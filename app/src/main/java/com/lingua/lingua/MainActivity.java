@@ -9,6 +9,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.lingua.lingua.fragments.ChatFragment;
+import com.lingua.lingua.fragments.ExploreFragment;
+import com.lingua.lingua.fragments.NotificationsFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final Fragment profileFragment = new ProfileFragment();
+        final Fragment chatFragment = new ChatFragment();
+        final Fragment exploreFragment = new ExploreFragment();
+        final Fragment notificationsFragment = new NotificationsFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
 
@@ -32,13 +38,13 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.explore:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
                         return true;
                     case R.id.chat:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.flContainer, chatFragment).commit();
                         return true;
-                    case R.id.alerts:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+                    case R.id.notifications:
+                        fragmentManager.beginTransaction().replace(R.id.flContainer, notificationsFragment).commit();
                         return true;
                     case R.id.profile:
                         fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
