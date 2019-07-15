@@ -4,7 +4,7 @@
     <item
         android:id="@+id/explore"
         android:enabled="true"
-        android:icon="@drawable/baseline_public_black_48dp"
+        android:icon="@drawable/baseline_public_black_18dp"
         android:title="Explore"
         app:showAsAction="ifRoom" />
     <item
