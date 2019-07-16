@@ -33,6 +33,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.lingua.lingua.models.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
     Context context;
     GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     private static final String TAG = "LoginActivity";
 
@@ -58,8 +62,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         context = getApplicationContext();
 
-        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         info = findViewById(R.id.info);
         imageView = findViewById(R.id.imageView);
@@ -191,6 +195,11 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void writeNewUser(String userId, String name, String email) {
+        User user = new User(name, email);
+        mDatabase.child("users").child(userId).setValue(user);
     }
 
 
