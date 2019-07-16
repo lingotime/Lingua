@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         final Fragment exploreFragment = new ExploreFragment();
         final Fragment notificationsFragment = new NotificationsFragment();
 
-        fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
