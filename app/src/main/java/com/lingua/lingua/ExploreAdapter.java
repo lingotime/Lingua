@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,14 +17,13 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     private Context context;
     private List<Object> users;
 
-    private TextView tvUser;
-    private TextView tvCaption;
-    private ImageView imageView;
-    private TextView timestamp;
     private ImageView ivProfile;
-    private TextView tvLikeCount;
-    private Button heartButton;
-    private Button commentButton;
+    private ImageView ivFlag;
+    private TextView tvBio;
+    private TextView tvName;
+    private TextView tvAge;
+    private TextView tvGender;
+    private TextView tvFrom;
 
     public ExploreAdapter(Context context, List<Object> users) {
         this.context = context;
@@ -53,7 +51,13 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.ivProfile);
+            ivProfile = itemView.findViewById(R.id.ivProfile);
+            ivFlag = itemView.findViewById(R.id.ivFlag);
+            tvName = itemView.findViewById(R.id.tvName);
+            tvAge = itemView.findViewById(R.id.tvAge);
+            tvBio = itemView.findViewById(R.id.tvBio);
+            tvGender = itemView.findViewById(R.id.tvGender);
+            tvFrom = itemView.findViewById(R.id.tvFrom);
         }
     }
 
