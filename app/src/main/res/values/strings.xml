@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Lingua</string>
+    <string name="facebook_app_id">2390237354634096</string>
+    <string name="fb_login_protocol_scheme">fb2390237354634096</string>
 </resources>
