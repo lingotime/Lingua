@@ -1,0 +1,75 @@
+package com.lingua.lingua;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
+public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHolder> {
+
+    private Context context;
+    private List<Object> users;
+
+    private ImageView ivProfile;
+    private ImageView ivFlag;
+    private TextView tvBio;
+    private TextView tvName;
+    private TextView tvAge;
+    private TextView tvGender;
+    private TextView tvFrom;
+
+    public ExploreAdapter(Context context, List<Object> users) {
+        this.context = context;
+//        this.users = users;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_user, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+//        final User user = users.get(position);
+    }
+
+    @Override
+    public int getItemCount() {
+ //       return users.size();
+        return 5;
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        public ViewHolder(View itemView) {
+            super(itemView);
+            ivProfile = itemView.findViewById(R.id.ivProfile);
+            ivFlag = itemView.findViewById(R.id.ivFlag);
+            tvName = itemView.findViewById(R.id.tvName);
+            tvAge = itemView.findViewById(R.id.tvAge);
+            tvBio = itemView.findViewById(R.id.tvBio);
+            tvGender = itemView.findViewById(R.id.tvGender);
+            tvFrom = itemView.findViewById(R.id.tvFrom);
+        }
+    }
+
+    // Clean all elements of the recycler
+    public void clear() {
+        users.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items
+    public void addAll(List<Object> list) {
+        users.addAll(list);
+        notifyDataSetChanged();
+    }
+}
