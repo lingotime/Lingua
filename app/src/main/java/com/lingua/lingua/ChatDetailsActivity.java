@@ -24,6 +24,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat_details);
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
+
         for (int i = 0; i < 10; i++) {
             if (i % 2 == 0) {
                 Message message = new Message();
@@ -41,9 +42,11 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 messages.add(message);
             }
         }
+
         adapter = new ChatDetailsAdapter(this, messages);
         rvMessages.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
         rvMessages.setLayoutManager(linearLayoutManager);
     }
 }
