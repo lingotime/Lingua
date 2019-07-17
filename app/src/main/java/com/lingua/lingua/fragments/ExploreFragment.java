@@ -36,7 +36,7 @@ public class ExploreFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rvExplore = view.findViewById(R.id.rvExplore);
+        rvExplore = view.findViewById(R.id.fragment_explore_rv);
         users = new ArrayList<>();
         adapter = new ExploreAdapter(getContext(), users);
         rvExplore.setAdapter(adapter);

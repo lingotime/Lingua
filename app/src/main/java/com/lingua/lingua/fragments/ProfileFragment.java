@@ -48,8 +48,8 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ivProfile = view.findViewById(R.id.ivProfile);
-        tvUsername = view.findViewById(R.id.tvUsername);
+        ivProfile = view.findViewById(R.id.item_user_iv_profile);
+        tvUsername = view.findViewById(R.id.fragment_profile_tv_name);
 
         ivProfile.setOnClickListener(new View.OnClickListener() {
             @Override
