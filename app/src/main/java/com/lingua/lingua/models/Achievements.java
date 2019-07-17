@@ -9,5 +9,4 @@ public class Achievements {
     private File badge;
     // mapping the image to the achievement
     // set the language for the achievement
-
 }

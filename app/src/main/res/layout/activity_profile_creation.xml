@@ -13,8 +13,8 @@
 
         <Toolbar
             android:id="@+id/activity_profile_creation_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_width="494dp"
+            android:layout_height="165dp"
             android:background="#E91E63"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme">
@@ -141,6 +141,14 @@
                     android:layout_below="@+id/activity_profile_creation_targetCountries"
                     android:layout_toRightOf="@+id/textView7"
                     android:hint="Fun facts about yourself"/>
+
+                <Button
+                    android:id="@+id/activity_profile_creation_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SUBMIT"
+                    android:layout_below="@+id/activity_profile_creation_bio"
+                    android:layout_centerHorizontal="true"/>
 
             </RelativeLayout>
         </LinearLayout>

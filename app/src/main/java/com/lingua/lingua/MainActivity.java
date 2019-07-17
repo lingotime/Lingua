@@ -1,5 +1,6 @@
 package com.lingua.lingua;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -24,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        // TODO: remove this since this is only ensuring that Profile Creation is tested
+        Intent intent = new Intent(this, ProfileCreationActivity.class);
+        startActivity(intent);
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final Fragment profileFragment = new ProfileFragment();
