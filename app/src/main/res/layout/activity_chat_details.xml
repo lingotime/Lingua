@@ -20,9 +20,8 @@
     <RelativeLayout
         android:id="@+id/rlSend"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="76dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/browser_actions_bg_grey"
         android:paddingLeft="0dp"
         android:paddingTop="5dp"
         android:paddingRight="0dp"
@@ -30,32 +29,55 @@
 
         <EditText
             android:id="@+id/activity_chat_details_et"
+            style="@android:style/Widget.DeviceDefault.Light.EditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
             android:layout_alignBottom="@+id/activity_chat_details_button_send"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="2dp"
             android:layout_toLeftOf="@+id/activity_chat_details_button_send"
-            android:gravity="top"
+            android:background="@drawable/rounded_rectangle_gray"
+            android:gravity="start|top"
+            android:padding="8dp"
             android:hint="Type here..."
             android:imeOptions="actionSend"
             android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
             android:maxLength="2000"
             android:maxLines="4"
-            />
+            android:singleLine="false" />
 
         <Button
             android:id="@+id/activity_chat_details_button_send"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:background="@drawable/baseline_send_black_48dp"
-            android:bottomLeftRadius="10dp"
-            android:bottomRightRadius="10dp"
-            android:gravity="center"
-            android:paddingRight="10dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textSize="18sp"
-            android:topLeftRadius="10dp"
-            android:topRightRadius="10dp"></Button>
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/blue_circle" />
+
+        <ImageView
+            android:id="@+id/activity_chat_details_iv_send"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignStart="@+id/activity_chat_details_button_send"
+            android:layout_alignLeft="@+id/activity_chat_details_button_send"
+            android:layout_alignTop="@+id/activity_chat_details_button_send"
+            android:layout_alignEnd="@+id/activity_chat_details_button_send"
+            android:layout_alignRight="@+id/activity_chat_details_button_send"
+            android:layout_alignBottom="@+id/activity_chat_details_button_send"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="5dp"
+            app:srcCompat="@drawable/baseline_send_black_48dp" />
+
     </RelativeLayout>
 
 </RelativeLayout>

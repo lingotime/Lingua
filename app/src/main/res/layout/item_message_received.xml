@@ -18,8 +18,6 @@
         android:padding="10dp"
         android:text="Hi! How are you doing?"
         android:textColor="@color/colorTextDark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.02"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
