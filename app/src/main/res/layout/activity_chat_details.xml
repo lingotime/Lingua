@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:windowSoftInputMode="stateVisible|adjustResize">
+    android:windowSoftInputMode="stateVisible|adjustResize"
     tools:context=".ChatDetailsActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -39,7 +39,8 @@
             android:imeOptions="actionSend"
             android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
             android:maxLength="2000"
-            android:maxLines="4" />
+            android:maxLines="4"
+            />
 
         <Button
             android:id="@+id/activity_chat_details_button_send"
