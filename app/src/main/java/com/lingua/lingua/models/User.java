@@ -13,7 +13,7 @@ public class User {
     ArrayList<String> targetCountries;
     ArrayList<User> friends;
 
-    User() {}
+    public User() {}
 
     public String getName() {
         return name;

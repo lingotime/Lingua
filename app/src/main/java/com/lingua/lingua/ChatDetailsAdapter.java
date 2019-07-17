@@ -53,15 +53,13 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        // return messages.size();
-        return 5;
+        return messages.size();
     }
 
     // Determines the appropriate ViewType according to the sender of the message.
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-
         if (message.getSender().getName().equals("Marta")) { // change to current user
             // If the current user is the sender of the message
             return VIEW_TYPE_MESSAGE_SENT;
