@@ -1,6 +1,7 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,13 +47,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return 5;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+
+
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ViewHolder(View itemView) {
             super(itemView);
             ivProfile = itemView.findViewById(R.id.item_user_iv_profile);
             tvName = itemView.findViewById(R.id.item_chat_tv_name);
             tvText = itemView.findViewById(R.id.item_chat_tv_text);
             tvTimestamp = itemView.findViewById(R.id.item_chat_tv_timestamp);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                Intent intent = new Intent(context, ChatDetailsActivity.class);
+                context.startActivity(intent);
+            }
         }
     }
 
