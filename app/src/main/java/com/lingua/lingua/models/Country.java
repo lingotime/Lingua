@@ -8,5 +8,4 @@ public class Country {
     public ArrayList<String> languages;
     public String name;
     public File flag; // file will come from the Firebase
-    public ArrayList<LocalUser> users;
 }
