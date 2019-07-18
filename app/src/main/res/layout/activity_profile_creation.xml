@@ -6,155 +6,227 @@
     android:layout_height="match_parent"
     tools:context=".ProfileCreationActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/activity_profile_creation_appBar"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/activity_profile_creation_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_marginBottom="20dp"
+        android:theme="?attr/actionBarTheme">
+
+        <ImageView
+            android:id="@+id/activity_profile_creation_profileImage"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/user_outline" />
+
+        <!--<TextView-->
+            <!--android:id="@+id/activity_profile_creation_fullName"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_toRightOf="@+id/activity_profile_creation_profileImage"-->
+            <!--android:text="TextView" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/activity_profile_creation_username"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/activity_profile_creation_fullName"-->
+            <!--android:layout_toRightOf="@+id/activity_profile_creation_profileImage"-->
+            <!--android:text="TextView" />-->
+    </androidx.appcompat.widget.Toolbar>
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_below="@+id/activity_profile_creation_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Toolbar
-            android:id="@+id/activity_profile_creation_toolbar"
-            android:layout_width="494dp"
-            android:layout_height="165dp"
-            android:background="#E91E63"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme">
-
-            <ImageView
-                android:id="@+id/activity_profile_creation_profileImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/user_outline" />
-
-            <TextView
-                android:id="@+id/activity_profile_creation_fullName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/activity_profile_creation_profileImage"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/activity_profile_creation_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/activity_profile_creation_fullName"
-                android:layout_toRightOf="@+id/activity_profile_creation_profileImage"
-                android:text="TextView" />
-        </Toolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/activity_profile_creation_appBar">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_below="@+id/activity_profile_creation_toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="24dp">
 
-            <RelativeLayout
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardView1"
                 android:layout_width="match_parent"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/card_margin">
 
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="Country of Origin: " />
+                <LinearLayout
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <AutoCompleteTextView
-                    android:id="@+id/activity_profile_creation_originCountry"
-                    android:layout_width="wrap_content"
-                    android:layout_toRightOf="@+id/textView3"
-                    android:hint="Where are you from?"
-                    android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="Country of Origin: " />
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/textView3"
-                    android:layout_below="@+id/activity_profile_creation_originCountry"
-                    android:text="Primary Languages: "
-                    />
+                    <com.hootsuite.nachos.NachoTextView
+                        android:id="@+id/activity_profile_creation_originCountry"
+                        android:layout_width="wrap_content"
+                        android:layout_toRightOf="@+id/textView3"
+                        android:hint="Where are you from?"
+                        android:layout_height="wrap_content" />
 
-                <MultiAutoCompleteTextView
-                    android:id="@+id/activity_profile_creation_currentLanguages"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/activity_profile_creation_originCountry"
-                    android:layout_toRightOf="@+id/textView4"
-                    android:hint="Which languages do you currently speak?"
-                    />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/activity_profile_creation_currentLanguages"
-                    android:layout_alignStart="@+id/textView4"
-                    android:text="Target Languages: "
-                    />
+            </android.support.v7.widget.CardView>
 
-                <MultiAutoCompleteTextView
-                    android:id="@+id/activity_profile_creation_targetLanguages"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/activity_profile_creation_currentLanguages"
-                    android:layout_toRightOf="@+id/textView5"
-                    android:hint="Which languages are you trying to learn?"
-                    />
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:layout_marginLeft="@dimen/card_margin"
+                android:layout_marginRight="@dimen/card_margin">
 
-                <TextView
-                    android:id="@+id/textView6"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/activity_profile_creation_targetLanguages"
-                    android:layout_alignStart="@+id/textView5"
-                    android:text="Target Countries: "
-                    />
+                <LinearLayout
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <MultiAutoCompleteTextView
-                    android:id="@+id/activity_profile_creation_targetCountries"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/activity_profile_creation_targetLanguages"
-                    android:layout_toRightOf="@+id/textView6"
-                    android:hint="Which countries are you interested in?"
-                    />
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignLeft="@+id/activity_profile_creation_dobCard"
+                        android:layout_below="@+id/activity_profile_creation_dobCard"
+                        android:text="Primary Languages: "
+                        />
 
-                <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/activity_profile_creation_targetCountries"
-                    android:layout_alignStart="@+id/textView6"
-                    android:text="Enter a short bio: "
-                    />
+                    <com.hootsuite.nachos.NachoTextView
+                        android:id="@+id/activity_profile_creation_currentLanguages"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/activity_profile_creation_dobCard"
+                        android:layout_toRightOf="@+id/textView4"
+                        android:hint="Which languages do you currently speak?"/>
 
-                <EditText
-                    android:id="@+id/activity_profile_creation_bio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/activity_profile_creation_targetCountries"
-                    android:layout_toRightOf="@+id/textView7"
-                    android:hint="Fun facts about yourself"/>
+                </LinearLayout>
 
-                <Button
-                    android:id="@+id/activity_profile_creation_submit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="SUBMIT"
-                    android:layout_below="@+id/activity_profile_creation_bio"
-                    android:layout_centerHorizontal="true"/>
+            </android.support.v7.widget.CardView>
 
-            </RelativeLayout>
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:layout_marginLeft="@dimen/card_margin"
+                android:layout_marginRight="@dimen/card_margin">
+
+                <LinearLayout
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/activity_profile_creation_currentLanguages"
+                        android:layout_alignStart="@+id/textView4"
+                        android:text="Target Languages: "
+                        android:layout_alignLeft="@+id/textView4" />
+
+                    <com.hootsuite.nachos.NachoTextView
+                        android:id="@+id/activity_profile_creation_targetLanguages"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/activity_profile_creation_currentLanguages"
+                        android:layout_toRightOf="@+id/textView5"
+                        android:hint="Which languages are you trying to learn?"
+                        />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:layout_marginLeft="@dimen/card_margin"
+                android:layout_marginRight="@dimen/card_margin">
+
+                <LinearLayout
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/activity_profile_creation_targetLanguages"
+                        android:layout_alignStart="@+id/textView5"
+                        android:text="Target Countries: "
+                        android:layout_alignLeft="@+id/textView5" />
+
+                    <com.hootsuite.nachos.NachoTextView
+                        android:id="@+id/activity_profile_creation_targetCountries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/activity_profile_creation_targetLanguages"
+                        android:layout_toRightOf="@+id/textView6"
+                        android:hint="Which countries are you interested in?"
+                        />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:layout_marginLeft="@dimen/card_margin"
+                android:layout_marginRight="@dimen/card_margin">
+
+                <LinearLayout
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/activity_profile_creation_targetCountries"
+                        android:layout_alignStart="@+id/textView6"
+                        android:text="Enter a short bio: "
+                        android:layout_alignLeft="@+id/textView6" />
+
+                    <EditText
+                        android:id="@+id/activity_profile_creation_bio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/activity_profile_creation_targetCountries"
+                        android:layout_toRightOf="@+id/textView7"
+                        android:hint="Fun facts about yourself"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
         </LinearLayout>
 
-
-    </ScrollView>
-
-
+        <Button
+            android:id="@+id/activity_profile_creation_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SUBMIT"
+            android:layout_below="@+id/activity_profile_creation_bio"
+            android:layout_centerHorizontal="true"/>
+    </android.support.v4.widget.NestedScrollView>
+    </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>
