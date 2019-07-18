@@ -10,12 +10,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lingua.lingua.models.User;
+
 import java.util.List;
+
+/*
+RecyclerView Adapter that adapts User objects to the viewholders in the recyclerview
+*/
 
 public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHolder> {
 
     private Context context;
-    private List<Object> users;
+    private List<User> users;
 
     private ImageView ivProfile;
     private ImageView ivFlag;
@@ -25,9 +31,9 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     private TextView tvGender;
     private TextView tvFrom;
 
-    public ExploreAdapter(Context context, List<Object> users) {
+    public ExploreAdapter(Context context, List<User> users) {
         this.context = context;
-//        this.users = users;
+        this.users = users;
     }
 
     @NonNull
@@ -39,13 +45,13 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-//        final User user = users.get(position);
+        final User user = users.get(position);
+        tvName.setText(user.getName());
     }
 
     @Override
     public int getItemCount() {
- //       return users.size();
-        return 5;
+        return users.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -68,7 +74,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     }
 
     // Add a list of items
-    public void addAll(List<Object> list) {
+    public void addAll(List<User> list) {
         users.addAll(list);
         notifyDataSetChanged();
     }

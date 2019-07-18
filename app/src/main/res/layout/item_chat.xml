@@ -21,7 +21,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@color/colorPrimary" />
+            app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
 
         <TextView
             android:id="@+id/item_chat_tv_text"
