@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lingua.lingua.models.Message;
 import com.lingua.lingua.models.User;
 
 import java.util.ArrayList;

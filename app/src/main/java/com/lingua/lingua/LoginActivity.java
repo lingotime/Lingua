@@ -5,129 +5,107 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
-
-    private LoginButton fbLoginButton;
-    ProfilePictureView imageView;
-    CallbackManager callbackManager;
+    CallbackManager facebookLoginManager;
     Context context;
-
-    private static final String TAG = "LoginActivity";
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
+    private LoginButton facebookLoginButton;
+    private ProfilePictureView facebookProfileImage;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // initialize context, facebook login manager, and firebase
+        facebookLoginManager = CallbackManager.Factory.create();
         context = getApplicationContext();
+        firebaseAuth = FirebaseAuth.getInstance();
 
-        imageView = findViewById(R.id.imageView);
-        fbLoginButton = findViewById(R.id.fbLoginButton);
-        fbLoginButton.setPermissions(Arrays.asList("public_profile, email, user_birthday"));
+        // get signed in user, if there is one
+        firebaseUser = firebaseAuth.getCurrentUser();
 
-        // Facebook login
-        FacebookSdk.sdkInitialize(context);
-        //AppEventsLogger.activateApp(context);
+        // associate views with java variables
+        facebookProfileImage = findViewById(R.id.activity_login_profile_image);
+        facebookLoginButton = findViewById(R.id.activity_login_facebook_button);
 
-        callbackManager = CallbackManager.Factory.create();
+        // check if already logged in
+        if (firebaseUser != null) {
+            // log in
+            // previously: LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
+            loadAppContent(firebaseUser);
+        } else {
+            facebookLoginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
 
-        // Callback registration
-        fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
+            // register a callback for logging in
+            LoginManager.getInstance().registerCallback(facebookLoginManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    AccessToken facebookAccessToken = loginResult.getAccessToken();
 
-                AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+                    Profile.fetchProfileForCurrentAccessToken();
+                    Profile facebookProfile = Profile.getCurrentProfile();
 
-                if (isLoggedIn) {
-                    handleFacebookAccessToken(accessToken);
+                    AuthCredential credential = FacebookAuthProvider.getCredential(facebookAccessToken.getToken());
+
+                    firebaseAuth.signInWithCredential(credential).addOnCompleteListener(getParent(), new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+                                loadAppContent(user);
+                            } else {
+                                Log.e("LoginActivity", "signInWithCredential:failure", task.getException());
+                            }
+                        }
+                    });
                 }
 
-                GraphRequest request = GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCancel() {
+                    Log.d("LoginActivity", "facebook:onCancel");
+                }
 
-                            @Override
-                            public void onCompleted(JSONObject jsonObject, GraphResponse response) {
-                                try {
-                                    Log.i(TAG, "email: " + jsonObject.getString("email"));
-                                    Log.i(TAG, "name: " + jsonObject.getString("name"));
-                                    if (jsonObject.getString("id") != null) {
-                                        Log.i(TAG, "id: " + jsonObject.getString("id")); // This is the unique id that we can use to reference the facebook user
-                                        imageView.setPresetSize(ProfilePictureView.LARGE);
-                                        imageView.setProfileId(jsonObject.getString("id"));
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id, name, email, gender, birthday");
-                request.setParameters(parameters);
-                request.executeAsync();
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-            }
-        });
+                @Override
+                public void onError(FacebookException error) {
+                    Log.e("LoginActivity", "facebook:onError", error);
+                }
+            });
+        }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // forward activity result to facebook login manager
+        facebookLoginManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-//        mAuth.signInWithCredential(credential)
-//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        if (task.isSuccessful()) {
-//                            // Sign in success, update UI with the signed-in user's information
-//                            Log.d(TAG, "signInWithCredential:success");
-//                            FirebaseUser user = mAuth.getCurrentUser();
-//                            Log.d(TAG, "name: " + user.getDisplayName());
-//                            Log.d(TAG, "photoUrl: " + user.getPhotoUrl());
-//
-//                            //updateUI(user);
-//                        } else {
-//                            // If sign in fails, display a message to the user.
-//                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-//                        }
-//                    }
-//                });
+    private void loadAppContent(FirebaseUser user) {
+        //load either the profile creation page or the main activity
     }
-
 }

@@ -8,9 +8,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.lingua.lingua.models.Message;
-
 import java.util.List;
 
 public class ChatDetailsAdapter extends RecyclerView.Adapter {

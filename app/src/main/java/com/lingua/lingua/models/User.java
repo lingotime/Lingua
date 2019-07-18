@@ -1,24 +1,25 @@
 package com.lingua.lingua.models;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class User {
-
-    String name;
-    Date dob;
-    String gender;
-    String profilePictureUrl;
-    ArrayList<String> targetLanguages;
-    ArrayList<String> targetCountries;
-    ArrayList<User> friends;
-
-    public User() {}
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String id;
+    private String firstName;
+    private String lastName;
+    private Date birthDate;
+    private String biographyText;
+    private Country originCountry;
+    private String profilePhotoURL;
+    private ArrayList<Language> knownLanguages;
+    private ArrayList<Language> exploreLanguages;
+    private ArrayList<Country> knownCountries;
+    private ArrayList<Country> exploreCountries;
+    private HashMap<Language, Integer> hoursSpoken;
+    private ArrayList<User> confirmedFriends;
+    private ArrayList<User> pendingSentRequestFriends;
+    private ArrayList<User> pendingReceivedRequestFriends;
+    private boolean isOnline;
+    private boolean isComplete;
 }
