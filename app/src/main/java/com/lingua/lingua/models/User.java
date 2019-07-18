@@ -13,7 +13,9 @@ public class User {
     ArrayList<String> targetCountries;
     ArrayList<User> friends;
 
-    public User() {}
+    public User(String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;

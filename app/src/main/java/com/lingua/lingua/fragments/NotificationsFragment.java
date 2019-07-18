@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.lingua.lingua.ExploreAdapter;
+import com.lingua.lingua.NotificationsAdapter;
 import com.lingua.lingua.R;
+import com.lingua.lingua.models.FriendRequest;
+import com.lingua.lingua.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +23,8 @@ import java.util.List;
 public class NotificationsFragment extends Fragment {
 
     RecyclerView rvNotifications;
-    private ExploreAdapter adapter;
-    private List<Object> users;
+    private NotificationsAdapter adapter;
+    private List<FriendRequest> friendRequests;
     private SwipeRefreshLayout swipeContainer;
 
     @Nullable
@@ -36,8 +38,15 @@ public class NotificationsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rvNotifications = view.findViewById(R.id.fragment_notifications_rv);
-        users = new ArrayList<>();
-        adapter = new ExploreAdapter(getContext(), users);
+        friendRequests = new ArrayList<>();
+
+        FriendRequest friendRequest = new FriendRequest("hi girl! let's connect", new User("Cristina"), new User("Marta"));
+
+        for (int i = 0; i < 10; i++) {
+            friendRequests.add(friendRequest);
+        }
+
+        adapter = new NotificationsAdapter(getContext(), friendRequests);
         rvNotifications.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvNotifications.setLayoutManager(linearLayoutManager);

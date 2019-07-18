@@ -39,7 +39,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_user, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_friend_request, parent, false);
         return new ViewHolder(view);
     }
 
@@ -54,10 +54,16 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             @Override
             public void onClick(View view) {
                 // TODO: add friend, create chat with friend's message
-
                 Intent intent = new Intent(context, ChatDetailsActivity.class);
                 intent.putExtra("user", Parcels.wrap(user));
                 context.startActivity(intent);
+            }
+        });
+
+        rejectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: delete friend request from database, refresh
             }
         });
     }
