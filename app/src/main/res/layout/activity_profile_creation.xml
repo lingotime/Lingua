@@ -17,9 +17,11 @@
 
         <ImageView
             android:id="@+id/activity_profile_creation_profileImage"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_height="wrap_content"
+            android:background="@drawable/dotted_border"
+            android:clickable="true"
             app:srcCompat="@drawable/user_outline" />
     </androidx.appcompat.widget.Toolbar>
 
@@ -50,11 +52,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Date of Birth: "
+                    android:layout_marginBottom="10dp"
                     android:textAppearance="@style/TextAppearance.MyTheme.Overline" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/activity_profile_creation_dob"
-                    android:layout_width="375dp"
+                    android:layout_width="match_parent"
                     android:background="@drawable/edittext_layout"
                     android:layout_height="wrap_content"
                     android:hint="mm/dd/yyyy"
@@ -72,7 +75,7 @@
         android:layout_marginTop="@dimen/component_label_horizontal_margin">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="wrap_content">
 
@@ -80,12 +83,13 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
+            android:layout_marginBottom="10dp"
             android:layout_height="wrap_content"
             android:text="Country of Origin: " />
 
             <com.hootsuite.nachos.NachoTextView
                 android:id="@+id/activity_profile_creation_originCountry"
-                android:layout_width="375dp"
+                android:layout_width="match_parent"
                 android:background="@drawable/edittext_layout"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.MyTheme.Caption" />
@@ -101,7 +105,7 @@
         android:layout_marginTop="@dimen/component_label_horizontal_margin">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="wrap_content">
 
@@ -111,6 +115,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
             android:layout_below="@+id/activity_profile_creation_dobCard"
+            android:layout_marginBottom="10dp"
             android:layout_alignLeft="@+id/activity_profile_creation_dobCard"
             android:text="Primary Languages: " />
 
@@ -133,7 +138,7 @@
                 android:layout_marginTop="@dimen/component_label_horizontal_margin">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:layout_height="wrap_content">
 
@@ -144,6 +149,7 @@
                         android:layout_height="wrap_content"
                         android:text="Target Languages: "
                         android:layout_alignLeft="@+id/textView4"
+                        android:layout_marginBottom="10dp"
                         android:layout_alignStart="@+id/textView4" />
 
                     <com.hootsuite.nachos.NachoTextView
@@ -163,7 +169,7 @@
                 android:layout_marginTop="@dimen/component_label_horizontal_margin">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:layout_height="wrap_content">
 
@@ -172,6 +178,7 @@
                         android:layout_width="wrap_content"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                         android:text="Target Countries: " />
 
                     <com.hootsuite.nachos.NachoTextView
@@ -192,7 +199,7 @@
                 android:layout_marginTop="@dimen/component_label_horizontal_margin">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:layout_height="wrap_content">
 
@@ -201,7 +208,8 @@
                         android:layout_width="wrap_content"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
                         android:layout_height="wrap_content"
-                        android:text="Enter a short bio: " />
+                        android:text="Enter a short bio: "
+                        android:layout_marginBottom="10dp"/>
 
                     <EditText
                         android:id="@+id/activity_profile_creation_bio"
