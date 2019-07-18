@@ -1,17 +1,24 @@
 package com.lingua.lingua.models;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class User {
 
-    public String username;
-    public String email;
+    String name;
+    Date dob;
+    String gender;
+    String profilePictureUrl;
+    ArrayList<String> targetLanguages;
+    ArrayList<String> targetCountries;
+    ArrayList<User> friends;
 
-    public User() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+    public User() {}
+
+    public String getName() {
+        return name;
     }
 
-    public User(String username, String email) {
-        this.username = username;
-        this.email = email;
+    public void setName(String name) {
+        this.name = name;
     }
-
 }

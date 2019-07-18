@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/ivProfile"
+        android:id="@+id/item_user_iv_profile"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="48dp"
@@ -16,13 +16,13 @@
         app:srcCompat="@mipmap/ic_launcher_round" />
 
         <TextView
-            android:id="@+id/tvUsername"
+            android:id="@+id/fragment_profile_tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="marta"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivProfile" />
+            app:layout_constraintTop_toBottomOf="@+id/item_user_iv_profile" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
