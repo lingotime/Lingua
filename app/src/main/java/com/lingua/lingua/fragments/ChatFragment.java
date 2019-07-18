@@ -19,6 +19,11 @@ import com.lingua.lingua.R;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Fragment that displays the user's open chats (one with each friend) ordered by most recent, can click
+on each chat to message that person in the ChatDetailsActivity
+*/
+
 public class ChatFragment extends Fragment {
 
     RecyclerView rvChats;

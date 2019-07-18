@@ -1,5 +1,10 @@
 package com.lingua.lingua.models;
 
+/*
+    Friend request class for pending friend requests, friend request should be deleted once user accepts or rejects the request
+    TODO: make this class Firebase compatible, save, delete and query friend requests by receiver
+    */
+
 public class FriendRequest {
 
     String message;

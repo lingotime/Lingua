@@ -1,5 +1,10 @@
 package com.lingua.lingua.models;
 
+    /*
+    Message class with body of message, sender, receiver and timestamp
+    TODO: make this class Firebase compatible, save and query messages methods
+    */
+
 public class Message {
 
     String message;

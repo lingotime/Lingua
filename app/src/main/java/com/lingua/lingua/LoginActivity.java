@@ -17,6 +17,10 @@ import com.facebook.login.widget.LoginButton;
 
 import java.util.Arrays;
 
+/*
+Login activity that handles Facebook OAuth
+*/
+
 public class LoginActivity extends AppCompatActivity {
 
     private LoginButton loginButton;

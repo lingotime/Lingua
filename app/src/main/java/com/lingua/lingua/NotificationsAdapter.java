@@ -17,6 +17,10 @@ import com.lingua.lingua.models.User;
 
 import java.util.List;
 
+/*
+RecyclerView Adapter that adapts Friend Request objects to the viewholders in the recyclerview
+*/
+
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder> {
 
     private Context context;

@@ -29,6 +29,10 @@ import java.io.File;
 
 import static android.app.Activity.RESULT_OK;
 
+/*
+Fragment that displays the user's profile and allows them to edit it
+*/
+
 public class ProfileFragment extends Fragment {
 
     ImageView ivProfile;
@@ -59,22 +63,6 @@ public class ProfileFragment extends Fragment {
         });
 
         // TODO: Set user information
-
-//        tvUsername.setText(user.getUsername());
-
-//        try {
-//            ParseFile profilePicFile = user.fetchIfNeeded().getParseFile("profilePicture");
-//            if (profilePicFile != null) {
-//                RequestOptions requestOptionsMedia = new RequestOptions();
-//                requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
-//                Glide.with(this)
-//                        .load(profilePicFile.getUrl())
-//                        .apply(requestOptionsMedia)
-//                        .into(ivProfile);
-//            }
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
 
     }
 

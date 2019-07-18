@@ -17,6 +17,11 @@ import com.lingua.lingua.models.User;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Activity for chatting with a specific friend, the recycler view contains all the messages the user
+and that friend have exchanged and user can send messages from here
+*/
+
 public class ChatDetailsActivity extends AppCompatActivity {
 
     RecyclerView rvMessages;

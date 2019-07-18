@@ -20,6 +20,10 @@ import com.lingua.lingua.models.User;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Fragment that displays pending friend requests, and possibly in the future also missed calls.
+*/
+
 public class NotificationsFragment extends Fragment {
 
     RecyclerView rvNotifications;

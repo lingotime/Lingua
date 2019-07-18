@@ -2,6 +2,10 @@ package com.lingua.lingua.models;
 
 import java.util.ArrayList;
 import java.util.Date;
+/*
+    Custom User class with basic info, language information, etc.
+    TODO: make this class Firebase compatible, save and query user methods
+ */
 
 public class User {
 
