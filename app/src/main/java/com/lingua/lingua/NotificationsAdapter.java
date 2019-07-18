@@ -15,8 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 
-import org.parceler.Parcels;
-
 import java.util.List;
 
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder> {
@@ -55,7 +53,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             public void onClick(View view) {
                 // TODO: add friend, create chat with friend's message
                 Intent intent = new Intent(context, ChatDetailsActivity.class);
-                intent.putExtra("user", Parcels.wrap(user));
+                // intent.putExtra("user", Parcels.wrap(user));
                 context.startActivity(intent);
             }
         });

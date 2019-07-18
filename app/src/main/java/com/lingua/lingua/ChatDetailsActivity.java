@@ -1,6 +1,11 @@
 package com.lingua.lingua;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +22,10 @@ public class ChatDetailsActivity extends AppCompatActivity {
     RecyclerView rvMessages;
     private ChatDetailsAdapter adapter;
     private List<Message> messages;
+
+    private ImageView sendButtonIcon;
+    private Button sendButton;
+    private EditText etMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,5 +55,17 @@ public class ChatDetailsActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
         rvMessages.setLayoutManager(linearLayoutManager);
+
+        sendButton = findViewById(R.id.activity_chat_details_button_send);
+        sendButtonIcon = findViewById(R.id.activity_chat_details_iv_send);
+        etMessage = findViewById(R.id.activity_chat_details_et);
+        sendButtonIcon.setColorFilter(Color.argb(255, 255, 255, 255));
+
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: send message
+            }
+        });
     }
 }
