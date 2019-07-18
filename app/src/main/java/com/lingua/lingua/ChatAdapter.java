@@ -11,6 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lingua.lingua.models.Chat;
+import com.lingua.lingua.models.User;
+
 import java.util.List;
 
 /*
@@ -20,16 +23,16 @@ RecyclerView Adapter that adapts Chat objects to the viewholders in the recycler
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     private Context context;
-    private List<Object> chats;
+    private List<Chat> chats;
 
     private ImageView ivProfile;
     private TextView tvName;
     private TextView tvText;
     private TextView tvTimestamp;
 
-    public ChatAdapter(Context context, List<Object> chats) {
+    public ChatAdapter(Context context, List<Chat> chats) {
         this.context = context;
-//        this.users = users;
+        this.chats = chats;
     }
 
     @NonNull
@@ -41,17 +44,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
-//        final User user = users.get(position);
-
+        final Chat chat = chats.get(position);
+        final User user = chat.getUsers().get(0);
+        tvName.setText(user.getName());
+        tvText.setText(chat.getLastMessage());
     }
 
     @Override
     public int getItemCount() {
-        //       return users.size();
-        return 5;
+        return chats.size();
     }
-
-
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ViewHolder(View itemView) {
@@ -71,17 +73,5 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 context.startActivity(intent);
             }
         }
-    }
-
-    // Clean all elements of the recycler
-    public void clear() {
-        chats.clear();
-        notifyDataSetChanged();
-    }
-
-    // Add a list of items
-    public void addAll(List<Object> list) {
-        chats.addAll(list);
-        notifyDataSetChanged();
     }
 }

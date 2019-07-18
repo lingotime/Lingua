@@ -15,6 +15,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.lingua.lingua.ChatAdapter;
 import com.lingua.lingua.R;
+import com.lingua.lingua.models.Chat;
+import com.lingua.lingua.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +30,7 @@ public class ChatFragment extends Fragment {
 
     RecyclerView rvChats;
     private ChatAdapter adapter;
-    private List<Object> chats;
+    private List<Chat> chats;
     private SwipeRefreshLayout swipeContainer;
 
     @Nullable
@@ -42,6 +44,13 @@ public class ChatFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         chats = new ArrayList<>();
+
+        ArrayList<User> users = new ArrayList<>();
+        users.add(new User("Cristina"));
+        users.add(new User("Marta"));
+        chats.add(new Chat(users, "Hi! how are you doing?"));
+        chats.add(new Chat(users, "Wassuppppp"));
+
         adapter = new ChatAdapter(getContext(), chats);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         rvChats.addItemDecoration(itemDecoration);
