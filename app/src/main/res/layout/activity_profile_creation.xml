@@ -23,7 +23,7 @@
             android:layout_gravity="center"
             android:background="@drawable/dotted_border"
             android:clickable="true"
-            app:srcCompat="@drawable/user_outline" />
+            app:srcCompat="@drawable/baseline_person_black_18dp" />
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -37,14 +37,14 @@
         android:layout_height="wrap_content">
 
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/component_label_horizontal_margin">
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:orientation="vertical"
                 android:layout_height="wrap_content">
 
@@ -56,20 +56,29 @@
                     android:layout_marginBottom="10dp"
                     android:textAppearance="@style/TextAppearance.MyTheme.Overline" />
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/activity_profile_creation_dob"
-                    android:layout_width="match_parent"
-                    android:background="@drawable/edittext_layout"
-                    android:layout_height="wrap_content"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:hint="@string/mm_dd_yyyy"
-                    android:inputType="date"
-                    android:textAppearance="@style/TextAppearance.MyTheme.Caption" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/keyline_4"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/activity_profile_creation_dob"
+                        android:layout_width="match_parent"
+                        android:textAppearance="@style/TextAppearance.MyTheme.Caption"
+                        android:layout_height="wrap_content"
+                        android:inputType="date" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -88,18 +97,27 @@
             android:layout_height="wrap_content"
             android:text="@string/country_of_origin" />
 
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="@string/where_are_you_from"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/keyline_4"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp">
+
             <com.hootsuite.nachos.NachoTextView
                 android:id="@+id/activity_profile_creation_originCountry"
                 android:layout_width="match_parent"
-                android:background="@drawable/edittext_layout"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.MyTheme.Caption" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -120,19 +138,26 @@
             android:layout_alignLeft="@+id/activity_profile_creation_dobCard"
             android:text="@string/primary_languages" />
 
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="@string/what_languages_do_you_speak"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/keyline_4"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp">
+
             <com.hootsuite.nachos.NachoTextView
                 android:id="@+id/activity_profile_creation_currentLanguages"
-                android:layout_width="375dp"
-                android:background="@drawable/edittext_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/activity_profile_creation_dobCard"
-                android:layout_toRightOf="@+id/textView4"
                 android:textAppearance="@style/TextAppearance.MyTheme.Caption" />
+            </com.google.android.material.textfield.TextInputLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -153,17 +178,26 @@
                         android:layout_marginBottom="10dp"
                         android:layout_alignStart="@+id/textView4" />
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:hint="@string/languages_to_learn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/keyline_4"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp">
+
                     <com.hootsuite.nachos.NachoTextView
                         android:id="@+id/activity_profile_creation_targetLanguages"
-                        android:layout_width="375dp"
-                        android:background="@drawable/edittext_layout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.MyTheme.Caption" />
+                    </com.google.android.material.textfield.TextInputLayout>
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -182,18 +216,28 @@
                         android:layout_marginBottom="10dp"
                         android:text="@string/target_countries" />
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:hint="@string/for_cultural_exchange"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/keyline_4"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp">
+
                     <com.hootsuite.nachos.NachoTextView
                         android:id="@+id/activity_profile_creation_targetCountries"
-                        android:layout_width="375dp"
-                        android:background="@drawable/edittext_layout"
+                        android:layout_width="match_parent"
+                        android:textAppearance="@style/TextAppearance.MyTheme.Caption"
                         android:layout_height="wrap_content"
                         />
+                    </com.google.android.material.textfield.TextInputLayout>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardView5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -212,16 +256,24 @@
                         android:text="@string/enter_a_short_bio"
                         android:layout_marginBottom="10dp"/>
 
-                    <EditText
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:hint="..."
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/keyline_4"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/activity_profile_creation_bio"
-                        android:layout_width="375dp"
-                        android:background="@drawable/edittext_layout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.MyTheme.Caption" />
-
+                    </com.google.android.material.textfield.TextInputLayout>
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatButton

@@ -24,6 +24,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lingua.lingua.CameraUtil;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.MainActivity;
@@ -50,6 +51,7 @@ public class ProfileFragment extends Fragment {
     ChipGroup targetCounts;
     ChipGroup primaryLangs;
     TextView dob;
+    FloatingActionButton editFab;
 
     private final String TAG = "ProfileFragment";
 
@@ -79,6 +81,11 @@ public class ProfileFragment extends Fragment {
         targetLangs = view.findViewById(R.id.fragment_profile_targetLangChips);
         targetCounts = view.findViewById(R.id.fragment_profile_targetCountChips);
         primaryLangs = view.findViewById(R.id.fragment_profile_primaryChips);
+        editFab = view.findViewById(R.id.fragment_profile_FAB);
+
+        // TODO: Allow for the creation from the explore page to see other profiles, with User passed as Parcelables. In this scenario, the FAB visibility will be set to GONE
+
+        //TODO: Set the onclick function for the FAB - launches ProfileEdit fragment
 
 
         // TODO: Set user information, and format the date for display
