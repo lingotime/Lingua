@@ -13,7 +13,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -25,6 +24,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.lingua.lingua.models.User;
 
 import java.util.Arrays;
 
@@ -57,7 +57,8 @@ public class LoginActivity extends AppCompatActivity {
         if (firebaseUser != null) {
             // log in
             // previously: LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
-            loadAppContent(firebaseUser);
+            User currentUser = User.convertFirebaseUserToNormalUser(firebaseUser);
+            loadNextStep(currentUser);
         } else {
             facebookLoginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
 
@@ -67,9 +68,6 @@ public class LoginActivity extends AppCompatActivity {
                 public void onSuccess(LoginResult loginResult) {
                     AccessToken facebookAccessToken = loginResult.getAccessToken();
 
-                    Profile.fetchProfileForCurrentAccessToken();
-                    Profile facebookProfile = Profile.getCurrentProfile();
-
                     AuthCredential credential = FacebookAuthProvider.getCredential(facebookAccessToken.getToken());
 
                     firebaseAuth.signInWithCredential(credential).addOnCompleteListener(getParent(), new OnCompleteListener<AuthResult>() {
@@ -77,7 +75,8 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                                loadAppContent(user);
+                                User currentUser = User.convertFirebaseUserToNormalUser(firebaseUser);
+                                loadNextStep(currentUser);
                             } else {
                                 Log.e("LoginActivity", "signInWithCredential:failure", task.getException());
                             }
@@ -105,7 +104,17 @@ public class LoginActivity extends AppCompatActivity {
         facebookLoginManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void loadAppContent(FirebaseUser user) {
-        //load either the profile creation page or the main activity
+    private void loadNextStep(User currentUser) {
+        if (currentUser.isComplete()) {
+            // load the main page
+            final Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            // load the profile creation page
+            final Intent intent = new Intent(LoginActivity.this, ProfileCreationActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }
