@@ -26,6 +26,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lingua.lingua.models.User;
 
+import org.parceler.Parcels;
+
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
@@ -57,7 +59,9 @@ public class LoginActivity extends AppCompatActivity {
         if (firebaseUser != null) {
             // log in
             // previously: LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
+            Log.d("TRUMP", "There is already a firebase user...logging in...STEP 1");
             User currentUser = User.convertFirebaseUserToNormalUser(firebaseUser);
+            Log.d("TRUMP", "There is already a firebase user...logging in...STEP 2: "+currentUser.getId());
             loadNextStep(currentUser);
         } else {
             facebookLoginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
@@ -70,12 +74,14 @@ public class LoginActivity extends AppCompatActivity {
 
                     AuthCredential credential = FacebookAuthProvider.getCredential(facebookAccessToken.getToken());
 
-                    firebaseAuth.signInWithCredential(credential).addOnCompleteListener(getParent(), new OnCompleteListener<AuthResult>() {
+                    firebaseAuth.signInWithCredential(credential).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                                User currentUser = User.convertFirebaseUserToNormalUser(firebaseUser);
+                                Log.d("TRUMP", "There is already a firebase user...logging in...STEP A");
+                                User currentUser = User.convertFirebaseUserToNormalUser(user);
+                                Log.d("TRUMP", "There is already a firebase user...logging in...STEP B: "+currentUser.getId());
                                 loadNextStep(currentUser);
                             } else {
                                 Log.e("LoginActivity", "signInWithCredential:failure", task.getException());
@@ -108,11 +114,13 @@ public class LoginActivity extends AppCompatActivity {
         if (currentUser.isComplete()) {
             // load the main page
             final Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
             startActivity(intent);
             finish();
         } else {
             // load the profile creation page
             final Intent intent = new Intent(LoginActivity.this, ProfileCreationActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
             startActivity(intent);
             finish();
         }
