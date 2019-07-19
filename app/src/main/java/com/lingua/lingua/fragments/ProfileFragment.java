@@ -35,6 +35,10 @@ import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
 
+/*
+Fragment that displays the user's profile and allows them to edit it
+*/
+
 public class ProfileFragment extends Fragment {
 
     AppCompatImageView userImage;
@@ -66,7 +70,6 @@ public class ProfileFragment extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-
 
         dob = view.findViewById(R.id.fragment_profile_dob);
         userImage = view.findViewById(R.id.fragment_profile_userImage);

@@ -8,4 +8,7 @@
     <string name="target_countries">Target Countries:</string>
     <string name="submit">SUBMIT</string>
     <string name="enter_a_short_bio">Enter a short bio:</string>
+    <string name="facebook_app_id">2390237354634096</string>
+    <string name="fb_login_protocol_scheme">fb2390237354634096</string>
+    <string name="google_client_id">889445319058-2b0m2ijlcnrsqbf6mvjc5s06897sjoem.apps.googleusercontent.com</string>
 </resources>

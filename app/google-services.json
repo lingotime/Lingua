@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "889445319058",
+    "firebase_url": "https://lingua-project.firebaseio.com",
+    "project_id": "lingua-project",
+    "storage_bucket": "lingua-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889445319058:android:8c9a7508a6e2a36f",
+        "android_client_info": {
+          "package_name": "com.lingua.lingua"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "889445319058-hqml2jvk0vo144gsvsk6fpsrrm410rna.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTxEgjQZCP9NgDnUS2Iz1qvLoeJKcgx8k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889445319058-hqml2jvk0vo144gsvsk6fpsrrm410rna.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

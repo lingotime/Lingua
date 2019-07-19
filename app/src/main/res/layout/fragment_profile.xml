@@ -1,3 +1,4 @@
+
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
@@ -200,7 +201,6 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.core.widget.NestedScrollView>
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_profile_FAB"

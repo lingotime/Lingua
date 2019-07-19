@@ -15,6 +15,10 @@ import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
 
+/*
+Main Activity with bottom navigation bar that handles switching between fragments
+*/
+
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
@@ -32,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         final Fragment exploreFragment = new ExploreFragment();
         final Fragment notificationsFragment = new NotificationsFragment();
 
-        fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

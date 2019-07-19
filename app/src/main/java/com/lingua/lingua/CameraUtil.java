@@ -13,6 +13,10 @@ import androidx.core.content.FileProvider;
 
 import java.io.File;
 
+/*
+Contains helper methods for getting image files from the camera and camera roll
+*/
+
 public class CameraUtil {
 
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
