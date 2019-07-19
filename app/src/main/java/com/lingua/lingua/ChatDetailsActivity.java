@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lingua.lingua.models.Message;
 import com.lingua.lingua.models.User;
+import com.lingua.lingua.models.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,13 +42,15 @@ public class ChatDetailsActivity extends AppCompatActivity {
         for (int i = 0; i < 10; i++) {
             if (i % 2 == 0) {
                 Message message = new Message();
-                User sender = new User("Marta");
+                User sender = new User();
+                sender.setFirstName("Marta");
                 message.setMessage("Hey girl! How are you? I've been having a great day I hope you have too");
                 message.setSender(sender);
                 messages.add(message);
             } else {
                 Message message = new Message();
-                User sender = new User("Cristina");
+                User sender = new User();
+                sender.setFirstName("Cristina");
                 message.setMessage("How are you? I'm doing well. Life is good, the family is doing well...");
                 message.setSender(sender);
                 messages.add(message);

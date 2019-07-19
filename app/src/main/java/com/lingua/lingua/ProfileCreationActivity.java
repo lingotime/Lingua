@@ -1,5 +1,6 @@
 package com.lingua.lingua;
 
+import android.os.Bundle;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -49,7 +50,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
     // target languages will be an EditText and then separate them to form an ArrayList
     // their bio
     // target countries will be the same as target languages
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,18 +113,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
 
         // TODO: Set the onlick listener for the Submit button and place the info into the User class connected to the database
-
-        // set the User fields upon submission
-//        btnSubmit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                user.setOriginCountry(originCountry.getChipValues().get(0));
-//                user.setCurrentLanguages(currentLanguages.getChipValues());
-//                user.setTargetLanguages(targetLanguages.getChipValues());
-//                user.setTargetCountries(targetCountries.getChipValues());
-//                user.setBio(bio.getText().toString());
-//            }
-//        });
     }
 
     @Override

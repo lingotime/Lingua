@@ -18,8 +18,17 @@
         <activity android:name=".ProfilePicture"></activity>
         <activity android:name=".ProfileCreationActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
         android:usesCleartextTraffic="true">
-        <activity android:name=".ChatDetailsActivity"></activity>
-        <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+        <activity android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ProfileCreationActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".ChatDetailsActivity" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.lingua.fileprovider"
@@ -48,14 +57,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="@string/fb_login_protocol_scheme" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>

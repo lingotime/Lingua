@@ -9,9 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lingua.lingua.models.Message;
-
 import java.util.List;
+import com.lingua.lingua.models.Message;
 
 /*
 RecyclerView Adapter that adapts Message objects to the viewholders in the recyclerview
@@ -64,7 +63,7 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-        if (message.getSender().getName().equals("Marta")) { // change to current user
+        if (message.getSender().getFirstName().equals("Marta")) { // change to current user
             // If the current user is the sender of the message
             return VIEW_TYPE_MESSAGE_SENT;
         } else {
