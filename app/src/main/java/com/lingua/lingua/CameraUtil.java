@@ -1,8 +1,15 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
+
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 
@@ -14,6 +21,12 @@ public class CameraUtil {
 
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     private static final String TAG = "CameraUtil";
+    // member variables concerned with the camera activity
+    public final String APP_TAG = "MyCustomApp";
+    public String photoFileName = "photo.jpg";
+    File photoFile;
+    // PICK_PHOTO_CODE is a constant integer
+    public final static int PICK_PHOTO_CODE = 1046;
 
     // Returns the File for a photo stored on disk given the fileName
     public static File getPhotoFileUri(Context context, String fileName) {

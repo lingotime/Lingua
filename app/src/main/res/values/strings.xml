@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">Lingua</string>
+    <string name="date_of_birth">Date of Birth:</string>
+    <string name="primary_languages">Primary Languages:</string>
+    <string name="country_of_origin">Country of Origin:</string>
+    <string name="mm_dd_yyyy">mm/dd/yyyy</string>
+    <string name="target_languages">Target Languages:</string>
+    <string name="target_countries">Target Countries:</string>
+    <string name="submit">SUBMIT</string>
+    <string name="enter_a_short_bio">Enter a short bio:</string>
     <string name="facebook_app_id">2390237354634096</string>
     <string name="fb_login_protocol_scheme">fb2390237354634096</string>
     <string name="google_client_id">889445319058-2b0m2ijlcnrsqbf6mvjc5s06897sjoem.apps.googleusercontent.com</string>
