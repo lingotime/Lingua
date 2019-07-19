@@ -3,9 +3,8 @@ package com.lingua.lingua.fragments;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,28 +14,42 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.lingua.lingua.CameraUtil;
+import com.lingua.lingua.CountryInformation;
+import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment {
 
-    ImageView ivProfile;
-    TextView tvUsername;
+    AppCompatImageView userImage;
+    TextView userName;
 
-    public String photoFileName = "photo.jpg";
-    private File photoFile;
+    AppCompatImageView flagImage;
+    ChipGroup origin;
+    ChipGroup targetLangs;
+    ChipGroup targetCounts;
+    ChipGroup primaryLangs;
+    TextView dob;
+
     private final String TAG = "ProfileFragment";
+
+
 
     @Nullable
     @Override
@@ -48,74 +61,49 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ivProfile = view.findViewById(R.id.ivProfile);
-        tvUsername = view.findViewById(R.id.tvUsername);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_profile_appBar);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        ivProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchCamera();
-            }
-        });
 
-        // TODO: Set user information
+        dob = view.findViewById(R.id.fragment_profile_dob);
+        userImage = view.findViewById(R.id.fragment_profile_userImage);
+        userName = view.findViewById(R.id.fragment_profile_userName);
+        flagImage = view.findViewById(R.id.fragment_profile_originFlag);
+        origin = view.findViewById(R.id.fragment_profile_origin);
+        targetLangs = view.findViewById(R.id.fragment_profile_targetLangChips);
+        targetCounts = view.findViewById(R.id.fragment_profile_targetCountChips);
+        primaryLangs = view.findViewById(R.id.fragment_profile_primaryChips);
 
-//        tvUsername.setText(user.getUsername());
 
-//        try {
-//            ParseFile profilePicFile = user.fetchIfNeeded().getParseFile("profilePicture");
-//            if (profilePicFile != null) {
-//                RequestOptions requestOptionsMedia = new RequestOptions();
-//                requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
-//                Glide.with(this)
-//                        .load(profilePicFile.getUrl())
-//                        .apply(requestOptionsMedia)
-//                        .into(ivProfile);
-//            }
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
+        // TODO: Set user information, and format the date for display
 
+        //TODO: Set the action bar title as the name of the user, and include their picture
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "activity result");
-        if (requestCode == CameraUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                RequestOptions requestOptionsMedia = new RequestOptions();
-                requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
-                Glide.with(this)
-                        .load(takenImage)
-                        .apply(requestOptionsMedia)
-                        .into(ivProfile);
+    // TODO: Format the flags so they fit more snugly into the chips and the collapsing toolbar
+    // add the country chips to the layout along with their flags
+    public void addCountryChips(String country, ChipGroup chipGroup) {
+        // creating each of the chips to represent the countries and the languages
+        Chip chip = new Chip(getContext());
+        chip.setText(country);
 
-                // TODO: set profile pic
-            } else {
-                Log.e(TAG, "Picture wasn't taken");
-            }
-        }
+        // getting the drawable that represents the flag for the given country
+        String fileName = CountryInformation.COUNTRY_CODES.get(country);
+        int id = getContext().getResources().getIdentifier(fileName, "drawable", getContext().getPackageName());
+        Drawable drawable = getContext().getResources().getDrawable(id);
+        chip.setChipIcon(drawable);
+
+        //adding the new chip to the given ChipGroup
+        chipGroup.addView(chip);
     }
 
-    public void launchCamera() {
-        // create Intent to take a picture and return control to the calling application
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Create a File reference to access to future access
-        photoFile = CameraUtil.getPhotoFileUri(getContext(), photoFileName);
-
-        // wrap File object into a content provider
-        // required for API >= 24
-        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.lingua.fileprovider", photoFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-            // Start the image capture intent to take photo
-            startActivityForResult(intent, CameraUtil.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
+    // add the language chips
+    public void addLangChips(String language, ChipGroup chipGroup) {
+        Chip chip = new Chip(getContext());
+        chip.setText(language);
+        chipGroup.addView(chip);
     }
-
 }

@@ -41,5 +41,4 @@ public class CameraUtil {
 
         return file;
     }
-
 }

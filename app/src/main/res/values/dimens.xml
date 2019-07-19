@@ -53,4 +53,12 @@
   <!-- Disabled emphasis of 38% is the same for type and icon. -->
   <item name="mtrl_emphasis_disabled" format="float" type="dimen">0.38</item>
 
+  <dimen name="tall_toolbar_height">128dp</dimen>
+  <dimen name="short_toolbar_height">128dp</dimen>
+  <dimen name="toolbar_image_offset">16dp</dimen>
+  <dimen name="grid_divider_size">1dp</dimen>
+  <dimen name="item_size">180dp</dimen>
+
+  <dimen name="card_margin">16dp</dimen>
+
 </resources>
