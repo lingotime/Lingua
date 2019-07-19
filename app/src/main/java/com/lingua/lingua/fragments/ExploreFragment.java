@@ -15,15 +15,21 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.lingua.lingua.EndlessRecyclerViewScrollListener;
 import com.lingua.lingua.ExploreAdapter;
 import com.lingua.lingua.R;
+import com.lingua.lingua.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/*
+Fragment that displays other people's profiles that match the user's target language or country for
+the user to browse through and send friend requests
+*/
 
 public class ExploreFragment extends Fragment {
 
     RecyclerView rvExplore;
     private ExploreAdapter adapter;
-    private List<Object> users;
+    private List<User> users;
     private SwipeRefreshLayout swipeContainer;
     private EndlessRecyclerViewScrollListener scrollListener;
 
@@ -38,6 +44,8 @@ public class ExploreFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvExplore = view.findViewById(R.id.fragment_explore_rv);
         users = new ArrayList<>();
+        users.add(new User("Briana Douglas"));
+        users.add(new User("Fausto Zurita"));
         adapter = new ExploreAdapter(getContext(), users);
         rvExplore.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);

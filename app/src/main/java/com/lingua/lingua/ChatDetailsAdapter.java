@@ -12,6 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import com.lingua.lingua.models.Message;
 
+/*
+RecyclerView Adapter that adapts Message objects to the viewholders in the recyclerview
+*/
+
 public class ChatDetailsAdapter extends RecyclerView.Adapter {
 
     private Context context;

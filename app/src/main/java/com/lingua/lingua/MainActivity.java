@@ -1,5 +1,6 @@
 package com.lingua.lingua;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -13,6 +14,10 @@ import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
+
+/*
+Main Activity with bottom navigation bar that handles switching between fragments
+*/
 
 public class MainActivity extends AppCompatActivity {
 

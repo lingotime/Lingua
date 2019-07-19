@@ -30,6 +30,10 @@ import org.parceler.Parcels;
 
 import java.util.Arrays;
 
+/*
+Login activity that handles Facebook OAuth
+*/
+
 public class LoginActivity extends AppCompatActivity {
     CallbackManager facebookLoginManager;
     Context context;
