@@ -11,4 +11,8 @@
     <string name="submit">SUBMIT</string>
     <string name="enter_a_short_bio">Enter a short bio:</string>
     <string name="google_client_id">889445319058-2b0m2ijlcnrsqbf6mvjc5s06897sjoem.apps.googleusercontent.com</string>
+    <string name="where_are_you_from">Where are you from?</string>
+    <string name="what_languages_do_you_speak">What languages do you speak?</string>
+    <string name="languages_to_learn">Languages to learn</string>
+    <string name="for_cultural_exchange">For cultural exchange</string>
 </resources>
