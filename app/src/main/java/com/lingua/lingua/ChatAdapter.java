@@ -46,7 +46,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
         final Chat chat = chats.get(position);
         final User user = chat.getUsers().get(0);
-        tvName.setText(user.getName());
+        tvName.setText(user.getFirstName());
         tvText.setText(chat.getLastMessage());
     }
 
