@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.lingua.lingua.EndlessRecyclerViewScrollListener;
-import com.lingua.lingua.ExploreAdapter;
+import com.lingua.lingua.supports.EndlessRecyclerViewScrollListener;
+import com.lingua.lingua.adapters.ExploreAdapter;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 

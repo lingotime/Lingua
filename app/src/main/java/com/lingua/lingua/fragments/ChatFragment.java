@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.lingua.lingua.ChatAdapter;
+import com.lingua.lingua.adapters.ChatAdapter;
 import com.lingua.lingua.R;
-import com.lingua.lingua.models.Chat;
+import com.lingua.lingua.models.Conversation;
 import com.lingua.lingua.models.User;
 
 import java.util.ArrayList;
@@ -23,14 +23,14 @@ import java.util.List;
 
 /*
 Fragment that displays the user's open chats (one with each friend) ordered by most recent, can click
-on each chat to message that person in the ChatDetailsActivity
+on each chat to message that person in the TextChatActivity
 */
 
 public class ChatFragment extends Fragment {
 
     RecyclerView rvChats;
     private ChatAdapter adapter;
-    private List<Chat> chats;
+    private List<Conversation> chats;
     private SwipeRefreshLayout swipeContainer;
 
     @Nullable
@@ -48,8 +48,8 @@ public class ChatFragment extends Fragment {
         ArrayList<User> users = new ArrayList<>();
         users.add(new User("Cristina"));
         users.add(new User("Marta"));
-        chats.add(new Chat(users, "Hi! how are you doing?"));
-        chats.add(new Chat(users, "Wassuppppp"));
+        chats.add(new Conversation(users, "Hi! how are you doing?"));
+        chats.add(new Conversation(users, "Wassuppppp"));
 
         adapter = new ChatAdapter(getContext(), chats);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);

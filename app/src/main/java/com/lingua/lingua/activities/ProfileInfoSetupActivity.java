@@ -1,13 +1,9 @@
-package com.lingua.lingua;
+package com.lingua.lingua.activities;
 
 import android.os.Bundle;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -15,23 +11,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.hootsuite.nachos.NachoTextView;
+import com.lingua.lingua.R;
+import com.lingua.lingua.models.Country;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 
 /**
  * Activity that allows the user to input their information relevant to the main functions of the app after getting past Auth
  */
 
-public class ProfileCreationActivity extends AppCompatActivity {
+public class ProfileInfoSetupActivity extends AppCompatActivity {
 
 
     private ImageView profilePicture; // will be taken from OAuth
@@ -54,7 +49,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_creation);
+        setContentView(R.layout.activity_profile_info_setup);
 
         Toolbar toolbar = findViewById(R.id.activity_profile_creation_toolbar);
         // Sets the Toolbar to act as the ActionBar for this Activity window.
@@ -82,10 +77,10 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // TODO: create adapters with a list of the possibilities for autocompletion and set it upon creation
 
         ArrayAdapter<String> adapterCountries = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, CountryInformation.COUNTRIES);
+                android.R.layout.simple_dropdown_item_1line, Country.COUNTRIES);
 
         ArrayAdapter<String> adapterLanguages = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, CountryInformation.LANGUAGES);
+                android.R.layout.simple_dropdown_item_1line, Country.LANGUAGES);
 
 
         targetCountries.setAdapter(adapterCountries);
@@ -105,7 +100,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO: Launch the activity that will allow the user to take a picture
-                Intent intent = new Intent(ProfileCreationActivity.this, ProfilePicture.class);
+                Intent intent = new Intent(ProfileInfoSetupActivity.this, ProfilePhotoSetupActivity.class);
                 startActivityForResult(intent, CAMERA_ACTIVITY);
             }
         });

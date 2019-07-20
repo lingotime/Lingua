@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lingua.lingua.R;
+import com.lingua.lingua.activities.TextChatActivity;
 import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 
@@ -21,7 +23,7 @@ import java.util.List;
 RecyclerView Adapter that adapts Friend Request objects to the viewholders in the recyclerview
 */
 
-public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder> {
+public class ConnectAdapter extends RecyclerView.Adapter<ConnectAdapter.ViewHolder> {
 
     private Context context;
     private List<FriendRequest> friendRequests;
@@ -33,7 +35,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     private Button acceptButton;
     private Button rejectButton;
 
-    public NotificationsAdapter(Context context, List<FriendRequest> friendRequests) {
+    public ConnectAdapter(Context context, List<FriendRequest> friendRequests) {
         this.context = context;
         this.friendRequests = friendRequests;
     }
@@ -56,7 +58,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             @Override
             public void onClick(View view) {
                 // TODO: add friend, create chat with friend's message
-                Intent intent = new Intent(context, ChatDetailsActivity.class);
+                Intent intent = new Intent(context, TextChatActivity.class);
                 // intent.putExtra("user", Parcels.wrap(user));
                 context.startActivity(intent);
             }

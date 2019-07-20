@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,13 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+
+import com.lingua.lingua.R;
 import com.lingua.lingua.models.Message;
 
 /*
 RecyclerView Adapter that adapts Message objects to the viewholders in the recyclerview
 */
 
-public class ChatDetailsAdapter extends RecyclerView.Adapter {
+public class TextChatAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<Message> messages;
@@ -26,7 +28,7 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
 
     TextView tvMessage, tvTimestamp;
 
-    public ChatDetailsAdapter(Context context, List<Message> messages) {
+    public TextChatAdapter(Context context, List<Message> messages) {
         this.context = context;
         this.messages = messages;
     }

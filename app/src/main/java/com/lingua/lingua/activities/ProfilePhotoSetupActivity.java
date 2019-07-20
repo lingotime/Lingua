@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -18,16 +18,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.lingua.lingua.R;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
 /**
  * Activity that allows the user to set their profile picture, whether it be from a picture that they take now, or a photo selected from the gallery.
- * This is called from the fragment where the user can edit their profile and from ProfileCreationActivity where they enter the rest of their information.
+ * This is called from the fragment where the user can edit their profile and from ProfileInfoSetupActivity where they enter the rest of their information.
  */
 
-public class ProfilePicture extends AppCompatActivity {
+public class ProfilePhotoSetupActivity extends AppCompatActivity {
 
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     private static final String TAG = "ProfilePictureActivity";
@@ -47,7 +49,7 @@ public class ProfilePicture extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_picture);
+        setContentView(R.layout.activity_profile_photo_setup);
 
         btnCapture = findViewById(R.id.activity_profile_picture_btnCapture);
         btnChoose = findViewById(R.id.activity_profile_picture_btnChoose);
@@ -67,8 +69,8 @@ public class ProfilePicture extends AppCompatActivity {
                 // generate the URI from the bitmap in order to pass the bitmap back to the ProfileCreation Activity
 
                 Intent data = new Intent();
-                data.putExtra("profilePicture", getImageUri(ProfilePicture.this, profilePicture).toString());
-                setResult(ProfileCreationActivity.CAMERA_ACTIVITY, data);
+                data.putExtra("profilePicture", getImageUri(ProfilePhotoSetupActivity.this, profilePicture).toString());
+                setResult(ProfileInfoSetupActivity.CAMERA_ACTIVITY, data);
                 finish();
 
             }

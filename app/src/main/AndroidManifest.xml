@@ -16,18 +16,18 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
 
-        <activity android:name=".LoginActivity">
+        <activity android:name=".activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProfileCreationActivity" />
-        <activity android:name=".ProfilePicture" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".ChatDetailsActivity" />
-        <activity android:name=".VideoActivity" />
+        <activity android:name=".activities.ProfileInfoSetupActivity" />
+        <activity android:name=".activities.ProfilePhotoSetupActivity" />
+        <activity android:name=".activities.MainActivity" />
+        <activity android:name=".activities.TextChatActivity" />
+        <activity android:name=".activities.VideoChatActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +24,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
@@ -123,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         } else {
             // load the profile creation page
-            final Intent intent = new Intent(LoginActivity.this, ProfileCreationActivity.class);
+            final Intent intent = new Intent(LoginActivity.this, ProfileInfoSetupActivity.class);
             intent.putExtra("user", Parcels.wrap(currentUser));
             startActivity(intent);
             finish();

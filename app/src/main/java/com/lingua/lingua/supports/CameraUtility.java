@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.supports;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,10 +17,10 @@ import java.io.File;
 Contains helper methods for getting image files from the camera and camera roll
 */
 
-public class CameraUtil {
+public class CameraUtility {
 
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
-    private static final String TAG = "CameraUtil";
+    private static final String TAG = "CameraUtility";
     // member variables concerned with the camera activity
     public final String APP_TAG = "MyCustomApp";
     public String photoFileName = "photo.jpg";

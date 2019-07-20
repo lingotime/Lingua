@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.supports;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;

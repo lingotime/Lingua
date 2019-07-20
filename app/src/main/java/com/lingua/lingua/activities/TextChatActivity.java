@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.activities;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lingua.lingua.adapters.TextChatAdapter;
+import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.models.Message;
 
@@ -22,10 +24,10 @@ Activity for chatting with a specific friend, the recycler view contains all the
 and that friend have exchanged and user can send messages from here
 */
 
-public class ChatDetailsActivity extends AppCompatActivity {
+public class TextChatActivity extends AppCompatActivity {
 
     RecyclerView rvMessages;
-    private ChatDetailsAdapter adapter;
+    private TextChatAdapter adapter;
     private List<Message> messages;
 
     private ImageView sendButtonIcon;
@@ -35,7 +37,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_details);
+        setContentView(R.layout.activity_text_chat);
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
 
@@ -57,7 +59,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
             }
         }
 
-        adapter = new ChatDetailsAdapter(this, messages);
+        adapter = new TextChatAdapter(this, messages);
         rvMessages.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);

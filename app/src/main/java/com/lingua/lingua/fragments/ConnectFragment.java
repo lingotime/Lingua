@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.lingua.lingua.NotificationsAdapter;
+import com.lingua.lingua.adapters.ConnectAdapter;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
@@ -24,17 +24,17 @@ import java.util.List;
 Fragment that displays pending friend requests, and possibly in the future also missed calls.
 */
 
-public class NotificationsFragment extends Fragment {
+public class ConnectFragment extends Fragment {
 
     RecyclerView rvNotifications;
-    private NotificationsAdapter adapter;
+    private ConnectAdapter adapter;
     private List<FriendRequest> friendRequests;
     private SwipeRefreshLayout swipeContainer;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+        return inflater.inflate(R.layout.fragment_connect, container, false);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class NotificationsFragment extends Fragment {
             friendRequests.add(friendRequest);
         }
 
-        adapter = new NotificationsAdapter(getContext(), friendRequests);
+        adapter = new ConnectAdapter(getContext(), friendRequests);
         rvNotifications.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvNotifications.setLayoutManager(linearLayoutManager);

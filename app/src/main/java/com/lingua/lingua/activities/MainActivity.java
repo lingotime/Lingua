@@ -1,6 +1,5 @@
-package com.lingua.lingua;
+package com.lingua.lingua.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -10,9 +9,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.lingua.lingua.R;
 import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
-import com.lingua.lingua.fragments.NotificationsFragment;
+import com.lingua.lingua.fragments.ConnectFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
 
 /*
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         final Fragment profileFragment = new ProfileFragment();
         final Fragment chatFragment = new ChatFragment();
         final Fragment exploreFragment = new ExploreFragment();
-        final Fragment notificationsFragment = new NotificationsFragment();
+        final Fragment notificationsFragment = new ConnectFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
 

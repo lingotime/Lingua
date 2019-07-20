@@ -1,19 +1,19 @@
 package com.lingua.lingua.models;
 
 /*
-Chat class with
+Conversation class with
 TODO: make this class Firebase compatible, save and query chats methods
 */
 
 import java.util.ArrayList;
 
-public class Chat {
+public class Conversation {
 
     String lastMessage;
     ArrayList<User> users;
     long lastUpdatedAt;
 
-    public Chat(ArrayList<User> users, String lastMessage) {
+    public Conversation(ArrayList<User> users, String lastMessage) {
         this.users = users;
         this.lastMessage = lastMessage;
     }

@@ -1,14 +1,16 @@
-package com.lingua.lingua;
+package com.lingua.lingua.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class VideoActivity extends AppCompatActivity {
+import com.lingua.lingua.R;
+
+public class VideoChatActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video);
+        setContentView(R.layout.activity_video_chat);
     }
 }
