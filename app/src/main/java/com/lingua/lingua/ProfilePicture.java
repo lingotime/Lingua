@@ -18,8 +18,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.parse.ParseUser;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
