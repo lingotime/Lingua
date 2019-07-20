@@ -63,10 +63,10 @@ public class LoginActivity extends AppCompatActivity {
         if (firebaseUser != null) {
             // log in
             // previously: LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
-            Log.d("TRUMP", "There is already a firebase user...logging in...STEP 1");
-            User currentUser = User.convertFirebaseUserToNormalUser(firebaseUser);
-            Log.d("TRUMP", "There is already a firebase user...logging in...STEP 2: "+currentUser.getId());
-            loadNextStep(currentUser);
+//            Log.d("TRUMP", "There is already a firebase user...logging in...STEP 1");
+//            User currentUser = User.convertFirebaseUserToNormalUser(firebaseUser);
+//            Log.d("TRUMP", "There is already a firebase user...logging in...STEP 2: "+currentUser.getId());
+//            loadNextStep(currentUser);
         } else {
             facebookLoginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
 

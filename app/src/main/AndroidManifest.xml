@@ -13,19 +13,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:windowSoftInputMode="adjustResize"
-        android:usesCleartextTraffic="true">
-     
-        <activity android:name=".ProfilePicture"/>
+        android:windowSoftInputMode="adjustResize">
+
+        <activity android:name=".ProfilePicture"></activity>
         <activity android:name=".ProfileCreationActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
-        <activity android:name=".LoginActivity">
+        android:usesCleartextTraffic="true">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".LoginActivity" />
         <activity android:name=".ChatDetailsActivity" />
 
         <provider
@@ -58,6 +58,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
