@@ -50,7 +50,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         final FriendRequest friendRequest = friendRequests.get(position);
         final User user = friendRequest.getSender();
         tvMessage.setText(friendRequest.getMessage());
-        tvName.setText(user.getName());
+        tvName.setText(user.getFirstName());
 
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override

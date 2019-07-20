@@ -99,6 +99,10 @@ public class User {
     public User() {
     }
 
+    public User(String firstName) {
+        this.firstName = getFirstName();
+    }
+
     public String getId() {
         return id;
     }
