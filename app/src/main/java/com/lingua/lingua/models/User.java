@@ -1,226 +1,158 @@
 package com.lingua.lingua.models;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.HashMap;
-import java.util.List;
-/*
-Custom User class with basic info, language information, etc.
- */
 
 public class User {
-    private String id;
-    private String firstName;
-    private String lastName;
-    private Date birthDate;
-    private String biographyText;
-    private Country originCountry;
-    private String profilePhotoURL;
-    private ArrayList<Language> knownLanguages;
-    private ArrayList<Language> exploreLanguages;
-    private ArrayList<Country> knownCountries;
-    private ArrayList<Country> exploreCountries;
-    private HashMap<Language, Integer> hoursSpoken;
-    private ArrayList<User> confirmedFriends;
-    private ArrayList<User> pendingSentRequestFriends;
-    private ArrayList<User> pendingReceivedRequestFriends;
-    private boolean isOnline;
+    private String userID;
+    private String userName;
+    private Date userBirthDate;
+    private String userBiographyText;
+    private String userOriginCountry;
+    private String userProfilePhotoURL;
+    private ArrayList<String> knownLanguages;
+    private ArrayList<String> exploreLanguages;
+    private ArrayList<String> knownCountries;
+    private ArrayList<String> exploreCountries;
+    private HashMap<String, Integer> hoursSpokenPerLanguage;
+    private ArrayList<String> friends;
+    private ArrayList<String> pendingSentFriendRequests;
+    private ArrayList<String> pendingReceivedFriendRequests;
+    private ArrayList<String> conversations;
     private boolean isComplete;
-
-    public static User convertFirebaseUserToNormalUser(FirebaseUser firebaseUser) {
-        // use list to "hack" requirement that objects used in inner classes must be final
-        final List<User> tempUserList = new ArrayList<User>();
-
-        // get the Firebase user's information
-        final String userUniversalID = firebaseUser.getUid();
-        final String userDisplayName = firebaseUser.getDisplayName();
-        final String userProfilePhotoURL = firebaseUser.getPhotoUrl().getPath();
-        Log.d("TRUMP", "User: "+userUniversalID+", Name: "+userDisplayName+", Photo URL: "+userProfilePhotoURL);
-
-        // check if the user's universal ID exists in database
-        final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("TRUMP", "Triggered on data change.");
-                User attemptedNormalUser = dataSnapshot.getValue(User.class);
-
-                if (attemptedNormalUser != null) {
-                    // if it does, create User object by reading stored data
-                    tempUserList.add(attemptedNormalUser);
-                    Log.d("TRUMP", "It's not nulll!!!!");
-                } else {
-                    // if it does not, write a new User to database and return it
-                    User newNormalUser = new User();
-                    newNormalUser.setId(userUniversalID);
-                    newNormalUser.setFirstName(userDisplayName);
-                    newNormalUser.setProfilePhotoURL(userProfilePhotoURL);
-                    newNormalUser.setComplete(false);
-                    Log.d("TRUMP", "Created a new user object");
-
-                    database.child("users").child(userUniversalID).setValue(newNormalUser);
-                    Log.d("TRUMP", "Set the user to the database");
-                    tempUserList.add(newNormalUser);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("User", "There was an issue with the database.");
-            }
-        });
-
-        // wait for User to be updated by the database before returning
-        while (tempUserList.isEmpty()) {
-            try {
-                Thread.sleep(50);
-                Log.d("TRUMP", "Waiting");
-            } catch (Exception e) {
-                Log.e("User", "There was an issue with threads.");
-            }
-        }
-        Log.d("TRUMP", "Returning the object");
-        return tempUserList.get(0);
-    }
+    private boolean isOnline;
 
     public User() {
+        userID = generateRandomID();
     }
 
-    public User(String firstName) {
-        this.firstName = getFirstName();
+    public String getUserID() {
+        return userID;
     }
 
-    public String getId() {
-        return id;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getUserName() {
+        return userName;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public Date getUserBirthDate() {
+        return userBirthDate;
     }
 
-    public String getLastName() {
-        return lastName;
+    public void setUserBirthDate(Date userBirthDate) {
+        this.userBirthDate = userBirthDate;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public String getUserBiographyText() {
+        return userBiographyText;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
+    public void setUserBiographyText(String userBiographyText) {
+        this.userBiographyText = userBiographyText;
     }
 
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
+    public String getUserOriginCountry() {
+        return userOriginCountry;
     }
 
-    public String getBiographyText() {
-        return biographyText;
+    public void setUserOriginCountry(String userOriginCountry) {
+        this.userOriginCountry = userOriginCountry;
     }
 
-    public void setBiographyText(String biographyText) {
-        this.biographyText = biographyText;
+    public String getUserProfilePhotoURL() {
+        return userProfilePhotoURL;
     }
 
-    public Country getOriginCountry() {
-        return originCountry;
+    public void setUserProfilePhotoURL(String userProfilePhotoURL) {
+        this.userProfilePhotoURL = userProfilePhotoURL;
     }
 
-    public void setOriginCountry(Country originCountry) {
-        this.originCountry = originCountry;
-    }
-
-    public String getProfilePhotoURL() {
-        return profilePhotoURL;
-    }
-
-    public void setProfilePhotoURL(String profilePhotoURL) {
-        this.profilePhotoURL = profilePhotoURL;
-    }
-
-    public ArrayList<Language> getKnownLanguages() {
+    public ArrayList<String> getKnownLanguages() {
         return knownLanguages;
     }
 
-    public void setKnownLanguages(ArrayList<Language> knownLanguages) {
+    public void setKnownLanguages(ArrayList<String> knownLanguages) {
         this.knownLanguages = knownLanguages;
     }
 
-    public ArrayList<Language> getExploreLanguages() {
+    public ArrayList<String> getExploreLanguages() {
         return exploreLanguages;
     }
 
-    public void setExploreLanguages(ArrayList<Language> exploreLanguages) {
+    public void setExploreLanguages(ArrayList<String> exploreLanguages) {
         this.exploreLanguages = exploreLanguages;
     }
 
-    public ArrayList<Country> getKnownCountries() {
+    public ArrayList<String> getKnownCountries() {
         return knownCountries;
     }
 
-    public void setKnownCountries(ArrayList<Country> knownCountries) {
+    public void setKnownCountries(ArrayList<String> knownCountries) {
         this.knownCountries = knownCountries;
     }
 
-    public ArrayList<Country> getExploreCountries() {
+    public ArrayList<String> getExploreCountries() {
         return exploreCountries;
     }
 
-    public void setExploreCountries(ArrayList<Country> exploreCountries) {
+    public void setExploreCountries(ArrayList<String> exploreCountries) {
         this.exploreCountries = exploreCountries;
     }
 
-    public HashMap<Language, Integer> getHoursSpoken() {
-        return hoursSpoken;
+    public HashMap<String, Integer> getHoursSpokenPerLanguage() {
+        return hoursSpokenPerLanguage;
     }
 
-    public void setHoursSpoken(HashMap<Language, Integer> hoursSpoken) {
-        this.hoursSpoken = hoursSpoken;
+    public void setHoursSpokenPerLanguage(HashMap<String, Integer> hoursSpokenPerLanguage) {
+        this.hoursSpokenPerLanguage = hoursSpokenPerLanguage;
     }
 
-    public ArrayList<User> getConfirmedFriends() {
-        return confirmedFriends;
+    public ArrayList<String> getFriends() {
+        return friends;
     }
 
-    public void setConfirmedFriends(ArrayList<User> confirmedFriends) {
-        this.confirmedFriends = confirmedFriends;
+    public void setFriends(ArrayList<String> friends) {
+        this.friends = friends;
     }
 
-    public ArrayList<User> getPendingSentRequestFriends() {
-        return pendingSentRequestFriends;
+    public ArrayList<String> getPendingSentFriendRequests() {
+        return pendingSentFriendRequests;
     }
 
-    public void setPendingSentRequestFriends(ArrayList<User> pendingSentRequestFriends) {
-        this.pendingSentRequestFriends = pendingSentRequestFriends;
+    public void setPendingSentFriendRequests(ArrayList<String> pendingSentFriendRequests) {
+        this.pendingSentFriendRequests = pendingSentFriendRequests;
     }
 
-    public ArrayList<User> getPendingReceivedRequestFriends() {
-        return pendingReceivedRequestFriends;
+    public ArrayList<String> getPendingReceivedFriendRequests() {
+        return pendingReceivedFriendRequests;
     }
 
-    public void setPendingReceivedRequestFriends(ArrayList<User> pendingReceivedRequestFriends) {
-        this.pendingReceivedRequestFriends = pendingReceivedRequestFriends;
+    public void setPendingReceivedFriendRequests(ArrayList<String> pendingReceivedFriendRequests) {
+        this.pendingReceivedFriendRequests = pendingReceivedFriendRequests;
+    }
+
+    public ArrayList<String> getConversations() {
+        return conversations;
+    }
+
+    public void setConversations(ArrayList<String> conversations) {
+        this.conversations = conversations;
+    }
+
+    public boolean isComplete() {
+        return isComplete;
+    }
+
+    public void setComplete(boolean complete) {
+        isComplete = complete;
     }
 
     public boolean isOnline() {
@@ -231,11 +163,20 @@ public class User {
         isOnline = online;
     }
 
-    public boolean isComplete() {
-        return isComplete;
-    }
+    private String generateRandomID() {
+        String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        int numberOfCharacters = 20;
 
-    public void setComplete(boolean complete) {
-        isComplete = complete;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        while (numberOfCharacters != 0) {
+            int character = (int) (Math.random() * allowedCharacters.length());
+
+            stringBuilder.append(allowedCharacters.charAt(character));
+
+            numberOfCharacters--;
+        }
+
+        return stringBuilder.toString();
     }
 }

@@ -1,48 +1,72 @@
 package com.lingua.lingua.models;
 
-/*
-Message class with body of message, sender, receiver and timestamp
-TODO: make this class Firebase compatible, save and query messages methods
-*/
+import java.util.Date;
 
 public class Message {
+    private String messageID;
+    private String messageText;
+    private String senderUser;
+    private String receiverUser;
+    private Date createdTime;
 
-    String message;
-    User sender;
-    User receiver;
-    long createdAt;
-
-    public Message() {}
-
-    public String getMessage() {
-        return message;
+    public Message() {
+        messageID = generateRandomID();
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public String getMessageID() {
+        return messageID;
     }
 
-    public User getSender() {
-        return sender;
+    public void setMessageID(String messageID) {
+        this.messageID = messageID;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+    public String getMessageText() {
+        return messageText;
     }
 
-    public User getReceiver() {
-        return receiver;
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
     }
 
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
+    public String getSenderUser() {
+        return senderUser;
     }
 
-    public long getCreatedAt() {
-        return createdAt;
+    public void setSenderUser(String senderUser) {
+        this.senderUser = senderUser;
     }
 
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
+    public String getReceiverUser() {
+        return receiverUser;
+    }
+
+    public void setReceiverUser(String receiverUser) {
+        this.receiverUser = receiverUser;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    private String generateRandomID() {
+        String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        int numberOfCharacters = 15;
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        while (numberOfCharacters != 0) {
+            int character = (int) (Math.random() * allowedCharacters.length());
+
+            stringBuilder.append(allowedCharacters.charAt(character));
+
+            numberOfCharacters--;
+        }
+
+        return stringBuilder.toString();
     }
 }

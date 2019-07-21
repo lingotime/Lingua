@@ -1,36 +1,81 @@
 package com.lingua.lingua.models;
 
-/*
-Friend request class for pending friend requests, friend request should be deleted once user accepts or rejects the request
-TODO: make this class Firebase compatible, save, delete and query friend requests by receiver
-*/
+import java.util.Date;
 
 public class FriendRequest {
+    private String friendRequestID;
+    private String friendRequestStatus;
+    private String senderUser;
+    private String receiverUser;
+    private Date createdTime;
+    private Date respondedTime;
 
-    String message;
-    User sender;
-    User receiver;
-    long createdAt;
-
-    public FriendRequest(String message, User sender, User receiver) {
-        this.message = message;
-        this.sender = sender;
-        this.receiver = receiver;
+    public FriendRequest() {
+        friendRequestID = generateRandomID();
     }
 
-    public String getMessage() {
-        return message;
+    public String getFriendRequestID() {
+        return friendRequestID;
     }
 
-    public User getSender() {
-        return sender;
+    public void setFriendRequestID(String friendRequestID) {
+        this.friendRequestID = friendRequestID;
     }
 
-    public User getReceiver() {
-        return receiver;
+    public String getFriendRequestStatus() {
+        return friendRequestStatus;
     }
 
-    public long getCreatedAt() {
-        return createdAt;
+    public void setFriendRequestStatus(String friendRequestStatus) {
+        this.friendRequestStatus = friendRequestStatus;
+    }
+
+    public String getSenderUser() {
+        return senderUser;
+    }
+
+    public void setSenderUser(String senderUser) {
+        this.senderUser = senderUser;
+    }
+
+    public String getReceiverUser() {
+        return receiverUser;
+    }
+
+    public void setReceiverUser(String receiverUser) {
+        this.receiverUser = receiverUser;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Date getRespondedTime() {
+        return respondedTime;
+    }
+
+    public void setRespondedTime(Date respondedTime) {
+        this.respondedTime = respondedTime;
+    }
+
+    private String generateRandomID() {
+        String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        int numberOfCharacters = 15;
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        while (numberOfCharacters != 0) {
+            int character = (int) (Math.random() * allowedCharacters.length());
+
+            stringBuilder.append(allowedCharacters.charAt(character));
+
+            numberOfCharacters--;
+        }
+
+        return stringBuilder.toString();
     }
 }

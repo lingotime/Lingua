@@ -5,300 +5,588 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Country {
-    private String name;
-    private String flagPhotoURL;
+    private String countryID;
+    private String countryName;
+    private String countryFlagPhotoURL;
+    private ArrayList<String> usersWithKnownSelected;
+    private ArrayList<String> usersWithExploreSelected;
 
-    public String getName() {
-        return name;
+    public Country() {
+        countryID = generateRandomID();
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getCountryID() {
+        return countryID;
     }
 
-    public String getFlagPhotoURL() {
-        return flagPhotoURL;
+    public void setCountryID(String countryID) {
+        this.countryID = countryID;
     }
 
-    public void setFlagPhotoURL(String flagPhotoURL) {
-        this.flagPhotoURL = flagPhotoURL;
+    public String getCountryName() {
+        return countryName;
     }
 
-    public ArrayList<User> getNativeUsers() {
-        return nativeUsers;
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
     }
 
-    public void setNativeUsers(ArrayList<User> nativeUsers) {
-        this.nativeUsers = nativeUsers;
+    public String getCountryFlagPhotoURL() {
+        return countryFlagPhotoURL;
     }
 
-    private ArrayList<User> nativeUsers;
+    public void setCountryFlagPhotoURL(String countryFlagPhotoURL) {
+        this.countryFlagPhotoURL = countryFlagPhotoURL;
+    }
+
+    public ArrayList<String> getUsersWithKnownSelected() {
+        return usersWithKnownSelected;
+    }
+
+    public void setUsersWithKnownSelected(ArrayList<String> usersWithKnownSelected) {
+        this.usersWithKnownSelected = usersWithKnownSelected;
+    }
+
+    public ArrayList<String> getUsersWithExploreSelected() {
+        return usersWithExploreSelected;
+    }
+
+    public void setUsersWithExploreSelected(ArrayList<String> usersWithExploreSelected) {
+        this.usersWithExploreSelected = usersWithExploreSelected;
+    }
+
+    private String generateRandomID() {
+        String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        int numberOfCharacters = 15;
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        while (numberOfCharacters != 0) {
+            int character = (int) (Math.random() * allowedCharacters.length());
+
+            stringBuilder.append(allowedCharacters.charAt(character));
+
+            numberOfCharacters--;
+        }
+
+        return stringBuilder.toString();
+    }
 
     public static final String[] COUNTRIES = new String[] {
-            "Canada", "Saint Martin", "Sao Tome and Principe", "Guinea-Bissau", "Iran, Islamic Republic of", "Lithuania", "Saint Pierre and Miquelon", "Saint Helena, Ascension and Tristan da Cunha", "Switzerland", "Ethiopia", "Aruba", "Sri Lanka", "Swaziland", "Svalbard and Jan Mayen Islands", "Palestine", "Argentina", "Cameroon", "Burkina Faso", "Turkmenistan", "Bahrain", "Saudi Arabia", "Togo", "Japan", "Cape Verde", "Cocos (Keeling) Islands", "Faroe Islands", "Guatemala", "Bosnia and Herzegovina", "Kuwait", "Russian Federation", "Germany", "Saint Barthelemy", "Virgin Islands, British", "Spain", "Liberia", "Maldives", "Armenia", "Jamaica", "Oman", "Isle of Man", "Gabon", "Niue", "Monaco", "England", "New Zealand", "Yemen", "Jersey", "Pakistan", "Greenland", "Samoa", "Norfolk Island", "Liechtenstein", "Guam", "Uruguay", "Viet Nam", "Azerbaijan", "Lesotho", "Saint Vincent and the Grenadines", "United Arab Emirates", "Cyprus", "Tajikistan", "Turkey", "Afghanistan", "Bangladesh", "Mauritania", "Solomon Islands", "Turks and Caicos Islands", "Saint Lucia", "San Marino", "French Polynesia", "Wallis and Futuna Islands", "Macedonia, the former Yugoslav Republic of", "Syrian Arab Republic", "Bermuda", "Slovakia", "Somalia", "Peru", "Wales", "Nauru", "Seychelles", "Norway", "Malawi", "Cook Islands", "Benin", "Congo, the Democratic Republic of the", "Libya", "Mexico", "Montenegro", "Saint Kitts and Nevis", "Mayotte", "Holy See (Vatican City State)", "China", "Micronesia, Federated States of", "Antigua and Barbuda", "Dominican Republic", "Ukraine", "Ghana", "Tonga", "Cayman Islands", "Qatar", "Western Sahara", "Finland", "Central African Republic", "Mauritius", "Sweden", "Australia", "Mali", "Cambodia", "American Samoa", "Bulgaria", "United States", "Romania", "Angola", "French Southern Territories", "Portugal", "South Africa", "Tokelau", "Macao", "Christmas Island", "South Georgia and the South Sandwich Islands", "Caribbean Netherlands", "Brunei Darussalam", "Venezuela, Bolivarian Republic of", "Malaysia", "Senegal", "Mozambique", "Uganda", "Hungary", "Niger", "Brazil", "Pitcairn", "Guinea", "Panama", "Korea, Republic of", "Scotland", "Costa Rica", "Luxembourg", "Virgin Islands, U.S.", "Bahamas", "Gibraltar", "Ireland", "Italy", "Nigeria", "Ecuador", "Northern Mariana Islands", "Europe", "Belarus", "Korea, Democratic People's Republic of", "Algeria", "Slovenia", "El Salvador", "Tuvalu", "Czech Republic", "Rwanda", "Chile", "Puerto Rico", "Belgium", "Marshall Islands", "Haiti", "Iraq", "Hong Kong", "Sierra Leone", "Georgia", "Lao People's Democratic Republic", "Gambia", "Philippines", "Morocco", "Albania", "Croatia", "Mongolia", "Guernsey", "Kiribati", "Namibia", "Grenada", "France", "Belize", "Tanzania, United Republic of", "Chad", "Estonia", "Kosovo", "Bouvet Island", "Lebanon", "India", "Uzbekistan", "Tunisia", "Falkland Islands (Malvinas)", "Heard Island and McDonald Islands", "Timor-Leste", "Dominica", "Colombia", "Reunion", "Burundi", "Taiwan", "Fiji", "Barbados", "Madagascar", "Palau", "Curacao", "Bhutan", "Kenya", "Sudan", "Bolivia, Plurinational State of", "Vanuatu", "Singapore", "Malta", "Netherlands", "Suriname", "Anguilla", "Thailand", "Netherlands Antilles", "Aland Islands", "Israel", "Indonesia", "Iceland", "Zambia", "Austria", "Papua New Guinea", "Cote d'Ivoire", "Zimbabwe", "Jordan", "Martinique", "Kazakhstan", "Poland", "Moldova, Republic of", "Djibouti", "Eritrea", "Kyrgyzstan", "Denmark", "Northern Ireland", "British Indian Ocean Territory", "Montserrat", "New Caledonia", "Andorra", "Trinidad and Tobago", "Latvia", "South Sudan", "Guyana", "Guadeloupe", "Nepal", "Honduras", "Myanmar", "Equatorial Guinea", "Egypt", "Nicaragua", "Cuba", "Serbia", "Comoros", "United Kingdom", "Antarctica", "Congo", "Sint Maarten (Dutch part)", "Greece", "Paraguay", "French Guiana", "Botswana", "US Minor Outlying Islands"
+            "Afghanistan",
+            "Aland Islands",
+            "Albania",
+            "Algeria",
+            "American Samoa",
+            "Andorra",
+            "Angola",
+            "Anguilla",
+            "Antarctica",
+            "Antigua and Barbuda",
+            "Argentina",
+            "Armenia",
+            "Aruba",
+            "Australia",
+            "Austria",
+            "Azerbaijan",
+            "Bahamas",
+            "Bahrain",
+            "Bangladesh",
+            "Barbados",
+            "Belarus",
+            "Belgium",
+            "Belize",
+            "Benin",
+            "Bermuda",
+            "Bhutan",
+            "Bolivia, Plurinational State of",
+            "Bosnia and Herzegovina",
+            "Botswana",
+            "Bouvet Island",
+            "Brazil",
+            "British Indian Ocean Territory",
+            "Brunei Darussalam",
+            "Bulgaria",
+            "Burkina Faso",
+            "Burundi",
+            "Cambodia",
+            "Cameroon",
+            "Canada",
+            "Cape Verde",
+            "Caribbean Netherlands",
+            "Cayman Islands",
+            "Central African Republic",
+            "Chad",
+            "Chile",
+            "China",
+            "Christmas Island",
+            "Cocos (Keeling) Islands",
+            "Colombia",
+            "Comoros",
+            "Congo",
+            "Congo, the Democratic Republic of the",
+            "Cook Islands",
+            "Costa Rica",
+            "Cote d'Ivoire",
+            "Croatia",
+            "Cuba",
+            "Curacao",
+            "Cyprus",
+            "Czech Republic",
+            "Denmark",
+            "Djibouti",
+            "Dominica",
+            "Dominican Republic",
+            "Ecuador",
+            "Egypt",
+            "El Salvador",
+            "England",
+            "Equatorial Guinea",
+            "Eritrea",
+            "Estonia",
+            "Ethiopia",
+            "Europe",
+            "Falkland Islands (Malvinas)",
+            "Faroe Islands",
+            "Fiji",
+            "Finland",
+            "France",
+            "French Guiana",
+            "French Polynesia",
+            "French Southern Territories",
+            "Gabon",
+            "Gambia",
+            "Georgia",
+            "Germany",
+            "Ghana",
+            "Gibraltar",
+            "Greece",
+            "Greenland",
+            "Grenada",
+            "Guadeloupe",
+            "Guam",
+            "Guatemala",
+            "Guernsey",
+            "Guinea",
+            "Guinea-Bissau",
+            "Guyana",
+            "Haiti",
+            "Heard Island and McDonald Islands",
+            "Holy See (Vatican City State)",
+            "Honduras",
+            "Hong Kong",
+            "Hungary",
+            "Iceland",
+            "India",
+            "Indonesia",
+            "Iran, Islamic Republic of",
+            "Iraq",
+            "Ireland",
+            "Isle of Man",
+            "Israel",
+            "Italy",
+            "Jamaica",
+            "Japan",
+            "Jersey",
+            "Jordan",
+            "Kazakhstan",
+            "Kenya",
+            "Kiribati",
+            "Korea, Democratic People's Republic of",
+            "Korea, Republic of",
+            "Kosovo",
+            "Kuwait",
+            "Kyrgyzstan",
+            "Lao People's Democratic Republic",
+            "Latvia",
+            "Lebanon",
+            "Lesotho",
+            "Liberia",
+            "Libya",
+            "Liechtenstein",
+            "Lithuania",
+            "Luxembourg",
+            "Macao",
+            "Macedonia, the former Yugoslav Republic of",
+            "Madagascar",
+            "Malawi",
+            "Malaysia",
+            "Maldives",
+            "Mali",
+            "Malta",
+            "Marshall Islands",
+            "Martinique",
+            "Mauritania",
+            "Mauritius",
+            "Mayotte",
+            "Mexico",
+            "Micronesia, Federated States of",
+            "Moldova, Republic of",
+            "Monaco",
+            "Mongolia",
+            "Montenegro",
+            "Montserrat",
+            "Morocco",
+            "Mozambique",
+            "Myanmar",
+            "Namibia",
+            "Nauru",
+            "Nepal",
+            "Netherlands Antilles",
+            "Netherlands",
+            "New Caledonia",
+            "New Zealand",
+            "Nicaragua",
+            "Niger",
+            "Nigeria",
+            "Niue",
+            "Norfolk Island",
+            "Northern Ireland",
+            "Northern Mariana Islands",
+            "Norway",
+            "Oman",
+            "Pakistan",
+            "Palau",
+            "Palestine",
+            "Panama",
+            "Papua New Guinea",
+            "Paraguay",
+            "Peru",
+            "Philippines",
+            "Pitcairn",
+            "Poland",
+            "Portugal",
+            "Puerto Rico",
+            "Qatar",
+            "Reunion",
+            "Romania",
+            "Russian Federation",
+            "Rwanda",
+            "Saint Barthelemy",
+            "Saint Helena Ascension and Tristan da Cunha",
+            "Saint Kitts and Nevis",
+            "Saint Lucia",
+            "Saint Martin",
+            "Saint Pierre and Miquelon",
+            "Saint Vincent and the Grenadines",
+            "Samoa",
+            "San Marino",
+            "Sao Tome and Principe",
+            "Saudi Arabia",
+            "Scotland",
+            "Senegal",
+            "Serbia",
+            "Seychelles",
+            "Sierra Leone",
+            "Singapore",
+            "Sint Maarten (Dutch part)",
+            "Slovakia",
+            "Slovenia",
+            "Solomon Islands",
+            "Somalia",
+            "South Africa",
+            "South Georgia and the South Sandwich Islands",
+            "South Sudan",
+            "Spain",
+            "Sri Lanka",
+            "Sudan",
+            "Suriname",
+            "Svalbard and Jan Mayen Islands",
+            "Swaziland",
+            "Sweden",
+            "Switzerland",
+            "Syrian Arab Republic",
+            "Taiwan",
+            "Tajikistan",
+            "Tanzania, United Republic of",
+            "Thailand",
+            "Timor-Leste",
+            "Togo",
+            "Tokelau",
+            "Tonga",
+            "Trinidad and Tobago",
+            "Tunisia",
+            "Turkey",
+            "Turkmenistan",
+            "Turks and Caicos Islands",
+            "Tuvalu",
+            "Uganda",
+            "Ukraine",
+            "United Arab Emirates",
+            "United Kingdom",
+            "United States",
+            "Uruguay",
+            "US Minor Outlying Islands",
+            "Uzbekistan",
+            "Vanuatu",
+            "Venezuela, Bolivarian Republic of",
+            "Viet Nam",
+            "Virgin Islands, British",
+            "Virgin Islands, U.S.",
+            "Wales",
+            "Wallis and Futuna Islands",
+            "Western Sahara",
+            "Yemen",
+            "Zambia",
+            "Zimbabwe"
     };
 
-    public static final String[] LANGUAGES = new String[] {
-            "Acholi", "Afrikaans", "Akan", "Albanian", "Amharic", "Arabic", "Ashante", "Asl", "Assyrian", "Azerbaijani", "Azeri", "Bajuni", "Basque", "Behdini", "Belorussian", "Bengali", "Berber", "Bosnian", "Bravanese", "Bulgarian", "Burmese", "Cakchiquel", "Cambodian", "Cantonese", "Catalan", "Chaldean", "Chamorro", "Chao-chow", "Chavacano", "Chin", "Chuukese", "Cree", "Croatian", "Czech", "Dakota", "Danish", "Dari", "Dinka", "Diula", "Dutch", "Edo", "English", "Estonian", "Ewe", "Fante", "Farsi", "Fijian Hindi", "Finnish", "Flemish", "French", "French Canadian", "Fukienese", "Fula", "Fulani", "Fuzhou", "Ga", "Gaddang", "Gaelic", "Gaelic-irish", "Gaelic-scottish", "Georgian", "German", "Gorani", "Greek", "Gujarati", "Haitian Creole", "Hakka", "Hakka-chinese", "Hausa", "Hebrew", "Hindi", "Hmong", "Hungarian", "Ibanag", "Ibo", "Icelandic", "Igbo", "Ilocano", "Indonesian", "Inuktitut", "Italian", "Jakartanese", "Japanese", "Javanese", "Kanjobal", "Karen", "Karenni", "Kashmiri", "Kazakh", "Kikuyu", "Kinyarwanda", "Kirundi", "Korean", "Kosovan", "Kotokoli", "Krio", "Kurdish", "Kurmanji", "Kyrgyz", "Lakota", "Laotian", "Latvian", "Lingala", "Lithuanian", "Luganda", "Luo", "Maay", "Macedonian", "Malay", "Malayalam", "Maltese", "Mandarin", "Mandingo", "Mandinka", "Marathi", "Marshallese", "Mien", "Mina", "Mirpuri", "Mixteco", "Moldavan", "Mongolian", "Montenegrin", "Navajo", "Neapolitan", "Nepali", "Nigerian Pidgin", "Norwegian", "Oromo", "Pahari", "Papago", "Papiamento", "Pashto", "Patois", "Pidgin English", "Polish", "Portug.creole", "Portuguese", "Pothwari", "Pulaar", "Punjabi", "Putian", "Quichua", "Romanian", "Russian", "Samoan", "Serbian", "Shanghainese", "Shona", "Sichuan", "Sicilian", "Sinhalese", "Slovak", "Somali", "Sorani", "Spanish", "Sudanese Arabic", "Sundanese", "Susu", "Swahili", "Swedish", "Sylhetti", "Tagalog", "Taiwanese", "Tajik", "Tamil", "Telugu", "Thai", "Tibetan", "Tigre", "Tigrinya", "Toishanese", "Tongan", "Toucouleur", "Trique", "Tshiluba", "Turkish", "Twi", "Ukrainian", "Urdu", "Uyghur", "Uzbek", "Vietnamese", "Visayan", "Welsh", "Wolof", "Yiddish", "Yoruba", "Yupik"
-    };
-
-    // maps the countries to their codes in order to make it able to locate their flag files
     public static final Map<String, String> COUNTRY_CODES = new HashMap<String, String>() {{
-        put("Canada", "ca");
-        put("Saint Martin", "mf");
-        put("Sao Tome and Principe", "st");
-        put("Guinea-Bissau", "gw");
-        put("Iran, Islamic Republic of", "ir");
-        put("Lithuania", "lt");
-        put("Saint Pierre and Miquelon", "pm");
-        put("Saint Helena, Ascension and Tristan da Cunha", "sh");
-        put("Switzerland", "ch");
-        put("Ethiopia", "et");
-        put("Aruba", "aw");
-        put("Sri Lanka", "lk");
-        put("Swaziland", "sz");
-        put("Svalbard and Jan Mayen Islands", "sj");
-        put("Palestine", "ps");
-        put("Argentina", "ar");
-        put("Cameroon", "cm");
-        put("Burkina Faso", "bf");
-        put("Turkmenistan", "tm");
-        put("Bahrain", "bh");
-        put("Saudi Arabia", "sa");
-        put("Togo", "tg");
-        put("Japan", "jp");
-        put("Cape Verde", "cv");
-        put("Cocos (Keeling) Islands", "cc");
-        put("Faroe Islands", "fo");
-        put("Guatemala", "gt");
-        put("Bosnia and Herzegovina", "ba");
-        put("Kuwait", "kw");
-        put("Russian Federation", "ru");
-        put("Germany", "de");
-        put("Saint Barthelemy", "bl");
-        put("Virgin Islands, British", "vg");
-        put("Spain", "es");
-        put("Liberia", "lr");
-        put("Maldives", "mv");
-        put("Armenia", "am");
-        put("Jamaica", "jm");
-        put("Oman", "om");
-        put("Isle of Man", "im");
-        put("Gabon", "ga");
-        put("Niue", "nu");
-        put("Monaco", "mc");
-        put("England", "gb_eng");
-        put("New Zealand", "nz");
-        put("Yemen", "ye");
-        put("Jersey", "je");
-        put("Pakistan", "pk");
-        put("Greenland", "gl");
-        put("Samoa", "ws");
-        put("Norfolk Island", "nf");
-        put("Liechtenstein", "li");
-        put("Guam", "gu");
-        put("Uruguay", "uy");
-        put("Viet Nam", "vn");
-        put("Azerbaijan", "az");
-        put("Lesotho", "ls");
-        put("Saint Vincent and the Grenadines", "vc");
-        put("United Arab Emirates", "ae");
-        put("Cyprus", "cy");
-        put("Tajikistan", "tj");
-        put("Turkey", "tr");
         put("Afghanistan", "af");
-        put("Bangladesh", "bd");
-        put("Mauritania", "mr");
-        put("Solomon Islands", "sb");
-        put("Turks and Caicos Islands", "tc");
-        put("Saint Lucia", "lc");
-        put("San Marino", "sm");
-        put("French Polynesia", "pf");
-        put("Wallis and Futuna Islands", "wf");
-        put("Macedonia, the former Yugoslav Republic of", "mk");
-        put("Syrian Arab Republic", "sy");
-        put("Bermuda", "bm");
-        put("Slovakia", "sk");
-        put("Somalia", "so");
-        put("Peru", "pe");
-        put("Wales", "gb_wls");
-        put("Nauru", "nr");
-        put("Seychelles", "sc");
-        put("Norway", "no");
-        put("Malawi", "mw");
-        put("Cook Islands", "ck");
-        put("Benin", "bj");
-        put("Congo, the Democratic Republic of the", "cd");
-        put("Libya", "ly");
-        put("Mexico", "mx");
-        put("Montenegro", "me");
-        put("Saint Kitts and Nevis", "kn");
-        put("Mayotte", "yt");
-        put("Holy See (Vatican City State)", "va");
-        put("China", "cn");
-        put("Micronesia, Federated States of", "fm");
-        put("Antigua and Barbuda", "ag");
-        put("Dominican Republic", "domr");
-        put("Ukraine", "ua");
-        put("Ghana", "gh");
-        put("Tonga", "to");
-        put("Cayman Islands", "ky");
-        put("Qatar", "qa");
-        put("Western Sahara", "eh");
-        put("Finland", "fi");
-        put("Central African Republic", "cf");
-        put("Mauritius", "mu");
-        put("Sweden", "se");
-        put("Australia", "au");
-        put("Mali", "ml");
-        put("Cambodia", "kh");
-        put("American Samoa", "as");
-        put("Bulgaria", "bg");
-        put("United States", "us");
-        put("Romania", "ro");
-        put("Angola", "ao");
-        put("French Southern Territories", "tf");
-        put("Portugal", "pt");
-        put("South Africa", "za");
-        put("Tokelau", "tk");
-        put("Macao", "mo");
-        put("Christmas Island", "cx");
-        put("South Georgia and the South Sandwich Islands", "gs");
-        put("Caribbean Netherlands", "bq");
-        put("Brunei Darussalam", "bn");
-        put("Venezuela, Bolivarian Republic of", "ve");
-        put("Malaysia", "my");
-        put("Senegal", "sn");
-        put("Mozambique", "mz");
-        put("Uganda", "ug");
-        put("Hungary", "hu");
-        put("Niger", "ne");
-        put("Brazil", "br");
-        put("Pitcairn", "pn");
-        put("Guinea", "gn");
-        put("Panama", "pa");
-        put("Korea, Republic of", "kr");
-        put("Scotland", "gb_sct");
-        put("Costa Rica", "cr");
-        put("Luxembourg", "lu");
-        put("Virgin Islands, U.S.", "vi");
-        put("Bahamas", "bs");
-        put("Gibraltar", "gi");
-        put("Ireland", "ie");
-        put("Italy", "it");
-        put("Nigeria", "ng");
-        put("Ecuador", "ec");
-        put("Northern Mariana Islands", "mp");
-        put("Europe", "eu");
-        put("Belarus", "by");
-        put("Korea, Democratic People's Republic of", "kp");
-        put("Algeria", "dz");
-        put("Slovenia", "si");
-        put("El Salvador", "sv");
-        put("Tuvalu", "tv");
-        put("Czech Republic", "cz");
-        put("Rwanda", "rw");
-        put("Chile", "cl");
-        put("Puerto Rico", "pr");
-        put("Belgium", "be");
-        put("Marshall Islands", "mh");
-        put("Haiti", "ht");
-        put("Iraq", "iq");
-        put("Hong Kong", "hk");
-        put("Sierra Leone", "sl");
-        put("Georgia", "ge");
-        put("Lao People's Democratic Republic", "la");
-        put("Gambia", "gm");
-        put("Philippines", "ph");
-        put("Morocco", "ma");
-        put("Albania", "al");
-        put("Croatia", "hr");
-        put("Mongolia", "mn");
-        put("Guernsey", "gg");
-        put("Kiribati", "ki");
-        put("Namibia", "na");
-        put("Grenada", "gd");
-        put("France", "fr");
-        put("Belize", "bz");
-        put("Tanzania, United Republic of", "tz");
-        put("Chad", "td");
-        put("Estonia", "ee");
-        put("Kosovo", "xk");
-        put("Bouvet Island", "bv");
-        put("Lebanon", "lb");
-        put("India", "in");
-        put("Uzbekistan", "uz");
-        put("Tunisia", "tn");
-        put("Falkland Islands (Malvinas)", "fk");
-        put("Heard Island and McDonald Islands", "hm");
-        put("Timor-Leste", "tl");
-        put("Dominica", "dm");
-        put("Colombia", "co");
-        put("Reunion", "re");
-        put("Burundi", "bi");
-        put("Taiwan", "tw");
-        put("Fiji", "fj");
-        put("Barbados", "bb");
-        put("Madagascar", "mg");
-        put("Palau", "pw");
-        put("Curacao", "cw");
-        put("Bhutan", "bt");
-        put("Kenya", "ke");
-        put("Sudan", "sd");
-        put("Bolivia, Plurinational State of", "bo");
-        put("Vanuatu", "vu");
-        put("Singapore", "sg");
-        put("Malta", "mt");
-        put("Netherlands", "nl");
-        put("Suriname", "sr");
-        put("Anguilla", "ai");
-        put("Thailand", "th");
-        put("Netherlands Antilles", "an");
         put("Aland Islands", "ax");
-        put("Israel", "il");
-        put("Indonesia", "id");
-        put("Iceland", "is");
-        put("Zambia", "zm");
-        put("Austria", "at");
-        put("Papua New Guinea", "pg");
-        put("Cote d'Ivoire", "ci");
-        put("Zimbabwe", "zw");
-        put("Jordan", "jo");
-        put("Martinique", "mq");
-        put("Kazakhstan", "kz");
-        put("Poland", "pl");
-        put("Moldova, Republic of", "md");
-        put("Djibouti", "dj");
-        put("Eritrea", "er");
-        put("Kyrgyzstan", "kg");
-        put("Denmark", "dk");
-        put("Northern Ireland", "gb_nir");
-        put("British Indian Ocean Territory", "io");
-        put("Montserrat", "ms");
-        put("New Caledonia", "nc");
+        put("Albania", "al");
+        put("Algeria", "dz");
+        put("American Samoa", "as");
         put("Andorra", "ad");
-        put("Trinidad and Tobago", "tt");
-        put("Latvia", "lv");
-        put("South Sudan", "ss");
-        put("Guyana", "gy");
-        put("Guadeloupe", "gp");
-        put("Nepal", "np");
-        put("Honduras", "hn");
-        put("Myanmar", "mm");
-        put("Equatorial Guinea", "gq");
-        put("Egypt", "eg");
-        put("Nicaragua", "ni");
-        put("Cuba", "cu");
-        put("Serbia", "rs");
-        put("Comoros", "km");
-        put("United Kingdom", "gb");
+        put("Angola", "ao");
+        put("Anguilla", "ai");
         put("Antarctica", "aq");
-        put("Congo", "cg");
-        put("Sint Maarten (Dutch part)", "sx");
-        put("Greece", "gr");
-        put("Paraguay", "py");
-        put("French Guiana", "gf");
+        put("Antigua and Barbuda", "ag");
+        put("Argentina", "ar");
+        put("Armenia", "am");
+        put("Aruba", "aw");
+        put("Australia", "au");
+        put("Austria", "at");
+        put("Azerbaijan", "az");
+        put("Bahamas", "bs");
+        put("Bahrain", "bh");
+        put("Bangladesh", "bd");
+        put("Barbados", "bb");
+        put("Belarus", "by");
+        put("Belgium", "be");
+        put("Belize", "bz");
+        put("Benin", "bj");
+        put("Bermuda", "bm");
+        put("Bhutan", "bt");
+        put("Bolivia, Plurinational State of", "bo");
+        put("Bosnia and Herzegovina", "ba");
         put("Botswana", "bw");
+        put("Bouvet Island", "bv");
+        put("Brazil", "br");
+        put("British Indian Ocean Territory", "io");
+        put("Brunei Darussalam", "bn");
+        put("Bulgaria", "bg");
+        put("Burkina Faso", "bf");
+        put("Burundi", "bi");
+        put("Cambodia", "kh");
+        put("Cameroon", "cm");
+        put("Canada", "ca");
+        put("Cape Verde", "cv");
+        put("Caribbean Netherlands", "bq");
+        put("Cayman Islands", "ky");
+        put("Central African Republic", "cf");
+        put("Chad", "td");
+        put("Chile", "cl");
+        put("China", "cn");
+        put("Christmas Island", "cx");
+        put("Cocos (Keeling) Islands", "cc");
+        put("Colombia", "co");
+        put("Comoros", "km");
+        put("Congo", "cg");
+        put("Congo, the Democratic Republic of the", "cd");
+        put("Cook Islands", "ck");
+        put("Costa Rica", "cr");
+        put("Cote d'Ivoire", "ci");
+        put("Croatia", "hr");
+        put("Cuba", "cu");
+        put("Curacao", "cw");
+        put("Cyprus", "cy");
+        put("Czech Republic", "cz");
+        put("Denmark", "dk");
+        put("Djibouti", "dj");
+        put("Dominica", "dm");
+        put("Dominican Republic", "domr");
+        put("Ecuador", "ec");
+        put("Egypt", "eg");
+        put("El Salvador", "sv");
+        put("England", "gb_eng");
+        put("Equatorial Guinea", "gq");
+        put("Eritrea", "er");
+        put("Estonia", "ee");
+        put("Ethiopia", "et");
+        put("Europe", "eu");
+        put("Falkland Islands (Malvinas)", "fk");
+        put("Faroe Islands", "fo");
+        put("Fiji", "fj");
+        put("Finland", "fi");
+        put("France", "fr");
+        put("French Guiana", "gf");
+        put("French Polynesia", "pf");
+        put("French Southern Territories", "tf");
+        put("Gabon", "ga");
+        put("Gambia", "gm");
+        put("Georgia", "ge");
+        put("Germany", "de");
+        put("Ghana", "gh");
+        put("Gibraltar", "gi");
+        put("Greece", "gr");
+        put("Greenland", "gl");
+        put("Grenada", "gd");
+        put("Guadeloupe", "gp");
+        put("Guam", "gu");
+        put("Guatemala", "gt");
+        put("Guernsey", "gg");
+        put("Guinea", "gn");
+        put("Guinea-Bissau", "gw");
+        put("Guyana", "gy");
+        put("Haiti", "ht");
+        put("Heard Island and McDonald Islands", "hm");
+        put("Holy See (Vatican City State)", "va");
+        put("Honduras", "hn");
+        put("Hong Kong", "hk");
+        put("Hungary", "hu");
+        put("Iceland", "is");
+        put("India", "in");
+        put("Indonesia", "id");
+        put("Iran, Islamic Republic of", "ir");
+        put("Iraq", "iq");
+        put("Ireland", "ie");
+        put("Isle of Man", "im");
+        put("Israel", "il");
+        put("Italy", "it");
+        put("Jamaica", "jm");
+        put("Japan", "jp");
+        put("Jersey", "je");
+        put("Jordan", "jo");
+        put("Kazakhstan", "kz");
+        put("Kenya", "ke");
+        put("Kiribati", "ki");
+        put("Korea, Democratic People's Republic of", "kp");
+        put("Korea, Republic of", "kr");
+        put("Kosovo", "xk");
+        put("Kuwait", "kw");
+        put("Kyrgyzstan", "kg");
+        put("Lao People's Democratic Republic", "la");
+        put("Latvia", "lv");
+        put("Lebanon", "lb");
+        put("Lesotho", "ls");
+        put("Liberia", "lr");
+        put("Libya", "ly");
+        put("Liechtenstein", "li");
+        put("Lithuania", "lt");
+        put("Luxembourg", "lu");
+        put("Macao", "mo");
+        put("Macedonia, the former Yugoslav Republic of", "mk");
+        put("Madagascar", "mg");
+        put("Malawi", "mw");
+        put("Malaysia", "my");
+        put("Maldives", "mv");
+        put("Mali", "ml");
+        put("Malta", "mt");
+        put("Marshall Islands", "mh");
+        put("Martinique", "mq");
+        put("Mauritania", "mr");
+        put("Mauritius", "mu");
+        put("Mayotte", "yt");
+        put("Mexico", "mx");
+        put("Micronesia, Federated States of", "fm");
+        put("Moldova, Republic of", "md");
+        put("Monaco", "mc");
+        put("Mongolia", "mn");
+        put("Montenegro", "me");
+        put("Montserrat", "ms");
+        put("Morocco", "ma");
+        put("Mozambique", "mz");
+        put("Myanmar", "mm");
+        put("Namibia", "na");
+        put("Nauru", "nr");
+        put("Nepal", "np");
+        put("Netherlands Antilles", "an");
+        put("Netherlands", "nl");
+        put("New Caledonia", "nc");
+        put("New Zealand", "nz");
+        put("Nicaragua", "ni");
+        put("Niger", "ne");
+        put("Nigeria", "ng");
+        put("Niue", "nu");
+        put("Norfolk Island", "nf");
+        put("Northern Ireland", "gb_nir");
+        put("Northern Mariana Islands", "mp");
+        put("Norway", "no");
+        put("Oman", "om");
+        put("Pakistan", "pk");
+        put("Palau", "pw");
+        put("Palestine", "ps");
+        put("Panama", "pa");
+        put("Papua New Guinea", "pg");
+        put("Paraguay", "py");
+        put("Peru", "pe");
+        put("Philippines", "ph");
+        put("Pitcairn", "pn");
+        put("Poland", "pl");
+        put("Portugal", "pt");
+        put("Puerto Rico", "pr");
+        put("Qatar", "qa");
+        put("Reunion", "re");
+        put("Romania", "ro");
+        put("Russian Federation", "ru");
+        put("Rwanda", "rw");
+        put("Saint Barthelemy", "bl");
+        put("Saint Helena, Ascension and Tristan da Cunha", "sh");
+        put("Saint Kitts and Nevis", "kn");
+        put("Saint Lucia", "lc");
+        put("Saint Martin", "mf");
+        put("Saint Pierre and Miquelon", "pm");
+        put("Saint Vincent and the Grenadines", "vc");
+        put("Samoa", "ws");
+        put("San Marino", "sm");
+        put("Sao Tome and Principe", "st");
+        put("Saudi Arabia", "sa");
+        put("Scotland", "gb_sct");
+        put("Senegal", "sn");
+        put("Serbia", "rs");
+        put("Seychelles", "sc");
+        put("Sierra Leone", "sl");
+        put("Singapore", "sg");
+        put("Sint Maarten (Dutch part)", "sx");
+        put("Slovakia", "sk");
+        put("Slovenia", "si");
+        put("Solomon Islands", "sb");
+        put("Somalia", "so");
+        put("South Africa", "za");
+        put("South Georgia and the South Sandwich Islands", "gs");
+        put("South Sudan", "ss");
+        put("Spain", "es");
+        put("Sri Lanka", "lk");
+        put("Sudan", "sd");
+        put("Suriname", "sr");
+        put("Svalbard and Jan Mayen Islands", "sj");
+        put("Swaziland", "sz");
+        put("Sweden", "se");
+        put("Switzerland", "ch");
+        put("Syrian Arab Republic", "sy");
+        put("Taiwan", "tw");
+        put("Tajikistan", "tj");
+        put("Tanzania, United Republic of", "tz");
+        put("Thailand", "th");
+        put("Timor-Leste", "tl");
+        put("Togo", "tg");
+        put("Tokelau", "tk");
+        put("Tonga", "to");
+        put("Trinidad and Tobago", "tt");
+        put("Tunisia", "tn");
+        put("Turkey", "tr");
+        put("Turkmenistan", "tm");
+        put("Turks and Caicos Islands", "tc");
+        put("Tuvalu", "tv");
+        put("Uganda", "ug");
+        put("Ukraine", "ua");
+        put("United Arab Emirates", "ae");
+        put("United Kingdom", "gb");
+        put("United States", "us");
+        put("Uruguay", "uy");
         put("US Minor Outlying Islands", "um");
+        put("Uzbekistan", "uz");
+        put("Vanuatu", "vu");
+        put("Venezuela, Bolivarian Republic of", "ve");
+        put("Viet Nam", "vn");
+        put("Virgin Islands, British", "vg");
+        put("Virgin Islands, U.S.", "vi");
+        put("Wales", "gb_wls");
+        put("Wallis and Futuna Islands", "wf");
+        put("Western Sahara", "eh");
+        put("Yemen", "ye");
+        put("Zambia", "zm");
+        put("Zimbabwe", "zw");
     }};
 }
