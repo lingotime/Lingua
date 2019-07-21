@@ -6,15 +6,16 @@ import java.util.HashMap;
 
 public class User {
     private String userID;
-    private String userName;
-    private Date userBirthDate;
-    private String userBiographyText;
-    private String userOriginCountry;
-    private String userProfilePhotoURL;
-    private ArrayList<String> knownLanguages;
-    private ArrayList<String> exploreLanguages;
-    private ArrayList<String> knownCountries;
-    private ArrayList<String> exploreCountries;
+    private String userName; // Required and prompted
+    private Date userBirthDate; // Required and prompted
+    private String userGender; // Required and prompted
+    private String userBiographyText; // Required and prompted
+    private String userOriginCountry; // Required and prompted
+    private String userProfilePhotoURL; // Required and prompted
+    private ArrayList<String> knownLanguages; // Required and prompted
+    private ArrayList<String> exploreLanguages; // Required and prompted
+    private ArrayList<String> knownCountries; // Required and prompted
+    private ArrayList<String> exploreCountries; // Required and prompted
     private HashMap<String, Integer> hoursSpokenPerLanguage;
     private ArrayList<String> friends;
     private ArrayList<String> pendingSentFriendRequests;
@@ -49,6 +50,14 @@ public class User {
 
     public void setUserBirthDate(Date userBirthDate) {
         this.userBirthDate = userBirthDate;
+    }
+
+    public String getUserGender() {
+        return userGender;
+    }
+
+    public void setUserGender(String userGender) {
+        this.userGender = userGender;
     }
 
     public String getUserBiographyText() {

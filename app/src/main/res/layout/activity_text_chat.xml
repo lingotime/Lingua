@@ -1,87 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:windowSoftInputMode="stateVisible|adjustResize"
-    tools:context=".activities.TextChatActivity">
+    tools:context=".activities.VideoChatActivity">
+
+    <TextView
+        android:id="@+id/activity_text_chat_description_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="[username]"
+        android:textColor="#262E5B"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/activity_chat_details_rv"
+        android:id="@+id/activity_text_chat_messages_timeline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:transcriptMode="alwaysScroll"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_above="@+id/rlSend"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        app:layout_constraintBottom_toTopOf="@+id/activity_text_chat_send_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_text_chat_description_text" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/rlSend"
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/activity_text_chat_message_field"
+        style="@android:style/Widget.DeviceDefault.Light.EditText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:paddingLeft="0dp"
-        android:paddingTop="5dp"
-        android:paddingRight="0dp"
-        android:paddingBottom="10dp">
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="Say something..."
+        android:imeOptions="actionSend"
+        android:inputType="textShortMessage|textAutoCorrect|textMultiLine"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_text_chat_send_button"
+        app:layout_constraintEnd_toStartOf="@+id/activity_text_chat_send_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_text_chat_send_button" />
 
-        <EditText
-            android:id="@+id/activity_chat_details_et"
-            style="@android:style/Widget.DeviceDefault.Light.EditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="2dp"
-            android:background="@drawable/rounded_rectangle_gray"
-            android:gravity="start|top"
-            android:hint="Type here..."
-            android:imeOptions="actionSend"
-            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
-            android:maxLength="2000"
-            android:maxLines="4"
-            android:padding="8dp"
-            android:singleLine="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/activity_chat_details_button_send"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageButton
+        android:id="@+id/activity_text_chat_send_button"
+        android:layout_width="75dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#262E5B"
+        android:tint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/send_button" />
 
-        <Button
-            android:id="@+id/activity_chat_details_button_send"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@drawable/blue_circle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/activity_chat_details_iv_send"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_alignTop="@+id/rlSend"
-            android:layout_marginStart="6dp"
-            android:layout_marginLeft="6dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginRight="3dp"
-            android:layout_marginBottom="6dp"
-            android:clickable="false"
-            app:layout_constraintBottom_toBottomOf="@+id/activity_chat_details_button_send"
-            app:layout_constraintEnd_toEndOf="@+id/activity_chat_details_button_send"
-            app:layout_constraintStart_toStartOf="@+id/activity_chat_details_button_send"
-            app:layout_constraintTop_toTopOf="@+id/activity_chat_details_button_send"
-            app:srcCompat="@drawable/baseline_send_black_48dp" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

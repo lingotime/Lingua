@@ -38,7 +38,7 @@ public class TextChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_text_chat);
-        rvMessages = findViewById(R.id.activity_chat_details_rv);
+        rvMessages = findViewById(R.id.activity_text_chat_messages_timeline);
         messages = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
@@ -67,7 +67,7 @@ public class TextChatActivity extends AppCompatActivity {
 
         sendButton = findViewById(R.id.activity_chat_details_button_send);
         sendButtonIcon = findViewById(R.id.activity_chat_details_iv_send);
-        etMessage = findViewById(R.id.activity_chat_details_et);
+        etMessage = findViewById(R.id.activity_text_chat_message_field);
         sendButtonIcon.setColorFilter(Color.argb(255, 255, 255, 255));
 
         sendButton.setOnClickListener(new View.OnClickListener() {

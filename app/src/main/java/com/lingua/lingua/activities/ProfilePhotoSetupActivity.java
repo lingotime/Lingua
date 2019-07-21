@@ -51,10 +51,10 @@ public class ProfilePhotoSetupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_photo_setup);
 
-        btnCapture = findViewById(R.id.activity_profile_picture_btnCapture);
-        btnChoose = findViewById(R.id.activity_profile_picture_btnChoose);
-        ivImageTaken = findViewById(R.id.activity_profile_picture_ivImageTaken);
-        btnProfile = findViewById(R.id.activity_profile_picture_btnProfile);
+        btnCapture = findViewById(R.id.activity_profile_photo_setup_take_photo_button);
+        btnChoose = findViewById(R.id.activity_profile_photo_setup_select_photo_button);
+        ivImageTaken = findViewById(R.id.activity_profile_photo_setup_profile_image_preview);
+        btnProfile = findViewById(R.id.activity_profile_photo_setup_set_photo_button);
 
         // allows the user to change their profile picture
         btnProfile.setOnClickListener(new View.OnClickListener() {

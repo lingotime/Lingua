@@ -2,27 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/explore"
+        android:id="@+id/Explore"
         android:enabled="true"
-        android:icon="@drawable/baseline_public_black_18dp"
+        android:icon="@drawable/compass"
         android:title="Explore"
-        app:showAsAction="ifRoom" />
+        android:visible="true"
+        app:showAsAction="always" />
     <item
-        android:id="@+id/chat"
+        android:id="@+id/Chat"
         android:enabled="true"
-        android:icon="@drawable/selector_chat"
+        android:icon="@drawable/message"
         android:title="Chat"
-        app:showAsAction="ifRoom" />
+        android:visible="true"
+        app:showAsAction="always" />
     <item
-        android:id="@+id/notifications"
+        android:id="@+id/Connect"
         android:enabled="true"
-        android:icon="@drawable/selector_notifications"
-        android:title="Notifications"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/box"
+        android:title="Connect"
+        android:visible="true"
+        app:showAsAction="always" />
     <item
-        android:id="@+id/profile"
+        android:id="@+id/Profile"
         android:enabled="true"
-        android:icon="@drawable/selector_profile"
+        android:icon="@drawable/person"
         android:title="Profile"
-        app:showAsAction="ifRoom" />
+        android:visible="true"
+        app:showAsAction="always" />
 </menu>

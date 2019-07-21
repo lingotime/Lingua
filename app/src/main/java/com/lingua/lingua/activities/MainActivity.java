@@ -42,16 +42,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.explore:
+                    case R.id.Explore:
                         fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
                         return true;
-                    case R.id.chat:
+                    case R.id.Chat:
                         fragmentManager.beginTransaction().replace(R.id.flContainer, chatFragment).commit();
                         return true;
-                    case R.id.notifications:
+                    case R.id.Connect:
                         fragmentManager.beginTransaction().replace(R.id.flContainer, notificationsFragment).commit();
                         return true;
-                    case R.id.profile:
+                    case R.id.Profile:
                         fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
                         return true;
                     default:
