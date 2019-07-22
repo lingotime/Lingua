@@ -1,17 +1,20 @@
 package com.lingua.lingua.models;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.Date;
 
+@Parcel
 public class Conversation {
-    private String conversationID;
-    private String conversationName;
-    private ArrayList<String> conversationParticipants;
-    private ArrayList<String> conversationMessages;
-    private Date firstTextChatTime;
-    private Date firstVideoChatTime;
-    private Date lastTextChatTime;
-    private Date lastVideoChatTime;
+    String conversationID;
+    String conversationName;
+    ArrayList<String> conversationParticipants;
+    ArrayList<String> conversationMessages;
+    Date firstTextChatTime;
+    Date firstVideoChatTime;
+    Date lastTextChatTime;
+    Date lastVideoChatTime;
 
     public Conversation() {
         conversationID = generateRandomID();

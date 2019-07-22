@@ -1,12 +1,15 @@
 package com.lingua.lingua.models;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 
+@Parcel
 public class Language {
-    private String languageID;
-    private String languageName;
-    private ArrayList<String> usersWithKnownSelected;
-    private ArrayList<String> usersWithExploreSelected;
+    String languageID;
+    String languageName;
+    ArrayList<String> usersWithKnownSelected;
+    ArrayList<String> usersWithExploreSelected;
 
     public Language() {
         languageID = generateRandomID();

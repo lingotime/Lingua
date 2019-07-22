@@ -1,14 +1,17 @@
 package com.lingua.lingua.models;
 
+import org.parceler.Parcel;
+
 import java.util.Date;
 
+@Parcel
 public class FriendRequest {
-    private String friendRequestID;
-    private String friendRequestStatus;
-    private String senderUser;
-    private String receiverUser;
-    private Date createdTime;
-    private Date respondedTime;
+    String friendRequestID;
+    String friendRequestStatus;
+    String senderUser;
+    String receiverUser;
+    Date createdTime;
+    Date respondedTime;
 
     public FriendRequest() {
         friendRequestID = generateRandomID();

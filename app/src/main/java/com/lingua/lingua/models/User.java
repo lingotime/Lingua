@@ -1,28 +1,31 @@
 package com.lingua.lingua.models;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+@Parcel
 public class User {
-    private String userID;
-    private String userName; // Required and prompted
-    private Date userBirthDate; // Required and prompted
-    private String userGender; // Required and prompted
-    private String userBiographyText; // Required and prompted
-    private String userOriginCountry; // Required and prompted
-    private String userProfilePhotoURL; // Required and prompted
-    private ArrayList<String> knownLanguages; // Required and prompted
-    private ArrayList<String> exploreLanguages; // Required and prompted
-    private ArrayList<String> knownCountries; // Required and prompted
-    private ArrayList<String> exploreCountries; // Required and prompted
-    private HashMap<String, Integer> hoursSpokenPerLanguage;
-    private ArrayList<String> friends;
-    private ArrayList<String> pendingSentFriendRequests;
-    private ArrayList<String> pendingReceivedFriendRequests;
-    private ArrayList<String> conversations;
-    private boolean isComplete;
-    private boolean isOnline;
+    String userID;
+    String userName; // Required and prompted
+    Date userBirthDate; // Required and prompted
+    String userGender; // Required and prompted
+    String userBiographyText; // Required and prompted
+    String userOriginCountry; // Required and prompted
+    String userProfilePhotoURL; // Required and prompted
+    ArrayList<String> knownLanguages; // Required and prompted
+    ArrayList<String> exploreLanguages; // Required and prompted
+    ArrayList<String> knownCountries; // Required and prompted
+    ArrayList<String> exploreCountries; // Required and prompted
+    HashMap<String, Integer> hoursSpokenPerLanguage;
+    ArrayList<String> friends;
+    ArrayList<String> pendingSentFriendRequests;
+    ArrayList<String> pendingReceivedFriendRequests;
+    ArrayList<String> conversations;
+    boolean isComplete;
+    boolean isOnline;
 
     public User() {
         userID = generateRandomID();

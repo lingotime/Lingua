@@ -1,15 +1,18 @@
 package com.lingua.lingua.models;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+@Parcel
 public class Country {
-    private String countryID;
-    private String countryName;
-    private String countryFlagPhotoURL;
-    private ArrayList<String> usersWithKnownSelected;
-    private ArrayList<String> usersWithExploreSelected;
+    String countryID;
+    String countryName;
+    String countryFlagPhotoURL;
+    ArrayList<String> usersWithKnownSelected;
+    ArrayList<String> usersWithExploreSelected;
 
     public Country() {
         countryID = generateRandomID();

@@ -1,13 +1,16 @@
 package com.lingua.lingua.models;
 
+import org.parceler.Parcel;
+
 import java.util.Date;
 
+@Parcel
 public class Message {
-    private String messageID;
-    private String messageText;
-    private String senderUser;
-    private String receiverUser;
-    private Date createdTime;
+    String messageID;
+    String messageText;
+    String senderUser;
+    String receiverUser;
+    Date createdTime;
 
     public Message() {
         messageID = generateRandomID();

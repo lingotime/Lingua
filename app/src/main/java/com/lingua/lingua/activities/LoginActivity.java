@@ -6,12 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -35,14 +32,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
-
+import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.Arrays;
 
-/* Login activity that logs in users via Facebook OAuth. */
+/* FINALIZED, DOCUMENTED, and TESTED. LoginActivity logs in a user with Facebook OAuth. */
 
 public class LoginActivity extends AppCompatActivity {
     CallbackManager facebookLoginManager;
@@ -152,8 +149,13 @@ public class LoginActivity extends AppCompatActivity {
                         if (usersJSONObject.has(firebaseUserID)) {
                             // user found in database
                             JSONObject userJSONObject = usersJSONObject.getJSONObject(firebaseUserID);
-                            Log.d("OBAMA", userJSONObject.toString());
-                            //loadNextStep(createdUser);
+
+                            // convert JSON object to User
+                            Gson gson = new Gson();
+                            User generatedUser = gson.fromJson(userJSONObject.toString(), User.class);
+
+                            // proceed to set next activity
+                            loadNextStep(generatedUser);
                         } else {
                             // user not found in database, hence: new user
                             User createdUser = new User();
