@@ -37,7 +37,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     private Button sendButton;
     private EditText etMessage;
 
-    Firebase reference1, reference2;
+    Firebase reference;
     private User currentUser;
     private User friend;
 
@@ -48,14 +48,13 @@ public class ChatDetailsActivity extends AppCompatActivity {
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
 
-        String friendId = getIntent().getStringExtra("userId");
-        String friendName = getIntent().getStringExtra("username"); //TODO: show as title in toolbar
+        String chatId = getIntent().getStringExtra("chatId");
+        String name = getIntent().getStringExtra("name"); //TODO: show as title in toolbar
 
         currentUser = new User("Marta"); //TODO: get current signed in user
 
         Firebase.setAndroidContext(this);
-        reference1 = new Firebase("https://lingua-project.firebaseio.com/messages/" + currentUser.getId() + "/" + friendId);
-        reference2 = new Firebase("https://lingua-project.firebaseio.com/messages/" + friendId + "/" + currentUser.getId());
+        reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
 
         adapter = new ChatDetailsAdapter(this, messages);
         rvMessages.setAdapter(adapter);
@@ -75,12 +74,11 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 Map<String, String> map = new HashMap<>();
                 map.put("message", messageText);
                 map.put("sender", currentUser.getId());
-                reference1.push().setValue(map);
-                reference2.push().setValue(map);
+                reference.push().setValue(map);
             }
         });
 
-        reference1.addChildEventListener(new ChildEventListener() {
+        reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Map map = dataSnapshot.getValue(Map.class);

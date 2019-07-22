@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingua.lingua.models.Chat;
-import com.lingua.lingua.models.User;
 
 import java.util.List;
 
@@ -31,7 +30,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private TextView tvTimestamp;
 
     private Chat chat;
-    private User user;
 
     public ChatAdapter(Context context, List<Chat> chats) {
         this.context = context;
@@ -48,8 +46,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
         chat = chats.get(position);
-        user = chat.getUsers().get(0);
-        tvName.setText(user.getFirstName());
+        tvName.setText(chat.getName());
         tvText.setText(chat.getLastMessage());
     }
 
@@ -73,8 +70,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
                 Intent intent = new Intent(context, ChatDetailsActivity.class);
-                intent.putExtra("userId", user.getId());
-                intent.putExtra("username", user.getFirstName());
+                intent.putExtra("chatId", chat.getId());
+                intent.putExtra("name", chat.getName());
                 context.startActivity(intent);
             }
         }

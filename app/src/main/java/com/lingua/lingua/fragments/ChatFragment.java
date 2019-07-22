@@ -1,6 +1,7 @@
 package com.lingua.lingua.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.ChatAdapter;
@@ -29,7 +28,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -64,12 +62,6 @@ public class ChatFragment extends Fragment {
         chats = new ArrayList<>();
         queryChats();
 
-        ArrayList<User> users = new ArrayList<>();
-        users.add(new User("Cristina"));
-        users.add(new User("Marta"));
-        chats.add(new Chat(users, "Hi! how are you doing?"));
-        chats.add(new Chat(users, "Wassuppppp"));
-
         adapter = new ChatAdapter(getContext(), chats);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         rvChats.addItemDecoration(itemDecoration);
@@ -94,39 +86,51 @@ public class ChatFragment extends Fragment {
     }
 
     private void queryChats() {
-        String url = "https://lingua-project.firebaseio.com/chats/" + currentUser.getId();
+        String url = "https://lingua-project.firebaseio.com/users/vopjV0oYl5NXjvkLVjZgwGv93CG3/chats.json"; // TODO: change to current user id
+        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+            try {
+                JSONObject object = new JSONObject(s);
+                Log.i("ChatFragment", object.toString());
 
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
-            @Override
-            public void onResponse(String s) {
-                try {
-                    JSONObject obj = new JSONObject(s);
-                    Iterator i = obj.keys();
+//                JSONArray array = new JSONArray(s);
+//                for (int i = 0; i < array.length(); i++) {
+//                    Log.i("ChatFragment", array.getString(i));
+//                    queryChatInfo(array.getString(i));
+//                }
 
-                    while (i.hasNext()){
-                        String key = i.next().toString();
-                        //TODO: add chats to the adapter
-
-                        if (chats.size() < 1){
-                            tvNoChats.setVisibility(View.VISIBLE);
-                            rvChats.setVisibility(View.GONE);
-                        } else {
-                            tvNoChats.setVisibility(View.GONE);
-                            rvChats.setVisibility(View.VISIBLE);
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if (chats.size() < 1) {
+                    tvNoChats.setVisibility(View.VISIBLE);
+                    rvChats.setVisibility(View.GONE);
+                } else {
+                    tvNoChats.setVisibility(View.GONE);
+                    rvChats.setVisibility(View.VISIBLE);
+                    adapter.notifyDataSetChanged();
                 }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }, new Response.ErrorListener(){
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                System.out.println("" + volleyError);
-            }
-        });
+        }, volleyError -> System.out.println("" + volleyError));
 
         RequestQueue rQueue = Volley.newRequestQueue(getContext());
         rQueue.add(request);
+    }
+
+    private void queryChatInfo(String id) {
+        String chatUrl = "https://lingua-project.firebaseio.com/chats" + id;
+        StringRequest chatInfoRequest = new StringRequest(Request.Method.GET, chatUrl, s -> {
+            try {
+                JSONObject chat = new JSONObject(s);
+                String name = chat.getString("name");
+                Log.i("ChatFragment", name);
+                String lastMessage = chat.getString("lastMessage");
+                chats.add(new Chat(id, name, lastMessage));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, volleyError -> System.out.println("" + volleyError));
+
+        RequestQueue rQueue = Volley.newRequestQueue(getContext());
+        rQueue.add(chatInfoRequest);
     }
 }
