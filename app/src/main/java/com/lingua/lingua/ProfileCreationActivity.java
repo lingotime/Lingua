@@ -1,5 +1,7 @@
 package com.lingua.lingua;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import android.content.Intent;
@@ -17,11 +19,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.hootsuite.nachos.ChipConfiguration;
 import com.hootsuite.nachos.NachoTextView;
+import com.hootsuite.nachos.chip.Chip;
+import com.hootsuite.nachos.chip.ChipSpan;
+import com.hootsuite.nachos.chip.ChipSpanChipCreator;
+import com.hootsuite.nachos.tokenizer.SpanChipTokenizer;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,16 +98,48 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
 
         targetCountries.setAdapter(adapterCountries);
-//        targetCountries.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        targetCountries.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
+            @Override
+            public ChipSpan createChip(@NonNull Context context, @NonNull CharSequence text, Object data) {
+                String fileName = CountryInformation.COUNTRY_CODES.get(text); // gets the lowercase country code, and therefore, the filename
+                int id = getResources().getIdentifier(fileName, "drawable", getPackageName()); // gets the id for the image in order to find and return the drawable
+                Drawable drawable = getResources().getDrawable(id);
+                return new ChipSpan(context, text, drawable, data);
+            }
+
+            @Override
+            public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
+                super.configureChip(chip, chipConfiguration);
+                chip.setShowIconOnLeft(true);
+                chip.setIconBackgroundColor(R.color.veryLightGrey);
+            }
+        }, ChipSpan.class));
 
 
         currentLanguages.setAdapter(adapterLanguages);
-//        currentLanguages.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+
 
         targetLanguages.setAdapter(adapterLanguages);
-//        targetLanguages.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+
 
         originCountry.setAdapter(adapterCountries);
+        // overrides the creation of the ChipSpan from the library used so that the chip has the icon of the countries' flags
+        originCountry.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
+            @Override
+            public ChipSpan createChip(@NonNull Context context, @NonNull CharSequence text, Object data) {
+                String fileName = CountryInformation.COUNTRY_CODES.get(text); // gets the lowercase country code, and therefore, the filename
+                int id = getResources().getIdentifier(fileName, "drawable", getPackageName()); // gets the id for the image in order to find and return the drawable
+                Drawable drawable = getResources().getDrawable(id);
+                return new ChipSpan(context, text, drawable, data);
+            }
+
+            @Override
+            public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
+                super.configureChip(chip, chipConfiguration);
+                chip.setShowIconOnLeft(true);
+                chip.setIconBackgroundColor(R.color.veryLightGrey);
+            }
+        }, ChipSpan.class));
 
 
         profilePicture.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +154,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
 
         // TODO: Set the onlick listener for the Submit button and place the info into the User class connected to the database
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

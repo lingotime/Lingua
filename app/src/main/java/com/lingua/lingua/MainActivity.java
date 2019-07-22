@@ -36,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
         final Fragment exploreFragment = new ExploreFragment();
         final Fragment notificationsFragment = new NotificationsFragment();
 
+        // TODO: Remove this since just for testing
+        Intent intent = new Intent(this, ProfileCreationActivity.class);
+        startActivity(intent);
+
         fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

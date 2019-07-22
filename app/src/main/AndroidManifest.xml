@@ -16,7 +16,11 @@
         android:windowSoftInputMode="adjustResize">
      
         <activity android:name=".ProfilePicture"></activity>
-        <activity android:name=".ProfileCreationActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+        <activity
+            android:name=".ProfileCreationActivity"
+            android:windowSoftInputMode="adjustResize">
+
+        </activity> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
         android:usesCleartextTraffic="true">
         <activity android:name=".MainActivity">
             <intent-filter>

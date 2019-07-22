@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.IconCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -104,6 +106,9 @@ public class ProfileFragment extends Fragment {
         String fileName = CountryInformation.COUNTRY_CODES.get(country);
         int id = getContext().getResources().getIdentifier(fileName, "drawable", getContext().getPackageName());
         Drawable drawable = getContext().getResources().getDrawable(id);
+
+        // convert the drawable to an icon compat
+
         chip.setChipIcon(drawable);
 
         //adding the new chip to the given ChipGroup
