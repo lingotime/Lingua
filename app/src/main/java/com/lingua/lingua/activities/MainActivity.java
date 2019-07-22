@@ -37,9 +37,13 @@ public class MainActivity extends AppCompatActivity {
         final Fragment connectFragment = new ConnectFragment();
         final Fragment profileFragment = new ProfileFragment();
 
+        // set initial fragment as "Explore"
         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, exploreFragment).commit();
 
+        // set initial selected item as "Explore"
         bottomNavigation.setSelectedItemId(R.id.Explore);
+
+        // allow the bottom navigation to control the fragment view
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
