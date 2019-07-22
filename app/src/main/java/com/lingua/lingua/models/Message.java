@@ -12,7 +12,10 @@ public class Message {
     User receiver;
     long createdAt;
 
-    public Message() {}
+    public Message(User sender, String message) {
+        this.sender = sender;
+        this.message = message;
+    }
 
     public String getMessage() {
         return message;

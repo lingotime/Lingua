@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.client.Firebase;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
@@ -24,6 +25,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     private Context context;
     private List<Chat> chats;
+    Firebase reference1, reference2;
 
     private ImageView ivProfile;
     private TextView tvName;
@@ -73,5 +75,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 context.startActivity(intent);
             }
         }
+    }
+
+    // Clean all elements of the recycler
+    public void clear() {
+        chats.clear();
+        notifyDataSetChanged();
     }
 }
