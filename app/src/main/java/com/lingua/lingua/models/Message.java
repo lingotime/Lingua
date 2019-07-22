@@ -8,12 +8,11 @@ TODO: make this class Firebase compatible, save and query messages methods
 public class Message {
 
     String message;
-    User sender;
-    User receiver;
+    String senderId;
     long createdAt;
 
-    public Message(User sender, String message) {
-        this.sender = sender;
+    public Message(String senderId, String message) {
+        this.senderId = senderId;
         this.message = message;
     }
 
@@ -25,20 +24,8 @@ public class Message {
         this.message = message;
     }
 
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
+    public String getSenderId() {
+        return senderId;
     }
 
     public long getCreatedAt() {

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +43,7 @@ public class ChatFragment extends Fragment {
     private ChatAdapter adapter;
     private List<Chat> chats;
     private SwipeRefreshLayout swipeContainer;
+    private TextView tvNoChats;
 
     private User currentUser;
 
@@ -55,6 +57,7 @@ public class ChatFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvChats = view.findViewById(R.id.fragment_chat_rv);
+        tvNoChats = view.findViewById(R.id.fragment_chat_no_chats_tv);
 
         currentUser = new User("Marta"); //TODO: get current signed in user
 
@@ -91,7 +94,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void queryChats() {
-        String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/chats";
+        String url = "https://lingua-project.firebaseio.com/chats/" + currentUser.getId();
 
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
             @Override
@@ -104,9 +107,13 @@ public class ChatFragment extends Fragment {
                         String key = i.next().toString();
                         //TODO: add chats to the adapter
 
-                        if (chats.size() <= 1){
-                            // TODO: show text view that says no users
-                        } else {}
+                        if (chats.size() < 1){
+                            tvNoChats.setVisibility(View.VISIBLE);
+                            rvChats.setVisibility(View.GONE);
+                        } else {
+                            tvNoChats.setVisibility(View.GONE);
+                            rvChats.setVisibility(View.VISIBLE);
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

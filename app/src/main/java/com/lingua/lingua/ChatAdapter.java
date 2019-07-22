@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.client.Firebase;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
@@ -25,12 +24,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     private Context context;
     private List<Chat> chats;
-    Firebase reference1, reference2;
 
     private ImageView ivProfile;
     private TextView tvName;
     private TextView tvText;
     private TextView tvTimestamp;
+
+    private Chat chat;
+    private User user;
 
     public ChatAdapter(Context context, List<Chat> chats) {
         this.context = context;
@@ -46,8 +47,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
-        final Chat chat = chats.get(position);
-        final User user = chat.getUsers().get(0);
+        chat = chats.get(position);
+        user = chat.getUsers().get(0);
         tvName.setText(user.getFirstName());
         tvText.setText(chat.getLastMessage());
     }
@@ -72,6 +73,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
                 Intent intent = new Intent(context, ChatDetailsActivity.class);
+                intent.putExtra("userId", user.getId());
+                intent.putExtra("username", user.getFirstName());
                 context.startActivity(intent);
             }
         }

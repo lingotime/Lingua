@@ -48,12 +48,14 @@ public class ChatDetailsActivity extends AppCompatActivity {
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
 
+        String friendId = getIntent().getStringExtra("userId");
+        String friendName = getIntent().getStringExtra("username"); //TODO: show as title in toolbar
+
         currentUser = new User("Marta"); //TODO: get current signed in user
-        friend = new User("Cris"); //TODO: get friend you're chatting with through intent
 
         Firebase.setAndroidContext(this);
-        reference1 = new Firebase("https://lingua-project.firebaseio.com/messages/" + currentUser.getId() + "_" + friend.getId());
-        reference2 = new Firebase("https://lingua-project.firebaseio.com/messages/" + friend.getId() + "_" + currentUser.getId());
+        reference1 = new Firebase("https://lingua-project.firebaseio.com/messages/" + currentUser.getId() + "/" + friendId);
+        reference2 = new Firebase("https://lingua-project.firebaseio.com/messages/" + friendId + "/" + currentUser.getId());
 
         adapter = new ChatDetailsAdapter(this, messages);
         rvMessages.setAdapter(adapter);
@@ -85,7 +87,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 String message = map.get("message").toString();
                 String senderId = map.get("sender").toString();
 
-                messages.add(new Message(new User(senderId), message)); //TODO: get user from user ID
+                messages.add(new Message(senderId, message)); //TODO: get user from user ID
                 adapter.notifyDataSetChanged();
             }
 
