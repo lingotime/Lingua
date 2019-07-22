@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +32,7 @@ public class TextChatActivity extends AppCompatActivity {
     private List<Message> messages;
 
     private ImageView sendButtonIcon;
-    private Button sendButton;
+    private ImageButton sendButton;
     private EditText etMessage;
 
     @Override
@@ -45,16 +46,16 @@ public class TextChatActivity extends AppCompatActivity {
             if (i % 2 == 0) {
                 Message message = new Message();
                 User sender = new User();
-                sender.setFirstName("Marta");
-                message.setMessage("Hey girl! How are you? I've been having a great day I hope you have too");
-                message.setSender(sender);
+                //sender.setFirstName("Marta");
+                //message.setMessage("Hey girl! How are you? I've been having a great day I hope you have too");
+                //message.setSender(sender);
                 messages.add(message);
             } else {
                 Message message = new Message();
                 User sender = new User();
-                sender.setFirstName("Cristina");
-                message.setMessage("How are you? I'm doing well. Life is good, the family is doing well...");
-                message.setSender(sender);
+                //sender.setFirstName("Cristina");
+                //message.setMessage("How are you? I'm doing well. Life is good, the family is doing well...");
+                //message.setSender(sender);
                 messages.add(message);
             }
         }
@@ -65,8 +66,7 @@ public class TextChatActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true);
         rvMessages.setLayoutManager(linearLayoutManager);
 
-        sendButton = findViewById(R.id.activity_chat_details_button_send);
-        sendButtonIcon = findViewById(R.id.activity_chat_details_iv_send);
+        sendButton = findViewById(R.id.activity_text_chat_send_button);
         etMessage = findViewById(R.id.activity_text_chat_message_field);
         sendButtonIcon.setColorFilter(Color.argb(255, 255, 255, 255));
 

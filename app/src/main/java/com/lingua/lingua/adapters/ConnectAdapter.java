@@ -50,9 +50,9 @@ public class ConnectAdapter extends RecyclerView.Adapter<ConnectAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final FriendRequest friendRequest = friendRequests.get(position);
-        final User user = friendRequest.getSender();
-        tvMessage.setText(friendRequest.getMessage());
-        tvName.setText(user.getFirstName());
+        //final User user = friendRequest.getSender();
+        //tvMessage.setText(friendRequest.getMessage());
+        //tvName.setText(user.getFirstName());
 
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,12 +80,12 @@ public class ConnectAdapter extends RecyclerView.Adapter<ConnectAdapter.ViewHold
     class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View itemView) {
             super(itemView);
-            ivProfile = itemView.findViewById(R.id.friend_request_iv);
+            /*ivProfile = itemView.findViewById(R.id.friend_request_iv);
             tvMessage = itemView.findViewById(R.id.friend_request_message_tv);
             tvName = itemView.findViewById(R.id.friend_request_name);
             tvTimestamp = itemView.findViewById(R.id.friend_request_timestamp_tv);
             acceptButton = itemView.findViewById(R.id.friend_request_accept_button);
-            rejectButton = itemView.findViewById(R.id.friend_request_reject_button);
+            rejectButton = itemView.findViewById(R.id.friend_request_reject_button);*/
         }
     }
 }

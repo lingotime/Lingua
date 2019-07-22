@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final Fragment profileFragment = new ProfileFragment();
@@ -36,23 +36,23 @@ public class MainActivity extends AppCompatActivity {
         final Fragment exploreFragment = new ExploreFragment();
         final Fragment notificationsFragment = new ConnectFragment();
 
-        fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, exploreFragment).commit();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.Explore:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, exploreFragment).commit();
                         return true;
                     case R.id.Chat:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, chatFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, chatFragment).commit();
                         return true;
                     case R.id.Connect:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, notificationsFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, notificationsFragment).commit();
                         return true;
                     case R.id.Profile:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, profileFragment).commit();
                         return true;
                     default:
                         return true;

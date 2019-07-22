@@ -41,13 +41,13 @@ public class ConnectFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvNotifications = view.findViewById(R.id.fragment_notifications_rv);
+        rvNotifications = view.findViewById(R.id.fragment_connect_history_timeline);
         friendRequests = new ArrayList<>();
 
-        FriendRequest friendRequest = new FriendRequest("hi girl! let's connect", new User("Cristina"), new User("Marta"));
+        //FriendRequest friendRequest = new FriendRequest("hi girl! let's connect", new User("Cristina"), new User("Marta"));
 
         for (int i = 0; i < 10; i++) {
-            friendRequests.add(friendRequest);
+            //friendRequests.add(friendRequest);
         }
 
         adapter = new ConnectAdapter(getContext(), friendRequests);

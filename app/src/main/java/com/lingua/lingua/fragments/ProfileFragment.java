@@ -51,13 +51,13 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_profile_appBar);
+        /*Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_profile_appBar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);*/
 
-        dob = view.findViewById(R.id.fragment_profile_dob);
+        /*dob = view.findViewById(R.id.fragment_profile_dob);
         userImage = view.findViewById(R.id.fragment_profile_userImage);
         userName = view.findViewById(R.id.fragment_profile_userName);
         flagImage = view.findViewById(R.id.fragment_profile_originFlag);
@@ -65,7 +65,7 @@ public class ProfileFragment extends Fragment {
         targetLangs = view.findViewById(R.id.fragment_profile_targetLangChips);
         targetCounts = view.findViewById(R.id.fragment_profile_targetCountChips);
         primaryLangs = view.findViewById(R.id.fragment_profile_primaryChips);
-        editFab = view.findViewById(R.id.fragment_profile_FAB);
+        editFab = view.findViewById(R.id.fragment_profile_FAB);*/
 
         // TODO: Allow for the creation from the explore page to see other profiles, with User passed as Parcelables. In this scenario, the FAB visibility will be set to GONE
 

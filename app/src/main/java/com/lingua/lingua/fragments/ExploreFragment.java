@@ -42,10 +42,10 @@ public class ExploreFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rvExplore = view.findViewById(R.id.fragment_explore_rv);
+        rvExplore = view.findViewById(R.id.fragment_explore_history_timeline);
         users = new ArrayList<>();
-        users.add(new User("Briana Douglas"));
-        users.add(new User("Fausto Zurita"));
+        //users.add(new User("Briana Douglas"));
+        //users.add(new User("Fausto Zurita"));
         adapter = new ExploreAdapter(getContext(), users);
         rvExplore.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);

@@ -53,7 +53,7 @@ public class TextChatAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
-        tvMessage.setText(message.getMessage());
+        //tvMessage.setText(message.getMessage());
     }
 
     @Override
@@ -65,13 +65,15 @@ public class TextChatAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-        if (message.getSender().getFirstName().equals("Marta")) { // change to current user
+        /*if (message.getSender().getFirstName().equals("Marta")) { // change to current user
             // If the current user is the sender of the message
             return VIEW_TYPE_MESSAGE_SENT;
         } else {
             // If some other user sent the message
             return VIEW_TYPE_MESSAGE_RECEIVED;
-        }
+        }*/
+
+        return 0;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

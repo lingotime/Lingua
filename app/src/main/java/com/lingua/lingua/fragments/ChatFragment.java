@@ -46,10 +46,10 @@ public class ChatFragment extends Fragment {
         chats = new ArrayList<>();
 
         ArrayList<User> users = new ArrayList<>();
-        users.add(new User("Cristina"));
+        /*users.add(new User("Cristina"));
         users.add(new User("Marta"));
         chats.add(new Conversation(users, "Hi! how are you doing?"));
-        chats.add(new Conversation(users, "Wassuppppp"));
+        chats.add(new Conversation(users, "Wassuppppp"));*/
 
         adapter = new ChatAdapter(getContext(), chats);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);

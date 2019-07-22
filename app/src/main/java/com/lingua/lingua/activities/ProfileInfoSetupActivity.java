@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.hootsuite.nachos.NachoTextView;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.Country;
+import com.lingua.lingua.models.Language;
 
 import java.io.File;
 
@@ -51,28 +52,25 @@ public class ProfileInfoSetupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_info_setup);
 
-        Toolbar toolbar = findViewById(R.id.activity_profile_creation_toolbar);
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         // Make sure the toolbar exists in the activity and is not null
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
 
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE |
                         WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE );
 
         //TODO: add a button to allow for the change in the profile image
-        profilePicture = (ImageView) findViewById(R.id.activity_profile_creation_profileImage);
+        profilePicture = (ImageView) findViewById(R.id.activity_profile_info_setup_profile_image);
         // TODO: get the full name, username, and maybe profile picture from the sign up or login through Google or Facebook
 //        fullName = (TextView) findViewById(R.id.activity_profile_creation_fullName);
 //        username = (TextView) findViewById(R.id.activity_profile_creation_username);
-        originCountry = (NachoTextView) findViewById(R.id.activity_profile_creation_originCountry);
+        originCountry = (NachoTextView) findViewById(R.id.activity_profile_info_setup_origin_country_field);
         // TODO: split the strings by commas and place them into an array list of the same fields in the user
-        currentLanguages = (NachoTextView) findViewById(R.id.activity_profile_creation_currentLanguages);
-        targetLanguages = (NachoTextView) findViewById(R.id.activity_profile_creation_targetLanguages);
-        targetCountries = (NachoTextView) findViewById(R.id.activity_profile_creation_targetCountries);
-        bio = (EditText) findViewById(R.id.activity_profile_creation_bio);
-        btnSubmit = (Button) findViewById(R.id.activity_profile_creation_submit);
+        currentLanguages = (NachoTextView) findViewById(R.id.activity_profile_info_setup_known_languages_field);
+        targetLanguages = (NachoTextView) findViewById(R.id.activity_profile_info_setup_explore_languages_field);
+        targetCountries = (NachoTextView) findViewById(R.id.activity_profile_info_setup_explore_countries_field);
+        bio = (EditText) findViewById(R.id.activity_profile_info_setup_biography_field);
+        btnSubmit = (Button) findViewById(R.id.activity_profile_info_setup_continue_button);
 
         // TODO: create adapters with a list of the possibilities for autocompletion and set it upon creation
 
@@ -80,7 +78,7 @@ public class ProfileInfoSetupActivity extends AppCompatActivity {
                 android.R.layout.simple_dropdown_item_1line, Country.COUNTRIES);
 
         ArrayAdapter<String> adapterLanguages = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, Country.LANGUAGES);
+                android.R.layout.simple_dropdown_item_1line, Language.LANGUAGES);
 
 
         targetCountries.setAdapter(adapterCountries);

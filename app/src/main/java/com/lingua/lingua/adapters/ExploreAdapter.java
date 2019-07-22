@@ -47,7 +47,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final User user = users.get(position);
-        tvName.setText(user.getFirstName());
+        //tvName.setText(user.getFirstName());
     }
 
     @Override
