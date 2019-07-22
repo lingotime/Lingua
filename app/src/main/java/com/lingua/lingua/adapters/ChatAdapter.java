@@ -60,10 +60,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ViewHolder(View itemView) {
             super(itemView);
-            ivProfile = itemView.findViewById(R.id.item_user_iv_profile);
-            tvName = itemView.findViewById(R.id.item_chat_tv_name);
-            tvText = itemView.findViewById(R.id.item_chat_tv_text);
-            tvTimestamp = itemView.findViewById(R.id.item_chat_tv_timestamp);
+            ivProfile = itemView.findViewById(R.id.item_user_profile_image);
+            tvName = itemView.findViewById(R.id.item_conversation_name_text);
+            tvText = itemView.findViewById(R.id.item_conversation_message_text);
+            tvTimestamp = itemView.findViewById(R.id.item_conversation_timestamp_text);
             itemView.setOnClickListener(this);
         }
 

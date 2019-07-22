@@ -77,8 +77,8 @@ public class TextChatAdapter extends RecyclerView.Adapter {
     class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View itemView) {
             super(itemView);
-            tvMessage = itemView.findViewById(R.id.message_tv);
-            tvTimestamp = itemView.findViewById(R.id.message_timestamp);
+            tvMessage = itemView.findViewById(R.id.item_message_received_message_text);
+            tvTimestamp = itemView.findViewById(R.id.item_message_received_timestamp_text);
         }
     }
 }

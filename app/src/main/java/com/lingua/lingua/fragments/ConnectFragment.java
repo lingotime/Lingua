@@ -55,7 +55,7 @@ public class ConnectFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvNotifications.setLayoutManager(linearLayoutManager);
 
-        swipeContainer = view.findViewById(R.id.exploreSwipeContainer);
+        swipeContainer = view.findViewById(R.id.fragment_chat_swipe_container);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

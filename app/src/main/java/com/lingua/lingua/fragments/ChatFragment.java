@@ -42,7 +42,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rvChats = view.findViewById(R.id.fragment_chat_rv);
+        rvChats = view.findViewById(R.id.fragment_chat_history_timeline);
         chats = new ArrayList<>();
 
         ArrayList<User> users = new ArrayList<>();
@@ -58,7 +58,7 @@ public class ChatFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvChats.setLayoutManager(linearLayoutManager);
 
-        swipeContainer = view.findViewById(R.id.exploreSwipeContainer);
+        swipeContainer = view.findViewById(R.id.fragment_chat_swipe_container);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

@@ -60,7 +60,7 @@ public class ExploreFragment extends Fragment {
         // Adds the scroll listener to RecyclerView
         rvExplore.addOnScrollListener(scrollListener);
 
-        swipeContainer = view.findViewById(R.id.exploreSwipeContainer);
+        swipeContainer = view.findViewById(R.id.fragment_chat_swipe_container);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

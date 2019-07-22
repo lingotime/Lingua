@@ -58,13 +58,13 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View itemView) {
             super(itemView);
-            ivProfile = itemView.findViewById(R.id.item_user_iv_profile);
+            ivProfile = itemView.findViewById(R.id.item_user_profile_image);
             ivFlag = itemView.findViewById(R.id.item_user_flag);
-            tvName = itemView.findViewById(R.id.item_user_tv_name);
-            tvAge = itemView.findViewById(R.id.item_user_tv_age);
-            tvBio = itemView.findViewById(R.id.item_user_tv_bio);
-            tvGender = itemView.findViewById(R.id.item_user_tv_gender);
-            tvFrom = itemView.findViewById(R.id.item_user_tv_from);
+            tvName = itemView.findViewById(R.id.item_user_name_text);
+            tvAge = itemView.findViewById(R.id.item_user_age_text);
+            tvBio = itemView.findViewById(R.id.item_user_biography_text);
+            tvGender = itemView.findViewById(R.id.item_user_gender_text);
+            tvFrom = itemView.findViewById(R.id.item_user_country_text);
         }
     }
 
