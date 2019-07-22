@@ -63,7 +63,6 @@ public class ProfileFragment extends Fragment {
     private final String TAG = "ProfileFragment";
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,8 +78,6 @@ public class ProfileFragment extends Fragment {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_profile_appBar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         dob = view.findViewById(R.id.fragment_profile_dob);
         userImage = view.findViewById(R.id.fragment_profile_userImage);
