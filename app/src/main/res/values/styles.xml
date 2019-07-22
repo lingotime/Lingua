@@ -1,26 +1,18 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-
-    <!-- Base application theme. -->
+<resources>
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorMedium</item>
+        <item name="colorPrimaryDark">@color/colorDark1</item>
+        <item name="colorAccent">@color/colorDark2</item>
     </style>
 
     <style name="Widget.MaterialComponents.CardView" parent="CardView">
         <item name="enforceMaterialTheme">true</item>
-
-        <item name="android:stateListAnimator" tools:ignore="NewApi">
-            @animator/mtrl_card_state_list_anim
-        </item>
         <item name="cardBackgroundColor">?attr/colorSurface</item>
         <item name="cardCornerRadius">@null</item>
         <item name="cardElevation">@dimen/mtrl_card_elevation</item>
-        <item name="cardForegroundColor">@color/mtrl_card_view_foreground</item>
-        <item name="checkedIcon">@drawable/ic_mtrl_checked_circle</item>
+        <item name="cardForegroundColor">@color/colorLight2</item>
         <item name="checkedIconTint">?attr/colorPrimary</item>
-        <item name="rippleColor">@color/mtrl_card_view_ripple</item>
+        <item name="rippleColor">@color/colorLight2</item>
         <item name="shapeAppearance">?attr/shapeAppearanceMediumComponent</item>
     </style>
 
@@ -37,57 +29,5 @@
         <item name="android:paddingTop">24dp</item>
         <item name="android:paddingBottom">24dp</item>
         <item name="android:orientation">vertical</item>
-    </style>
-
-    <style name="TextAppearance.MyTheme.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Headline2" parent="TextAppearance.MaterialComponents.Headline2">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Headline3" parent="TextAppearance.MaterialComponents.Headline3">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Body1" parent="TextAppearance.MaterialComponents.Body1">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Body2" parent="TextAppearance.MaterialComponents.Body2">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Button" parent="TextAppearance.MaterialComponents.Button">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Caption" parent="TextAppearance.MaterialComponents.Caption">
-        <!--Your custom type style here-->
-    </style>
-
-    <style name="TextAppearance.MyTheme.Overline" parent="TextAppearance.MaterialComponents.Overline">
-        <!--Your custom type style here-->
     </style>
 </resources>

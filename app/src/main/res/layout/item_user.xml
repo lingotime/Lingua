@@ -34,10 +34,10 @@
                 android:id="@+id/item_user_flag"
                 android:layout_width="0dp"
                 android:layout_height="150dp"
+                android:background="#262E5B"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="#262E5B" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/item_user_profile_image"
