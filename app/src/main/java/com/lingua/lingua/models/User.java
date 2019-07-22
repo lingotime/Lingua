@@ -100,7 +100,7 @@ public class User {
     }
 
     public User(String firstName) {
-        this.firstName = getFirstName();
+        this.firstName = firstName;
     }
 
     public String getId() {

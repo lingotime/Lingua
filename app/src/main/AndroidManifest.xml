@@ -13,11 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
      
         <activity android:name=".ProfilePicture"></activity>
         <activity android:name=".ProfileCreationActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
-        android:usesCleartextTraffic="true">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
