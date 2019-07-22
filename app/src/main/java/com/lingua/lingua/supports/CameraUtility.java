@@ -1,36 +1,27 @@
 package com.lingua.lingua.supports;
 
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
-
-import androidx.core.content.FileProvider;
 
 import java.io.File;
 
-/*
-Contains helper methods for getting image files from the camera and camera roll
-*/
+/* Contains helper methods for getting image files from the camera and camera roll. */
 
 public class CameraUtility {
-
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
-    private static final String TAG = "CameraUtility";
-    // member variables concerned with the camera activity
-    public final String APP_TAG = "MyCustomApp";
-    public String photoFileName = "photo.jpg";
-    File photoFile;
-    // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
+    public final static String TAG = "CameraUtility";
 
-    // Returns the File for a photo stored on disk given the fileName
+    // member variables concerned with the camera activity
+    public final String APP_NAME = "Lingua";
+    public final String PHOTO_FILE_NAME = "photo.jpg";
+
+    File photoFile;
+
+    // Returns File for a photo stored on the disk, given the file name
     public static File getPhotoFileUri(Context context, String fileName) {
-        // Get safe storage directory for photos
+        // Get safe storage directory for photos.
         // Use `getExternalFilesDir` on Context to access package-specific directories.
         // This way, we don't need to request external read/write runtime permissions.
         File mediaStorageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "MainActivity");
