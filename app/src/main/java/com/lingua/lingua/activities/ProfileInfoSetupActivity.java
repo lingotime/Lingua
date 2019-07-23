@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
+/* TODO: make chip group for origin country field, fix Date serialization issues. */
 
 public class ProfileInfoSetupActivity extends AppCompatActivity {
     private User currentUser;
