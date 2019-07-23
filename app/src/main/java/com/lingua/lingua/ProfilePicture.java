@@ -1,5 +1,6 @@
 package com.lingua.lingua;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
@@ -11,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcel;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +20,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.lingua.lingua.models.User;
 import com.parse.ParseUser;
+
+import org.parceler.Parcels;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,6 +44,7 @@ import java.io.IOException;
  */
 
 public class ProfilePicture extends AppCompatActivity {
+    private User currentUser;
 
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     private static final String TAG = "ProfilePictureActivity";
@@ -56,6 +71,9 @@ public class ProfilePicture extends AppCompatActivity {
         ivImageTaken = findViewById(R.id.activity_profile_picture_ivImageTaken);
         btnProfile = findViewById(R.id.activity_profile_picture_btnProfile);
 
+        //unwrap user
+        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+
         // allows the user to change their profile picture
         btnProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,12 +84,51 @@ public class ProfilePicture extends AppCompatActivity {
                     return;
                 }
 
+                Uri file = Uri.fromFile(photoFile);
 
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReference();
+                StorageReference profilesRef = storageRef.child("profiles/"+currentUser.getId()+"_profile.png");
+                UploadTask uploadTask = profilesRef.putFile(file);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("PROFILEPIC", "There was an error.");
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                Intent data = new Intent();
-                data.putExtra("profilePicture", getImageUri(ProfilePicture.this, profilePicture).toString());
-                setResult(ProfileCreationActivity.CAMERA_ACTIVITY, data);
-                finish();
+                    }
+                });
+
+                Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if (!task.isSuccessful()) {
+                            Log.e("PROFILEPIC", "There was an error with URL getting.");
+                        }
+
+                        // Continue with the task to get the download URL
+                        return profilesRef.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            Uri downloadUri = task.getResult();
+                            currentUser.setProfilePhotoURL(downloadUri.toString());
+                            Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+                            databaseReference.child(currentUser.getId()).setValue(currentUser);
+                        } else {
+                            Log.e("PROFILEPIC", "There was an error with URL getting.");
+                        }
+                    }
+                });
+
+                final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
+                intent.putExtra("user", Parcels.wrap(currentUser));
+                startActivity(intent);
 
             }
         });
