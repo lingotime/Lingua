@@ -138,7 +138,7 @@ public class ProfilePicture extends AppCompatActivity {
         photoFile = getPhotoFileUri(this, photoFileName);
 
         // wrap the file object into a content provider
-        Uri fileProvider = FileProvider.getUriForFile(this, "com.codepath.fileprovider", photoFile);
+        Uri fileProvider = FileProvider.getUriForFile(this, "com.lingua.fileprovider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
         // checking that the result of the intent is not null and therefore that the app will not crash
