@@ -39,7 +39,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
     Firebase reference;
     private User currentUser;
-    private User friend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

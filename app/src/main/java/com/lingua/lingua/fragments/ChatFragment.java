@@ -24,6 +24,7 @@ import com.lingua.lingua.R;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -89,22 +90,16 @@ public class ChatFragment extends Fragment {
         String url = "https://lingua-project.firebaseio.com/users/vopjV0oYl5NXjvkLVjZgwGv93CG3/chats.json"; // TODO: change to current user id
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
-                JSONObject object = new JSONObject(s);
-                Log.i("ChatFragment", object.toString());
-
-//                JSONArray array = new JSONArray(s);
-//                for (int i = 0; i < array.length(); i++) {
-//                    Log.i("ChatFragment", array.getString(i));
-//                    queryChatInfo(array.getString(i));
-//                }
-
-                if (chats.size() < 1) {
+                Log.i("ChatFragment", s);
+                JSONArray array = new JSONArray(s);
+                for (int i = 0; i < array.length(); i++) {
+                    queryChatInfo(array.getString(i));
+                }
+                swipeContainer.setRefreshing(false);
+                Log.i("ChatFragment", String.valueOf(chats.size()));
+                if (array.length() < 1) {
                     tvNoChats.setVisibility(View.VISIBLE);
                     rvChats.setVisibility(View.GONE);
-                } else {
-                    tvNoChats.setVisibility(View.GONE);
-                    rvChats.setVisibility(View.VISIBLE);
-                    adapter.notifyDataSetChanged();
                 }
 
             } catch (JSONException e) {
@@ -117,14 +112,16 @@ public class ChatFragment extends Fragment {
     }
 
     private void queryChatInfo(String id) {
-        String chatUrl = "https://lingua-project.firebaseio.com/chats" + id;
+        String chatUrl = "https://lingua-project.firebaseio.com/chats/" + id + ".json";
         StringRequest chatInfoRequest = new StringRequest(Request.Method.GET, chatUrl, s -> {
             try {
                 JSONObject chat = new JSONObject(s);
                 String name = chat.getString("name");
-                Log.i("ChatFragment", name);
                 String lastMessage = chat.getString("lastMessage");
                 chats.add(new Chat(id, name, lastMessage));
+                tvNoChats.setVisibility(View.GONE);
+                rvChats.setVisibility(View.VISIBLE);
+                adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
