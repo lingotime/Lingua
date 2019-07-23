@@ -39,63 +39,6 @@ public class User {
     private boolean isOnline;
     private boolean isComplete;
 
-    public static User convertFirebaseUserToNormalUser(FirebaseUser firebaseUser) {
-        // use list to "hack" requirement that objects used in inner classes must be final
-        final List<User> tempUserList = new ArrayList<User>();
-
-        // get the Firebase user's information
-        final String userUniversalID = firebaseUser.getUid();
-        final String userDisplayName = firebaseUser.getDisplayName();
-        final String userProfilePhotoURL = firebaseUser.getPhotoUrl().getPath();
-        Log.d("TRUMP", "User: "+userUniversalID+", Name: "+userDisplayName+", Photo URL: "+userProfilePhotoURL);
-
-        // check if the user's universal ID exists in database
-        final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("TRUMP", "Triggered on data change.");
-                User attemptedNormalUser = dataSnapshot.getValue(User.class);
-
-                if (attemptedNormalUser != null) {
-                    // if it does, create User object by reading stored data
-                    tempUserList.add(attemptedNormalUser);
-                    Log.d("TRUMP", "It's not nulll!!!!");
-                } else {
-                    // if it does not, write a new User to database and return it
-                    User newNormalUser = new User();
-                    newNormalUser.setId(userUniversalID);
-                    newNormalUser.setFirstName(userDisplayName);
-                    newNormalUser.setProfilePhotoURL(userProfilePhotoURL);
-                    newNormalUser.setComplete(false);
-                    Log.d("TRUMP", "Created a new user object");
-
-                    database.child("users").child(userUniversalID).setValue(newNormalUser);
-                    Log.d("TRUMP", "Set the user to the database");
-                    tempUserList.add(newNormalUser);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("User", "There was an issue with the database.");
-            }
-        });
-
-        // wait for User to be updated by the database before returning
-        while (tempUserList.isEmpty()) {
-            try {
-                Thread.sleep(50);
-                Log.d("TRUMP", "Waiting");
-            } catch (Exception e) {
-                Log.e("User", "There was an issue with threads.");
-            }
-        }
-        Log.d("TRUMP", "Returning the object");
-        return tempUserList.get(0);
-    }
-
     public User() {
     }
 

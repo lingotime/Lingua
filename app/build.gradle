@@ -72,6 +72,21 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    // Firebase support
+    implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-auth:18.1.0'
+    implementation 'com.google.firebase:firebase-database:18.0.0'
+    implementation 'com.firebase:firebase-client-android:2.3.1'
+
+    // Other support
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.android.volley:volley:1.1.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.code.gson:gson:2.2.4'
+    implementation "com.hootsuite.android:nachos:1.1.1"
+    implementation 'jp.wasabeef:recyclerview-animators:2.2.3'
+    testImplementation 'junit:junit:4.12'
 }
 
 apply plugin: 'com.google.gms.google-services'
