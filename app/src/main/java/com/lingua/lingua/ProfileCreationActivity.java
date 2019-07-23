@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -202,23 +203,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 final Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
                 intent.putExtra("user", Parcels.wrap(currentUser));
                 startActivity(intent);
-            }
-        });
-
-
-
-        // TODO: Set the onlick listener for the Submit button and place the info into the User class connected to the database
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // after all the information is saved, the user is taken to the main activity if this is the first time signup
-//                Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
-//                startActivity(intent);
-                // Otherwise, they return to the profile fragment that will show their updated information
-                Intent intent = new Intent();
-                setResult(RESULT_OK, intent);
-                finish();
-
             }
         });
 

@@ -65,8 +65,8 @@ public class ProfilePicture extends AppCompatActivity {
                     Log.e(TAG, "No photo to submit");
                     return;
                 }
-                // TODO: return the image URI to the previous activity, and add it to the current instance of the user
-                // generate the URI from the bitmap in order to pass the bitmap back to the ProfileCreation Activity
+
+
 
                 Intent data = new Intent();
                 data.putExtra("profilePicture", getImageUri(ProfilePicture.this, profilePicture).toString());
