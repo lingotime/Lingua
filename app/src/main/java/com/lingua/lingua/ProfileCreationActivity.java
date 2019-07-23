@@ -126,11 +126,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
 
         currentLanguages.setAdapter(adapterLanguages);
-
-
         targetLanguages.setAdapter(adapterLanguages);
-
-
         originCountry.setAdapter(adapterCountries);
         // overrides the creation of the ChipSpan from the library used so that the chip has the icon of the countries' flags
         originCountry.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
