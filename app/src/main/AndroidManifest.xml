@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="adjustResize"
         android:usesCleartextTraffic="true">
-        
+
         <activity android:name=".ProfilePicture"></activity>
         <activity
             android:name=".ProfileCreationActivity"
