@@ -20,6 +20,7 @@ import com.lingua.lingua.models.Message;
 import com.lingua.lingua.models.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 Map<String, String> map = new HashMap<>();
                 map.put("message", messageText);
                 map.put("sender", currentUser.getId());
+                map.put("timestamp", new Date().toString());
                 reference.push().setValue(map);
                 etMessage.setText("");
 
