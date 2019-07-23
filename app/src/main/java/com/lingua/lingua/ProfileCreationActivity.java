@@ -1,5 +1,7 @@
 package com.lingua.lingua;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import android.content.Intent;
@@ -17,8 +19,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -28,10 +32,21 @@ import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.hootsuite.nachos.ChipConfiguration;
+import com.hootsuite.nachos.NachoTextView;
+import com.hootsuite.nachos.chip.Chip;
+import com.hootsuite.nachos.chip.ChipSpan;
+import com.hootsuite.nachos.chip.ChipSpanChipCreator;
+import com.hootsuite.nachos.tokenizer.ChipTokenizer;
+import com.hootsuite.nachos.tokenizer.SpanChipTokenizer;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Activity that allows the user to input their information relevant to the main functions of the app after getting past Auth
@@ -43,6 +58,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private ImageView profilePicture; // will be taken from OAuth
     private TextView fullName;
     private TextView username;
+    private TextInputEditText dob;
     private NachoTextView originCountry;
     private NachoTextView currentLanguages;
     private NachoTextView targetLanguages;
@@ -74,11 +90,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE |
                         WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE );
 
+
         //TODO: add a button to allow for the change in the profile image
         profilePicture = (ImageView) findViewById(R.id.activity_profile_creation_profileImage);
         // TODO: get the full name, username, and maybe profile picture from the sign up or login through Google or Facebook
 //        fullName = (TextView) findViewById(R.id.activity_profile_creation_fullName);
 //        username = (TextView) findViewById(R.id.activity_profile_creation_username);
+        dob = findViewById(R.id.activity_profile_creation_dob);
         originCountry = (NachoTextView) findViewById(R.id.activity_profile_creation_originCountry);
         // TODO: split the strings by commas and place them into an array list of the same fields in the user
         currentLanguages = (NachoTextView) findViewById(R.id.activity_profile_creation_currentLanguages);
@@ -121,16 +139,49 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
 
         targetCountries.setAdapter(adapterCountries);
-//        targetCountries.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        targetCountries.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
+            @Override
+            public ChipSpan createChip(@NonNull Context context, @NonNull CharSequence text, Object data) {
+                String fileName = CountryInformation.COUNTRY_CODES.get(text); // gets the lowercase country code, and therefore, the filename
+                int id = getResources().getIdentifier(fileName, "drawable", getPackageName()); // gets the id for the image in order to find and return the drawable
+                Drawable drawable = getResources().getDrawable(id);
+                return new ChipSpan(context, text, drawable, data);
+            }
+
+            @Override
+            public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
+                // alter the appearance of the chips and the chip icon backgrounds
+                super.configureChip(chip, chipConfiguration);
+                chip.setShowIconOnLeft(true);
+                chip.setIconBackgroundColor(R.color.veryLightGrey);
+            }
+        }, ChipSpan.class));
 
 
         currentLanguages.setAdapter(adapterLanguages);
-//        currentLanguages.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+
 
         targetLanguages.setAdapter(adapterLanguages);
-//        targetLanguages.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+
 
         originCountry.setAdapter(adapterCountries);
+        // overrides the creation of the ChipSpan from the library used so that the chip has the icon of the countries' flags
+        originCountry.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
+            @Override
+            public ChipSpan createChip(@NonNull Context context, @NonNull CharSequence text, Object data) {
+                String fileName = CountryInformation.COUNTRY_CODES.get(text); // gets the lowercase country code, and therefore, the filename
+                int id = getResources().getIdentifier(fileName, "drawable", getPackageName()); // gets the id for the image in order to find and return the drawable
+                Drawable drawable = getResources().getDrawable(id);
+                return new ChipSpan(context, text, drawable, data);
+            }
+
+            @Override
+            public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
+                super.configureChip(chip, chipConfiguration);
+                chip.setShowIconOnLeft(true);
+                chip.setIconBackgroundColor(R.color.veryLightGrey);
+            }
+        }, ChipSpan.class));
 
 
         profilePicture.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +208,21 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
 
         // TODO: Set the onlick listener for the Submit button and place the info into the User class connected to the database
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // after all the information is saved, the user is taken to the main activity if this is the first time signup
+//                Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
+//                startActivity(intent);
+                // Otherwise, they return to the profile fragment that will show their updated information
+                Intent intent = new Intent();
+                setResult(RESULT_OK, intent);
+                finish();
+
+            }
+        });
+
+        //TODO: Check if a user is already logged in and in this case, they've come from the profile fragment with a desire to edit their page. Prepopulate the edittexts before they enter anything
     }
 
     private void saveData() {
@@ -183,5 +249,23 @@ public class ProfileCreationActivity extends AppCompatActivity {
                     .load(new File(imageUri.getPath()))
                     .into(profilePicture);
         }
+    }
+
+    protected void loadInfo() {
+        // loads the user info from the current logged in user
+        Date userDob = null;
+        List<String> userOriginCountry = new ArrayList<String>();
+        List<String> userPrimaryLanguages = new ArrayList<String>();
+        List<String> userTargetLanguages = new ArrayList<String>();
+        List<String> userTargetCountries = new ArrayList<String>();
+        String userBio = null;
+
+        //dob.setText(userDob.toString());
+        // the data fields with the chips must be entered as a list of Strings
+        originCountry.setText(userOriginCountry);
+        currentLanguages.setText(userPrimaryLanguages);
+        targetCountries.setText(userTargetCountries);
+        targetLanguages.setText(userTargetLanguages);
+        bio.setText(userBio);
     }
 }

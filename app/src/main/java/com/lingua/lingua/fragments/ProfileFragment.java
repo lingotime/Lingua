@@ -4,9 +4,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.IconCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -28,6 +33,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lingua.lingua.CameraUtil;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.MainActivity;
+import com.lingua.lingua.ProfileCreationActivity;
 import com.lingua.lingua.R;
 
 import java.io.File;
@@ -52,15 +58,17 @@ public class ProfileFragment extends Fragment {
     ChipGroup primaryLangs;
     TextView dob;
     FloatingActionButton editFab;
+    public final int EDIT_REQUEST_CODE = 250;
 
     private final String TAG = "ProfileFragment";
-
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        setHasOptionsMenu(true);
+        return v;
     }
 
     @Override
@@ -70,8 +78,6 @@ public class ProfileFragment extends Fragment {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_profile_appBar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         dob = view.findViewById(R.id.fragment_profile_dob);
         userImage = view.findViewById(R.id.fragment_profile_userImage);
@@ -85,7 +91,13 @@ public class ProfileFragment extends Fragment {
 
         // TODO: Allow for the creation from the explore page to see other profiles, with User passed as Parcelables. In this scenario, the FAB visibility will be set to GONE
 
-        //TODO: Set the onclick function for the FAB - launches ProfileEdit fragment
+        //TODO: Set the onclick function for the FAB - launches ProfileCreation activity
+        editFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editProfile(view);
+            }
+        });
 
 
         // TODO: Set user information, and format the date for display
@@ -104,6 +116,9 @@ public class ProfileFragment extends Fragment {
         String fileName = CountryInformation.COUNTRY_CODES.get(country);
         int id = getContext().getResources().getIdentifier(fileName, "drawable", getContext().getPackageName());
         Drawable drawable = getContext().getResources().getDrawable(id);
+
+        // convert the drawable to an icon compat
+
         chip.setChipIcon(drawable);
 
         //adding the new chip to the given ChipGroup
@@ -115,5 +130,15 @@ public class ProfileFragment extends Fragment {
         Chip chip = new Chip(getContext());
         chip.setText(language);
         chipGroup.addView(chip);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void editProfile(View view) {
+        Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
+        startActivityForResult(intent, EDIT_REQUEST_CODE);
     }
 }
