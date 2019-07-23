@@ -1,25 +1,15 @@
 package com.lingua.lingua.models;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.HashMap;
-import java.util.List;
 /*
 Custom User class with basic info, language information, etc.
  */
 
+@Parcel
 public class User {
     private String id;
     private String firstName;
@@ -39,8 +29,7 @@ public class User {
     private boolean isOnline;
     private boolean isComplete;
 
-    public User() {
-    }
+    public User() {}
 
     public User(String firstName) {
         this.firstName = firstName;
