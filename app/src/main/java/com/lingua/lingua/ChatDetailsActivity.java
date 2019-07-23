@@ -74,8 +74,9 @@ public class ChatDetailsActivity extends AppCompatActivity {
             if (!messageText.equals("")) {
                 Map<String, String> map = new HashMap<>();
                 map.put("message", messageText);
-                map.put("sender", currentUser.getId());
+                map.put("sender", "currentUserId");
                 reference.push().setValue(map);
+                etMessage.setText("");
             }
         });
 

@@ -61,6 +61,7 @@ public class ChatFragment extends Fragment {
         currentUser = new User("Marta"); //TODO: get current signed in user
 
         chats = new ArrayList<>();
+
         queryChats();
 
         adapter = new ChatAdapter(getContext(), chats);
@@ -95,16 +96,22 @@ public class ChatFragment extends Fragment {
                 for (int i = 0; i < array.length(); i++) {
                     queryChatInfo(array.getString(i));
                 }
-                swipeContainer.setRefreshing(false);
-                if (array.length() < 1) {
+                if (array.length() == 0) {
                     tvNoChats.setVisibility(View.VISIBLE);
                     rvChats.setVisibility(View.GONE);
+                } else {
+                    tvNoChats.setVisibility(View.GONE);
+                    rvChats.setVisibility(View.VISIBLE);
                 }
+                swipeContainer.setRefreshing(false);
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }, volleyError -> System.out.println("" + volleyError));
+        }, volleyError -> {
+            tvNoChats.setText("Oops! There was a connection error.");
+            Log.e("ChatFragment", "" + volleyError);
+        });
 
         RequestQueue rQueue = Volley.newRequestQueue(getContext());
         rQueue.add(request);
@@ -118,13 +125,14 @@ public class ChatFragment extends Fragment {
                 String name = chat.getString("name");
                 String lastMessage = chat.getString("lastMessage");
                 chats.add(new Chat(id, name, lastMessage));
-                tvNoChats.setVisibility(View.GONE);
-                rvChats.setVisibility(View.VISIBLE);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }, volleyError -> System.out.println("" + volleyError));
+        }, volleyError -> {
+            tvNoChats.setText("Oops! There was a connection error.");
+            Log.e("ChatFragment", "" + volleyError);
+        });
 
         RequestQueue rQueue = Volley.newRequestQueue(getContext());
         rQueue.add(chatInfoRequest);
