@@ -26,16 +26,16 @@ public class User {
     private String lastName;
     private Date birthDate;
     private String biographyText;
-    private Country originCountry;
+    private String originCountry;
     private String profilePhotoURL;
-    private ArrayList<Language> knownLanguages;
-    private ArrayList<Language> exploreLanguages;
-    private ArrayList<Country> knownCountries;
-    private ArrayList<Country> exploreCountries;
-    private HashMap<Language, Integer> hoursSpoken;
-    private ArrayList<User> confirmedFriends;
-    private ArrayList<User> pendingSentRequestFriends;
-    private ArrayList<User> pendingReceivedRequestFriends;
+    private ArrayList<String> knownLanguages;
+    private ArrayList<String> exploreLanguages;
+    private ArrayList<String> knownCountries;
+    private ArrayList<String> exploreCountries;
+    private HashMap<String, Integer> hoursSpoken;
+    private ArrayList<String> confirmedFriends;
+    private ArrayList<String> pendingSentRequestFriends;
+    private ArrayList<String> pendingReceivedRequestFriends;
     private boolean isOnline;
     private boolean isComplete;
 
@@ -86,11 +86,11 @@ public class User {
         this.biographyText = biographyText;
     }
 
-    public Country getOriginCountry() {
+    public String getOriginCountry() {
         return originCountry;
     }
 
-    public void setOriginCountry(Country originCountry) {
+    public void setOriginCountry(String originCountry) {
         this.originCountry = originCountry;
     }
 
@@ -102,67 +102,67 @@ public class User {
         this.profilePhotoURL = profilePhotoURL;
     }
 
-    public ArrayList<Language> getKnownLanguages() {
+    public ArrayList<String> getKnownLanguages() {
         return knownLanguages;
     }
 
-    public void setKnownLanguages(ArrayList<Language> knownLanguages) {
+    public void setKnownLanguages(ArrayList<String> knownLanguages) {
         this.knownLanguages = knownLanguages;
     }
 
-    public ArrayList<Language> getExploreLanguages() {
+    public ArrayList<String> getExploreLanguages() {
         return exploreLanguages;
     }
 
-    public void setExploreLanguages(ArrayList<Language> exploreLanguages) {
+    public void setExploreLanguages(ArrayList<String> exploreLanguages) {
         this.exploreLanguages = exploreLanguages;
     }
 
-    public ArrayList<Country> getKnownCountries() {
+    public ArrayList<String> getKnownCountries() {
         return knownCountries;
     }
 
-    public void setKnownCountries(ArrayList<Country> knownCountries) {
+    public void setKnownCountries(ArrayList<String> knownCountries) {
         this.knownCountries = knownCountries;
     }
 
-    public ArrayList<Country> getExploreCountries() {
+    public ArrayList<String> getExploreCountries() {
         return exploreCountries;
     }
 
-    public void setExploreCountries(ArrayList<Country> exploreCountries) {
+    public void setExploreCountries(ArrayList<String> exploreCountries) {
         this.exploreCountries = exploreCountries;
     }
 
-    public HashMap<Language, Integer> getHoursSpoken() {
+    public HashMap<String, Integer> getHoursSpoken() {
         return hoursSpoken;
     }
 
-    public void setHoursSpoken(HashMap<Language, Integer> hoursSpoken) {
+    public void setHoursSpoken(HashMap<String, Integer> hoursSpoken) {
         this.hoursSpoken = hoursSpoken;
     }
 
-    public ArrayList<User> getConfirmedFriends() {
+    public ArrayList<String> getConfirmedFriends() {
         return confirmedFriends;
     }
 
-    public void setConfirmedFriends(ArrayList<User> confirmedFriends) {
+    public void setConfirmedFriends(ArrayList<String> confirmedFriends) {
         this.confirmedFriends = confirmedFriends;
     }
 
-    public ArrayList<User> getPendingSentRequestFriends() {
+    public ArrayList<String> getPendingSentRequestFriends() {
         return pendingSentRequestFriends;
     }
 
-    public void setPendingSentRequestFriends(ArrayList<User> pendingSentRequestFriends) {
+    public void setPendingSentRequestFriends(ArrayList<String> pendingSentRequestFriends) {
         this.pendingSentRequestFriends = pendingSentRequestFriends;
     }
 
-    public ArrayList<User> getPendingReceivedRequestFriends() {
+    public ArrayList<String> getPendingReceivedRequestFriends() {
         return pendingReceivedRequestFriends;
     }
 
-    public void setPendingReceivedRequestFriends(ArrayList<User> pendingReceivedRequestFriends) {
+    public void setPendingReceivedRequestFriends(ArrayList<String> pendingReceivedRequestFriends) {
         this.pendingReceivedRequestFriends = pendingReceivedRequestFriends;
     }
 
