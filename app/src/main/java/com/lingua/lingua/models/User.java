@@ -103,6 +103,11 @@ public class User {
         this.firstName = firstName;
     }
 
+    public User(String id, String firstName) {
+        this.id = id;
+        this.firstName = firstName;
+    }
+
     public String getId() {
         return id;
     }

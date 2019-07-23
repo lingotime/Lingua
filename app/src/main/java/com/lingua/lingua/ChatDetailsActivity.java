@@ -15,6 +15,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.models.Message;
 import com.lingua.lingua.models.User;
 
@@ -51,7 +52,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         String chatId = getIntent().getStringExtra("chatId");
         String name = getIntent().getStringExtra("name"); //TODO: show as title in toolbar, if chat is not a group show name of friend
 
-        currentUser = new User("Marta"); //TODO: get current signed in user
+        currentUser = ChatFragment.currentUser; //TODO: get current signed in user
 
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
@@ -74,9 +75,13 @@ public class ChatDetailsActivity extends AppCompatActivity {
             if (!messageText.equals("")) {
                 Map<String, String> map = new HashMap<>();
                 map.put("message", messageText);
-                map.put("sender", "currentUserId");
+                map.put("sender", currentUser.getId());
                 reference.push().setValue(map);
                 etMessage.setText("");
+
+                // save this message as the lastMessage of the chat
+                Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
+                chatReference.child("lastMessage").setValue(messageText);
             }
         });
 

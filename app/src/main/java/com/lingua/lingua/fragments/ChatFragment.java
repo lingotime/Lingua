@@ -44,7 +44,7 @@ public class ChatFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private TextView tvNoChats;
 
-    private User currentUser;
+    public static User currentUser = new User("ms9Ipw52ccdEEt3CIyYUj12xLzs2", "Fausto");
 
     @Nullable
     @Override
@@ -57,11 +57,9 @@ public class ChatFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         tvNoChats = view.findViewById(R.id.fragment_chat_no_chats_tv);
-
-        currentUser = new User("Marta"); //TODO: get current signed in user
+        //TODO: get current signed in user
 
         chats = new ArrayList<>();
-
         queryChats();
 
         adapter = new ChatAdapter(getContext(), chats);
@@ -91,7 +89,6 @@ public class ChatFragment extends Fragment {
         String url = "https://lingua-project.firebaseio.com/users/vopjV0oYl5NXjvkLVjZgwGv93CG3/chats.json"; // TODO: change to current user id
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
-                Log.i("ChatFragment", s);
                 JSONArray array = new JSONArray(s);
                 for (int i = 0; i < array.length(); i++) {
                     queryChatInfo(array.getString(i));
@@ -106,9 +103,11 @@ public class ChatFragment extends Fragment {
                 swipeContainer.setRefreshing(false);
 
             } catch (JSONException e) {
+                swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
+            swipeContainer.setRefreshing(false);
             tvNoChats.setText("Oops! There was a connection error.");
             Log.e("ChatFragment", "" + volleyError);
         });
