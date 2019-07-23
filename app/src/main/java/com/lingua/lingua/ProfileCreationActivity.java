@@ -25,6 +25,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.firebase.client.Firebase;
+import com.hootsuite.nachos.NachoTextView;
+import com.lingua.lingua.models.User;
+
+import org.parceler.Parcels;
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.hootsuite.nachos.ChipConfiguration;
 import com.hootsuite.nachos.NachoTextView;
@@ -60,7 +67,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private EditText bio;
     public static final int CAMERA_ACTIVITY = 700; // return code for the profile picture activity
 
-
+    private User currentUser;
 
     // target languages will be an EditText and then separate them to form an ArrayList
     // their bio
@@ -70,6 +77,8 @@ public class ProfileCreationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_creation);
+
+
 
         Toolbar toolbar = findViewById(R.id.activity_profile_creation_toolbar);
         // Sets the Toolbar to act as the ActionBar for this Activity window.
@@ -95,6 +104,30 @@ public class ProfileCreationActivity extends AppCompatActivity {
         targetCountries = (NachoTextView) findViewById(R.id.activity_profile_creation_targetCountries);
         bio = (EditText) findViewById(R.id.activity_profile_creation_bio);
         btnSubmit = (Button) findViewById(R.id.activity_profile_creation_submit);
+
+        // added by fausto - prepopulate data
+        // prepopulate data from the current user
+        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+
+        if (currentUser.getBiographyText() != null) {
+            bio.setText(currentUser.getBiographyText());
+        }
+
+        if (currentUser.getOriginCountry() != null) {
+            originCountry.setText(currentUser.getOriginCountry());
+        }
+
+        if (currentUser.getKnownLanguages() != null) {
+            currentLanguages.setText(currentUser.getKnownLanguages());
+        }
+
+        if (currentUser.getExploreLanguages() != null) {
+            targetLanguages.setText(currentUser.getExploreLanguages());
+        }
+
+        if (currentUser.getExploreCountries() != null) {
+            targetCountries.setText(currentUser.getExploreCountries());
+        }
 
         // TODO: create adapters with a list of the possibilities for autocompletion and set it upon creation
 
@@ -160,6 +193,18 @@ public class ProfileCreationActivity extends AppCompatActivity {
             }
         });
 
+        // added by fausto
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveData();
+
+                final Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
+                intent.putExtra("user", Parcels.wrap(currentUser));
+                startActivity(intent);
+            }
+        });
+
 
 
         // TODO: Set the onlick listener for the Submit button and place the info into the User class connected to the database
@@ -178,6 +223,17 @@ public class ProfileCreationActivity extends AppCompatActivity {
         });
 
         //TODO: Check if a user is already logged in and in this case, they've come from the profile fragment with a desire to edit their page. Prepopulate the edittexts before they enter anything
+    }
+
+    private void saveData() {
+        currentUser.setBiographyText(bio.getText().toString());
+        currentUser.setOriginCountry(originCountry.getChipValues().get(0));
+        currentUser.setKnownLanguages((ArrayList) currentLanguages.getChipValues());
+        currentUser.setExploreLanguages((ArrayList) targetLanguages.getChipValues());
+        currentUser.setExploreCountries((ArrayList) targetCountries.getChipValues());
+        // save
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+        databaseReference.child(currentUser.getId()).setValue(currentUser);
     }
 
     @Override
