@@ -55,7 +55,7 @@ public class ChatFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         tvNoChats = view.findViewById(R.id.fragment_chat_no_chats_tv);
-
+        tvNoChats.setVisibility(View.GONE);
         chats = new ArrayList<>();
         queryChats();
 
@@ -94,9 +94,6 @@ public class ChatFragment extends Fragment {
                 if (array.length() == 0) {
                     tvNoChats.setVisibility(View.VISIBLE);
                     rvChats.setVisibility(View.GONE);
-                } else {
-                    tvNoChats.setVisibility(View.GONE);
-                    rvChats.setVisibility(View.VISIBLE);
                 }
                 swipeContainer.setRefreshing(false);
 
@@ -106,6 +103,8 @@ public class ChatFragment extends Fragment {
             }
         }, volleyError -> {
             swipeContainer.setRefreshing(false);
+            tvNoChats.setVisibility(View.VISIBLE);
+            rvChats.setVisibility(View.GONE);
             tvNoChats.setText("Oops! There was a connection error.");
             Log.e("ChatFragment", "" + volleyError);
         });

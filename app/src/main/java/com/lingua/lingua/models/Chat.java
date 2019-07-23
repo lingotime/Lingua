@@ -1,8 +1,7 @@
 package com.lingua.lingua.models;
 
 /*
-Chat class with
-TODO: make this class Firebase compatible, save and query chats methods
+Chat class
 */
 
 import android.text.format.DateUtils;
@@ -43,7 +42,7 @@ public class Chat {
         return lastUpdatedAt;
     }
 
-    // "Tue Jul 09 17:22:36 PDT 2019"
+    // Converts from date format "Tue Jul 09 17:22:36 PDT 2019" to "5 min. ago"
     public static String getRelativeTimeAgo(String rawDate) {
         String parseFormat = "EEE MMM dd HH:mm:ss zzz yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(parseFormat, Locale.ENGLISH);
