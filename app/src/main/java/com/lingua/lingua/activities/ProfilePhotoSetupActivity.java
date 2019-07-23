@@ -70,7 +70,7 @@ public class ProfilePhotoSetupActivity extends AppCompatActivity {
 
                 Intent data = new Intent();
                 data.putExtra("profilePicture", getImageUri(ProfilePhotoSetupActivity.this, profilePicture).toString());
-                setResult(ProfileInfoSetupActivity.CAMERA_ACTIVITY, data);
+                setResult(700, data);
                 finish();
 
             }

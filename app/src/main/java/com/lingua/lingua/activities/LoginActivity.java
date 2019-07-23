@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
         // extract data from Firebase user object
         String firebaseUserID = tempFirebaseUser.getUid();
         String firebaseUserDisplayName = tempFirebaseUser.getDisplayName();
-        String firebaseUserProfilePhotoURL = tempFirebaseUser.getPhotoUrl().getPath();
+        String firebaseUserProfilePhotoURL = "https://graph.facebook.com" + tempFirebaseUser.getPhotoUrl().getPath() + "?type=large";
 
         String databaseURL = "https://lingua-project.firebaseio.com/users.json";
 

@@ -364,7 +364,7 @@ public class Country {
         put("Bolivia, Plurinational State of", "bo");
         put("Bosnia and Herzegovina", "ba");
         put("Botswana", "bw");
-        put("Bouvet Island", "bv");
+        put("Bouvet Island", "bv"); // circular icon not found
         put("Brazil", "br");
         put("British Indian Ocean Territory", "io");
         put("Brunei Darussalam", "bn");
@@ -375,7 +375,7 @@ public class Country {
         put("Cameroon", "cm");
         put("Canada", "ca");
         put("Cape Verde", "cv");
-        put("Caribbean Netherlands", "bq");
+        put("Caribbean Netherlands", "bq"); // circular icon not found
         put("Cayman Islands", "ky");
         put("Central African Republic", "cf");
         put("Chad", "td");
@@ -413,9 +413,9 @@ public class Country {
         put("Fiji", "fj");
         put("Finland", "fi");
         put("France", "fr");
-        put("French Guiana", "gf");
+        put("French Guiana", "gf"); // circular icon not found
         put("French Polynesia", "pf");
-        put("French Southern Territories", "tf");
+        put("French Southern Territories", "tf"); // circular icon not found
         put("Gabon", "ga");
         put("Gambia", "gm");
         put("Georgia", "ge");
@@ -425,7 +425,7 @@ public class Country {
         put("Greece", "gr");
         put("Greenland", "gl");
         put("Grenada", "gd");
-        put("Guadeloupe", "gp");
+        put("Guadeloupe", "gp"); // circular icon not found
         put("Guam", "gu");
         put("Guatemala", "gt");
         put("Guernsey", "gg");
@@ -433,7 +433,7 @@ public class Country {
         put("Guinea-Bissau", "gw");
         put("Guyana", "gy");
         put("Haiti", "ht");
-        put("Heard Island and McDonald Islands", "hm");
+        put("Heard Island and McDonald Islands", "hm"); // circular icon not found
         put("Holy See (Vatican City State)", "va");
         put("Honduras", "hn");
         put("Hong Kong", "hk");
@@ -480,7 +480,7 @@ public class Country {
         put("Martinique", "mq");
         put("Mauritania", "mr");
         put("Mauritius", "mu");
-        put("Mayotte", "yt");
+        put("Mayotte", "yt"); // circular icon not found
         put("Mexico", "mx");
         put("Micronesia, Federated States of", "fm");
         put("Moldova, Republic of", "md");
@@ -494,16 +494,16 @@ public class Country {
         put("Namibia", "na");
         put("Nauru", "nr");
         put("Nepal", "np");
-        put("Netherlands Antilles", "an");
+        put("Netherlands Antilles", "an"); // circular icon not found
         put("Netherlands", "nl");
-        put("New Caledonia", "nc");
+        put("New Caledonia", "nc"); // circular icon not found
         put("New Zealand", "nz");
         put("Nicaragua", "ni");
         put("Niger", "ne");
         put("Nigeria", "ng");
         put("Niue", "nu");
         put("Norfolk Island", "nf");
-        put("Northern Ireland", "gb_nir");
+        put("Northern Ireland", "gb_nir"); // circular icon not found
         put("Northern Mariana Islands", "mp");
         put("Norway", "no");
         put("Oman", "om");
@@ -520,16 +520,16 @@ public class Country {
         put("Portugal", "pt");
         put("Puerto Rico", "pr");
         put("Qatar", "qa");
-        put("Reunion", "re");
+        put("Reunion", "re"); // circular icon not found
         put("Romania", "ro");
         put("Russian Federation", "ru");
         put("Rwanda", "rw");
         put("Saint Barthelemy", "bl");
-        put("Saint Helena, Ascension and Tristan da Cunha", "sh");
+        put("Saint Helena, Ascension and Tristan da Cunha", "sh"); // circular icon not found
         put("Saint Kitts and Nevis", "kn");
         put("Saint Lucia", "lc");
-        put("Saint Martin", "mf");
-        put("Saint Pierre and Miquelon", "pm");
+        put("Saint Martin", "mf"); // circular icon not found
+        put("Saint Pierre and Miquelon", "pm"); // circular icon not found
         put("Saint Vincent and the Grenadines", "vc");
         put("Samoa", "ws");
         put("San Marino", "sm");
@@ -547,13 +547,13 @@ public class Country {
         put("Solomon Islands", "sb");
         put("Somalia", "so");
         put("South Africa", "za");
-        put("South Georgia and the South Sandwich Islands", "gs");
+        put("South Georgia and the South Sandwich Islands", "gs"); // circular icon not found
         put("South Sudan", "ss");
         put("Spain", "es");
         put("Sri Lanka", "lk");
         put("Sudan", "sd");
         put("Suriname", "sr");
-        put("Svalbard and Jan Mayen Islands", "sj");
+        put("Svalbard and Jan Mayen Islands", "sj"); // circular icon not found
         put("Swaziland", "sz");
         put("Sweden", "se");
         put("Switzerland", "ch");
@@ -586,7 +586,7 @@ public class Country {
         put("Virgin Islands, British", "vg");
         put("Virgin Islands, U.S.", "vi");
         put("Wales", "gb_wls");
-        put("Wallis and Futuna Islands", "wf");
+        put("Wallis and Futuna Islands", "wf"); // circular icon not found
         put("Western Sahara", "eh");
         put("Yemen", "ye");
         put("Zambia", "zm");

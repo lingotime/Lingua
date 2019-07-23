@@ -1,125 +1,288 @@
 package com.lingua.lingua.activities;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
 import android.content.Intent;
-import android.net.Uri;
+import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
-
+import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.firebase.client.Firebase;
+import com.google.android.material.textfield.TextInputEditText;
+import com.hootsuite.nachos.ChipConfiguration;
 import com.hootsuite.nachos.NachoTextView;
+import com.hootsuite.nachos.chip.ChipSpan;
+import com.hootsuite.nachos.chip.ChipSpanChipCreator;
+import com.hootsuite.nachos.tokenizer.SpanChipTokenizer;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.Country;
 import com.lingua.lingua.models.Language;
+import com.lingua.lingua.models.User;
+import org.parceler.Parcels;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
-import java.io.File;
-
-/**
- * Activity that allows the user to input their information relevant to the main functions of the app after getting past Auth
- */
+/* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
 
 public class ProfileInfoSetupActivity extends AppCompatActivity {
+    private User currentUser;
 
-
-    private ImageView profilePicture; // will be taken from OAuth
-    private TextView fullName;
-    private TextView username;
-    private NachoTextView originCountry;
-    private NachoTextView currentLanguages;
-    private NachoTextView targetLanguages;
-    private NachoTextView targetCountries;
-    private Button btnSubmit;
-    private EditText bio;
-    public static final int CAMERA_ACTIVITY = 700; // return code for the profile picture activity
-
-
-
-    // target languages will be an EditText and then separate them to form an ArrayList
-    // their bio
-    // target countries will be the same as target languages
+    private TextView descriptionText;
+    private ImageView profileImage;
+    private EditText nameField;
+    private EditText birthdateField;
+    private TextView boyText;
+    private Switch genderSwitch;
+    private TextView girlText;
+    private TextInputEditText biographyField;
+    private TextInputEditText originCountryField;
+    private NachoTextView knownLanguagesField;
+    private NachoTextView exploreLanguagesField;
+    private NachoTextView knownCountriesField;
+    private NachoTextView exploreCountriesField;
+    private Button continueButton;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_info_setup);
 
-        // Sets the Toolbar to act as the ActionBar for this Activity window.
-        // Make sure the toolbar exists in the activity and is not null
+        // associate views with java variables
+        descriptionText = findViewById(R.id.activity_profile_info_setup_description_text);
+        profileImage = findViewById(R.id.activity_profile_info_setup_profile_image);
+        nameField = findViewById(R.id.activity_profile_info_setup_name_field);
+        birthdateField = findViewById(R.id.activity_profile_info_setup_birthdate_field);
+        boyText = findViewById(R.id.activity_profile_info_setup_boy_text);
+        genderSwitch = findViewById(R.id.activity_profile_info_setup_gender_switch);
+        girlText = findViewById(R.id.activity_profile_info_setup_girl_text);
+        biographyField = findViewById(R.id.activity_profile_info_setup_biography_field);
+        originCountryField = findViewById(R.id.activity_profile_info_setup_origin_country_field);
+        knownLanguagesField = findViewById(R.id.activity_profile_info_setup_known_languages_field);
+        exploreLanguagesField = findViewById(R.id.activity_profile_info_setup_explore_languages_field);
+        knownCountriesField = findViewById(R.id.activity_profile_info_setup_known_countries_field);
+        exploreCountriesField = findViewById(R.id.activity_profile_info_setup_explore_countries_field);
+        continueButton = findViewById(R.id.activity_profile_info_setup_continue_button);
 
-        getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE |
-                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE );
+        // unwrap the current user
+        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
-        //TODO: add a button to allow for the change in the profile image
-        profilePicture = (ImageView) findViewById(R.id.activity_profile_info_setup_profile_image);
-        // TODO: get the full name, username, and maybe profile picture from the sign up or login through Google or Facebook
-//        fullName = (TextView) findViewById(R.id.activity_profile_creation_fullName);
-//        username = (TextView) findViewById(R.id.activity_profile_creation_username);
-        originCountry = (NachoTextView) findViewById(R.id.activity_profile_info_setup_origin_country_field);
-        // TODO: split the strings by commas and place them into an array list of the same fields in the user
-        currentLanguages = (NachoTextView) findViewById(R.id.activity_profile_info_setup_known_languages_field);
-        targetLanguages = (NachoTextView) findViewById(R.id.activity_profile_info_setup_explore_languages_field);
-        targetCountries = (NachoTextView) findViewById(R.id.activity_profile_info_setup_explore_countries_field);
-        bio = (EditText) findViewById(R.id.activity_profile_info_setup_biography_field);
-        btnSubmit = (Button) findViewById(R.id.activity_profile_info_setup_continue_button);
+        // prepopulate data from the current user
+        if (currentUser.getUserName() != null) {
+            nameField.setText(currentUser.getUserName());
+        }
 
-        // TODO: create adapters with a list of the possibilities for autocompletion and set it upon creation
+        if (currentUser.getUserBirthDate() != null) {
+            birthdateField.setText(currentUser.getUserBirthDate().getMonth() + "/" + currentUser.getUserBirthDate().getDay() + "/" + currentUser.getUserBirthDate().getYear());
+        }
 
-        ArrayAdapter<String> adapterCountries = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, Country.COUNTRIES);
+        if (currentUser.getUserGender() != null) {
+            if (currentUser.getUserGender().equals("Girl")) {
+                genderSwitch.setChecked(true);
+            } else {
+                genderSwitch.setChecked(false);
+            }
+        }
 
-        ArrayAdapter<String> adapterLanguages = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, Language.LANGUAGES);
+        if (currentUser.getUserBiographyText() != null) {
+            biographyField.setText(currentUser.getUserBiographyText());
+        }
 
+        if (currentUser.getUserOriginCountry() != null) {
+            originCountryField.setText(currentUser.getUserOriginCountry());
+        }
 
-        targetCountries.setAdapter(adapterCountries);
-//        targetCountries.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
 
+        if (currentUser.getKnownLanguages() != null) {
+            knownLanguagesField.setText(currentUser.getKnownLanguages());
+        }
 
-        currentLanguages.setAdapter(adapterLanguages);
-//        currentLanguages.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        if (currentUser.getExploreLanguages() != null) {
+            exploreLanguagesField.setText(currentUser.getExploreLanguages());
+        }
 
-        targetLanguages.setAdapter(adapterLanguages);
-//        targetLanguages.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        if (currentUser.getKnownCountries() != null) {
+            knownCountriesField.setText(currentUser.getKnownCountries());
+        }
 
-        originCountry.setAdapter(adapterCountries);
+        if (currentUser.getExploreCountries() != null) {
+            exploreCountriesField.setText(currentUser.getExploreCountries());
+        }
 
-
-        profilePicture.setOnClickListener(new View.OnClickListener() {
+        // enable the profile image to be clickable
+        profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Launch the activity that will allow the user to take a picture
-                Intent intent = new Intent(ProfileInfoSetupActivity.this, ProfilePhotoSetupActivity.class);
-                startActivityForResult(intent, CAMERA_ACTIVITY);
+                // save the updated data
+                saveData();
+
+                // proceed to photo setup activity
+                final Intent intent = new Intent(ProfileInfoSetupActivity.this, ProfilePhotoSetupActivity.class);
+                intent.putExtra("user", Parcels.wrap(currentUser));
+                startActivity(intent);
             }
         });
 
+        // set adapters for each field with chip functionality
+        ArrayAdapter<String> countriesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, Country.COUNTRIES);
+        ArrayAdapter<String> languagesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, Language.LANGUAGES);
+        knownLanguagesField.setAdapter(languagesAdapter);
+        exploreLanguagesField.setAdapter(languagesAdapter);
+        knownCountriesField.setAdapter(countriesAdapter);
+        exploreCountriesField.setAdapter(countriesAdapter);
 
+        // set a flag icon with each country chip entered
+        knownCountriesField.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
+            @Override
+            public ChipSpan createChip(@NonNull Context context, @NonNull CharSequence text, Object data) {
+                Drawable flagDrawable;
+                try {
+                    // attempt to load correct flag icon
+                    String flagPhotoFileName = Country.COUNTRY_CODES.get(text.toString()) + "_round";
+                    flagDrawable = getResources().getDrawable(getResources().getIdentifier(flagPhotoFileName, "drawable", getPackageName()));
+                } catch (Exception exception) {
+                    // load United Nations flag icon if error occurs
+                    String flagPhotoFileName = "un_round";
+                    flagDrawable = getResources().getDrawable(getResources().getIdentifier(flagPhotoFileName, "drawable", getPackageName()));
+                }
+                return new ChipSpan(context, text, flagDrawable, data);
+            }
 
-        // TODO: Set the onlick listener for the Submit button and place the info into the User class connected to the database
+            @Override
+            public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
+                super.configureChip(chip, chipConfiguration);
+                chip.setShowIconOnLeft(true);
+            }
+        }, ChipSpan.class));
+
+        // set a flag icon with each country chip entered
+        exploreCountriesField.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
+            @Override
+            public ChipSpan createChip(@NonNull Context context, @NonNull CharSequence text, Object data) {
+                Drawable flagDrawable;
+                try {
+                    // attempt to load correct flag icon
+                    String flagPhotoFileName = Country.COUNTRY_CODES.get(text.toString()) + "_round";
+                    flagDrawable = getResources().getDrawable(getResources().getIdentifier(flagPhotoFileName, "drawable", getPackageName()));
+                } catch (Exception exception) {
+                    // load United Nations flag icon if error occurs
+                    String flagPhotoFileName = "un_round";
+                    flagDrawable = getResources().getDrawable(getResources().getIdentifier(flagPhotoFileName, "drawable", getPackageName()));
+                }
+                return new ChipSpan(context, text, flagDrawable, data);
+            }
+
+            @Override
+            public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
+                super.configureChip(chip, chipConfiguration);
+                chip.setShowIconOnLeft(true);
+            }
+        }, ChipSpan.class));
+
+        // set the continue button to be clickable
+        continueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // save the updated data
+                saveData();
+
+                // proceed to main activity, if data was successfully saved to an acceptable level
+                if (currentUser.isComplete()) {
+                    final Intent intent = new Intent(ProfileInfoSetupActivity.this, MainActivity.class);
+                    intent.putExtra("user", Parcels.wrap(currentUser));
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == CAMERA_ACTIVITY) {
-            // extract the URI string, parse it into a URI object and set bitmap to the profile image view
-            String imagePath = data.getStringExtra("profilePicture");
-            Uri imageUri = Uri.parse(imagePath);
-            // load image into view
-            // TODO: fix the method to load in the image - probably from the stored URI
-            Glide.with(this)
-                    .load(new File(imageUri.getPath()))
-                    .into(profilePicture);
+    private void saveData() {
+        boolean isCompleteCheck = true;
+
+        // deal with userName
+        String userNameInput = nameField.getText().toString();
+
+        if (userNameInput.length() >= 5 && userNameInput.contains(" ")) {
+            currentUser.setUserName(userNameInput);
+        } else {
+            isCompleteCheck = false;
+            Toast.makeText(ProfileInfoSetupActivity.this, "Please enter a valid full name.", Toast.LENGTH_LONG).show();
         }
+
+        // deal with userBirthDate
+        String userBirthDateInput = birthdateField.getText().toString();
+
+        try {
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            Date userBirthDateInputAsDate = inputDateFormat.parse(userBirthDateInput);
+            currentUser.setUserBirthDate(userBirthDateInputAsDate);
+        } catch (ParseException exception) {
+            isCompleteCheck = false;
+            Toast.makeText(ProfileInfoSetupActivity.this, "Please enter a valid birth date. Format: mm/dd/yyyy", Toast.LENGTH_LONG).show();
+        }
+
+        // deal with userGender
+        boolean userGenderInput = genderSwitch.isChecked();
+
+        if (userGenderInput) {
+            currentUser.setUserGender("Girl");
+        } else {
+            currentUser.setUserGender("Boy");
+        }
+
+        // deal with userBiographyText
+        String userBiographyTextInput = biographyField.getText().toString();
+
+        if (userBiographyTextInput.length() >= 4) {
+            currentUser.setUserBiographyText(userBiographyTextInput);
+        } else {
+            isCompleteCheck = false;
+            Toast.makeText(ProfileInfoSetupActivity.this, "Please enter a biography that is at least four characters.", Toast.LENGTH_LONG).show();
+        }
+
+        // deal with userOriginCountry
+        String userOriginCountryInput = originCountryField.getText().toString();
+
+        if (userOriginCountryInput.length() >= 4) {
+            currentUser.setUserOriginCountry(userOriginCountryInput);
+        } else {
+            isCompleteCheck = false;
+            Toast.makeText(ProfileInfoSetupActivity.this, "Please enter a valid country name.", Toast.LENGTH_LONG).show();
+        }
+
+        // deal with knownLanguages
+        ArrayList<String> knownLanguagesInput = (ArrayList) knownLanguagesField.getChipValues();
+        currentUser.setKnownLanguages(knownLanguagesInput);
+
+        // deal with exploreLanguages
+        ArrayList<String> exploreLanguagesInput = (ArrayList) exploreLanguagesField.getChipValues();
+        currentUser.setExploreLanguages(exploreLanguagesInput);
+
+        // deal with knownCountries
+        ArrayList<String> knownCountriesInput = (ArrayList) knownCountriesField.getChipValues();
+        currentUser.setKnownCountries(knownCountriesInput);
+
+        // deal with exploreCountries
+        ArrayList<String> exploreCountriesInput = (ArrayList) exploreCountriesField.getChipValues();
+        currentUser.setExploreCountries(exploreCountriesInput);
+
+        // deal with isComplete
+        currentUser.setComplete(isCompleteCheck);
+
+        // save
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
     }
 }

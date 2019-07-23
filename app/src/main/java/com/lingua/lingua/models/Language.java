@@ -94,7 +94,7 @@ public class Language {
             "Chamorro",
             "Chao-chow",
             "Chavacano",
-            "Chin",
+            "Chinese",
             "Chuukese",
             "Cree",
             "Croatian",
