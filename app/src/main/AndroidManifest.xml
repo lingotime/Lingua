@@ -14,14 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="adjustResize">
-
-        <activity android:name=".ProfilePicture"></activity>
+        <activity android:name=".VideoCallActivity"></activity>
+        <activity android:name=".ProfilePicture" />
         <activity
             android:name=".ProfileCreationActivity"
-            android:windowSoftInputMode="adjustResize">
-
-        </activity> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
-        android:usesCleartextTraffic="true">
+            android:windowSoftInputMode="adjustResize"></activity> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -62,7 +59,6 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
