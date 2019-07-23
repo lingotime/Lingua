@@ -1,6 +1,5 @@
 package com.lingua.lingua;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -14,6 +13,7 @@ import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
+import com.lingua.lingua.models.User;
 
 /*
 Main Activity with bottom navigation bar that handles switching between fragments
@@ -22,6 +22,8 @@ Main Activity with bottom navigation bar that handles switching between fragment
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
+
+    public static User currentUser = new User("fXTkmMEQadZ25d0NK3tND6MPbDW2", "Marta"); //TODO: get current signed in user
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

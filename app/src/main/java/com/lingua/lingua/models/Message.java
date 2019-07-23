@@ -2,47 +2,25 @@ package com.lingua.lingua.models;
 
 /*
 Message class with body of message, sender, receiver and timestamp
-TODO: make this class Firebase compatible, save and query messages methods
 */
 
 public class Message {
 
     String message;
-    User sender;
-    User receiver;
-    long createdAt;
+    String senderId;
+    String timestamp;
 
-    public Message() {}
+    public Message(String senderId, String message, String timestamp) {
+        this.senderId = senderId;
+        this.message = message;
+        this.timestamp = timestamp;
+    }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+    public String getSenderId() { return senderId; }
 
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
-    }
-
-    public long getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
-    }
+    public String getTimestamp() { return timestamp; }
 }

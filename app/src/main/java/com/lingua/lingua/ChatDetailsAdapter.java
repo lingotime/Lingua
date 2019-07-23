@@ -9,8 +9,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
 import com.lingua.lingua.models.Message;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /*
 RecyclerView Adapter that adapts Message objects to the viewholders in the recyclerview
@@ -52,6 +57,16 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
         tvMessage.setText(message.getMessage());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+        try {
+            Date timestamp = dateFormat.parse(message.getTimestamp());
+            DateFormat hourFormat = new SimpleDateFormat("hh:mm a");
+            String hour = hourFormat.format(timestamp);
+            tvTimestamp.setText(hour);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -63,7 +78,7 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-        if (message.getSender().getFirstName().equals("Marta")) { // change to current user
+        if (message.getSenderId().equals(MainActivity.currentUser.getId())) {
             // If the current user is the sender of the message
             return VIEW_TYPE_MESSAGE_SENT;
         } else {

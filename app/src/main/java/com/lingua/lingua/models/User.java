@@ -43,7 +43,12 @@ public class User {
     }
 
     public User(String firstName) {
-        this.firstName = getFirstName();
+        this.firstName = firstName;
+    }
+
+    public User(String id, String firstName) {
+        this.id = id;
+        this.firstName = firstName;
     }
 
     public String getId() {
