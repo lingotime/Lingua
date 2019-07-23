@@ -2,6 +2,7 @@ package com.lingua.lingua;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private TextView tvText;
     private TextView tvTimestamp;
 
-    private Chat chat;
-
     public ChatAdapter(Context context, List<Chat> chats) {
         this.context = context;
         this.chats = chats;
@@ -45,7 +44,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
-        chat = chats.get(position);
+        Chat chat = chats.get(position);
         tvName.setText(chat.getName());
         tvText.setText(chat.getLastMessage());
     }
@@ -70,8 +69,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
                 Intent intent = new Intent(context, ChatDetailsActivity.class);
+                Chat chat = chats.get(position);
                 intent.putExtra("chatId", chat.getId());
                 intent.putExtra("name", chat.getName());
+                Log.i("ChatAdapter", chat.getId());
                 context.startActivity(intent);
             }
         }

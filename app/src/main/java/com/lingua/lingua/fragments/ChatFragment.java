@@ -96,7 +96,6 @@ public class ChatFragment extends Fragment {
                     queryChatInfo(array.getString(i));
                 }
                 swipeContainer.setRefreshing(false);
-                Log.i("ChatFragment", String.valueOf(chats.size()));
                 if (array.length() < 1) {
                     tvNoChats.setVisibility(View.VISIBLE);
                     rvChats.setVisibility(View.GONE);

@@ -2,6 +2,7 @@ package com.lingua.lingua;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -48,12 +49,13 @@ public class ChatDetailsActivity extends AppCompatActivity {
         messages = new ArrayList<>();
 
         String chatId = getIntent().getStringExtra("chatId");
-        String name = getIntent().getStringExtra("name"); //TODO: show as title in toolbar
+        String name = getIntent().getStringExtra("name"); //TODO: show as title in toolbar, if chat is not a group show name of friend
 
         currentUser = new User("Marta"); //TODO: get current signed in user
 
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
+        Log.i("ChatDetailsActivity", chatId);
 
         adapter = new ChatDetailsAdapter(this, messages);
         rvMessages.setAdapter(adapter);
@@ -81,11 +83,13 @@ public class ChatDetailsActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Map map = dataSnapshot.getValue(Map.class);
-                String message = map.get("message").toString();
-                String senderId = map.get("sender").toString();
-
-                messages.add(new Message(senderId, message)); //TODO: get user from user ID
-                adapter.notifyDataSetChanged();
+                if (map.get("sender") != null && map.get("message") != null) {
+                    String senderId = map.get("sender").toString();
+                    String message = map.get("message").toString();
+                    Log.i("ChatDetailsActivity", message + chatId);
+                    messages.add(new Message(senderId, message));
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override
