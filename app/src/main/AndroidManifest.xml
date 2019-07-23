@@ -17,9 +17,9 @@
         android:usesCleartextTraffic="true">
      
         <activity android:name=".ProfilePicture"></activity>
-        <activity android:name=".ProfileCreationActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+        <activity android:name=".MainActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".ProfileCreationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
