@@ -20,9 +20,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.ChatAdapter;
+import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.Chat;
-import com.lingua.lingua.models.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,8 +44,6 @@ public class ChatFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private TextView tvNoChats;
 
-    public static User currentUser = new User("ms9Ipw52ccdEEt3CIyYUj12xLzs2", "Fausto");
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,7 +55,6 @@ public class ChatFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         tvNoChats = view.findViewById(R.id.fragment_chat_no_chats_tv);
-        //TODO: get current signed in user
 
         chats = new ArrayList<>();
         queryChats();
@@ -86,10 +83,11 @@ public class ChatFragment extends Fragment {
     }
 
     private void queryChats() {
-        String url = "https://lingua-project.firebaseio.com/users/vopjV0oYl5NXjvkLVjZgwGv93CG3/chats.json"; // TODO: change to current user id
+        String url = "https://lingua-project.firebaseio.com/users/" + MainActivity.currentUser.getId() + "/chats.json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONArray array = new JSONArray(s);
+                Log.i("ChatFragment", array.toString());
                 for (int i = 0; i < array.length(); i++) {
                     queryChatInfo(array.getString(i));
                 }
@@ -121,9 +119,11 @@ public class ChatFragment extends Fragment {
         StringRequest chatInfoRequest = new StringRequest(Request.Method.GET, chatUrl, s -> {
             try {
                 JSONObject chat = new JSONObject(s);
+                Log.i("ChatFragment", chat.toString());
                 String name = chat.getString("name");
                 String lastMessage = chat.getString("lastMessage");
-                chats.add(new Chat(id, name, lastMessage));
+                String lastMessageAt = chat.getString("lastMessageAt");
+                chats.add(new Chat(id, name, lastMessage, lastMessageAt));
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();

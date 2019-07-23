@@ -9,30 +9,19 @@ public class Message {
 
     String message;
     String senderId;
-    long createdAt;
+    String timestamp;
 
-    public Message(String senderId, String message) {
+    public Message(String senderId, String message, String timestamp) {
         this.senderId = senderId;
         this.message = message;
+        this.timestamp = timestamp;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+    public String getSenderId() { return senderId; }
 
-    public String getSenderId() {
-        return senderId;
-    }
-
-    public long getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
-    }
+    public String getTimestamp() { return timestamp; }
 }

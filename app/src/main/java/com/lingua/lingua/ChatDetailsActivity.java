@@ -15,7 +15,6 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.models.Message;
 import com.lingua.lingua.models.User;
 
@@ -53,7 +52,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         String chatId = getIntent().getStringExtra("chatId");
         String name = getIntent().getStringExtra("name"); //TODO: show as title in toolbar, if chat is not a group show name of friend
 
-        currentUser = ChatFragment.currentUser; //TODO: get current signed in user
+        currentUser = MainActivity.currentUser;
 
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
@@ -72,18 +71,19 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
         sendButton.setOnClickListener(view -> {
             String messageText = etMessage.getText().toString();
-
+            String timestamp = new Date().toString();
             if (!messageText.equals("")) {
                 Map<String, String> map = new HashMap<>();
                 map.put("message", messageText);
                 map.put("sender", currentUser.getId());
-                map.put("timestamp", new Date().toString());
+                map.put("timestamp", timestamp);
                 reference.push().setValue(map);
                 etMessage.setText("");
 
                 // save this message as the lastMessage of the chat
                 Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
                 chatReference.child("lastMessage").setValue(messageText);
+                chatReference.child("lastMessageAt").setValue(timestamp);
             }
         });
 
@@ -94,8 +94,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 if (map.get("sender") != null && map.get("message") != null) {
                     String senderId = map.get("sender").toString();
                     String message = map.get("message").toString();
-                    Log.i("ChatDetailsActivity", message + chatId);
-                    messages.add(new Message(senderId, message));
+                    String timestamp = map.get("timestamp").toString();
+                    messages.add(new Message(senderId, message, timestamp));
                     adapter.notifyDataSetChanged();
                 }
             }
