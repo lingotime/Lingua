@@ -40,8 +40,8 @@ public class VideoCallActivity extends AppCompatActivity implements com.opentok.
     private FrameLayout mPublisherViewContainer;
     private FrameLayout mSubscriberViewContainer;
     private ImageButton endCall;
-    String sessionId = null;
-    String token = null;
+    String sessionId;
+    String token;
 
     // remember to close the OpenTok object with opentok.close()
 
@@ -58,13 +58,13 @@ public class VideoCallActivity extends AppCompatActivity implements com.opentok.
             // Store this sessionId in the database for later use:
             sessionId = session.getSessionId();
             // Generate a token by calling the method on the Session (returned from createSession)
-            String token = session.generateToken();
+            token = session.generateToken();
             // now both user need to be added to the session
-
+            requestPermissions();
+            opentok.close();
         } catch (OpenTokException e) {
             e.printStackTrace();
         }
-
     }
 
     // boilerplate code to use EasyPermissions library which will allow app to access the user's camera and video.
