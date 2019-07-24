@@ -1,13 +1,17 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingua.lingua.models.User;
@@ -30,6 +34,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     private TextView tvAge;
     private TextView tvGender;
     private TextView tvFrom;
+    private Button friendRequestButton;
 
     public ExploreAdapter(Context context, List<User> users) {
         this.context = context;
@@ -47,6 +52,33 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final User user = users.get(position);
         tvName.setText(user.getFirstName());
+
+        friendRequestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                final View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
+                dialogBuilder.setView(dialogView);
+
+                dialogBuilder.setTitle("Send friend request to " + user.getFirstName());
+                dialogBuilder.setMessage("Tell " + user.getFirstName() + " a little about yourself!");
+                dialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // TODO: send friend request
+                                }
+                            });
+                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.d("ExploreAdapter", "Cancelled friend request");
+                                }
+                            });
+                AlertDialog dialog = dialogBuilder.create();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
+            }
+        });
     }
 
     @Override
@@ -64,6 +96,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             tvBio = itemView.findViewById(R.id.item_user_tv_bio);
             tvGender = itemView.findViewById(R.id.item_user_tv_gender);
             tvFrom = itemView.findViewById(R.id.item_user_tv_from);
+            friendRequestButton = itemView.findViewById(R.id.item_user_friend_request_button);
         }
     }
 
