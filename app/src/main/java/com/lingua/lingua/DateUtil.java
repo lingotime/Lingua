@@ -12,7 +12,6 @@ import java.util.Locale;
 Class with helper methods for changing date formats
 */
 
-
 public class DateUtil {
 
     // Converts from date format "Tue Jul 09 17:22:36 PDT 2019" to "5 min. ago"

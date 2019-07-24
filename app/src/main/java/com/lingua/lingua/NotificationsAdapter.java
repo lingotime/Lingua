@@ -2,6 +2,7 @@ package com.lingua.lingua;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,8 +59,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final FriendRequest friendRequest = friendRequests.get(position);
+        Log.i("NotificationsAdapter", friendRequest.getMessage());
+        Log.i("NotificationsAdapter", friendRequest.getSenderName()); //TODO: fix layout so it shows
         tvMessage.setText(friendRequest.getMessage());
-        tvName.setText(friendRequest.getSenderName());
 
         Integer viewType = holder.getItemViewType();
 
