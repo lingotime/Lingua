@@ -122,8 +122,10 @@ public class NotificationsFragment extends Fragment {
                 String message = object.getString("message");
                 String senderId = object.getString("senderId");
                 String senderName = object.getString("senderName");
+                String receiverId = object.getString("receiverId");
+                String receiverName = object.getString("receiverName");
                 String timestamp = object.getString("timestamp");
-                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, timestamp);
+                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp);
                 friendRequests.add(friendRequest);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {

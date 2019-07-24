@@ -75,7 +75,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                                     EditText editText = dialogView.findViewById(R.id.dialog_friend_request_et);
                                     String message = editText.getText().toString();
                                     if (!message.equals("")) {
-                                        sendFriendRequest(message, user.getId());
+                                        sendFriendRequest(message, user.getId(), user.getFirstName());
                                     } else {
                                         Toast.makeText(context, "Can't send a friend request without any text, say hi!", Toast.LENGTH_LONG).show();
                                     }
@@ -119,9 +119,9 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         notifyDataSetChanged();
     }
 
-    private void sendFriendRequest(String message, String receiverId) {
+    private void sendFriendRequest(String message, String receiverId, String receiverName) {
         FriendRequest friendRequest = new FriendRequest(message, MainActivity.currentUser.getId(),
-                MainActivity.currentUser.getFirstName(), new Date().toString());
+                MainActivity.currentUser.getFirstName(), receiverId, receiverName, new Date().toString());
 
         Firebase.setAndroidContext(context);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
@@ -130,6 +130,8 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         Map<String, String> map = new HashMap<>();
         map.put("message", message);
         map.put("senderId", MainActivity.currentUser.getId());
+        map.put("receiverId", receiverId);
+        map.put("receiverName", receiverName);
         map.put("senderName", MainActivity.currentUser.getFirstName());
         map.put("timestamp", new Date().toString());
 

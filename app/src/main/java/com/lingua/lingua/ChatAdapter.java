@@ -47,7 +47,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         Chat chat = chats.get(position);
         tvName.setText(chat.getName());
         tvText.setText(chat.getLastMessage());
-        tvTimestamp.setText(Chat.getRelativeTimeAgo(chat.getLastUpdatedAt()));
+        tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastUpdatedAt()));
     }
 
     @Override

@@ -11,10 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingua.lingua.models.Message;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /*
@@ -57,16 +53,8 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
         tvMessage.setText(message.getMessage());
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-        try {
-            Date timestamp = dateFormat.parse(message.getTimestamp());
-            DateFormat hourFormat = new SimpleDateFormat("hh:mm a");
-            String hour = hourFormat.format(timestamp);
-            tvTimestamp.setText(hour);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        String timestamp = DateUtil.getHourAndMinuteFormat(message.getTimestamp());
+        if (timestamp != null) { tvTimestamp.setText(timestamp);}
     }
 
     @Override
