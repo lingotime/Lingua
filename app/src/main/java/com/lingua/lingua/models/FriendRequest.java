@@ -2,35 +2,40 @@ package com.lingua.lingua.models;
 
 /*
 Friend request class for pending friend requests, friend request should be deleted once user accepts or rejects the request
-TODO: make this class Firebase compatible, save, delete and query friend requests by receiver
 */
 
 public class FriendRequest {
 
     String message;
-    User sender;
-    User receiver;
-    long createdAt;
+    String senderId;
+    String senderName;
+    String receiverId;
+    String timestamp;
 
-    public FriendRequest(String message, User sender, User receiver) {
+    public FriendRequest(String message, String senderId, String senderName, String timestamp) {
         this.message = message;
-        this.sender = sender;
-        this.receiver = receiver;
+        this.senderId = senderId;
+        this.senderName = senderName;
+        this.timestamp = timestamp;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public User getSender() {
-        return sender;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public User getReceiver() {
-        return receiver;
+    public String getSenderName() {
+        return senderName;
     }
 
-    public long getCreatedAt() {
-        return createdAt;
+    public String getReceiverId() {
+        return receiverId;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
     }
 }

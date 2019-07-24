@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingua.lingua.models.FriendRequest;
-import com.lingua.lingua.models.User;
 
 import java.util.List;
 
@@ -48,16 +47,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final FriendRequest friendRequest = friendRequests.get(position);
-        final User user = friendRequest.getSender();
         tvMessage.setText(friendRequest.getMessage());
-        tvName.setText(user.getFirstName());
+        tvName.setText(friendRequest.getSenderName());
 
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // TODO: add friend, create chat with friend's message
                 Intent intent = new Intent(context, ChatDetailsActivity.class);
-                // intent.putExtra("user", Parcels.wrap(user));
                 context.startActivity(intent);
             }
         });

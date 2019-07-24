@@ -7,16 +7,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.client.Firebase;
+import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
 RecyclerView Adapter that adapts User objects to the viewholders in the recyclerview
@@ -61,11 +68,17 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 dialogBuilder.setView(dialogView);
 
                 dialogBuilder.setTitle("Send friend request to " + user.getFirstName());
-                dialogBuilder.setMessage("Tell " + user.getFirstName() + " a little about yourself!");
+                dialogBuilder.setMessage("Say hi and tell " + user.getFirstName() + " a little about yourself!");
                 dialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    // TODO: send friend request
+                                    EditText editText = dialogView.findViewById(R.id.dialog_friend_request_et);
+                                    String message = editText.getText().toString();
+                                    if (!message.equals("")) {
+                                        sendFriendRequest(message, user.getId());
+                                    } else {
+                                        Toast.makeText(context, "Can't send a friend request without any text, say hi!", Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
                 dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -106,9 +119,28 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         notifyDataSetChanged();
     }
 
-    // Add a list of items
-    public void addAll(List<User> list) {
-        users.addAll(list);
-        notifyDataSetChanged();
+    private void sendFriendRequest(String message, String receiverId) {
+        FriendRequest friendRequest = new FriendRequest(message, MainActivity.currentUser.getId(),
+                MainActivity.currentUser.getFirstName(), new Date().toString());
+
+        Firebase.setAndroidContext(context);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
+
+        // save friend request
+        Map<String, String> map = new HashMap<>();
+        map.put("message", message);
+        map.put("senderId", MainActivity.currentUser.getId());
+        map.put("senderName", MainActivity.currentUser.getFirstName());
+        map.put("timestamp", new Date().toString());
+
+        String friendRequestId = reference.child("friend-requests").push().getKey();
+        reference.child("friend-requests").child(friendRequestId).setValue(map);
+        Log.i("ExploreAdapter", friendRequestId);
+
+        // save friend request reference in user objects
+        reference.child("users").child(MainActivity.currentUser.getId()).child("sent-friend-requests").child(friendRequestId).setValue(true);
+        reference.child("users").child(receiverId).child("received-friend-requests").child(friendRequestId).setValue(true);
+
+        Toast.makeText(context, "Friend request sent!", Toast.LENGTH_LONG).show();
     }
 }
