@@ -20,6 +20,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -146,6 +148,8 @@ public class ProfilePicture extends AppCompatActivity {
                 onPickPhoto(v);
             }
         });
+
+        Glide.with(this).load(currentUser.getProfilePhotoURL()).apply(RequestOptions.circleCropTransform()).into(ivImageTaken);
     }
 
 
@@ -226,7 +230,7 @@ public class ProfilePicture extends AppCompatActivity {
                 // by this point we have the camera photo on disk
                 profilePicture = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                 // Load the taken image into a preview
-                ivImageTaken.setImageBitmap(profilePicture);
+                Glide.with(this).load(profilePicture).apply(RequestOptions.circleCropTransform()).into(ivImageTaken);
             } else { // Result was a failure
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
@@ -241,7 +245,7 @@ public class ProfilePicture extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 // Load the selected image into a preview
-                ivImageTaken.setImageBitmap(profilePicture);
+                Glide.with(this).load(profilePicture).apply(RequestOptions.circleCropTransform()).into(ivImageTaken);
             }
         }
     }
