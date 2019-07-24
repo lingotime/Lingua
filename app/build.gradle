@@ -5,6 +5,7 @@ android {
     buildToolsVersion "29.0.0"
     defaultConfig {
         applicationId "com.lingua.lingua"
+        multiDexEnabled true
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
@@ -89,6 +90,7 @@ dependencies {
     implementation "com.hootsuite.android:nachos:1.1.1"
     implementation 'jp.wasabeef:recyclerview-animators:2.2.3'
     testImplementation 'junit:junit:4.12'
+    implementation 'com.google.firebase:firebase-storage:18.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
