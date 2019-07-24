@@ -1,3 +1,5 @@
+package com.lingua.lingua;
+
 import com.twilio.jwt.accesstoken.AccessToken;
 import com.twilio.jwt.accesstoken.VideoGrant;
 
@@ -16,9 +18,10 @@ public class VideoTokenGenerator {
     private VideoGrant grant = new VideoGrant().setRoom("DailyStandup");
 
     // Create access token
-    AccessToken token = new AccessToken.Builder(
+    public AccessToken token = new AccessToken.Builder(
             twilioAccountSid,
             twilioApiKey,
             twilioApiSecret
     ).identity(identity).grant(grant).build();
+
 }
