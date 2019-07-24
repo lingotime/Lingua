@@ -6,6 +6,7 @@ Friend request class for pending friend requests, friend request should be delet
 
 public class FriendRequest {
 
+    String id;
     String message;
     String senderId;
     String senderName;
@@ -13,13 +14,18 @@ public class FriendRequest {
     String receiverId;
     String timestamp;
 
-    public FriendRequest(String message, String senderId, String senderName, String receiverId, String receiverName, String timestamp) {
+    public FriendRequest(String message, String senderId, String senderName, String receiverId, String receiverName, String timestamp, String id) {
         this.message = message;
         this.senderId = senderId;
         this.senderName = senderName;
         this.timestamp = timestamp;
         this.receiverId = receiverId;
         this.receiverName = receiverName;
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getMessage() {

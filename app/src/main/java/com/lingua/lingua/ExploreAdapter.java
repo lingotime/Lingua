@@ -17,7 +17,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.client.Firebase;
-import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 
 import java.util.Date;
@@ -120,13 +119,13 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     }
 
     private void sendFriendRequest(String message, String receiverId, String receiverName) {
-        FriendRequest friendRequest = new FriendRequest(message, MainActivity.currentUser.getId(),
-                MainActivity.currentUser.getFirstName(), receiverId, receiverName, new Date().toString());
 
         Firebase.setAndroidContext(context);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
 
         // save friend request
+        String friendRequestId = reference.child("friend-requests").push().getKey();
+
         Map<String, String> map = new HashMap<>();
         map.put("message", message);
         map.put("senderId", MainActivity.currentUser.getId());
@@ -134,8 +133,8 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         map.put("receiverName", receiverName);
         map.put("senderName", MainActivity.currentUser.getFirstName());
         map.put("timestamp", new Date().toString());
+        map.put("id", friendRequestId);
 
-        String friendRequestId = reference.child("friend-requests").push().getKey();
         reference.child("friend-requests").child(friendRequestId).setValue(map);
         Log.i("ExploreAdapter", friendRequestId);
 

@@ -69,9 +69,7 @@ public class NotificationsFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                friendRequests.clear();
-                adapter.notifyDataSetChanged();
-                queryFriendRequests();
+                refresh();
             }
         });
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -80,8 +78,6 @@ public class NotificationsFragment extends Fragment {
                 android.R.color.holo_red_light);
     }
 
-
-    // TODO: differentiate between sent and received friend requests
     private void queryFriendRequests() {
         String urlReceived = "https://lingua-project.firebaseio.com/users/" + MainActivity.currentUser.getId() + "/received-friend-requests.json";
         queryFriendRequests(urlReceived);
@@ -119,13 +115,14 @@ public class NotificationsFragment extends Fragment {
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
+                String id = object.getString("id");
                 String message = object.getString("message");
                 String senderId = object.getString("senderId");
                 String senderName = object.getString("senderName");
                 String receiverId = object.getString("receiverId");
                 String receiverName = object.getString("receiverName");
                 String timestamp = object.getString("timestamp");
-                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp);
+                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp, id);
                 friendRequests.add(friendRequest);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
@@ -136,5 +133,11 @@ public class NotificationsFragment extends Fragment {
 
         RequestQueue rQueue = Volley.newRequestQueue(getContext());
         rQueue.add(request);
+    }
+
+    public void refresh() {
+        friendRequests.clear();
+        adapter.notifyDataSetChanged();
+        queryFriendRequests();
     }
 }

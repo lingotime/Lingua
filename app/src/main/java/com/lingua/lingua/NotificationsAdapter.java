@@ -2,17 +2,18 @@ package com.lingua.lingua;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.client.Firebase;
 import com.lingua.lingua.models.FriendRequest;
 
 import java.util.List;
@@ -59,13 +60,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final FriendRequest friendRequest = friendRequests.get(position);
-        Log.i("NotificationsAdapter", friendRequest.getMessage());
-        Log.i("NotificationsAdapter", friendRequest.getSenderName()); //TODO: fix layout so it shows
         tvMessage.setText(friendRequest.getMessage());
+        tvTimestamp.setText(DateUtil.getRelativeTimeAgo(friendRequest.getTimestamp()));
 
         Integer viewType = holder.getItemViewType();
 
         if (viewType == TYPE_RECEIVED_FRIEND_REQUESTS) {
+
             tvName.setText(friendRequest.getSenderName());
 
             acceptButton.setOnClickListener(new View.OnClickListener() {
@@ -80,16 +81,18 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             rejectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: delete friend request from database, refresh
+                    deleteFriendRequest(friendRequest.getId(), friendRequest.getSenderId(), friendRequest.getReceiverId(), position);
                 }
             });
 
         } else if (viewType == TYPE_SENT_FRIEND_REQUESTS) {
+
             tvName.setText(friendRequest.getReceiverName());
+
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: delete friend request from database
+                    deleteFriendRequest(friendRequest.getId(), friendRequest.getSenderId(), friendRequest.getReceiverId(), position);
                 }
             });
         }
@@ -125,5 +128,22 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             cancelButton = itemView.findViewById(R.id.friend_request_cancel_button);
             ivProfile = itemView.findViewById(R.id.friend_request_iv);
         }
+    }
+
+    public void deleteFriendRequest(String friendRequestId, String senderId, String receiverId, int position) {
+
+        Firebase.setAndroidContext(context);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
+
+        //delete from friend-requests
+        reference.child("friend-requests").child(friendRequestId).removeValue();;
+
+        // delete friend request reference in user objects
+        reference.child("users").child(senderId).child("sent-friend-requests").child(friendRequestId).removeValue();
+        reference.child("users").child(receiverId).child("received-friend-requests").child(friendRequestId).removeValue();
+
+        friendRequests.remove(position);
+        notifyItemRemoved(position);
+        Toast.makeText(context, "Friend request deleted", Toast.LENGTH_LONG).show();
     }
 }
