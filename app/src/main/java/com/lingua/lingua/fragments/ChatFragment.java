@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,8 +61,6 @@ public class ChatFragment extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Chats");
 
         rvChats = view.findViewById(R.id.fragment_chat_rv);
-        tvNoChats = view.findViewById(R.id.fragment_chat_no_chats_tv);
-        tvNoChats.setVisibility(View.GONE);
         chats = new ArrayList<>();
         queryChats();
 
@@ -97,21 +96,16 @@ public class ChatFragment extends Fragment {
                 for (int i = 0; i < array.length(); i++) {
                     queryChatInfo(array.getString(i));
                 }
-                if (array.length() == 0) {
-                    tvNoChats.setVisibility(View.VISIBLE);
-                    rvChats.setVisibility(View.GONE);
-                }
                 swipeContainer.setRefreshing(false);
 
             } catch (JSONException e) {
+                Toast.makeText(getContext(), "No chats to display", Toast.LENGTH_LONG).show();
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
+            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_LONG).show();
             swipeContainer.setRefreshing(false);
-            tvNoChats.setVisibility(View.VISIBLE);
-            rvChats.setVisibility(View.GONE);
-            tvNoChats.setText("Oops! There was a connection error.");
             Log.e("ChatFragment", "" + volleyError);
         });
 
@@ -134,7 +128,8 @@ public class ChatFragment extends Fragment {
                 e.printStackTrace();
             }
         }, volleyError -> {
-            tvNoChats.setText("Oops! There was a connection error.");
+            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_LONG).show();
+            swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });
 

@@ -9,14 +9,17 @@ public class FriendRequest {
     String message;
     String senderId;
     String senderName;
+    String receiverName;
     String receiverId;
     String timestamp;
 
-    public FriendRequest(String message, String senderId, String senderName, String timestamp) {
+    public FriendRequest(String message, String senderId, String senderName, String receiverId, String receiverName, String timestamp) {
         this.message = message;
         this.senderId = senderId;
         this.senderName = senderName;
         this.timestamp = timestamp;
+        this.receiverId = receiverId;
+        this.receiverName = receiverName;
     }
 
     public String getMessage() {
@@ -33,6 +36,10 @@ public class FriendRequest {
 
     public String getReceiverId() {
         return receiverId;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
     }
 
     public String getTimestamp() {
