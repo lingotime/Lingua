@@ -23,6 +23,7 @@ import com.lingua.lingua.adapters.ExploreAdapter;
 import com.lingua.lingua.models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -52,13 +53,7 @@ public class ExploreFragment extends Fragment {
         historyTimeline = view.findViewById(R.id.fragment_explore_history_timeline);
 
         // unwrap the current user
-        Bundle bundle = this.getArguments();
-
-        if (bundle != null) {
-            currentUser = bundle.getParcelable("user");
-        } else {
-            Log.e("ExploreFragment", "There was an issue placing user information into frame.");
-        }
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
         // fetch compatible users who match criteria and load them into timeline
         fetchCompatibleUsersAndLoad(currentUser);

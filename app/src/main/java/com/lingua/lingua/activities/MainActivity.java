@@ -45,6 +45,14 @@ public class MainActivity extends AppCompatActivity {
         final Fragment connectFragment = new ConnectFragment();
         final Fragment profileFragment = new ProfileFragment();
 
+        // prepare fragments with user parcel
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("user", Parcels.wrap(currentUser));
+        chatFragment.setArguments(bundle);
+        connectFragment.setArguments(bundle);
+        profileFragment.setArguments(bundle);
+        exploreFragment.setArguments(bundle);
+
         // set initial fragment as "Explore"
         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, exploreFragment).commit();
 
@@ -55,24 +63,17 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("user", (Parcelable) currentUser);
-
                 switch (item.getItemId()) {
                     case R.id.Chat:
-                        chatFragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, chatFragment).commit();
                         return true;
                     case R.id.Connect:
-                        connectFragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, connectFragment).commit();
                         return true;
                     case R.id.Profile:
-                        profileFragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, profileFragment).commit();
                         return true;
                     default:
-                        exploreFragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, exploreFragment).commit();
                         return true;
                 }
