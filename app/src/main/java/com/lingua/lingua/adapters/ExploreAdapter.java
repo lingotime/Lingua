@@ -54,7 +54,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         User user = userList.get(position);
 
         // load user flag and profile photo into place
-        Glide.with(context).load(Country.COUNTRY_CODES.get(user.getUserOriginCountry()) + ".png").into(flagImage);
+        Glide.with(context).load(context.getResources().getIdentifier(Country.COUNTRY_CODES.get(user.getUserOriginCountry()), "drawable", context.getPackageName())).into(flagImage);
         Glide.with(context).load(user.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePhotoImage);
 
         // load user live status into place

@@ -55,6 +55,9 @@ public class ExploreFragment extends Fragment {
         // unwrap the current user
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
+        // initialize the list of users
+        usersList = new ArrayList<User>();
+
         // fetch compatible users who match criteria and load them into timeline
         fetchCompatibleUsersAndLoad(currentUser);
     }
@@ -89,6 +92,7 @@ public class ExploreFragment extends Fragment {
 
                         // filter user depending on criteria
                         if (generatedUser.getUserID() != currentUser.getUserID() && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countriesSelectedByGeneratedUser)) {
+                            // add to the list of users
                             usersList.add(generatedUser);
                         }
                     }

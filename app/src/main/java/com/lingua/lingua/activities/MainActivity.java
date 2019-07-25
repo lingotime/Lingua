@@ -19,6 +19,7 @@ import com.lingua.lingua.models.User;
 import org.parceler.Parcels;
 
 /* FINALIZED, DOCUMENTED, and TESTED: MainActivity displays a fragment, switchable with a bottom navigation. */
+/* TODO: Fix online persistence issue. */
 
 public class MainActivity extends AppCompatActivity {
     private User currentUser;
