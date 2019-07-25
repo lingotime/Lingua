@@ -172,21 +172,4 @@ public class User {
     public void setOnline(boolean online) {
         isOnline = online;
     }
-
-    private String generateRandomID() {
-        String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        int numberOfCharacters = 20;
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        while (numberOfCharacters != 0) {
-            int character = (int) (Math.random() * allowedCharacters.length());
-
-            stringBuilder.append(allowedCharacters.charAt(character));
-
-            numberOfCharacters--;
-        }
-
-        return stringBuilder.toString();
-    }
 }

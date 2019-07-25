@@ -10,8 +10,8 @@ public class FriendRequest {
     String friendRequestStatus;
     String senderUser;
     String receiverUser;
-    Date createdTime;
-    Date respondedTime;
+    String createdTime;
+    String respondedTime;
 
     public FriendRequest() {
         friendRequestID = generateRandomID();
@@ -49,19 +49,17 @@ public class FriendRequest {
         this.receiverUser = receiverUser;
     }
 
-    public Date getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
-    }
+    public void setCreatedTime(String createdTime) { this.createdTime = createdTime; }
 
-    public Date getRespondedTime() {
+    public String getRespondedTime() {
         return respondedTime;
     }
 
-    public void setRespondedTime(Date respondedTime) {
+    public void setRespondedTime(String respondedTime) {
         this.respondedTime = respondedTime;
     }
 

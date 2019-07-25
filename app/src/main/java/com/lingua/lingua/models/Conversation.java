@@ -11,10 +11,10 @@ public class Conversation {
     String conversationName;
     ArrayList<String> conversationParticipants;
     ArrayList<String> conversationMessages;
-    Date firstTextChatTime;
-    Date firstVideoChatTime;
-    Date lastTextChatTime;
-    Date lastVideoChatTime;
+    String firstTextChatTime;
+    String firstVideoChatTime;
+    String lastTextChatTime;
+    String lastVideoChatTime;
 
     public Conversation() {
         conversationID = generateRandomID();
@@ -52,35 +52,35 @@ public class Conversation {
         this.conversationMessages = conversationMessages;
     }
 
-    public Date getFirstTextChatTime() {
+    public String getFirstTextChatTime() {
         return firstTextChatTime;
     }
 
-    public void setFirstTextChatTime(Date firstTextChatTime) {
+    public void setFirstTextChatTime(String firstTextChatTime) {
         this.firstTextChatTime = firstTextChatTime;
     }
 
-    public Date getFirstVideoChatTime() {
+    public String getFirstVideoChatTime() {
         return firstVideoChatTime;
     }
 
-    public void setFirstVideoChatTime(Date firstVideoChatTime) {
+    public void setFirstVideoChatTime(String firstVideoChatTime) {
         this.firstVideoChatTime = firstVideoChatTime;
     }
 
-    public Date getLastTextChatTime() {
+    public String getLastTextChatTime() {
         return lastTextChatTime;
     }
 
-    public void setLastTextChatTime(Date lastTextChatTime) {
+    public void setLastTextChatTime(String lastTextChatTime) {
         this.lastTextChatTime = lastTextChatTime;
     }
 
-    public Date getLastVideoChatTime() {
+    public String getLastVideoChatTime() {
         return lastVideoChatTime;
     }
 
-    public void setLastVideoChatTime(Date lastVideoChatTime) {
+    public void setLastVideoChatTime(String lastVideoChatTime) {
         this.lastVideoChatTime = lastVideoChatTime;
     }
 

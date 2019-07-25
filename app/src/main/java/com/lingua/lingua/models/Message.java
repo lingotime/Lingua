@@ -10,7 +10,7 @@ public class Message {
     String messageText;
     String senderUser;
     String receiverUser;
-    Date createdTime;
+    String createdTime;
 
     public Message() {
         messageID = generateRandomID();
@@ -48,11 +48,11 @@ public class Message {
         this.receiverUser = receiverUser;
     }
 
-    public Date getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
 
