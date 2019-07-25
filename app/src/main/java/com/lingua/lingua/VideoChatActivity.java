@@ -1,6 +1,7 @@
 package com.lingua.lingua;
 
 import android.Manifest;
+import android.graphics.Camera;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -59,7 +60,6 @@ public class VideoChatActivity extends AppCompatActivity {
     private String accessToken;
     private VideoCodec videoCodec;
 
-    private static final String TWILIO_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTS2Q4ZmJhMzYzZGFjM2M0MmMwOGM0NzZiMjRlMzdkMTVlLTE1NjQwODY1ODgiLCJpc3MiOiJTS2Q4ZmJhMzYzZGFjM2M0MmMwOGM0NzZiMjRlMzdkMTVlIiwic3ViIjoiQUM3ZmU3MzY4Y2M1YTUwOGYyYzA0NGMzZWIxZGYzYTUyYiIsImV4cCI6MTU2NDA5MDE4OCwiZ3JhbnRzIjp7ImlkZW50aXR5IjoiYnJpYW5hIiwidmlkZW8iOnsicm9vbSI6IlVzZXIgMSAmIDIifX19.cYohKiNBz-fJVYm6CRS-_Eyh046Esup0xiwg-wyRN1U";
 
 
     @Override
@@ -80,21 +80,18 @@ public class VideoChatActivity extends AppCompatActivity {
 
 
         // generate the Twilio room and token
-//        tokenGenerator = new VideoTokenGenerator();
-//        if (tokenGenerator.token == null) {
-//            Log.d(TAG, "Token object not generated");
-//        } else {
-//            Log.d(TAG, "Token generated");
-//        }
+        tokenGenerator = new VideoTokenGenerator();
+        if (tokenGenerator.token == null) {
+            Log.d(TAG, "Token object not generated");
+        } else {
+            Log.d(TAG, "Token generated");
+        }
 
         Log.i(TAG, "Inflated the layout for video activity");
         requestPermissions();
     }
 
     public void connectToRoom(String roomName) {
-//        ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.token.toString())
-//                .roomName(roomName)
-//                .build();
 
         //Check if H.264 is supported in this device
         boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
@@ -104,7 +101,7 @@ public class VideoChatActivity extends AppCompatActivity {
         videoCodec = isH264Supported ? (new H264Codec()) : (new Vp9Codec());
         Log.i(TAG, "The video codec has been set");
 
-        ConnectOptions connectOptions = new ConnectOptions.Builder(accessToken)
+        ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.token.toString())
                 .roomName(roomName)
                 .audioTracks(Collections.singletonList(localAudioTrack))
                 .videoTracks(Collections.singletonList(localVideoTrack))
@@ -115,6 +112,19 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onConnected(Room room) {
                 Log.i(TAG, "Connected to " + room.getName());
+                // check if the user already has a participant - then fix the rendering of the video tracks
+                if (room.getRemoteParticipants().size() > 0) {
+                    // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
+                    moveLocalVideoToSmallView();
+
+                    remoteVideoView.setMirror(false);
+                    // for now, only allows for 2 people in the room and allows for them to alter their views from the main screen to the one toggled to the bottom left
+                    RemoteVideoTrackPublication remoteVideoTrackPublication = room.getRemoteParticipants().get(0).getRemoteVideoTracks().get(0);
+                    // only render tracks to which the local participant is subscribed
+                    if (remoteVideoTrackPublication.isTrackSubscribed()) {
+                        remoteVideoTrackPublication.getRemoteVideoTrack().addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
+                    }
+                }
             }
 
             @Override
@@ -135,6 +145,9 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onDisconnected(@NonNull Room room, @Nullable TwilioException twilioException) {
                 Log.i(TAG, "disconnected");
+                // These tracks are released to ensure that memory allocated to them is freed
+                localAudioTrack.release();
+                localVideoTrack.release();
             }
 
             @Override
@@ -185,9 +198,7 @@ public class VideoChatActivity extends AppCompatActivity {
                     @Override
                     public void onVideoTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
                         // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
-                        localVideoView.setVisibility(View.VISIBLE);
-                        localVideoView.setMirror(cameraCapturer.getCameraSource() ==
-                                CameraCapturer.CameraSource.FRONT_CAMERA);
+                        moveLocalVideoToSmallView();
 
                         remoteVideoView.setMirror(false);
                         remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
@@ -200,6 +211,8 @@ public class VideoChatActivity extends AppCompatActivity {
 
                     @Override
                     public void onVideoTrackUnsubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
+                        remoteVideoTrack.removeRenderer(remoteVideoView); // removes the remote track from the view of the local participant once disconnected
+                        moveLocalVideoToMainView();
 
                     }
 
@@ -283,8 +296,7 @@ public class VideoChatActivity extends AppCompatActivity {
             // after permission is granted, initialise the video and audio tracks
             Log.i(TAG, "Permission granted");
             getVideoAndAudioTracks();
-            accessToken = TWILIO_ACCESS_TOKEN;
-            connectToRoom("User 1 & 2"); // and generate the token and the room
+            connectToRoom("Test"); // and generate the token and the room
         } else {
             // prompt to ask for mic and camera permission
             EasyPermissions.requestPermissions(this, "Lingua needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);
@@ -312,4 +324,30 @@ public class VideoChatActivity extends AppCompatActivity {
         // show the camera output from the user in the main screen
         remoteVideoView.setMirror(true);
     }
+
+    public void moveLocalVideoToSmallView() {
+        // moves the local participant's local video track from the main view to make space for the remote participant
+        if (localVideoView.getVisibility() == View.GONE) {
+            localVideoView.setVisibility(View.VISIBLE);
+            if (localVideoTrack != null) {
+                localVideoTrack.removeRenderer(remoteVideoView);
+                localVideoTrack.addRenderer(localVideoView);
+            }
+            localVideoView.setMirror(true);
+        }
+    }
+
+
+    public void moveLocalVideoToMainView() {
+        // moves the local participant's video track from the smaller view when there is no longer a remote participant
+        if (localVideoView.getVisibility() == View.VISIBLE) {
+            localVideoView.setVisibility(View.GONE);
+            if (localVideoTrack != null) {
+                localVideoTrack.removeRenderer(localVideoView);
+                localVideoTrack.addRenderer(remoteVideoView);
+            }
+            remoteVideoView.setMirror(true);
+        }
+    }
+
 }
