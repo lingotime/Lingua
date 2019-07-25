@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
+import com.twilio.video.H264Codec;
 import com.twilio.video.LocalAudioTrack;
 import com.twilio.video.LocalParticipant;
 import com.twilio.video.LocalVideoTrack;
@@ -25,8 +26,15 @@ import com.twilio.video.RemoteVideoTrackPublication;
 import com.twilio.video.Room;
 import com.twilio.video.TwilioException;
 import com.twilio.video.Video;
+import com.twilio.video.VideoCodec;
 import com.twilio.video.VideoView;
+import com.twilio.video.Vp8Codec;
+import com.twilio.video.Vp9Codec;
 
+import org.webrtc.MediaCodecVideoDecoder;
+import org.webrtc.MediaCodecVideoEncoder;
+
+import java.util.Collections;
 import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -38,6 +46,7 @@ public class VideoChatActivity extends AppCompatActivity {
     private VideoTokenGenerator tokenGenerator;
     private Room room;
     private LocalAudioTrack localAudioTrack;
+    private LocalVideoTrack localVideoTrack;
     private CameraCapturer cameraCapturer;
     private VideoView remoteVideoView;
     private VideoView localVideoView;
@@ -45,9 +54,13 @@ public class VideoChatActivity extends AppCompatActivity {
     private LocalParticipant localParticipant;
     private static final int RC_VIDEO_APP_PERM = 124;
     private ImageButton disconnect;
-
-
     private final static String TAG = "VideoChatActivity";
+    // just for the initial test
+    private String accessToken;
+    private VideoCodec videoCodec;
+
+    private static final String TWILIO_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTS2Q4ZmJhMzYzZGFjM2M0MmMwOGM0NzZiMjRlMzdkMTVlLTE1NjQwODY1ODgiLCJpc3MiOiJTS2Q4ZmJhMzYzZGFjM2M0MmMwOGM0NzZiMjRlMzdkMTVlIiwic3ViIjoiQUM3ZmU3MzY4Y2M1YTUwOGYyYzA0NGMzZWIxZGYzYTUyYiIsImV4cCI6MTU2NDA5MDE4OCwiZ3JhbnRzIjp7ImlkZW50aXR5IjoiYnJpYW5hIiwidmlkZW8iOnsicm9vbSI6IlVzZXIgMSAmIDIifX19.cYohKiNBz-fJVYm6CRS-_Eyh046Esup0xiwg-wyRN1U";
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,19 +80,37 @@ public class VideoChatActivity extends AppCompatActivity {
 
 
         // generate the Twilio room and token
-        tokenGenerator = new VideoTokenGenerator();
-        if (tokenGenerator.token == null) {
-            Log.d(TAG, "Token object not generated");
-        } else {
-            Log.d(TAG, "Token generated");
-        }
+//        tokenGenerator = new VideoTokenGenerator();
+//        if (tokenGenerator.token == null) {
+//            Log.d(TAG, "Token object not generated");
+//        } else {
+//            Log.d(TAG, "Token generated");
+//        }
+
+        Log.i(TAG, "Inflated the layout for video activity");
         requestPermissions();
     }
 
     public void connectToRoom(String roomName) {
-        ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.token.toString())
+//        ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.token.toString())
+//                .roomName(roomName)
+//                .build();
+
+        //Check if H.264 is supported in this device
+        boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
+                MediaCodecVideoEncoder.isH264HwSupported();
+
+        // Prefer H264 if it is hardware available for encoding and decoding
+        videoCodec = isH264Supported ? (new H264Codec()) : (new Vp9Codec());
+        Log.i(TAG, "The video codec has been set");
+
+        ConnectOptions connectOptions = new ConnectOptions.Builder(accessToken)
                 .roomName(roomName)
+                .audioTracks(Collections.singletonList(localAudioTrack))
+                .videoTracks(Collections.singletonList(localVideoTrack))
+                .preferVideoCodecs(Collections.singletonList(videoCodec))
                 .build();
+        Log.i(TAG, "Connection options generated");
         room = Video.connect(this, connectOptions, new Room.Listener() {
             @Override
             public void onConnected(Room room) {
@@ -243,10 +274,14 @@ public class VideoChatActivity extends AppCompatActivity {
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
+        Log.i(TAG, "Requesting permissions");
         String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        Log.i(TAG, "Gathered permissions");
         if (EasyPermissions.hasPermissions(this, perms)) {
             // after permission is granted, initialise the video and audio tracks
+            Log.i(TAG, "Permission granted");
             getVideoAndAudioTracks();
+            accessToken = TWILIO_ACCESS_TOKEN;
             connectToRoom("User 1 & 2"); // and generate the token and the room
         } else {
             // prompt to ask for mic and camera permission
@@ -264,7 +299,7 @@ public class VideoChatActivity extends AppCompatActivity {
                 CameraCapturer.CameraSource.FRONT_CAMERA);
 
         // Create a video track
-        LocalVideoTrack localVideoTrack = LocalVideoTrack.create(this, true, cameraCapturer);
+        localVideoTrack = LocalVideoTrack.create(this, true, cameraCapturer);
 
         // getting the publisher container (for the local participant) and setting visibility to gone before the other participant enters the chat)
         localVideoView.setVisibility(View.GONE);
