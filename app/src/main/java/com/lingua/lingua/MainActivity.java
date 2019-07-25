@@ -3,6 +3,7 @@ package com.lingua.lingua;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         User currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
+        Log.i("MainActivity", currentUser.getId());
+        Log.i("MainActivity", currentUser.getFirstName());
 
         SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         prefs.edit().putString("userId", currentUser.getId()).apply();

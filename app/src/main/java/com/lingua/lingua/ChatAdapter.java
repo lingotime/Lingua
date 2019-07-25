@@ -2,7 +2,6 @@ package com.lingua.lingua;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +72,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 Chat chat = chats.get(position);
                 intent.putExtra("chatId", chat.getId());
                 intent.putExtra("name", chat.getName());
-                Log.i("ChatAdapter", chat.getId());
                 context.startActivity(intent);
             }
         }

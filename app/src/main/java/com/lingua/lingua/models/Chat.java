@@ -25,9 +25,7 @@ public class Chat {
 
     public String getId() { return id; }
 
-    public String getLastMessage() {
-        return lastMessage;
-    }
+    public String getLastMessage() { return lastMessage; }
 
     public ArrayList<String> getUsers() {
         return users;
@@ -35,5 +33,13 @@ public class Chat {
 
     public String getLastUpdatedAt() {
         return lastUpdatedAt;
+    }
+
+    public void setLastMessage(String lastMessage) {
+        this.lastMessage = lastMessage;
+    }
+
+    public void setLastUpdatedAt(String lastUpdatedAt) {
+        this.lastUpdatedAt = lastUpdatedAt;
     }
 }

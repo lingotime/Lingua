@@ -174,15 +174,12 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("users").child(friendRequest.getReceiverId()).child("chats").child(chatId).setValue(true);
 
         // create message in the new chat
-        String messageId = reference.child("messages").child(chatId).push().getKey();
-
         Map<String, String> message = new HashMap<>();
         message.put("message", friendRequest.getMessage());
         message.put("senderId", friendRequest.getSenderId());
         message.put("timestamp", friendRequest.getTimestamp());
-        message.put("id", messageId);
 
-        reference.child("messages").child(chatId).child(messageId).setValue(message);
+        reference.child("messages").child(chatId).push().setValue(message);
 
         Toast.makeText(context, "Friend request accepted", Toast.LENGTH_SHORT).show();
     }

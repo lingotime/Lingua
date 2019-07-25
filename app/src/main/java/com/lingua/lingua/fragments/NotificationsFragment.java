@@ -63,7 +63,6 @@ public class NotificationsFragment extends Fragment {
 
         rvNotifications = view.findViewById(R.id.fragment_notifications_rv);
         friendRequests = new ArrayList<>();
-        queryFriendRequests();
         adapter = new NotificationsAdapter(getContext(), friendRequests);
         rvNotifications.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -81,6 +80,8 @@ public class NotificationsFragment extends Fragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+
+        queryFriendRequests();
     }
 
     private void queryFriendRequests() {
@@ -132,7 +133,10 @@ public class NotificationsFragment extends Fragment {
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
-        }, volleyError -> Log.e("ChatFragment", "" + volleyError));
+        }, volleyError -> {
+            Log.e("ChatFragment", "" + volleyError);
+            swipeContainer.setRefreshing(false);
+        });
 
         RequestQueue rQueue = Volley.newRequestQueue(getContext());
         rQueue.add(request);

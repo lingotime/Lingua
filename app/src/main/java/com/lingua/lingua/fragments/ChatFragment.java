@@ -65,7 +65,6 @@ public class ChatFragment extends Fragment {
 
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         chats = new ArrayList<>();
-        queryChats();
 
         adapter = new ChatAdapter(getContext(), chats);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
@@ -88,6 +87,7 @@ public class ChatFragment extends Fragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+        queryChats();
     }
 
     private void queryChats() {

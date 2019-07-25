@@ -18,7 +18,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.lingua.lingua.models.Message;
-import com.lingua.lingua.models.User;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,7 +41,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
     private EditText etMessage;
 
     Firebase reference;
-    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +61,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
-        Log.i("ChatDetailsActivity", chatId);
 
         adapter = new ChatDetailsAdapter(this, messages);
         rvMessages.setAdapter(adapter);
@@ -82,14 +79,14 @@ public class ChatDetailsActivity extends AppCompatActivity {
             if (!messageText.equals("")) {
                 Map<String, String> map = new HashMap<>();
                 map.put("message", messageText);
-                map.put("sender", currentUser.getId());
+                map.put("senderId", userId);
                 map.put("timestamp", timestamp);
                 reference.push().setValue(map);
                 etMessage.setText("");
 
                 // save this message as the lastMessage of the chat
                 Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
-                chatReference.child("lastMessage").setValue(messageText);
+                chatReference.child("lastMessage").setValue(userName + ": " + messageText);
                 chatReference.child("lastMessageAt").setValue(timestamp);
             }
         });
@@ -98,13 +95,11 @@ public class ChatDetailsActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Map map = dataSnapshot.getValue(Map.class);
-                if (map.get("sender") != null && map.get("message") != null) {
-                    String senderId = map.get("sender").toString();
-                    String message = map.get("message").toString();
-                    String timestamp = map.get("timestamp").toString();
-                    messages.add(new Message(senderId, message, timestamp));
-                    adapter.notifyDataSetChanged();
-                }
+                String senderId = map.get("senderId").toString();
+                String message = map.get("message").toString();
+                String timestamp = map.get("timestamp").toString();
+                messages.add(new Message(senderId, message, timestamp));
+                adapter.notifyDataSetChanged();
             }
 
             @Override
