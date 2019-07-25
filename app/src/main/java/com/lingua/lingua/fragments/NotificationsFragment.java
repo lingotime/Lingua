@@ -96,12 +96,10 @@ public class NotificationsFragment extends Fragment {
                 }
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-                // Toast.makeText(getContext(), "No notifications to display", Toast.LENGTH_LONG).show();
-                swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(getContext(), "No connection", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "No connection", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });
@@ -129,7 +127,7 @@ public class NotificationsFragment extends Fragment {
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
-        }, volleyError -> { });
+        }, volleyError -> Log.e("ChatFragment", "" + volleyError));
 
         RequestQueue rQueue = Volley.newRequestQueue(getContext());
         rQueue.add(request);

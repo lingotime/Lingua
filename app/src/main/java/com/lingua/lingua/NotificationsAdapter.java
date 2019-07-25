@@ -1,7 +1,6 @@
 package com.lingua.lingua;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.models.FriendRequest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
 RecyclerView Adapter that adapts Friend Request objects to the viewholders in the recyclerview
@@ -26,6 +27,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     private Context context;
     private List<FriendRequest> friendRequests;
+    Firebase reference;
 
     private ImageView ivProfile;
     private TextView tvMessage, tvName, tvTimestamp, tvDescription;
@@ -38,6 +40,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     public NotificationsAdapter(Context context, List<FriendRequest> friendRequests) {
         this.context = context;
         this.friendRequests = friendRequests;
+        Firebase.setAndroidContext(context);
+        reference = new Firebase("https://lingua-project.firebaseio.com");
     }
 
     @NonNull
@@ -72,16 +76,18 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: add friend, create chat with friend's message
-                    Intent intent = new Intent(context, ChatDetailsActivity.class);
-                    context.startActivity(intent);
+                    acceptFriendRequest(friendRequest);
+                    deleteFriendRequest(friendRequest, position);
+//                    Intent intent = new Intent(context, ChatDetailsActivity.class);
+//                    context.startActivity(intent);
                 }
             });
 
             rejectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest.getId(), friendRequest.getSenderId(), friendRequest.getReceiverId(), position);
+                    deleteFriendRequest(friendRequest, position);
+                    Toast.makeText(context, "Friend request rejected", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -92,7 +98,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest.getId(), friendRequest.getSenderId(), friendRequest.getReceiverId(), position);
+                    deleteFriendRequest(friendRequest, position);
+                    Toast.makeText(context, "Friend request deleted", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -130,20 +137,45 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
     }
 
-    public void deleteFriendRequest(String friendRequestId, String senderId, String receiverId, int position) {
-
-        Firebase.setAndroidContext(context);
-        Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
-
+    public void deleteFriendRequest(FriendRequest friendRequest, int position) {
         //delete from friend-requests
-        reference.child("friend-requests").child(friendRequestId).removeValue();;
+        reference.child("friend-requests").child(friendRequest.getId()).removeValue();;
 
         // delete friend request reference in user objects
-        reference.child("users").child(senderId).child("sent-friend-requests").child(friendRequestId).removeValue();
-        reference.child("users").child(receiverId).child("received-friend-requests").child(friendRequestId).removeValue();
+        reference.child("users").child(friendRequest.getSenderId()).child("sent-friend-requests").child(friendRequest.getId()).removeValue();
+        reference.child("users").child(friendRequest.getReceiverId()).child("received-friend-requests").child(friendRequest.getId()).removeValue();
 
         friendRequests.remove(position);
         notifyItemRemoved(position);
-        Toast.makeText(context, "Friend request deleted", Toast.LENGTH_LONG).show();
+    }
+
+    public void acceptFriendRequest(FriendRequest friendRequest) {
+        // create chat between users
+        String chatId = reference.child("chats").push().getKey();
+
+        Map<String, String> chat = new HashMap<>();
+        chat.put("lastMessage", friendRequest.getMessage());
+        chat.put("lastMessageAt", friendRequest.getTimestamp());
+        chat.put("id", chatId);
+        chat.put("name", "false");
+
+        reference.child("chats").child(chatId).setValue(chat);
+
+        // add chat reference to users
+        reference.child("users").child(friendRequest.getSenderId()).child("chats").child(chatId).setValue(true);
+        reference.child("users").child(friendRequest.getReceiverId()).child("chats").child(chatId).setValue(true);
+
+        // create message in the new chat
+        String messageId = reference.child("messages").child(chatId).push().getKey();
+
+        Map<String, String> message = new HashMap<>();
+        message.put("message", friendRequest.getMessage());
+        message.put("senderId", friendRequest.getSenderId());
+        message.put("timestamp", friendRequest.getTimestamp());
+        message.put("id", messageId);
+
+        reference.child("messages").child(chatId).child(messageId).setValue(message);
+
+        Toast.makeText(context, "Friend request accepted", Toast.LENGTH_SHORT).show();
     }
 }

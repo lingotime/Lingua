@@ -25,12 +25,13 @@ import com.lingua.lingua.ChatAdapter;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.Chat;
+import com.lingua.lingua.models.User;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -45,6 +46,7 @@ public class ChatFragment extends Fragment {
     private List<Chat> chats;
     private SwipeRefreshLayout swipeContainer;
     private TextView tvNoChats;
+    private User currentUser;
 
     @Nullable
     @Override
@@ -91,20 +93,20 @@ public class ChatFragment extends Fragment {
         String url = "https://lingua-project.firebaseio.com/users/" + MainActivity.currentUser.getId() + "/chats.json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
-                JSONArray array = new JSONArray(s);
-                Log.i("ChatFragment", array.toString());
-                for (int i = 0; i < array.length(); i++) {
-                    queryChatInfo(array.getString(i));
+                JSONObject object = new JSONObject(s);
+                Iterator keys = object.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next().toString();
+                    queryChatInfo(key);
                 }
                 swipeContainer.setRefreshing(false);
-
             } catch (JSONException e) {
-                Toast.makeText(getContext(), "No chats to display", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "No chats to display", Toast.LENGTH_SHORT).show();
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });
@@ -128,7 +130,7 @@ public class ChatFragment extends Fragment {
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });

@@ -136,12 +136,11 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         map.put("id", friendRequestId);
 
         reference.child("friend-requests").child(friendRequestId).setValue(map);
-        Log.i("ExploreAdapter", friendRequestId);
 
         // save friend request reference in user objects
         reference.child("users").child(MainActivity.currentUser.getId()).child("sent-friend-requests").child(friendRequestId).setValue(true);
         reference.child("users").child(receiverId).child("received-friend-requests").child(friendRequestId).setValue(true);
 
-        Toast.makeText(context, "Friend request sent!", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();
     }
 }

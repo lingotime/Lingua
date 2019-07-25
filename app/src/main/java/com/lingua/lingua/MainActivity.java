@@ -15,6 +15,8 @@ import com.lingua.lingua.fragments.NotificationsFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
 import com.lingua.lingua.models.User;
 
+import org.parceler.Parcels;
+
 /*
 Main Activity with bottom navigation bar that handles switching between fragments
 */
@@ -23,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
 
-    public static User currentUser = new User("fXTkmMEQadZ25d0NK3tND6MPbDW2", "Marta"); //TODO: get current signed in user
+    public User currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +34,18 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("user", Parcels.wrap(currentUser));
+
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final Fragment profileFragment = new ProfileFragment();
+        profileFragment.setArguments(bundle);
         final Fragment chatFragment = new ChatFragment();
+        chatFragment.setArguments(bundle);
         final Fragment exploreFragment = new ExploreFragment();
+        exploreFragment.setArguments(bundle);
         final Fragment notificationsFragment = new NotificationsFragment();
+        notificationsFragment.setArguments(bundle);
 
         fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
 
