@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,12 +24,14 @@ import com.lingua.lingua.ChatAdapter;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.Chat;
+import com.lingua.lingua.models.User;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -43,11 +45,13 @@ public class ChatFragment extends Fragment {
     private ChatAdapter adapter;
     private List<Chat> chats;
     private SwipeRefreshLayout swipeContainer;
-    private TextView tvNoChats;
+
+    User currentUser;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
@@ -60,10 +64,7 @@ public class ChatFragment extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Chats");
 
         rvChats = view.findViewById(R.id.fragment_chat_rv);
-        tvNoChats = view.findViewById(R.id.fragment_chat_no_chats_tv);
-        tvNoChats.setVisibility(View.GONE);
         chats = new ArrayList<>();
-        queryChats();
 
         adapter = new ChatAdapter(getContext(), chats);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
@@ -86,32 +87,29 @@ public class ChatFragment extends Fragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+
+        queryChats();
     }
 
     private void queryChats() {
-        String url = "https://lingua-project.firebaseio.com/users/" + MainActivity.currentUser.getId() + "/chats.json";
+        String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/chats.json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
-                JSONArray array = new JSONArray(s);
-                Log.i("ChatFragment", array.toString());
-                for (int i = 0; i < array.length(); i++) {
-                    queryChatInfo(array.getString(i));
-                }
-                if (array.length() == 0) {
-                    tvNoChats.setVisibility(View.VISIBLE);
-                    rvChats.setVisibility(View.GONE);
+                JSONObject object = new JSONObject(s);
+                Iterator keys = object.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next().toString();
+                    queryChatInfo(key);
                 }
                 swipeContainer.setRefreshing(false);
-
             } catch (JSONException e) {
+                Toast.makeText(getContext(), "No chats to display", Toast.LENGTH_SHORT).show();
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
+            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
-            tvNoChats.setVisibility(View.VISIBLE);
-            rvChats.setVisibility(View.GONE);
-            tvNoChats.setText("Oops! There was a connection error.");
             Log.e("ChatFragment", "" + volleyError);
         });
 
@@ -125,16 +123,24 @@ public class ChatFragment extends Fragment {
             try {
                 JSONObject chat = new JSONObject(s);
                 Log.i("ChatFragment", chat.toString());
-                String name = chat.getString("name");
                 String lastMessage = chat.getString("lastMessage");
                 String lastMessageAt = chat.getString("lastMessageAt");
+                String userName1 = chat.getString("user1");
+                String userName2 = chat.getString("user2");
+                String name;
+                if (userName1.equals(currentUser.getFirstName())) {
+                    name = userName2;
+                } else {
+                    name = userName1;
+                }
                 chats.add(new Chat(id, name, lastMessage, lastMessageAt));
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }, volleyError -> {
-            tvNoChats.setText("Oops! There was a connection error.");
+            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
+            swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });
 

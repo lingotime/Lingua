@@ -1,12 +1,8 @@
 package com.lingua.lingua;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,33 +14,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.google.android.material.textfield.TextInputEditText;
+import com.hootsuite.nachos.ChipConfiguration;
 import com.hootsuite.nachos.NachoTextView;
+import com.hootsuite.nachos.chip.ChipSpan;
+import com.hootsuite.nachos.chip.ChipSpanChipCreator;
+import com.hootsuite.nachos.tokenizer.SpanChipTokenizer;
 import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
 
-import com.google.android.material.textfield.TextInputEditText;
-import com.hootsuite.nachos.ChipConfiguration;
-import com.hootsuite.nachos.NachoTextView;
-import com.hootsuite.nachos.chip.Chip;
-import com.hootsuite.nachos.chip.ChipSpan;
-import com.hootsuite.nachos.chip.ChipSpanChipCreator;
-import com.hootsuite.nachos.tokenizer.ChipTokenizer;
-import com.hootsuite.nachos.tokenizer.SpanChipTokenizer;
-
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,8 +65,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_creation);
-
-
 
         Toolbar toolbar = findViewById(R.id.activity_profile_creation_toolbar);
         // Sets the Toolbar to act as the ActionBar for this Activity window.
@@ -115,7 +100,9 @@ public class ProfileCreationActivity extends AppCompatActivity {
         }
 
         if (currentUser.getOriginCountry() != null) {
-            originCountry.setText(currentUser.getOriginCountry());
+            ArrayList list = new ArrayList();
+            list.add(currentUser.getOriginCountry());
+            originCountry.setText(list);
         }
 
         if (currentUser.getKnownLanguages() != null) {
@@ -158,12 +145,9 @@ public class ProfileCreationActivity extends AppCompatActivity {
             }
         }, ChipSpan.class));
 
-
         currentLanguages.setAdapter(adapterLanguages);
 
-
         targetLanguages.setAdapter(adapterLanguages);
-
 
         originCountry.setAdapter(adapterCountries);
         // overrides the creation of the ChipSpan from the library used so that the chip has the icon of the countries' flags
@@ -216,6 +200,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         currentUser.setKnownLanguages((ArrayList) currentLanguages.getChipValues());
         currentUser.setExploreLanguages((ArrayList) targetLanguages.getChipValues());
         currentUser.setExploreCountries((ArrayList) targetCountries.getChipValues());
+        currentUser.setComplete(true);
         // save
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getId()).setValue(currentUser);

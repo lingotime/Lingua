@@ -1,8 +1,9 @@
 package com.lingua.lingua;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,7 +17,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.lingua.lingua.models.Message;
-import com.lingua.lingua.models.User;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,23 +40,24 @@ public class ChatDetailsActivity extends AppCompatActivity {
     private EditText etMessage;
 
     Firebase reference;
-    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_details);
+
+        SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        String userId = prefs.getString("userId", "");
+        String userName = prefs.getString("userName", "");
+
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
 
         String chatId = getIntent().getStringExtra("chatId");
         String name = getIntent().getStringExtra("name"); //TODO: show as title in toolbar, if chat is not a group show name of friend
 
-        currentUser = MainActivity.currentUser;
-
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
-        Log.i("ChatDetailsActivity", chatId);
 
         adapter = new ChatDetailsAdapter(this, messages);
         rvMessages.setAdapter(adapter);
@@ -73,16 +74,17 @@ public class ChatDetailsActivity extends AppCompatActivity {
             String messageText = etMessage.getText().toString();
             String timestamp = new Date().toString();
             if (!messageText.equals("")) {
+                // save message
                 Map<String, String> map = new HashMap<>();
                 map.put("message", messageText);
-                map.put("sender", currentUser.getId());
+                map.put("senderId", userId);
                 map.put("timestamp", timestamp);
                 reference.push().setValue(map);
                 etMessage.setText("");
 
-                // save this message as the lastMessage of the chat
+                // set this message to be the lastMessage of the chat
                 Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
-                chatReference.child("lastMessage").setValue(messageText);
+                chatReference.child("lastMessage").setValue( userName + ": " + messageText);
                 chatReference.child("lastMessageAt").setValue(timestamp);
             }
         });
@@ -90,14 +92,13 @@ public class ChatDetailsActivity extends AppCompatActivity {
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                // if a message is added, show it in the recycler view
                 Map map = dataSnapshot.getValue(Map.class);
-                if (map.get("sender") != null && map.get("message") != null) {
-                    String senderId = map.get("sender").toString();
-                    String message = map.get("message").toString();
-                    String timestamp = map.get("timestamp").toString();
-                    messages.add(new Message(senderId, message, timestamp));
-                    adapter.notifyDataSetChanged();
-                }
+                String senderId = map.get("senderId").toString();
+                String message = map.get("message").toString();
+                String timestamp = map.get("timestamp").toString();
+                messages.add(new Message(senderId, message, timestamp));
+                adapter.notifyDataSetChanged();
             }
 
             @Override

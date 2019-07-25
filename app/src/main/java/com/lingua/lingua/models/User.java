@@ -1,23 +1,12 @@
 package com.lingua.lingua.models;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import org.parceler.Parcel;
 
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.HashMap;
-import java.util.List;
 /*
 Custom User class with basic info, language information, etc.
  */
@@ -39,11 +28,10 @@ public class User {
     private ArrayList<String> confirmedFriends;
     private ArrayList<String> pendingSentRequestFriends;
     private ArrayList<String> pendingReceivedRequestFriends;
-    private boolean isOnline;
-    private boolean isComplete;
+    private boolean online;
+    private boolean complete;
 
-    public User() {
-    }
+    public User() {}
 
     public User(String firstName) {
         this.firstName = firstName;
@@ -175,18 +163,18 @@ public class User {
     }
 
     public boolean isOnline() {
-        return isOnline;
+        return online;
     }
 
     public void setOnline(boolean online) {
-        isOnline = online;
+        this.online = online;
     }
 
     public boolean isComplete() {
-        return isComplete;
+        return complete;
     }
 
     public void setComplete(boolean complete) {
-        isComplete = complete;
+        this.complete = complete;
     }
 }

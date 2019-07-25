@@ -1,25 +1,33 @@
 package com.lingua.lingua.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.EndlessRecyclerViewScrollListener;
 import com.lingua.lingua.ExploreAdapter;
-import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -35,9 +43,13 @@ public class ExploreFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private EndlessRecyclerViewScrollListener scrollListener;
 
+    User currentUser;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
+        Log.i("ExploreFragment", currentUser.getId());
         return inflater.inflate(R.layout.fragment_explore, container, false);
     }
 
@@ -47,8 +59,7 @@ public class ExploreFragment extends Fragment {
 
         rvExplore = view.findViewById(R.id.fragment_explore_rv);
         users = new ArrayList<>();
-        users.add(new User("Briana Douglas"));
-        users.add(new User("Fausto Zurita"));
+        queryUsers();
         adapter = new ExploreAdapter(getContext(), users);
         rvExplore.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -68,8 +79,8 @@ public class ExploreFragment extends Fragment {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // adapter.clear();
-                // TODO: load users
+                adapter.clear();
+                queryUsers();
             }
         });
         // Configure the refreshing colors
@@ -77,5 +88,35 @@ public class ExploreFragment extends Fragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+    }
+
+    private void queryUsers() {
+        String url = "https://lingua-project.firebaseio.com/users.json";
+        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+            try {
+                JSONObject object = new JSONObject(s);
+                Iterator keys = object.keys();
+                while (keys.hasNext()) {
+                    Object key = keys.next();
+                    JSONObject userObject = object.getJSONObject((String) key);
+                    String id = userObject.getString("id");
+                    String name = userObject.getString("firstName");
+                    User user = new User(id, name);
+                    users.add(user);
+                }
+                adapter.notifyDataSetChanged();
+                swipeContainer.setRefreshing(false);
+
+            } catch (JSONException e) {
+                swipeContainer.setRefreshing(false);
+                e.printStackTrace();
+            }
+        }, volleyError -> {
+            swipeContainer.setRefreshing(false);
+            Log.e("ExploreFragment", "" + volleyError);
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(getContext());
+        rQueue.add(request);
     }
 }
