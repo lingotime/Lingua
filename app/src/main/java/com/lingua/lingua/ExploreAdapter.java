@@ -2,6 +2,7 @@ package com.lingua.lingua;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,9 +43,18 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     private TextView tvFrom;
     private Button friendRequestButton;
 
+    String userId;
+    String userName;
+
     public ExploreAdapter(Context context, List<User> users) {
         this.context = context;
         this.users = users;
+
+        SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        userId = prefs.getString("userId", "");
+        userName = prefs.getString("userName", "");
+        Log.i("ExploreAdapter", userId);
+        Log.i("ExploreAdapter", userName);
     }
 
     @NonNull
@@ -128,17 +138,17 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
         Map<String, String> map = new HashMap<>();
         map.put("message", message);
-        map.put("senderId", MainActivity.currentUser.getId());
+        map.put("senderId", userId);
         map.put("receiverId", receiverId);
         map.put("receiverName", receiverName);
-        map.put("senderName", MainActivity.currentUser.getFirstName());
+        map.put("senderName", userName);
         map.put("timestamp", new Date().toString());
         map.put("id", friendRequestId);
 
         reference.child("friend-requests").child(friendRequestId).setValue(map);
 
         // save friend request reference in user objects
-        reference.child("users").child(MainActivity.currentUser.getId()).child("sent-friend-requests").child(friendRequestId).setValue(true);
+        reference.child("users").child(userId).child("sent-friend-requests").child(friendRequestId).setValue(true);
         reference.child("users").child(receiverId).child("received-friend-requests").child(friendRequestId).setValue(true);
 
         Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();

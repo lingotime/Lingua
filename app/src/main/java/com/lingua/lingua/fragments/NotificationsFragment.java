@@ -23,9 +23,11 @@ import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.NotificationsAdapter;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.FriendRequest;
+import com.lingua.lingua.models.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,9 +44,12 @@ public class NotificationsFragment extends Fragment {
     private List<FriendRequest> friendRequests;
     private SwipeRefreshLayout swipeContainer;
 
+    User currentUser;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
         return inflater.inflate(R.layout.fragment_notifications, container, false);
     }
 
@@ -79,9 +84,9 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void queryFriendRequests() {
-        String urlReceived = "https://lingua-project.firebaseio.com/users/" + MainActivity.currentUser.getId() + "/received-friend-requests.json";
+        String urlReceived = "https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/received-friend-requests.json";
         queryFriendRequests(urlReceived);
-        String urlSent = "https://lingua-project.firebaseio.com/users/" + MainActivity.currentUser.getId() + "/sent-friend-requests.json";
+        String urlSent = "https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/sent-friend-requests.json";
         queryFriendRequests(urlSent);
     }
 

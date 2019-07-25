@@ -1,6 +1,8 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     private TextView tvMessage, tvName, tvTimestamp, tvDescription;
     private Button acceptButton, rejectButton, cancelButton;
 
+    String userId;
+
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_RECEIVED_FRIEND_REQUESTS = 1;
     private static final int TYPE_SENT_FRIEND_REQUESTS = 2;
@@ -42,6 +46,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         this.friendRequests = friendRequests;
         Firebase.setAndroidContext(context);
         reference = new Firebase("https://lingua-project.firebaseio.com");
+
+        SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        userId = prefs.getString("userId", "");
+        Log.i("NotificationsAdapter", userId);
     }
 
     @NonNull
@@ -114,7 +122,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @Override
     public int getItemViewType(int position) {
         FriendRequest friendRequest = friendRequests.get(position);
-        if (friendRequest.getSenderId().equals(MainActivity.currentUser.getId())) {
+        if (friendRequest.getSenderId().equals(userId)) {
             // If the current user is the sender
             return TYPE_SENT_FRIEND_REQUESTS;
         } else {

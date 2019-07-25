@@ -1,5 +1,7 @@
 package com.lingua.lingua;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,13 +48,18 @@ public class ChatDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_details);
+
+        SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        String userId = prefs.getString("userId", "");
+        String userName = prefs.getString("userName", "");
+        Log.i("ChatDetailsActivity", userId);
+        Log.i("ChatDetailsActivity", userName);
+
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
 
         String chatId = getIntent().getStringExtra("chatId");
         String name = getIntent().getStringExtra("name"); //TODO: show as title in toolbar, if chat is not a group show name of friend
-
-        currentUser = MainActivity.currentUser;
 
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);

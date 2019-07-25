@@ -1,6 +1,8 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +29,15 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
 
     TextView tvMessage, tvTimestamp;
 
+    String userId;
+
     public ChatDetailsAdapter(Context context, List<Message> messages) {
         this.context = context;
         this.messages = messages;
+
+        SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        userId = prefs.getString("userId", "");
+        Log.i("ChatDetailsAdapter", userId);
     }
 
     @NonNull
@@ -66,7 +74,7 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-        if (message.getSenderId().equals(MainActivity.currentUser.getId())) {
+        if (message.getSenderId().equals(userId)) {
             // If the current user is the sender of the message
             return TYPE_MESSAGE_SENT;
         } else {

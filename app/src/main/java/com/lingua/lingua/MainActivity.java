@@ -1,5 +1,7 @@
 package com.lingua.lingua;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -25,12 +27,16 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
 
-    public User currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        User currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
+
+        SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        prefs.edit().putString("userId", currentUser.getId()).apply();
+        prefs.edit().putString("userName", currentUser.getFirstName()).apply();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 

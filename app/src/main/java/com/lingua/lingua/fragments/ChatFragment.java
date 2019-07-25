@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +28,7 @@ import com.lingua.lingua.models.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,12 +45,13 @@ public class ChatFragment extends Fragment {
     private ChatAdapter adapter;
     private List<Chat> chats;
     private SwipeRefreshLayout swipeContainer;
-    private TextView tvNoChats;
-    private User currentUser;
+
+    User currentUser;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
@@ -90,7 +91,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void queryChats() {
-        String url = "https://lingua-project.firebaseio.com/users/" + MainActivity.currentUser.getId() + "/chats.json";
+        String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/chats.json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
