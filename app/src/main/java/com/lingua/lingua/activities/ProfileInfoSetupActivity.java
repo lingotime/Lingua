@@ -85,9 +85,10 @@ public class ProfileInfoSetupActivity extends AppCompatActivity {
 
         if (currentUser.getUserBirthDate() != null) {
             try {
-                SimpleDateFormat storedDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzz yyyy");
+                SimpleDateFormat storedDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
                 Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getUserBirthDate());
-                birthdateField.setText(userBirthDateAsDate.getMonth() + "/" + userBirthDateAsDate.getDay() + "/" + userBirthDateAsDate.getYear());
+                SimpleDateFormat displayDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                birthdateField.setText(displayDateFormat.format(userBirthDateAsDate));
             } catch (ParseException exception) {
                 Log.e("ProfileSetupActivity", "There was an issue parsing the user's registered birth date.");
             }

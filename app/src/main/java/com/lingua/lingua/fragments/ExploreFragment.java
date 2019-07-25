@@ -13,9 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.lingua.lingua.EndlessRecyclerViewScrollListener;
-import com.lingua.lingua.ExploreAdapter;
-import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
@@ -28,7 +25,7 @@ the user to browse through and send friend requests
 */
 
 public class ExploreFragment extends Fragment {
-
+/*
     RecyclerView rvExplore;
     private ExploreAdapter adapter;
     private List<User> users;
@@ -77,5 +74,5 @@ public class ExploreFragment extends Fragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-    }
+    }*/
 }
