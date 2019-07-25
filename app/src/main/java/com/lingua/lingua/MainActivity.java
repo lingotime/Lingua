@@ -1,7 +1,9 @@
 package com.lingua.lingua;
 
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,9 @@ import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
+import com.lingua.lingua.models.User;
+
+import org.parceler.Parcels;
 
 /*
 Main Activity with bottom navigation bar that handles switching between fragments
@@ -28,16 +33,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(this, VideoChatActivity.class);
-        startActivity(intent);
+        User currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
+        Log.i("MainActivity", currentUser.getId());
+        Log.i("MainActivity", currentUser.getFirstName());
+
+        SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        prefs.edit().putString("userId", currentUser.getId()).apply();
+        prefs.edit().putString("userName", currentUser.getFirstName()).apply();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("user", Parcels.wrap(currentUser));
+
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final Fragment profileFragment = new ProfileFragment();
+        profileFragment.setArguments(bundle);
         final Fragment chatFragment = new ChatFragment();
+        chatFragment.setArguments(bundle);
         final Fragment exploreFragment = new ExploreFragment();
+        exploreFragment.setArguments(bundle);
         final Fragment notificationsFragment = new NotificationsFragment();
+        notificationsFragment.setArguments(bundle);
 
         fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
 

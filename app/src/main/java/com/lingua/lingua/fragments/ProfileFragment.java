@@ -1,46 +1,29 @@
 package com.lingua.lingua.fragments;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.drawable.IconCompat;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.lingua.lingua.CameraUtil;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.ProfileCreationActivity;
 import com.lingua.lingua.R;
+import com.lingua.lingua.models.User;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import static android.app.Activity.RESULT_OK;
+import org.parceler.Parcels;
 
 /*
 Fragment that displays the user's profile and allows them to edit it
@@ -62,10 +45,13 @@ public class ProfileFragment extends Fragment {
 
     private final String TAG = "ProfileFragment";
 
+    User currentUser;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         setHasOptionsMenu(true);
         return v;

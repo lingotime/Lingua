@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
         <activity android:name=".VideoChatActivity"></activity>
         <activity android:name=".ProfilePicture" />
@@ -22,13 +23,20 @@
             android:name=".ProfileCreationActivity"
             android:windowSoftInputMode="adjustResize"></activity> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
         <activity android:name=".MainActivity">
+        <activity android:name=".ProfilePicture"></activity>
+        <activity
+            android:name=".ProfileCreationActivity"
+            android:windowSoftInputMode="adjustResize">
+        </activity> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".MainActivity" />
         <activity android:name=".ChatDetailsActivity" />
 
         <provider
