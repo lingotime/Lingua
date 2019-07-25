@@ -166,6 +166,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         chat.put("lastMessageAt", friendRequest.getTimestamp());
         chat.put("id", chatId);
         chat.put("name", "false");
+        chat.put("user1", friendRequest.getSenderName());
+        chat.put("user2", friendRequest.getReceiverName());
 
         reference.child("chats").child(chatId).setValue(chat);
 

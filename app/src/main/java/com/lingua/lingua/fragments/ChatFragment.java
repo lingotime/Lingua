@@ -122,9 +122,16 @@ public class ChatFragment extends Fragment {
             try {
                 JSONObject chat = new JSONObject(s);
                 Log.i("ChatFragment", chat.toString());
-                String name = chat.getString("name");
                 String lastMessage = chat.getString("lastMessage");
                 String lastMessageAt = chat.getString("lastMessageAt");
+                String userName1 = chat.getString("user1");
+                String userName2 = chat.getString("user2");
+                String name;
+                if (userName1.equals(currentUser.getFirstName())) {
+                    name = userName2;
+                } else {
+                    name = userName1;
+                }
                 chats.add(new Chat(id, name, lastMessage, lastMessageAt));
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
