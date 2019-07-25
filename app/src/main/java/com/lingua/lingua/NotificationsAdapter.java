@@ -2,7 +2,6 @@ package com.lingua.lingua;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,12 +43,12 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     public NotificationsAdapter(Context context, List<FriendRequest> friendRequests) {
         this.context = context;
         this.friendRequests = friendRequests;
+
         Firebase.setAndroidContext(context);
         reference = new Firebase("https://lingua-project.firebaseio.com");
 
         SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         userId = prefs.getString("userId", "");
-        Log.i("NotificationsAdapter", userId);
     }
 
     @NonNull
@@ -86,8 +85,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 public void onClick(View view) {
                     acceptFriendRequest(friendRequest);
                     deleteFriendRequest(friendRequest, position);
-//                    Intent intent = new Intent(context, ChatDetailsActivity.class);
-//                    context.startActivity(intent);
                 }
             });
 

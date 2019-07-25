@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -50,8 +49,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
         SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         String userId = prefs.getString("userId", "");
         String userName = prefs.getString("userName", "");
-        Log.i("ChatDetailsActivity", userId);
-        Log.i("ChatDetailsActivity", userName);
 
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
@@ -77,6 +74,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
             String messageText = etMessage.getText().toString();
             String timestamp = new Date().toString();
             if (!messageText.equals("")) {
+                // save message
                 Map<String, String> map = new HashMap<>();
                 map.put("message", messageText);
                 map.put("senderId", userId);
@@ -84,9 +82,9 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 reference.push().setValue(map);
                 etMessage.setText("");
 
-                // save this message as the lastMessage of the chat
+                // set this message to be the lastMessage of the chat
                 Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
-                chatReference.child("lastMessage").setValue(userName + ": " + messageText);
+                chatReference.child("lastMessage").setValue( userName + ": " + messageText);
                 chatReference.child("lastMessageAt").setValue(timestamp);
             }
         });
@@ -94,6 +92,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                // if a message is added, show it in the recycler view
                 Map map = dataSnapshot.getValue(Map.class);
                 String senderId = map.get("senderId").toString();
                 String message = map.get("message").toString();

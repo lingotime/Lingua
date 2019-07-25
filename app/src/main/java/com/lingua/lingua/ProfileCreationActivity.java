@@ -197,6 +197,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         currentUser.setKnownLanguages((ArrayList) currentLanguages.getChipValues());
         currentUser.setExploreLanguages((ArrayList) targetLanguages.getChipValues());
         currentUser.setExploreCountries((ArrayList) targetCountries.getChipValues());
+        currentUser.setComplete(true);
         // save
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getId()).setValue(currentUser);

@@ -26,8 +26,8 @@ public class User {
     private ArrayList<String> confirmedFriends;
     private ArrayList<String> pendingSentRequestFriends;
     private ArrayList<String> pendingReceivedRequestFriends;
-    private boolean isOnline;
-    private boolean isComplete;
+    private boolean online;
+    private boolean complete;
 
     public User() {}
 
@@ -161,18 +161,18 @@ public class User {
     }
 
     public boolean isOnline() {
-        return isOnline;
+        return online;
     }
 
     public void setOnline(boolean online) {
-        isOnline = online;
+        this.online = online;
     }
 
     public boolean isComplete() {
-        return isComplete;
+        return complete;
     }
 
     public void setComplete(boolean complete) {
-        isComplete = complete;
+        this.complete = complete;
     }
 }
