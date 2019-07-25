@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(this, VideoCallActivity.class);
+        Intent intent = new Intent(this, VideoChatActivity.class);
         startActivity(intent);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);

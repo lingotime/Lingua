@@ -16,6 +16,7 @@ public class VideoTokenGenerator {
 
     // Create Video grant
     private VideoGrant grant = new VideoGrant().setRoom("DailyStandup");
+    // the name of the room will just be the two users appended
 
     // Create access token
     public AccessToken token = new AccessToken.Builder(
@@ -23,5 +24,4 @@ public class VideoTokenGenerator {
             twilioApiKey,
             twilioApiSecret
     ).identity(identity).grant(grant).build();
-
 }

@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="adjustResize">
-        <activity android:name=".VideoCallActivity"></activity>
+        <activity android:name=".VideoChatActivity"></activity>
         <activity android:name=".ProfilePicture" />
         <activity
             android:name=".ProfileCreationActivity"
