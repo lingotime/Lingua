@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
 import com.firebase.client.Firebase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.lingua.lingua.R;

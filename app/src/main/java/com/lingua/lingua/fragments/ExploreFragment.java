@@ -121,6 +121,10 @@ public class ExploreFragment extends Fragment {
     }
 
     private boolean matchExists(ArrayList<String> exploreLanguages, ArrayList<String> exploreCountries, ArrayList<String> knownLanguages, ArrayList<String> knownCountries) {
+        if (exploreLanguages.size() == 0 && exploreCountries.size() == 0) {
+            return true;
+        }
+
         for (String exploreLanguage : exploreLanguages) {
             for (String knownLanguage : knownLanguages) {
                 if (exploreLanguage.equals(knownLanguage)) {

@@ -53,15 +53,19 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = userList.get(position);
 
+        // load user flag and profile photo into place
         Glide.with(context).load(Country.COUNTRY_CODES.get(user.getUserOriginCountry()) + ".png").into(flagImage);
         Glide.with(context).load(user.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePhotoImage);
 
+        // load user live status into place
         if (user.isOnline()) {
             liveStatusSignal.setVisibility(View.VISIBLE);
         } else {
             liveStatusSignal.setVisibility(View.INVISIBLE);
         }
 
+        // load other user information into place
+        // use getAge() helper method to convert birth date to age
         nameText.setText(user.getUserName());
         countryText.setText("from " + user.getUserOriginCountry());
         ageText.setText(getAge(user.getUserBirthDate()) + " years old");

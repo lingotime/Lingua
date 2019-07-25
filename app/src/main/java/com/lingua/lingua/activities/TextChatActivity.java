@@ -12,7 +12,6 @@ import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.TextChatAdapter;
 import com.lingua.lingua.models.Message;
 import com.lingua.lingua.models.User;
-
 import java.util.ArrayList;
 
 /* TextChatActivity allows a user to text another user. */
