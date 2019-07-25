@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import com.firebase.client.Firebase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.lingua.lingua.R;
 import com.lingua.lingua.fragments.ChatFragment;
@@ -18,7 +20,6 @@ import com.lingua.lingua.models.User;
 import org.parceler.Parcels;
 
 /* FINALIZED, DOCUMENTED, and TESTED: MainActivity displays a fragment, switchable with a bottom navigation. */
-/* TODO: Take care of signal status */
 
 public class MainActivity extends AppCompatActivity {
     private User currentUser;
@@ -78,5 +79,24 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // mark user as live
+        currentUser.setOnline(true);
+
+        // save update
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // mark user as dead
+        currentUser.setOnline(false);
+
+        // save update
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
     }
 }
