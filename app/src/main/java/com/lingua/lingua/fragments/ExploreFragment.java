@@ -7,13 +7,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.lingua.lingua.supports.EndlessRecyclerViewScrollListener;
-import com.lingua.lingua.adapters.ExploreAdapter;
+import com.lingua.lingua.EndlessRecyclerViewScrollListener;
+import com.lingua.lingua.ExploreAdapter;
+import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
@@ -42,10 +44,11 @@ public class ExploreFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rvExplore = view.findViewById(R.id.fragment_explore_history_timeline);
+
+        rvExplore = view.findViewById(R.id.fragment_explore_rv);
         users = new ArrayList<>();
-        //users.add(new User("Briana Douglas"));
-        //users.add(new User("Fausto Zurita"));
+        users.add(new User("Briana Douglas"));
+        users.add(new User("Fausto Zurita"));
         adapter = new ExploreAdapter(getContext(), users);
         rvExplore.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -60,7 +63,7 @@ public class ExploreFragment extends Fragment {
         // Adds the scroll listener to RecyclerView
         rvExplore.addOnScrollListener(scrollListener);
 
-        swipeContainer = view.findViewById(R.id.fragment_chat_swipe_container);
+        swipeContainer = view.findViewById(R.id.exploreSwipeContainer);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
