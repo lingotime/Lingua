@@ -1,106 +1,45 @@
 package com.lingua.lingua.models;
 
-import android.util.Log;
+import org.parceler.Parcel;
 
-import androidx.annotation.NonNull;
-
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.HashMap;
-import java.util.List;
 /*
 Custom User class with basic info, language information, etc.
  */
 
+@Parcel
 public class User {
     private String id;
     private String firstName;
     private String lastName;
     private Date birthDate;
     private String biographyText;
-    private Country originCountry;
+    private String originCountry;
     private String profilePhotoURL;
-    private ArrayList<Language> knownLanguages;
-    private ArrayList<Language> exploreLanguages;
-    private ArrayList<Country> knownCountries;
-    private ArrayList<Country> exploreCountries;
-    private HashMap<Language, Integer> hoursSpoken;
-    private ArrayList<User> confirmedFriends;
-    private ArrayList<User> pendingSentRequestFriends;
-    private ArrayList<User> pendingReceivedRequestFriends;
-    private boolean isOnline;
-    private boolean isComplete;
+    private ArrayList<String> knownLanguages;
+    private ArrayList<String> exploreLanguages;
+    private ArrayList<String> knownCountries;
+    private ArrayList<String> exploreCountries;
+    private HashMap<String, Integer> hoursSpoken;
+    private ArrayList<String> confirmedFriends;
+    private ArrayList<String> pendingSentRequestFriends;
+    private ArrayList<String> pendingReceivedRequestFriends;
+    private boolean online;
+    private boolean complete;
 
-    public static User convertFirebaseUserToNormalUser(FirebaseUser firebaseUser) {
-        // use list to "hack" requirement that objects used in inner classes must be final
-        final List<User> tempUserList = new ArrayList<User>();
-
-        // get the Firebase user's information
-        final String userUniversalID = firebaseUser.getUid();
-        final String userDisplayName = firebaseUser.getDisplayName();
-        final String userProfilePhotoURL = firebaseUser.getPhotoUrl().getPath();
-        Log.d("TRUMP", "User: "+userUniversalID+", Name: "+userDisplayName+", Photo URL: "+userProfilePhotoURL);
-
-        // check if the user's universal ID exists in database
-        final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("TRUMP", "Triggered on data change.");
-                User attemptedNormalUser = dataSnapshot.getValue(User.class);
-
-                if (attemptedNormalUser != null) {
-                    // if it does, create User object by reading stored data
-                    tempUserList.add(attemptedNormalUser);
-                    Log.d("TRUMP", "It's not nulll!!!!");
-                } else {
-                    // if it does not, write a new User to database and return it
-                    User newNormalUser = new User();
-                    newNormalUser.setId(userUniversalID);
-                    newNormalUser.setFirstName(userDisplayName);
-                    newNormalUser.setProfilePhotoURL(userProfilePhotoURL);
-                    newNormalUser.setComplete(false);
-                    Log.d("TRUMP", "Created a new user object");
-
-                    database.child("users").child(userUniversalID).setValue(newNormalUser);
-                    Log.d("TRUMP", "Set the user to the database");
-                    tempUserList.add(newNormalUser);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("User", "There was an issue with the database.");
-            }
-        });
-
-        // wait for User to be updated by the database before returning
-        while (tempUserList.isEmpty()) {
-            try {
-                Thread.sleep(50);
-                Log.d("TRUMP", "Waiting");
-            } catch (Exception e) {
-                Log.e("User", "There was an issue with threads.");
-            }
-        }
-        Log.d("TRUMP", "Returning the object");
-        return tempUserList.get(0);
-    }
-
-    public User() {
-    }
+    public User() {}
 
     public User(String firstName) {
-        this.firstName = getFirstName();
+        this.firstName = firstName;
+    }
+
+    public User(String id, String firstName) {
+        this.id = id;
+        this.firstName = firstName;
     }
 
     public String getId() {
@@ -143,11 +82,11 @@ public class User {
         this.biographyText = biographyText;
     }
 
-    public Country getOriginCountry() {
+    public String getOriginCountry() {
         return originCountry;
     }
 
-    public void setOriginCountry(Country originCountry) {
+    public void setOriginCountry(String originCountry) {
         this.originCountry = originCountry;
     }
 
@@ -159,83 +98,83 @@ public class User {
         this.profilePhotoURL = profilePhotoURL;
     }
 
-    public ArrayList<Language> getKnownLanguages() {
+    public ArrayList<String> getKnownLanguages() {
         return knownLanguages;
     }
 
-    public void setKnownLanguages(ArrayList<Language> knownLanguages) {
+    public void setKnownLanguages(ArrayList<String> knownLanguages) {
         this.knownLanguages = knownLanguages;
     }
 
-    public ArrayList<Language> getExploreLanguages() {
+    public ArrayList<String> getExploreLanguages() {
         return exploreLanguages;
     }
 
-    public void setExploreLanguages(ArrayList<Language> exploreLanguages) {
+    public void setExploreLanguages(ArrayList<String> exploreLanguages) {
         this.exploreLanguages = exploreLanguages;
     }
 
-    public ArrayList<Country> getKnownCountries() {
+    public ArrayList<String> getKnownCountries() {
         return knownCountries;
     }
 
-    public void setKnownCountries(ArrayList<Country> knownCountries) {
+    public void setKnownCountries(ArrayList<String> knownCountries) {
         this.knownCountries = knownCountries;
     }
 
-    public ArrayList<Country> getExploreCountries() {
+    public ArrayList<String> getExploreCountries() {
         return exploreCountries;
     }
 
-    public void setExploreCountries(ArrayList<Country> exploreCountries) {
+    public void setExploreCountries(ArrayList<String> exploreCountries) {
         this.exploreCountries = exploreCountries;
     }
 
-    public HashMap<Language, Integer> getHoursSpoken() {
+    public HashMap<String, Integer> getHoursSpoken() {
         return hoursSpoken;
     }
 
-    public void setHoursSpoken(HashMap<Language, Integer> hoursSpoken) {
+    public void setHoursSpoken(HashMap<String, Integer> hoursSpoken) {
         this.hoursSpoken = hoursSpoken;
     }
 
-    public ArrayList<User> getConfirmedFriends() {
+    public ArrayList<String> getConfirmedFriends() {
         return confirmedFriends;
     }
 
-    public void setConfirmedFriends(ArrayList<User> confirmedFriends) {
+    public void setConfirmedFriends(ArrayList<String> confirmedFriends) {
         this.confirmedFriends = confirmedFriends;
     }
 
-    public ArrayList<User> getPendingSentRequestFriends() {
+    public ArrayList<String> getPendingSentRequestFriends() {
         return pendingSentRequestFriends;
     }
 
-    public void setPendingSentRequestFriends(ArrayList<User> pendingSentRequestFriends) {
+    public void setPendingSentRequestFriends(ArrayList<String> pendingSentRequestFriends) {
         this.pendingSentRequestFriends = pendingSentRequestFriends;
     }
 
-    public ArrayList<User> getPendingReceivedRequestFriends() {
+    public ArrayList<String> getPendingReceivedRequestFriends() {
         return pendingReceivedRequestFriends;
     }
 
-    public void setPendingReceivedRequestFriends(ArrayList<User> pendingReceivedRequestFriends) {
+    public void setPendingReceivedRequestFriends(ArrayList<String> pendingReceivedRequestFriends) {
         this.pendingReceivedRequestFriends = pendingReceivedRequestFriends;
     }
 
     public boolean isOnline() {
-        return isOnline;
+        return online;
     }
 
     public void setOnline(boolean online) {
-        isOnline = online;
+        this.online = online;
     }
 
     public boolean isComplete() {
-        return isComplete;
+        return complete;
     }
 
     public void setComplete(boolean complete) {
-        isComplete = complete;
+        this.complete = complete;
     }
 }

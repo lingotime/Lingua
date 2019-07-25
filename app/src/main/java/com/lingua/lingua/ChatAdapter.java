@@ -2,6 +2,7 @@ package com.lingua.lingua;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingua.lingua.models.Chat;
-import com.lingua.lingua.models.User;
 
 import java.util.List;
 
@@ -30,9 +30,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private TextView tvText;
     private TextView tvTimestamp;
 
+    String userId, userName;
+
     public ChatAdapter(Context context, List<Chat> chats) {
         this.context = context;
         this.chats = chats;
+
+        SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        userId = prefs.getString("userId", "");
+        userName = prefs.getString("userName", "");
     }
 
     @NonNull
@@ -44,10 +50,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
-        final Chat chat = chats.get(position);
-        final User user = chat.getUsers().get(0);
-        tvName.setText(user.getFirstName());
+        Chat chat = chats.get(position);
+        tvName.setText(chat.getName());
         tvText.setText(chat.getLastMessage());
+        tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastUpdatedAt()));
     }
 
     @Override
@@ -70,8 +76,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
                 Intent intent = new Intent(context, ChatDetailsActivity.class);
+                Chat chat = chats.get(position);
+                intent.putExtra("chatId", chat.getId());
+                intent.putExtra("name", chat.getName());
                 context.startActivity(intent);
             }
         }
+    }
+
+    // Clean all elements of the recycler
+    public void clear() {
+        chats.clear();
+        notifyDataSetChanged();
     }
 }
