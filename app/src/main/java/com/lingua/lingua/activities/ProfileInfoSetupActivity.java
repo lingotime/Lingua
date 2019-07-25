@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
-/* TODO: make chip group for origin country field, fix Date serialization issues. */
 
 public class ProfileInfoSetupActivity extends AppCompatActivity {
     private User currentUser;
@@ -85,7 +84,13 @@ public class ProfileInfoSetupActivity extends AppCompatActivity {
         }
 
         if (currentUser.getUserBirthDate() != null) {
-            birthdateField.setText(currentUser.getUserBirthDate().getMonth() + "/" + currentUser.getUserBirthDate().getDay() + "/" + currentUser.getUserBirthDate().getYear());
+            try {
+                SimpleDateFormat storedDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzzz yyyy");
+                Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getUserBirthDate());
+                birthdateField.setText(userBirthDateAsDate.getMonth() + "/" + userBirthDateAsDate.getDay() + "/" + userBirthDateAsDate.getYear());
+            } catch (ParseException exception) {
+                Log.e("ProfileSetupActivity", "There was an issue parsing the user's registered birth date.");
+            }
         }
 
         if (currentUser.getUserGender() != null) {
@@ -228,7 +233,7 @@ public class ProfileInfoSetupActivity extends AppCompatActivity {
         try {
             SimpleDateFormat inputDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             Date userBirthDateInputAsDate = inputDateFormat.parse(userBirthDateInput);
-            currentUser.setUserBirthDate(userBirthDateInputAsDate);
+            currentUser.setUserBirthDate(userBirthDateInputAsDate.toString());
         } catch (ParseException exception) {
             isCompleteCheck = false;
             Toast.makeText(ProfileInfoSetupActivity.this, "Please enter a valid birth date. Format: mm/dd/yyyy", Toast.LENGTH_LONG).show();

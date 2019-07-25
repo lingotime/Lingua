@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class User {
     String userID;
     String userName; // Required and prompted
-    Date userBirthDate; // Required and prompted
+    String userBirthDate; // Required and prompted
     String userGender; // Required and prompted
     String userBiographyText; // Required and prompted
     String userOriginCountry; // Required and prompted
@@ -27,9 +27,7 @@ public class User {
     boolean isComplete;
     boolean isOnline;
 
-    public User() {
-        userID = generateRandomID();
-    }
+    public User () { }
 
     public String getUserID() {
         return userID;
@@ -47,11 +45,11 @@ public class User {
         this.userName = userName;
     }
 
-    public Date getUserBirthDate() {
+    public String getUserBirthDate() {
         return userBirthDate;
     }
 
-    public void setUserBirthDate(Date userBirthDate) {
+    public void setUserBirthDate(String userBirthDate) {
         this.userBirthDate = userBirthDate;
     }
 
