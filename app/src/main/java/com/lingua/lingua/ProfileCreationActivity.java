@@ -146,7 +146,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
         }, ChipSpan.class));
 
         currentLanguages.setAdapter(adapterLanguages);
-
         targetLanguages.setAdapter(adapterLanguages);
 
         originCountry.setAdapter(adapterCountries);

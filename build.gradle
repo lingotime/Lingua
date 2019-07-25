@@ -15,6 +15,10 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
+
+        maven { url 'https://maven.google.com' }
+        maven { url 'https://tokbox.bintray.com/maven' }
+
     }
 }
 

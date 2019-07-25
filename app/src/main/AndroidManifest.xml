@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
         android:allowBackup="true"
@@ -15,7 +17,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
-
+        <activity android:name=".VideoChatActivity"></activity>
+        <activity android:name=".ProfilePicture" />
+        <activity
+            android:name=".ProfileCreationActivity"
+            android:windowSoftInputMode="adjustResize"></activity> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+        <activity android:name=".MainActivity">
         <activity android:name=".ProfilePicture"></activity>
         <activity
             android:name=".ProfileCreationActivity"
@@ -62,7 +69,6 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
