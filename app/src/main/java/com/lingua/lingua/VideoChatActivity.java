@@ -1,7 +1,10 @@
 package com.lingua.lingua;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,16 +29,22 @@ import com.twilio.video.VideoView;
 
 import java.util.List;
 
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+
 
 public class VideoChatActivity extends AppCompatActivity {
 
-    VideoTokenGenerator tokenGenerator;
-    Room room;
-    LocalAudioTrack localAudioTrack;
-    CameraCapturer cameraCapturer;
-    VideoView remoteVideoView;
-    List<RemoteParticipant> remoteParticipants;
-    LocalParticipant localParticipant;
+    private VideoTokenGenerator tokenGenerator;
+    private Room room;
+    private LocalAudioTrack localAudioTrack;
+    private CameraCapturer cameraCapturer;
+    private VideoView remoteVideoView;
+    private VideoView localVideoView;
+    private List<RemoteParticipant> remoteParticipants;
+    private LocalParticipant localParticipant;
+    private static final int RC_VIDEO_APP_PERM = 124;
+    private ImageButton disconnect;
 
 
     private final static String TAG = "VideoChatActivity";
@@ -44,7 +53,17 @@ public class VideoChatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_chat);
-        // pass in an intent with the conversation object with the 2 users for this call,
+        localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
+        remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
+        disconnect = (ImageButton) findViewById(R.id.activity_video_chat_end_call);
+
+        disconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                room.disconnect();
+            }
+        });
+        // receive an intent with the conversation object with the 2 users for this call,
 
 
         // generate the Twilio room and token
@@ -54,7 +73,7 @@ public class VideoChatActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "Token generated");
         }
-        connectToRoom("User 1 & 2");
+        requestPermissions();
     }
 
     public void connectToRoom(String roomName) {
@@ -134,6 +153,9 @@ public class VideoChatActivity extends AppCompatActivity {
 
                     @Override
                     public void onVideoTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
+                        // render the local participant's video into the publisher container
+                        localVideoView.setVisibility(View.VISIBLE);
+                        localVideoView.setMirror(true);
                         remoteVideoView.setMirror(false);
                         remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
                     }
@@ -212,6 +234,26 @@ public class VideoChatActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @AfterPermissionGranted(RC_VIDEO_APP_PERM)
+    private void requestPermissions() {
+        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // after permission is granted, initialise the video and audio tracks
+            getVideoAndAudioTracks();
+            connectToRoom("User 1 & 2"); // and generate the token and the room
+        } else {
+            // prompt to ask for mic and camera permission
+            EasyPermissions.requestPermissions(this, "Lingua needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);
+        }
+    }
+
 
     public void getVideoAndAudioTracks() {
         // Create an audio track
@@ -224,11 +266,12 @@ public class VideoChatActivity extends AppCompatActivity {
         // Create a video track
         LocalVideoTrack localVideoTrack = LocalVideoTrack.create(this, true, cameraCapturer);
 
-        // Rendering a local video track requires an implementation of VideoRenderer
-        videoView = (VideoView) findViewById(R.id.activity_video_call_publisher_container);
+        // getting the publisher container (for the local participant) and setting visibility to gone before the other participant enters the chat)
+        localVideoView.setVisibility(View.GONE);
 
+        // Rendering a local video track requires an implementation of VideoRenderer
         // Render a local video track to preview your camera
-        localVideoTrack.addRenderer(videoView);
+        localVideoTrack.addRenderer(remoteVideoView);
 
         // Release the audio track to free native memory resources
         localAudioTrack.release();

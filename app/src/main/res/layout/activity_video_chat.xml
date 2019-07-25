@@ -25,7 +25,7 @@
             </com.twilio.video.VideoView>
 
             <ImageButton
-                android:id="@+id/activity_video_call_end_call"
+                android:id="@+id/activity_video_chat_end_call"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|bottom"
@@ -44,7 +44,7 @@
             android:background="#FFFFFF"
             android:padding="2dp">
         <com.twilio.video.VideoView
-            android:id="@+id/activity_video_call_publisher_container"
+            android:id="@+id/activity_video_chat_publisher_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
         </FrameLayout>

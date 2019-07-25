@@ -98,6 +98,7 @@ dependencies {
     implementation "androidx.legacy:legacy-preference-v14:1.0.0"
     implementation 'io.jsonwebtoken:jjwt:0.4'
     implementation "com.twilio.sdk:twilio:7.14.0"
+    implementation 'pub.devrel:easypermissions:3.0.0'
 
 }
 
