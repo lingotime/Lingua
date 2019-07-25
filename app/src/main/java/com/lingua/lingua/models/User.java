@@ -2,6 +2,8 @@ package com.lingua.lingua.models;
 
 import org.parceler.Parcel;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;

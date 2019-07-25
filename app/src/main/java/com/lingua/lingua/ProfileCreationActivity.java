@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -172,6 +174,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // TODO: Launch the activity that will allow the user to take a picture
                 Intent intent = new Intent(ProfileCreationActivity.this, ProfilePicture.class);
+                intent.putExtra("user", Parcels.wrap(currentUser));
                 startActivityForResult(intent, CAMERA_ACTIVITY);
             }
         });
