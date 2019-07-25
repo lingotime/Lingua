@@ -184,9 +184,11 @@ public class VideoChatActivity extends AppCompatActivity {
 
                     @Override
                     public void onVideoTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
-                        // render the local participant's video into the publisher container
+                        // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
                         localVideoView.setVisibility(View.VISIBLE);
-                        localVideoView.setMirror(true);
+                        localVideoView.setMirror(cameraCapturer.getCameraSource() ==
+                                CameraCapturer.CameraSource.FRONT_CAMERA);
+
                         remoteVideoView.setMirror(false);
                         remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
                     }
@@ -294,11 +296,11 @@ public class VideoChatActivity extends AppCompatActivity {
         // Create an audio track
         localAudioTrack = LocalAudioTrack.create(this, true);
 
-        // A video track requires an implementation of VideoCapturer
+        // A video track requires an implementation of VideoCapturer - could include the back camera
         cameraCapturer = new CameraCapturer(this,
                 CameraCapturer.CameraSource.FRONT_CAMERA);
 
-        // Create a video track
+        // Create a video track using the device's front camera
         localVideoTrack = LocalVideoTrack.create(this, true, cameraCapturer);
 
         // getting the publisher container (for the local participant) and setting visibility to gone before the other participant enters the chat)
@@ -307,11 +309,7 @@ public class VideoChatActivity extends AppCompatActivity {
         // Rendering a local video track requires an implementation of VideoRenderer
         // Render a local video track to preview your camera
         localVideoTrack.addRenderer(remoteVideoView);
-
-        // Release the audio track to free native memory resources
-        localAudioTrack.release();
-
-        // Release the video track to free native memory resources
-        localVideoTrack.release();
+        // show the camera output from the user in the main screen
+        remoteVideoView.setMirror(true);
     }
 }
