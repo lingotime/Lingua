@@ -1,36 +1,41 @@
 package com.lingua.lingua.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 import com.lingua.lingua.R;
+import com.lingua.lingua.adapters.ExploreAdapter;
 import com.lingua.lingua.models.User;
-
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
-/*
-Fragment that displays other people's profiles that match the user's target language or country for
-the user to browse through and send friend requests
-*/
+/* FINALIZED, DOCUMENTED, and TESTED ExploreFragment displays timeline of users matching stated profile criteria. */
+/* TODO: Sort users to prioritize online users, limit to 20 users per view. */
 
 public class ExploreFragment extends Fragment {
-/*
-    RecyclerView rvExplore;
-    private ExploreAdapter adapter;
-    private List<User> users;
+    private User currentUser;
+
+    ArrayList<User> usersList;
+    ExploreAdapter usersAdapter;
     private SwipeRefreshLayout swipeContainer;
-    private EndlessRecyclerViewScrollListener scrollListener;
+    private RecyclerView historyTimeline;
 
     @Nullable
     @Override
@@ -42,37 +47,96 @@ public class ExploreFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvExplore = view.findViewById(R.id.fragment_explore_rv);
-        users = new ArrayList<>();
-        users.add(new User("Briana Douglas"));
-        users.add(new User("Fausto Zurita"));
-        adapter = new ExploreAdapter(getContext(), users);
-        rvExplore.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        rvExplore.setLayoutManager(linearLayoutManager);
+        // associate views with java variables
+        swipeContainer = view.findViewById(R.id.fragment_explore_swipe_container);
+        historyTimeline = view.findViewById(R.id.fragment_explore_history_timeline);
 
-        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+        // unwrap the current user
+        Bundle bundle = this.getArguments();
+
+        if (bundle != null) {
+            currentUser = bundle.getParcelable("user");
+        } else {
+            Log.e("ExploreFragment", "There was an issue placing user information into frame.");
+        }
+
+        // fetch compatible users who match criteria and load them into timeline
+        fetchCompatibleUsersAndLoad(currentUser);
+    }
+
+    private void fetchCompatibleUsersAndLoad(User currentUser) {
+        // get criteria for users to be loaded into timeline
+        ArrayList<String> languagesSelectedByUser = currentUser.getExploreLanguages();
+        ArrayList<String> countriesSelectedByUser = currentUser.getExploreCountries();
+
+        String databaseURL = "https://lingua-project.firebaseio.com/users.json";
+
+        // fetch users from database
+        StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new Response.Listener<String>() {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // TODO: load users
+            public void onResponse(String response) {
+                try {
+                    JSONObject usersJSONObject = new JSONObject(response);
+                    Iterator<String> usersJSONObjectKeys = usersJSONObject.keys();
+
+                    // iterate through users in the database
+                    while (usersJSONObjectKeys.hasNext()) {
+                        String userID = usersJSONObjectKeys.next();
+                        JSONObject userJSONObject = usersJSONObject.getJSONObject(userID);
+
+                        // convert JSONObject information to user
+                        Gson gson = new Gson();
+                        User generatedUser = gson.fromJson(userJSONObject.toString(), User.class);
+
+                        // get relevant information from user for matching
+                        ArrayList<String> languagesSelectedByGeneratedUser = generatedUser.getKnownLanguages();
+                        ArrayList<String> countriesSelectedByGeneratedUser = generatedUser.getKnownCountries();
+
+                        // filter user depending on criteria
+                        if (generatedUser.getUserID() != currentUser.getUserID() && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countriesSelectedByGeneratedUser)) {
+                            usersList.add(generatedUser);
+                        }
+                    }
+
+                    // load matched users into timeline
+                    usersAdapter = new ExploreAdapter(getContext(), usersList);
+                    historyTimeline.setAdapter(usersAdapter);
+
+                    // display timeline
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                    historyTimeline.setLayoutManager(layoutManager);
+                } catch (JSONException exception) {
+                    Log.e("ExploreFragment", "firebase:onException", exception);
+                }
             }
-        };
-        // Adds the scroll listener to RecyclerView
-        rvExplore.addOnScrollListener(scrollListener);
-
-        swipeContainer = view.findViewById(R.id.exploreSwipeContainer);
-        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        }, new Response.ErrorListener() {
             @Override
-            public void onRefresh() {
-                // adapter.clear();
-                // TODO: load users
+            public void onErrorResponse(VolleyError error) {
+                Log.e("ExploreFragment", "firebase:onError", error);
             }
         });
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-    }*/
+
+        RequestQueue databaseRequestQueue = Volley.newRequestQueue(getContext());
+        databaseRequestQueue.add(databaseRequest);
+    }
+
+    private boolean matchExists(ArrayList<String> exploreLanguages, ArrayList<String> exploreCountries, ArrayList<String> knownLanguages, ArrayList<String> knownCountries) {
+        for (String exploreLanguage : exploreLanguages) {
+            for (String knownLanguage : knownLanguages) {
+                if (exploreLanguage.equals(knownLanguage)) {
+                    return true;
+                }
+            }
+        }
+
+        for (String exploreCountry : exploreCountries) {
+            for (String knownCountry : knownCountries) {
+                if (exploreCountry.equals(knownCountry)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

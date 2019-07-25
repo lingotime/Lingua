@@ -2,8 +2,6 @@ package com.lingua.lingua.models;
 
 import org.parceler.Parcel;
 
-import java.util.Date;
-
 @Parcel
 public class FriendRequest {
     String friendRequestID;

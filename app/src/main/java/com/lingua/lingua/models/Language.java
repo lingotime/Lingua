@@ -1,69 +1,6 @@
 package com.lingua.lingua.models;
 
-import org.parceler.Parcel;
-
-import java.util.ArrayList;
-
-@Parcel
 public class Language {
-    String languageID;
-    String languageName;
-    ArrayList<String> usersWithKnownSelected;
-    ArrayList<String> usersWithExploreSelected;
-
-    public Language() {
-        languageID = generateRandomID();
-    }
-
-    public String getLanguageID() {
-        return languageID;
-    }
-
-    public void setLanguageID(String languageID) {
-        this.languageID = languageID;
-    }
-
-    public String getLanguageName() {
-        return languageName;
-    }
-
-    public void setLanguageName(String languageName) {
-        this.languageName = languageName;
-    }
-
-    public ArrayList<String> getUsersWithKnownSelected() {
-        return usersWithKnownSelected;
-    }
-
-    public void setUsersWithKnownSelected(ArrayList<String> usersWithKnownSelected) {
-        this.usersWithKnownSelected = usersWithKnownSelected;
-    }
-
-    public ArrayList<String> getUsersWithExploreSelected() {
-        return usersWithExploreSelected;
-    }
-
-    public void setUsersWithExploreSelected(ArrayList<String> usersWithExploreSelected) {
-        this.usersWithExploreSelected = usersWithExploreSelected;
-    }
-
-    private String generateRandomID() {
-        String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        int numberOfCharacters = 15;
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        while (numberOfCharacters != 0) {
-            int character = (int) (Math.random() * allowedCharacters.length());
-
-            stringBuilder.append(allowedCharacters.charAt(character));
-
-            numberOfCharacters--;
-        }
-
-        return stringBuilder.toString();
-    }
-
     public static final String[] LANGUAGES = new String[] {
             "Acholi",
             "Afrikaans",

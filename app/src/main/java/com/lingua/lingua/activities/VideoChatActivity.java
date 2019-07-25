@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 

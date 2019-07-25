@@ -1,9 +1,9 @@
 package com.lingua.lingua.activities;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -14,10 +14,15 @@ import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.ConnectFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
+import com.lingua.lingua.models.User;
+import org.parceler.Parcels;
 
 /* FINALIZED, DOCUMENTED, and TESTED: MainActivity displays a fragment, switchable with a bottom navigation. */
+/* TODO: Take care of signal status */
 
 public class MainActivity extends AppCompatActivity {
+    private User currentUser;
+
     private FrameLayout fragmentFrame;
     private BottomNavigationView bottomNavigation;
 
@@ -29,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
         // associate views with java variables
         fragmentFrame = findViewById(R.id.activity_main_fragment_frame);
         bottomNavigation = findViewById(R.id.activity_main_bottom_navigation);
+
+        // unwrap the current user
+        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
         // manage fragments
         final FragmentManager fragmentManager = getSupportFragmentManager();
@@ -47,17 +55,24 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("user", (Parcelable) currentUser);
+
                 switch (item.getItemId()) {
                     case R.id.Chat:
+                        chatFragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, chatFragment).commit();
                         return true;
                     case R.id.Connect:
+                        connectFragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, connectFragment).commit();
                         return true;
                     case R.id.Profile:
+                        profileFragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, profileFragment).commit();
                         return true;
                     default:
+                        exploreFragment.setArguments(bundle);
                         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, exploreFragment).commit();
                         return true;
                 }

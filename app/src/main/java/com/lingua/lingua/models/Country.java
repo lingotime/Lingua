@@ -1,80 +1,9 @@
 package com.lingua.lingua.models;
 
-import org.parceler.Parcel;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@Parcel
 public class Country {
-    String countryID;
-    String countryName;
-    String countryFlagPhotoURL;
-    ArrayList<String> usersWithKnownSelected;
-    ArrayList<String> usersWithExploreSelected;
-
-    public Country() {
-        countryID = generateRandomID();
-    }
-
-    public String getCountryID() {
-        return countryID;
-    }
-
-    public void setCountryID(String countryID) {
-        this.countryID = countryID;
-    }
-
-    public String getCountryName() {
-        return countryName;
-    }
-
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-
-    public String getCountryFlagPhotoURL() {
-        return countryFlagPhotoURL;
-    }
-
-    public void setCountryFlagPhotoURL(String countryFlagPhotoURL) {
-        this.countryFlagPhotoURL = countryFlagPhotoURL;
-    }
-
-    public ArrayList<String> getUsersWithKnownSelected() {
-        return usersWithKnownSelected;
-    }
-
-    public void setUsersWithKnownSelected(ArrayList<String> usersWithKnownSelected) {
-        this.usersWithKnownSelected = usersWithKnownSelected;
-    }
-
-    public ArrayList<String> getUsersWithExploreSelected() {
-        return usersWithExploreSelected;
-    }
-
-    public void setUsersWithExploreSelected(ArrayList<String> usersWithExploreSelected) {
-        this.usersWithExploreSelected = usersWithExploreSelected;
-    }
-
-    private String generateRandomID() {
-        String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        int numberOfCharacters = 15;
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        while (numberOfCharacters != 0) {
-            int character = (int) (Math.random() * allowedCharacters.length());
-
-            stringBuilder.append(allowedCharacters.charAt(character));
-
-            numberOfCharacters--;
-        }
-
-        return stringBuilder.toString();
-    }
-
     public static final String[] COUNTRIES = new String[] {
             "Afghanistan",
             "Aland Islands",

@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
+/* TODO: Ensure origin country is a valid country. */
 
 public class ProfileInfoSetupActivity extends AppCompatActivity {
     private User currentUser;

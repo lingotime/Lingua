@@ -1,9 +1,7 @@
 package com.lingua.lingua.models;
 
 import org.parceler.Parcel;
-
 import java.util.ArrayList;
-import java.util.Date;
 
 @Parcel
 public class Conversation {
