@@ -158,18 +158,22 @@ public class ExploreFragment extends Fragment {
             return true;
         }
 
-        for (String exploreLanguage : exploreLanguages) {
-            for (String knownLanguage : knownLanguages) {
-                if (exploreLanguage.equals(knownLanguage)) {
-                    return true;
+        if (exploreLanguages != null && knownLanguages != null) {
+            for (String exploreLanguage : exploreLanguages) {
+                for (String knownLanguage : knownLanguages) {
+                    if (exploreLanguage.equals(knownLanguage)) {
+                        return true;
+                    }
                 }
             }
         }
 
-        for (String exploreCountry : exploreCountries) {
-            for (String knownCountry : knownCountries) {
-                if (exploreCountry.equals(knownCountry)) {
-                    return true;
+        if (exploreCountries != null && knownCountries != null) {
+            for (String exploreCountry : exploreCountries) {
+                for (String knownCountry : knownCountries) {
+                    if (exploreCountry.equals(knownCountry)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -179,27 +183,35 @@ public class ExploreFragment extends Fragment {
 
     // ensure there is no previous relationship between user and displayed user
     private boolean actionNotTaken(String generatedUserID) {
-        for (String friendUserID : currentUser.getFriends()) {
-            if (friendUserID.equals(generatedUserID)) {
-                return false;
+        if (currentUser.getFriends() != null) {
+            for (String friendUserID : currentUser.getFriends()) {
+                if (friendUserID.equals(generatedUserID)) {
+                    return false;
+                }
             }
         }
 
-        for (String declinedUserID : currentUser.getDeclinedUsers()) {
-            if (declinedUserID.equals(generatedUserID)) {
-                return false;
+        if (currentUser.getDeclinedUsers() != null) {
+            for (String declinedUserID : currentUser.getDeclinedUsers()) {
+                if (declinedUserID.equals(generatedUserID)) {
+                    return false;
+                }
             }
         }
 
-        for (String pendingUserID : currentUser.getPendingSentFriendRequests()) {
-            if (pendingUserID.equals(generatedUserID)) {
-                return false;
+        if (currentUser.getPendingSentFriendRequests() != null) {
+            for (String pendingUserID : currentUser.getPendingSentFriendRequests()) {
+                if (pendingUserID.equals(generatedUserID)) {
+                    return false;
+                }
             }
         }
 
-        for (String pendingUserID : currentUser.getPendingReceivedFriendRequests()) {
-            if (pendingUserID.equals(generatedUserID)) {
-                return false;
+        if (currentUser.getPendingReceivedFriendRequests() != null) {
+            for (String pendingUserID : currentUser.getPendingReceivedFriendRequests()) {
+                if (pendingUserID.equals(generatedUserID)) {
+                    return false;
+                }
             }
         }
 
