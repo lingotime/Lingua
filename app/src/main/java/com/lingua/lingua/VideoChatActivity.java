@@ -105,7 +105,7 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                room.disconnect(); 
+                room.disconnect();
                 // launch intent to return to go to the ChatDetailsActivity
                 Intent intent = new Intent(VideoChatActivity.this, ChatDetailsActivity.class);
                 startActivity(intent);
