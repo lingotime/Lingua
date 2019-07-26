@@ -14,11 +14,12 @@ public class Chat {
     ArrayList<String> users;
     String lastUpdatedAt;
 
-    public Chat(String id, String name, String lastMessage, String lastUpdatedAt) {
+    public Chat(String id, String name, String lastMessage, String lastUpdatedAt, ArrayList<String> users) {
         this.id = id;
         this.name = name;
         this.lastMessage = lastMessage;
         this.lastUpdatedAt = lastUpdatedAt;
+        this.users = users;
     }
 
     public String getName() { return name; }
