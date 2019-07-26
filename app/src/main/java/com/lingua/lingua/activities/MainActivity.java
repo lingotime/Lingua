@@ -1,7 +1,6 @@
 package com.lingua.lingua.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
