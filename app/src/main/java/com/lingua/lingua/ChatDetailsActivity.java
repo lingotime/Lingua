@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,7 +55,11 @@ public class ChatDetailsActivity extends AppCompatActivity {
         messages = new ArrayList<>();
 
         String chatId = getIntent().getStringExtra("chatId");
-        String name = getIntent().getStringExtra("name"); //TODO: show as title in toolbar, if chat is not a group show name of friend
+        String name = getIntent().getStringExtra("name");
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_chat_details_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(name);
 
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);

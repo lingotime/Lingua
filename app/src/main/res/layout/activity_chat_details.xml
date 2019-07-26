@@ -9,13 +9,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_chat_details_rv"
-        android:transcriptMode="alwaysScroll"
-        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="580dp"
+        android:layout_above="@+id/rlSend"
+        android:layout_below="@+id/activity_chat_details_toolbar"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_above="@+id/rlSend"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:transcriptMode="alwaysScroll" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/rlSend"
@@ -84,5 +86,17 @@
             app:srcCompat="@drawable/baseline_send_black_48dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/activity_chat_details_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme" />
 
 </RelativeLayout>
