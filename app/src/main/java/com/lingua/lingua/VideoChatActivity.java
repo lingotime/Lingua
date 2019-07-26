@@ -1,6 +1,9 @@
 package com.lingua.lingua;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Camera;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.firebase.client.Firebase;
+import com.lingua.lingua.models.Chat;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
 import com.twilio.video.H264Codec;
@@ -32,11 +37,15 @@ import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 import com.twilio.video.Vp9Codec;
 
+import org.parceler.Parcels;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
 
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -45,6 +54,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class VideoChatActivity extends AppCompatActivity {
 
     private VideoTokenGenerator tokenGenerator;
+    private VideoTokenGenerator secondTokenGenerator; // for the second user in the chat
     private Room room;
     private LocalAudioTrack localAudioTrack;
     private LocalVideoTrack localVideoTrack;
@@ -57,8 +67,14 @@ public class VideoChatActivity extends AppCompatActivity {
     private ImageButton disconnect;
     private final static String TAG = "VideoChatActivity";
     // just for the initial test
-    private String accessToken;
     private VideoCodec videoCodec;
+    private String roomName;
+    private String userId;
+    private String username;
+    private String chatId;
+    private String receiverId; // id of the second user in the chat
+    private Firebase reference;
+
 
 
 
@@ -66,6 +82,22 @@ public class VideoChatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_chat);
+
+        // getting the current user from the shared preferences
+        SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        userId = prefs.getString("userId", "");
+        username = prefs.getString("userName", "");
+
+        chatId = getIntent().getStringExtra("chatID");
+        Log.d(TAG, chatId);
+        String chatName = getIntent().getStringExtra("name"); // the room will be set to this name
+        roomName = chatId;
+        receiverId = getIntent().getStringExtra("otherUser");
+
+        // setting up Firebase to receive the messages to be sent
+        Firebase.setAndroidContext(VideoChatActivity.this);
+        reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
+
         localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
         disconnect = (ImageButton) findViewById(R.id.activity_video_chat_end_call);
@@ -73,14 +105,17 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                room.disconnect();
+                room.disconnect(); 
+                // launch intent to return to go to the ChatDetailsActivity
+                Intent intent = new Intent(VideoChatActivity.this, ChatDetailsActivity.class);
+                startActivity(intent);
             }
         });
         // receive an intent with the conversation object with the 2 users for this call,
 
 
-        // generate the Twilio room and token
-        tokenGenerator = new VideoTokenGenerator();
+        // generate the Twilio room and token with the given chat name and the current user as the first identity
+        tokenGenerator = new VideoTokenGenerator(userId, roomName);
         if (tokenGenerator.token == null) {
             Log.d(TAG, "Token object not generated");
         } else {
@@ -91,7 +126,7 @@ public class VideoChatActivity extends AppCompatActivity {
         requestPermissions();
     }
 
-    public void connectToRoom(String roomName) {
+    public void connectToRoom(String roomName, VideoTokenGenerator tokenGenerator) {
 
         //Check if H.264 is supported in this device
         boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
@@ -100,8 +135,10 @@ public class VideoChatActivity extends AppCompatActivity {
         // Prefer H264 if it is hardware available for encoding and decoding
         videoCodec = isH264Supported ? (new H264Codec()) : (new Vp9Codec());
         Log.i(TAG, "The video codec has been set");
+        Log.i(TAG, "The access token: " + tokenGenerator.token + " for " + username + " in the room " + roomName);
 
-        ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.token.toString())
+
+        ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.JwtToken)
                 .roomName(roomName)
                 .audioTracks(Collections.singletonList(localAudioTrack))
                 .videoTracks(Collections.singletonList(localVideoTrack))
@@ -112,6 +149,11 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onConnected(Room room) {
                 Log.i(TAG, "Connected to " + room.getName());
+
+                // send a message to the other user to notify them of the creation of the room
+                sendTextChat("Video chat with me!");
+
+
                 // check if the user already has a participant - then fix the rendering of the video tracks
                 if (room.getRemoteParticipants().size() > 0) {
                     // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
@@ -130,6 +172,9 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
                 Log.i(TAG, "failure to connect");
+
+                // send a message to the other user detailing an attempted call
+                sendTextChat("I tried to call you :(");
             }
 
             @Override
@@ -296,7 +341,7 @@ public class VideoChatActivity extends AppCompatActivity {
             // after permission is granted, initialise the video and audio tracks
             Log.i(TAG, "Permission granted");
             getVideoAndAudioTracks();
-            connectToRoom("Test"); // and generate the token and the room
+            connectToRoom(roomName, tokenGenerator); // and generate the token and the room
         } else {
             // prompt to ask for mic and camera permission
             EasyPermissions.requestPermissions(this, "Lingua needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);
@@ -348,6 +393,21 @@ public class VideoChatActivity extends AppCompatActivity {
             }
             remoteVideoView.setMirror(true);
         }
+    }
+
+    public void sendTextChat(String messageText) {
+        String timestamp = new Date().toString();
+        // save message
+        Map<String, String> map = new HashMap<>();
+        map.put("message", messageText);
+        map.put("senderId", userId);
+        map.put("timestamp", timestamp);
+        reference.push().setValue(map);
+
+        // set this message to be the lastMessage of the chat
+        Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
+        chatReference.child("lastMessage").setValue(username + ": " + messageText);
+        chatReference.child("lastMessageAt").setValue(timestamp);
     }
 
 }

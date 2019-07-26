@@ -79,7 +79,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:18.0.0'
 
     implementation 'com.firebase:firebase-client-android:2.5.2+'
-    implementation 'com.android.volley:volley:1.1.0'
+    implementation 'com.android.volley:volley:1.1.1'
 
     // Facebook support
     implementation 'com.facebook.android:facebook-login:5.1.1'
@@ -103,8 +103,9 @@ dependencies {
     
     // Other support
     implementation 'com.google.firebase:firebase-storage:18.1.0'
-    implementation 'com.google.code.gson:gson:2.2.4'
+    implementation 'com.google.code.gson:gson:2.8.5'
 
+    implementation 'org.eclipse.birt.runtime.3_7_1:org.apache.xerces:2.9.0'
 }
 
 configurations {

@@ -1,5 +1,7 @@
 package com.lingua.lingua.fragments;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,8 +24,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.ChatAdapter;
+import com.lingua.lingua.ChatDetailsActivity;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
+import com.lingua.lingua.SwipeController;
+import com.lingua.lingua.SwipeControllerActions;
+import com.lingua.lingua.VideoChatActivity;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
@@ -42,9 +49,12 @@ on each chat to message that person in the ChatDetailsActivity
 public class ChatFragment extends Fragment {
 
     RecyclerView rvChats;
+    private Context context;
     private ChatAdapter adapter;
     private List<Chat> chats;
     private SwipeRefreshLayout swipeContainer;
+    private static final String TAG = "ChatFragment";
+    // used to implement the actions for swiping left or right on each chat object
 
     User currentUser;
 
@@ -52,6 +62,7 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
+        context = container.getContext();
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
@@ -140,6 +151,7 @@ public class ChatFragment extends Fragment {
                 Iterator keys = users.keys();
                 while (keys.hasNext()) {
                     String key = keys.next().toString();
+                    Log.d(TAG, key);
                     userIds.add(key);
                 }
                 chats.add(new Chat(id, name, lastMessage, lastMessageAt, userIds));
@@ -153,7 +165,7 @@ public class ChatFragment extends Fragment {
             Log.e("ChatFragment", "" + volleyError);
         });
 
-        RequestQueue rQueue = Volley.newRequestQueue(getContext());
+        RequestQueue rQueue = Volley.newRequestQueue(context);
         rQueue.add(chatInfoRequest);
     }
 }

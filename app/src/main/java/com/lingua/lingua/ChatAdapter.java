@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingua.lingua.models.Chat;
 
+import java.util.ArrayList;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -25,7 +26,7 @@ RecyclerView Adapter that adapts Chat objects to the viewholders in the recycler
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     private Context context;
-    private List<Chat> chats;
+    public List<Chat> chats;
 
     private ImageView ivProfile;
     private TextView tvName;

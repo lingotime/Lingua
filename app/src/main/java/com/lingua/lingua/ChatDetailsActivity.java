@@ -1,6 +1,7 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -45,18 +46,22 @@ public class ChatDetailsActivity extends AppCompatActivity {
     private Button sendButton;
     private EditText etMessage;
 
+    private String userId;
+    private String userName;
+
     Firebase reference;
+    Chat chat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_details);
 
-        Chat chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+        SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        userId = prefs.getString("userId", "");
+        userName = prefs.getString("userName", "");
 
-        SharedPreferences prefs = getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
-        String userId = prefs.getString("userId", "");
-        String userName = prefs.getString("userName", "");
+        chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
 
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
@@ -137,7 +142,18 @@ public class ChatDetailsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.chat_details_videochat_icon) {
-            // TODO: make call
+            // intent to the video chat activity
+            Intent intent = new Intent(this, VideoChatActivity.class);
+            intent.putExtra("chatID", chat.getId());
+            intent.putExtra("name", chat.getName());
+            // get the second user Id from the
+            for (int i = 0; i < chat.getUsers().size(); i++) {
+                String otherUserId = chat.getUsers().get(i);
+                if (otherUserId != userId) {
+                    intent.putExtra("otherUser", otherUserId);
+                }
+            }
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
