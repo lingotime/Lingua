@@ -32,15 +32,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 /**
- * NOTE: There can only be one service in each app that receives FCM messages. If multiple
- * are declared in the Manifest then the first one will be chosen.
- *
- * In order to make this Java sample functional, you must remove the following from the Kotlin messaging
- * service in the AndroidManifest.xml:
- *
- * <intent-filter>
- *   <action android:name="com.google.firebase.MESSAGING_EVENT" />
- * </intent-filter>
+ * Firebase Messaging Service that handles receiving push notifications
  */
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -85,7 +77,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 // Handle message within 10 seconds
                 handleNow();
             }
-
         }
 
         // Check if message contains a notification payload.
