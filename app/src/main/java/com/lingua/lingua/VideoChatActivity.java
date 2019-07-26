@@ -1,6 +1,8 @@
 package com.lingua.lingua;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Camera;
 import android.os.Bundle;
 import android.util.Log;
@@ -57,8 +59,12 @@ public class VideoChatActivity extends AppCompatActivity {
     private ImageButton disconnect;
     private final static String TAG = "VideoChatActivity";
     // just for the initial test
-    private String accessToken;
     private VideoCodec videoCodec;
+    private String roomName;
+    private String userId;
+    private String username;
+    private String chatId;
+
 
 
 
@@ -66,6 +72,16 @@ public class VideoChatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_chat);
+
+        // getting the current user from the shared preferences
+        SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        userId = prefs.getString("userId", "");
+        username = prefs.getString("userName", "");
+
+        chatId = getIntent().getStringExtra("chatId");
+        roomName = getIntent().getStringExtra("name"); // the room will be set to this name
+
+
         localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
         disconnect = (ImageButton) findViewById(R.id.activity_video_chat_end_call);
@@ -79,8 +95,8 @@ public class VideoChatActivity extends AppCompatActivity {
         // receive an intent with the conversation object with the 2 users for this call,
 
 
-        // generate the Twilio room and token
-        tokenGenerator = new VideoTokenGenerator();
+        // generate the Twilio room and token with the given chat name and the current user as the first identity
+        tokenGenerator = new VideoTokenGenerator(userId, roomName);
         if (tokenGenerator.token == null) {
             Log.d(TAG, "Token object not generated");
         } else {
@@ -296,7 +312,7 @@ public class VideoChatActivity extends AppCompatActivity {
             // after permission is granted, initialise the video and audio tracks
             Log.i(TAG, "Permission granted");
             getVideoAndAudioTracks();
-            connectToRoom("Test"); // and generate the token and the room
+            connectToRoom(roomName); // and generate the token and the room
         } else {
             // prompt to ask for mic and camera permission
             EasyPermissions.requestPermissions(this, "Lingua needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);

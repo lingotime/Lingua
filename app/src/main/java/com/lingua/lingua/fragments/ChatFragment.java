@@ -1,5 +1,6 @@
 package com.lingua.lingua.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,10 +23,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.ChatAdapter;
+import com.lingua.lingua.ChatDetailsActivity;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.SwipeController;
 import com.lingua.lingua.SwipeControllerActions;
+import com.lingua.lingua.VideoChatActivity;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
@@ -83,11 +86,22 @@ public class ChatFragment extends Fragment {
         SwipeController swipeController = new SwipeController(new SwipeControllerActions() {
             @Override
             public void onLeftClicked(int position) {
+                // launch the chat details activity
+                Intent intent = new Intent(getContext(), ChatDetailsActivity.class);
+                Chat chat = adapter.chats.get(position);
+                intent.putExtra("chatId", chat.getId());
+                intent.putExtra("name", chat.getName());
+                startActivity(intent);
                 super.onLeftClicked(position);
             }
 
             @Override
             public void onRightClicked(int position) {
+                Intent intent = new Intent(getContext(), VideoChatActivity.class);
+                Chat chat = adapter.chats.get(position);
+                intent.putExtra("chatID", chat.getId());
+                intent.putExtra("name", chat.getName());
+                startActivity(intent);
                 super.onRightClicked(position);
             }
         }, getContext());

@@ -23,7 +23,7 @@ RecyclerView Adapter that adapts Chat objects to the viewholders in the recycler
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     private Context context;
-    private List<Chat> chats;
+    public List<Chat> chats;
 
     private ImageView ivProfile;
     private TextView tvName;

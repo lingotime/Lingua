@@ -12,7 +12,15 @@ public class VideoTokenGenerator {
     private String twilioApiKey = "SK17f5203ceff0da12c3a9cda73e2831c4";
     private String twilioApiSecret = "rDXfaKJbOqlSGwCtF9ZlFZIBxkMjesUo";
 
-    private String identity = "alice"; // enter user's name here; preferably first
+
+    private String identity; // enter user's name here; preferably first
+    private String roomName;
+
+    public VideoTokenGenerator(String userId, String roomName) {
+        // takes care of adding the user
+        this.identity = userId;
+        this.roomName = roomName;
+    }
 
     // Create Video grant
     private VideoGrant grant = new VideoGrant().setRoom("DailyStandup");

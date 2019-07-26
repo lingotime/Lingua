@@ -15,7 +15,12 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.ItemTouchHelper.Callback;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.net.ConnectException;
+
+/*
+Class to control the swipe actions of the each item in the chat fragment. Implements swipe on either side to either enter
+a text chat or a video chat
+ */
+
 
 enum ButtonsState {
     GONE,
@@ -141,7 +146,19 @@ public class SwipeController extends Callback {
                     // resets the card's clickable attribute upon release, and also puts the cards back into their original position
                     setItemsClickable(recyclerView, true);
                     swipeBack = false;
-                    buttonShowedState = ButtonsState.GONE;
+
+
+                    // setting the actions for swiping the chat in either direction
+                    if (buttonsActions != null && buttonInstance != null && buttonInstance.contains(event.getX(), event.getY())) {
+                        if (buttonShowedState == ButtonsState.LEFT_VISIBLE) {
+                            buttonsActions.onLeftClicked(viewHolder.getAdapterPosition());
+                        }
+                        else if (buttonShowedState == ButtonsState.RIGHT_VISIBLE) {
+                            buttonsActions.onRightClicked(viewHolder.getAdapterPosition());
+                        }
+                    }
+                    buttonShowedState = ButtonsState.GONE; // resets fragment to original state
+                    currentItemViewHolder = null;
                 }
                 return false;
             }
