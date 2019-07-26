@@ -97,7 +97,7 @@ public class ExploreFragment extends Fragment {
                         ArrayList<String> countriesSelectedByGeneratedUser = generatedUser.getKnownCountries();
 
                         // filter user depending on criteria
-                        if (generatedUser.getUserID() != currentUser.getUserID() && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countriesSelectedByGeneratedUser) && actionNotTaken(generatedUser.getUserID())) {
+                        if (generatedUser.getUserID().equals(currentUser.getUserID()) && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countriesSelectedByGeneratedUser) && actionNotTaken(generatedUser.getUserID())) {
                             if (usersJSONObjectCounter < 20) {
                                 // add to the list of users
                                 usersList.add(generatedUser);

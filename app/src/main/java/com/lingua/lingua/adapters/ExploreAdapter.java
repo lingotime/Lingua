@@ -147,16 +147,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         return usersList.size();
     }
 
-    public void clear() {
-        usersList.clear();
-        notifyDataSetChanged();
-    }
-
-    public void addAll(List<User> newUserList) {
-        usersList.addAll(newUserList);
-        notifyDataSetChanged();
-    }
-
     private int getAge(String birthDateString) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
