@@ -4,7 +4,7 @@
     <item
         android:id="@+id/chat_details_videochat_icon"
         android:enabled="true"
-        android:icon="@drawable/video-outline"
+        android:icon="@drawable/video_outline"
         android:title="Videochat"
         app:showAsAction="ifRoom" />
 </menu>

@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingua.lingua.models.Chat;
 
+import org.parceler.Parcels;
+
 import java.util.List;
 
 /*
@@ -77,8 +79,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             if (position != RecyclerView.NO_POSITION) {
                 Intent intent = new Intent(context, ChatDetailsActivity.class);
                 Chat chat = chats.get(position);
-                intent.putExtra("chatId", chat.getId());
-                intent.putExtra("name", chat.getName());
+                intent.putExtra("chat", Parcels.wrap(chat));
                 context.startActivity(intent);
             }
         }
