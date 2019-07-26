@@ -1,5 +1,8 @@
 package com.lingua.lingua;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.ItemTouchHelper.Callback;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.net.ConnectException;
 
 enum ButtonsState {
     GONE,
@@ -32,8 +37,11 @@ public class SwipeController extends Callback {
 
     private static final float buttonWidth = 200;
 
-    public SwipeController(SwipeControllerActions buttonsActions) {
+    private Context context;
+
+    public SwipeController(SwipeControllerActions buttonsActions, Context parentContext) {
         this.buttonsActions = buttonsActions;
+        this.context = parentContext;
     }
 
 
@@ -149,39 +157,50 @@ public class SwipeController extends Callback {
 
     // to draw the buttons
     private void drawButtons(Canvas c, RecyclerView.ViewHolder viewHolder) {
+        // the button on the left to launch a video chat and the button on the right to launch the text chat details
         float buttonWidthWithoutPadding = buttonWidth - 20;
         float corners = 16;
 
         View itemView = viewHolder.itemView;
-        Paint p = new Paint();
+        Paint paint = new Paint();
 
-        RectF leftButton = new RectF(itemView.getLeft(), itemView.getTop(), itemView.getLeft() + buttonWidthWithoutPadding, itemView.getBottom());
-        p.setColor(Color.BLUE);
-        c.drawRoundRect(leftButton, corners, corners, p);
-        drawText("EDIT", c, leftButton, p);
+        RectF videoChatButton = new RectF(itemView.getLeft(), itemView.getTop(), itemView.getLeft() + buttonWidthWithoutPadding, itemView.getBottom());
+        paint.setColor(Color.BLUE);
+        c.drawRoundRect(videoChatButton, corners, corners, paint);
+        drawIcon("TEXT", c, videoChatButton, paint);
 
-        RectF rightButton = new RectF(itemView.getRight() - buttonWidthWithoutPadding, itemView.getTop(), itemView.getRight(), itemView.getBottom());
-        p.setColor(Color.RED);
-        c.drawRoundRect(rightButton, corners, corners, p);
-        drawText("DELETE", c, rightButton, p);
+        RectF textChatButton = new RectF(itemView.getRight() - buttonWidthWithoutPadding, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+        paint.setColor(Color.RED);
+        c.drawRoundRect(textChatButton, corners, corners, paint);
+        drawIcon("VIDEO", c, textChatButton, paint);
 
         buttonInstance = null;
         if (buttonShowedState == ButtonsState.LEFT_VISIBLE) {
-            buttonInstance = leftButton;
+            buttonInstance = videoChatButton;
         }
         else if (buttonShowedState == ButtonsState.RIGHT_VISIBLE) {
-            buttonInstance = rightButton;
+            buttonInstance = textChatButton;
         }
     }
 
-    private void drawText(String text, Canvas c, RectF button, Paint p) {
+    private void drawIcon(String text, Canvas c, RectF button, Paint paint) {
         float textSize = 60;
-        p.setColor(Color.WHITE);
-        p.setAntiAlias(true);
-        p.setTextSize(textSize);
+        paint.setColor(Color.WHITE);
+        paint.setAntiAlias(true);
+        paint.setTextSize(textSize);
+        Bitmap icon;
 
-        float textWidth = p.measureText(text);
-        c.drawText(text, button.centerX()-(textWidth/2), button.centerY()+(textSize/2), p);
+        // converts the drawables to Bitmap images for rendering on the canvas
+        if (text == "TEXT") {
+            icon = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.comment);
+        } else {
+            icon = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.camcorder);
+        }
+
+        float textWidth = paint.measureText(text);
+        c.drawBitmap(icon, button.centerX()-(textWidth/2), button.centerY()+(textSize/2), paint);
     }
 
 }

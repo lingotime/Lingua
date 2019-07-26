@@ -25,6 +25,7 @@ import com.lingua.lingua.ChatAdapter;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.SwipeController;
+import com.lingua.lingua.SwipeControllerActions;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
@@ -79,7 +80,17 @@ public class ChatFragment extends Fragment {
         rvChats.setLayoutManager(linearLayoutManager);
 
         // attaches the item touch helper to the recycler view
-        SwipeController swipeController = new SwipeController();
+        SwipeController swipeController = new SwipeController(new SwipeControllerActions() {
+            @Override
+            public void onLeftClicked(int position) {
+                super.onLeftClicked(position);
+            }
+
+            @Override
+            public void onRightClicked(int position) {
+                super.onRightClicked(position);
+            }
+        }, getContext());
         itemTouchHelper = new ItemTouchHelper(swipeController);
         itemTouchHelper.attachToRecyclerView(rvChats);
 
