@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -23,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.ChatAdapter;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
+import com.lingua.lingua.SwipeController;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
@@ -45,6 +47,9 @@ public class ChatFragment extends Fragment {
     private ChatAdapter adapter;
     private List<Chat> chats;
     private SwipeRefreshLayout swipeContainer;
+    // used to implement the actions for swiping left or right on each chat object
+
+    private ItemTouchHelper itemTouchHelper;
 
     User currentUser;
 
@@ -72,6 +77,11 @@ public class ChatFragment extends Fragment {
         rvChats.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvChats.setLayoutManager(linearLayoutManager);
+
+        // attaches the item touch helper to the recycler view
+        SwipeController swipeController = new SwipeController();
+        itemTouchHelper = new ItemTouchHelper(swipeController);
+        itemTouchHelper.attachToRecyclerView(rvChats);
 
         swipeContainer = view.findViewById(R.id.exploreSwipeContainer);
         // Setup refresh listener which triggers new data loading
