@@ -9,9 +9,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.firebase.client.Firebase;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.Country;
 import com.lingua.lingua.models.User;
@@ -19,13 +21,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Period;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHolder> {
-    Context context;
-    List<User> userList;
+/* TODO: "send friend request" function. */
 
+public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHolder> {
+    private User currentUser;
+
+    Context context;
+    List<User> usersList;
+    List<User> hiddenUsersList;
+    private CardView card;
     private ImageView flagImage;
     private ImageView profilePhotoImage;
     private ImageView liveStatusSignal;
@@ -37,9 +46,11 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     private Button sendRequestButton;
     private Button removeButton;
 
-    public ExploreAdapter(Context context, List<User> userList) {
+    public ExploreAdapter(Context context, List<User> usersList, List<User> hiddenUsersList, User currentUser) {
         this.context = context;
-        this.userList = userList;
+        this.usersList = usersList;
+        this.hiddenUsersList = hiddenUsersList;
+        this.currentUser = currentUser;
     }
 
     @NonNull
@@ -51,7 +62,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        User user = userList.get(position);
+        User user = usersList.get(position);
 
         // load user flag and profile photo into place
         Glide.with(context).load(context.getResources().getIdentifier(Country.COUNTRY_CODES.get(user.getUserOriginCountry()), "drawable", context.getPackageName())).into(flagImage);
@@ -72,35 +83,77 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         genderText.setText(user.getUserGender());
         biographyText.setText(user.getUserBiographyText());
 
-        // send user a friend request and remove them from view
+        // send user a friend request, remove them from view, and add a new user to timeline
         sendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: fire a friend request, remove user from list, add new user to list
+                // add user to sent friend request user list
+                if (currentUser.getPendingSentFriendRequests() == null) {
+                    currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(usersList.get(position).getUserID())));
+                } else {
+                    currentUser.getPendingSentFriendRequests().add(usersList.get(position).getUserID());
+                }
+
+                // save updated sent friend request user list to database
+                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
+                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+
+                // remove user from displayed user list
+                usersList.remove(position);
+
+                // check if there are more users to load
+                if (!hiddenUsersList.isEmpty()) {
+                    usersList.add(hiddenUsersList.get(0));
+                    hiddenUsersList.remove(0);
+                }
+
+                // notify adapter of changes in data
+                notifyDataSetChanged();
             }
         });
 
-        // remove user from view without friend request
+        // remove user from view without friend request and add a new user to timeline
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: remove user from list, add new user to list
+                // add user to declined user list
+                if (currentUser.getDeclinedUsers() == null) {
+                    currentUser.setDeclinedUsers(new ArrayList<String>(Arrays.asList(usersList.get(position).getUserID())));
+                } else {
+                    currentUser.getDeclinedUsers().add(usersList.get(position).getUserID());
+                }
+
+                // save updated declined user list to database
+                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
+                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+
+                // remove user from displayed user list
+                usersList.remove(position);
+
+                // check if there are more users to load
+                if (!hiddenUsersList.isEmpty()) {
+                    usersList.add(hiddenUsersList.get(0));
+                    hiddenUsersList.remove(0);
+                }
+
+                // notify adapter of changes in data
+                notifyDataSetChanged();
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        return usersList.size();
     }
 
     public void clear() {
-        userList.clear();
+        usersList.clear();
         notifyDataSetChanged();
     }
 
     public void addAll(List<User> newUserList) {
-        userList.addAll(newUserList);
+        usersList.addAll(newUserList);
         notifyDataSetChanged();
     }
 
@@ -123,6 +176,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         public ViewHolder(View userItemView) {
             super(userItemView);
 
+            card = userItemView.findViewById(R.id.item_user_card);
             flagImage = userItemView.findViewById(R.id.item_user_flag);
             profilePhotoImage = userItemView.findViewById(R.id.item_user_profile_image);
             liveStatusSignal = userItemView.findViewById(R.id.item_user_live_signal_image);

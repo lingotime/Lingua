@@ -21,6 +21,8 @@ import com.google.gson.Gson;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.ExploreAdapter;
 import com.lingua.lingua.models.User;
+import com.lingua.lingua.supports.EndlessRecyclerViewScrollListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -33,7 +35,10 @@ public class ExploreFragment extends Fragment {
     private User currentUser;
 
     ArrayList<User> usersList;
+    ArrayList<User> hiddenUsersList;
     ExploreAdapter usersAdapter;
+
+    private EndlessRecyclerViewScrollListener scrollListener;
     private SwipeRefreshLayout swipeContainer;
     private RecyclerView historyTimeline;
 
@@ -56,6 +61,7 @@ public class ExploreFragment extends Fragment {
 
         // initialize the list of users
         usersList = new ArrayList<User>();
+        hiddenUsersList = new ArrayList<User>();
 
         // fetch compatible users who match criteria and load them into timeline
         fetchCompatibleUsersAndLoad(currentUser);
@@ -75,6 +81,7 @@ public class ExploreFragment extends Fragment {
                 try {
                     JSONObject usersJSONObject = new JSONObject(response);
                     Iterator<String> usersJSONObjectKeys = usersJSONObject.keys();
+                    int usersJSONObjectCounter = 0;
 
                     // iterate through users in the database
                     while (usersJSONObjectKeys.hasNext()) {
@@ -90,18 +97,45 @@ public class ExploreFragment extends Fragment {
                         ArrayList<String> countriesSelectedByGeneratedUser = generatedUser.getKnownCountries();
 
                         // filter user depending on criteria
-                        if (generatedUser.getUserID() != currentUser.getUserID() && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countriesSelectedByGeneratedUser)) {
-                            // add to the list of users
-                            usersList.add(generatedUser);
+                        if (generatedUser.getUserID() != currentUser.getUserID() && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countriesSelectedByGeneratedUser) && actionNotTaken(generatedUser.getUserID())) {
+                            if (usersJSONObjectCounter < 20) {
+                                // add to the list of users
+                                usersList.add(generatedUser);
+
+                                // increment the user limiter
+                                usersJSONObjectCounter++;
+                            } else {
+                                // add to the hidden list of users
+                                hiddenUsersList.add(generatedUser);
+                            }
                         }
                     }
 
                     // load matched users into timeline
-                    usersAdapter = new ExploreAdapter(getContext(), usersList);
+                    usersAdapter = new ExploreAdapter(getContext(), usersList, hiddenUsersList, currentUser);
                     historyTimeline.setAdapter(usersAdapter);
 
-                    // display timeline
+                    // set the layout
                     LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+
+                    // prepare the endless scroll listener
+                    scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+                        @Override
+                        public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                            if (!hiddenUsersList.isEmpty()) {
+                                if (hiddenUsersList.size() > 20) {
+                                    usersList.addAll(hiddenUsersList.subList(0, 20));
+                                    hiddenUsersList.removeAll(hiddenUsersList.subList(0, 20));
+                                } else {
+                                    usersList.addAll(hiddenUsersList);
+                                    hiddenUsersList.clear();
+                                }
+                            }
+                        }
+                    };
+                    historyTimeline.addOnScrollListener(scrollListener);
+
+                    // display timeline
                     historyTimeline.setLayoutManager(layoutManager);
                 } catch (JSONException exception) {
                     Log.e("ExploreFragment", "firebase:onException", exception);
@@ -118,6 +152,7 @@ public class ExploreFragment extends Fragment {
         databaseRequestQueue.add(databaseRequest);
     }
 
+    // ensure there is a language or country match between user and displayed user
     private boolean matchExists(ArrayList<String> exploreLanguages, ArrayList<String> exploreCountries, ArrayList<String> knownLanguages, ArrayList<String> knownCountries) {
         if (exploreLanguages.size() == 0 && exploreCountries.size() == 0) {
             return true;
@@ -140,5 +175,34 @@ public class ExploreFragment extends Fragment {
         }
 
         return false;
+    }
+
+    // ensure there is no previous relationship between user and displayed user
+    private boolean actionNotTaken(String generatedUserID) {
+        for (String friendUserID : currentUser.getFriends()) {
+            if (friendUserID.equals(generatedUserID)) {
+                return false;
+            }
+        }
+
+        for (String declinedUserID : currentUser.getDeclinedUsers()) {
+            if (declinedUserID.equals(generatedUserID)) {
+                return false;
+            }
+        }
+
+        for (String pendingUserID : currentUser.getPendingSentFriendRequests()) {
+            if (pendingUserID.equals(generatedUserID)) {
+                return false;
+            }
+        }
+
+        for (String pendingUserID : currentUser.getPendingReceivedFriendRequests()) {
+            if (pendingUserID.equals(generatedUserID)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -21,6 +21,7 @@ public class User {
     ArrayList<String> friends;
     ArrayList<String> pendingSentFriendRequests;
     ArrayList<String> pendingReceivedFriendRequests;
+    ArrayList<String> declinedUsers;
     ArrayList<String> conversations;
     boolean complete;
     boolean online;
@@ -145,6 +146,14 @@ public class User {
 
     public void setPendingReceivedFriendRequests(ArrayList<String> pendingReceivedFriendRequests) {
         this.pendingReceivedFriendRequests = pendingReceivedFriendRequests;
+    }
+
+    public ArrayList<String> getDeclinedUsers() {
+        return declinedUsers;
+    }
+
+    public void setDeclinedUsers(ArrayList<String> declinedUsers) {
+        this.declinedUsers = declinedUsers;
     }
 
     public ArrayList<String> getConversations() {
