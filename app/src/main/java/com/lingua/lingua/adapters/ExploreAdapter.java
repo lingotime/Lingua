@@ -22,8 +22,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-/* TODO: Add functionality for buttons */
-
 public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHolder> {
     Context context;
     List<User> userList;
@@ -73,6 +71,22 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         ageText.setText(getAge(user.getUserBirthDate()) + " years old");
         genderText.setText(user.getUserGender());
         biographyText.setText(user.getUserBiographyText());
+
+        // send user a friend request and remove them from view
+        sendRequestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: fire a friend request, remove user from list, add new user to list
+            }
+        });
+
+        // remove user from view without friend request
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: remove user from list, add new user to list
+            }
+        });
     }
 
     @Override

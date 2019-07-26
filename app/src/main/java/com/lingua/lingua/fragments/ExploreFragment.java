@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /* FINALIZED, DOCUMENTED, and TESTED ExploreFragment displays timeline of users matching stated profile criteria. */
-/* TODO: Sort users to prioritize online users, limit to 20 users per view and implement "load more". */
 
 public class ExploreFragment extends Fragment {
     private User currentUser;
