@@ -1,6 +1,7 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.Message;
 
 import java.util.ArrayList;
@@ -42,6 +44,13 @@ public class ChatDetailsActivity extends AppCompatActivity {
     private Button sendButton;
     private EditText etMessage;
 
+    private String chatId;
+    private String name;
+    private String otherUserId; // for the other user in the chat
+
+    private String userId;
+    private String userName;
+
     Firebase reference;
 
     @Override
@@ -50,14 +59,15 @@ public class ChatDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat_details);
 
         SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
-        String userId = prefs.getString("userId", "");
-        String userName = prefs.getString("userName", "");
+        userId = prefs.getString("userId", "");
+        userName = prefs.getString("userName", "");
 
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
 
-        String chatId = getIntent().getStringExtra("chatId");
-        String name = getIntent().getStringExtra("name");
+        chatId = getIntent().getStringExtra("chatId");
+        name = getIntent().getStringExtra("name");
+        otherUserId = getIntent().getStringExtra("otherUserId");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_chat_details_toolbar);
         setSupportActionBar(toolbar);
@@ -136,7 +146,13 @@ public class ChatDetailsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.chat_details_videochat_icon) {
-            // TODO: make call
+            // intent to the video chat activity
+            Intent intent = new Intent(this, VideoChatActivity.class);
+            intent.putExtra("chatID", chatId);
+            intent.putExtra("name", name);
+            // get the second user Id from the chat
+            intent.putExtra("otherUser", otherUserId);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);

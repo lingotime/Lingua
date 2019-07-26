@@ -53,8 +53,6 @@ public class ChatFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     // used to implement the actions for swiping left or right on each chat object
 
-    private ItemTouchHelper itemTouchHelper;
-
     User currentUser;
 
     @Nullable
@@ -81,40 +79,6 @@ public class ChatFragment extends Fragment {
         rvChats.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvChats.setLayoutManager(linearLayoutManager);
-
-        // attaches the item touch helper to the recycler view
-        SwipeController swipeController = new SwipeController(new SwipeControllerActions() {
-            @Override
-            public void onLeftClicked(int position) {
-                // launch the chat details activity
-                Intent intent = new Intent(getContext(), ChatDetailsActivity.class);
-                Chat chat = adapter.chats.get(position);
-                intent.putExtra("chatId", chat.getId());
-                intent.putExtra("name", chat.getName());
-                startActivity(intent);
-                super.onLeftClicked(position);
-            }
-
-            @Override
-            public void onRightClicked(int position) {
-                Intent intent = new Intent(getContext(), VideoChatActivity.class);
-                Chat chat = adapter.chats.get(position);
-                intent.putExtra("chatID", chat.getId());
-                intent.putExtra("name", chat.getName());
-                // get the second user Id from the chat
-                ArrayList<String> users = chat.getUsers();
-                for (int i = 0; i < users.size(); i++) {
-                    // wrap the user id that doesn't match with the current one and send it as a part of the intent
-                    if (users.get(i) != currentUser.getId()) {
-                        intent.putExtra("otherUser", users.get(i));
-                    }
-                }
-                startActivity(intent);
-                super.onRightClicked(position);
-            }
-        }, getContext());
-        itemTouchHelper = new ItemTouchHelper(swipeController);
-        itemTouchHelper.attachToRecyclerView(rvChats);
 
         swipeContainer = view.findViewById(R.id.exploreSwipeContainer);
         // Setup refresh listener which triggers new data loading
