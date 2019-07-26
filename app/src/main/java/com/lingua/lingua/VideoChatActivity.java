@@ -91,6 +91,10 @@ public class VideoChatActivity extends AppCompatActivity {
         roomName = getIntent().getStringExtra("name"); // the room will be set to this name
         receiverId = getIntent().getStringExtra("otherId");
 
+        // setting up Firebase to receive the messages to be sent
+        Firebase.setAndroidContext(VideoChatActivity.this);
+        reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
+
         localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
         disconnect = (ImageButton) findViewById(R.id.activity_video_chat_end_call);
@@ -138,25 +142,9 @@ public class VideoChatActivity extends AppCompatActivity {
             public void onConnected(Room room) {
                 Log.i(TAG, "Connected to " + room.getName());
 
-                Firebase.setAndroidContext(VideoChatActivity.this);
-                reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
-
                 // send a message to the other user to notify them of the creation of the room
-                String messageText = "Video chat with me!";
-                String timestamp = new Date().toString();
-                if (!messageText.equals("")) {
-                    // save message
-                    Map<String, String> map = new HashMap<>();
-                    map.put("message", messageText);
-                    map.put("senderId", userId);
-                    map.put("timestamp", timestamp);
-                    reference.push().setValue(map);
+                sendTextChat("Video chat with me!");
 
-                    // set this message to be the lastMessage of the chat
-                    Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
-                    chatReference.child("lastMessage").setValue( username + ": " + messageText);
-                    chatReference.child("lastMessageAt").setValue(timestamp);
-                }
 
                 // check if the user already has a participant - then fix the rendering of the video tracks
                 if (room.getRemoteParticipants().size() > 0) {
@@ -176,6 +164,9 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
                 Log.i(TAG, "failure to connect");
+
+                // send a message to the other user detailing an attempted call
+                sendTextChat("I tried to call you :(");
             }
 
             @Override
@@ -394,6 +385,21 @@ public class VideoChatActivity extends AppCompatActivity {
             }
             remoteVideoView.setMirror(true);
         }
+    }
+
+    public void sendTextChat(String messageText) {
+        String timestamp = new Date().toString();
+        // save message
+        Map<String, String> map = new HashMap<>();
+        map.put("message", messageText);
+        map.put("senderId", userId);
+        map.put("timestamp", timestamp);
+        reference.push().setValue(map);
+
+        // set this message to be the lastMessage of the chat
+        Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
+        chatReference.child("lastMessage").setValue(username + ": " + messageText);
+        chatReference.child("lastMessageAt").setValue(timestamp);
     }
 
 }
