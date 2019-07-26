@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.firebase.client.Firebase;
+import com.lingua.lingua.models.Chat;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
 import com.twilio.video.H264Codec;
@@ -34,11 +36,15 @@ import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 import com.twilio.video.Vp9Codec;
 
+import org.parceler.Parcels;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
 
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -47,6 +53,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class VideoChatActivity extends AppCompatActivity {
 
     private VideoTokenGenerator tokenGenerator;
+    private VideoTokenGenerator secondTokenGenerator; // for the second user in the chat
     private Room room;
     private LocalAudioTrack localAudioTrack;
     private LocalVideoTrack localVideoTrack;
@@ -64,6 +71,8 @@ public class VideoChatActivity extends AppCompatActivity {
     private String userId;
     private String username;
     private String chatId;
+    private String receiverId; // id of the second user in the chat
+    private Firebase reference;
 
 
 
@@ -80,7 +89,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
         chatId = getIntent().getStringExtra("chatId");
         roomName = getIntent().getStringExtra("name"); // the room will be set to this name
-
+        receiverId = getIntent().getStringExtra("otherId");
 
         localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
@@ -107,7 +116,7 @@ public class VideoChatActivity extends AppCompatActivity {
         requestPermissions();
     }
 
-    public void connectToRoom(String roomName) {
+    public void connectToRoom(String roomName, VideoTokenGenerator tokenGenerator) {
 
         //Check if H.264 is supported in this device
         boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
@@ -128,6 +137,27 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onConnected(Room room) {
                 Log.i(TAG, "Connected to " + room.getName());
+
+                Firebase.setAndroidContext(VideoChatActivity.this);
+                reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
+
+                // send a message to the other user to notify them of the creation of the room
+                String messageText = "Video chat with me!";
+                String timestamp = new Date().toString();
+                if (!messageText.equals("")) {
+                    // save message
+                    Map<String, String> map = new HashMap<>();
+                    map.put("message", messageText);
+                    map.put("senderId", userId);
+                    map.put("timestamp", timestamp);
+                    reference.push().setValue(map);
+
+                    // set this message to be the lastMessage of the chat
+                    Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
+                    chatReference.child("lastMessage").setValue( username + ": " + messageText);
+                    chatReference.child("lastMessageAt").setValue(timestamp);
+                }
+
                 // check if the user already has a participant - then fix the rendering of the video tracks
                 if (room.getRemoteParticipants().size() > 0) {
                     // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
@@ -312,7 +342,7 @@ public class VideoChatActivity extends AppCompatActivity {
             // after permission is granted, initialise the video and audio tracks
             Log.i(TAG, "Permission granted");
             getVideoAndAudioTracks();
-            connectToRoom(roomName); // and generate the token and the room
+            connectToRoom(roomName, tokenGenerator); // and generate the token and the room
         } else {
             // prompt to ask for mic and camera permission
             EasyPermissions.requestPermissions(this, "Lingua needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);

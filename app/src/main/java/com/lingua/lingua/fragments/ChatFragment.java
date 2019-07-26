@@ -101,6 +101,14 @@ public class ChatFragment extends Fragment {
                 Chat chat = adapter.chats.get(position);
                 intent.putExtra("chatID", chat.getId());
                 intent.putExtra("name", chat.getName());
+                // get the second user Id from the chat
+                ArrayList<String> users = chat.getUsers();
+                for (int i = 0; i < users.size(); i++) {
+                    // wrap the user id that doesn't match with the current one and send it as a part of the intent
+                    if (users.get(i) != currentUser.getId()) {
+                        intent.putExtra("otherUser", users.get(i));
+                    }
+                }
                 startActivity(intent);
                 super.onRightClicked(position);
             }
