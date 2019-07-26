@@ -1,111 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp">
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/userCardView"
+        android:id="@+id/item_user_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
         app:cardMaxElevation="6dp"
-        app:cardUseCompatPadding="true">
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:id="@+id/item_user_tv_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Marta García Ferreiro"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_user_iv_profile" />
-
-            <TextView
-                android:id="@+id/item_user_tv_bio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:text="Hi! My name is Marta and I like coding, drawing and learning languages. Talk to me about Friends!"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_user_tv_age" />
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/item_user_flag"
                 android:layout_width="0dp"
                 android:layout_height="150dp"
+                android:background="#262E5B"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@color/colorAccent" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/item_user_iv_profile"
+                android:id="@+id/item_user_profile_image"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_marginTop="50dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/item_user_flag"
-                app:srcCompat="@mipmap/ic_launcher_round" />
+                app:srcCompat="@drawable/man" />
+
+            <ImageView
+                android:id="@+id/item_user_live_signal_image"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginStart="160dp"
+                android:layout_marginLeft="160dp"
+                android:tint="#43A738"
+                app:layout_constraintBottom_toBottomOf="@+id/item_user_profile_image"
+                app:layout_constraintStart_toStartOf="@+id/item_user_profile_image"
+                app:srcCompat="@drawable/live_signal" />
 
             <TextView
-                android:id="@+id/item_user_tv_age"
+                android:id="@+id/item_user_name_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="19 years old"
-                app:layout_constraintStart_toStartOf="@+id/item_user_tv_from"
-                app:layout_constraintTop_toBottomOf="@+id/item_user_tv_from" />
-
-            <TextView
-                android:id="@+id/item_user_tv_from"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="From Santiago de Compostela, Spain"
+                android:layout_marginTop="20dp"
+                android:text="[Username]"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.496"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_user_tv_name" />
+                app:layout_constraintTop_toBottomOf="@+id/item_user_profile_image" />
 
             <TextView
-                android:id="@+id/item_user_tv_gender"
+                android:id="@+id/item_user_country_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Female"
-                app:layout_constraintEnd_toEndOf="@+id/item_user_tv_from"
-                app:layout_constraintTop_toBottomOf="@+id/item_user_tv_from" />
+                android:layout_marginTop="10dp"
+                android:text="from [Country]"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/item_user_name_text" />
+
+            <TextView
+                android:id="@+id/item_user_age_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="10dp"
+                android:text="[Age]"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/item_user_country_text" />
+
+            <TextView
+                android:id="@+id/item_user_gender_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="50dp"
+                android:layout_marginRight="50dp"
+                android:text="[Gender]"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/item_user_country_text" />
+
+            <TextView
+                android:id="@+id/item_user_biography_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp"
+                android:text="[Biography]"
+                android:textColor="#000000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/item_user_age_text" />
 
             <Button
-                android:id="@+id/item_user_friend_request_button"
-                android:layout_width="wrap_content"
+                android:id="@+id/item_user_send_request_button"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:text="Send friend request"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:text="Send Friend Request"
+                app:backgroundTint="#262E5B"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/item_user_biography_text" />
 
+            <Button
+                android:id="@+id/item_user_remove_button"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:text="Remove User from View"
+                app:backgroundTint="#262E5B"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/item_user_biography_text" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.cardview.widget.CardView>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
