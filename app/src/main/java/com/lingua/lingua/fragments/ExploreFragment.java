@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -108,6 +109,7 @@ public class ExploreFragment extends Fragment {
                 swipeContainer.setRefreshing(false);
 
             } catch (JSONException e) {
+                Toast.makeText(getContext(), "No users to display", Toast.LENGTH_SHORT).show();
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }

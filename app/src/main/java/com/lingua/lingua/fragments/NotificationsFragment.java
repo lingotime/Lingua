@@ -102,6 +102,9 @@ public class NotificationsFragment extends Fragment {
                 }
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
+                if (url.equals("https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/received-friend-requests.json")) {
+                    Toast.makeText(getContext(), "No new friend requests", Toast.LENGTH_SHORT).show();
+                }
                 e.printStackTrace();
             }
         }, volleyError -> {
