@@ -32,10 +32,10 @@ import org.parceler.Parcels;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
-/* TODO: Ensure origin country is a valid country. */
 
 public class ProfileInfoSetupActivity extends AppCompatActivity {
     private User currentUser;
@@ -48,7 +48,7 @@ public class ProfileInfoSetupActivity extends AppCompatActivity {
     private Switch genderSwitch;
     private TextView girlText;
     private TextInputEditText biographyField;
-    private TextInputEditText originCountryField;
+    private NachoTextView originCountryField;
     private NachoTextView knownLanguagesField;
     private NachoTextView exploreLanguagesField;
     private NachoTextView knownCountriesField;
@@ -108,7 +108,7 @@ public class ProfileInfoSetupActivity extends AppCompatActivity {
         }
 
         if (currentUser.getUserOriginCountry() != null) {
-            originCountryField.setText(currentUser.getUserOriginCountry());
+            originCountryField.setText(new ArrayList<String>(Arrays.asList(currentUser.getUserOriginCountry())));
         }
 
         Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
@@ -146,6 +146,7 @@ public class ProfileInfoSetupActivity extends AppCompatActivity {
         // set adapters for each field with chip functionality
         ArrayAdapter<String> countriesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, Country.COUNTRIES);
         ArrayAdapter<String> languagesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, Language.LANGUAGES);
+        originCountryField.setAdapter(countriesAdapter);
         knownLanguagesField.setAdapter(languagesAdapter);
         exploreLanguagesField.setAdapter(languagesAdapter);
         knownCountriesField.setAdapter(countriesAdapter);
@@ -261,13 +262,13 @@ public class ProfileInfoSetupActivity extends AppCompatActivity {
         }
 
         // deal with userOriginCountry
-        String userOriginCountryInput = originCountryField.getText().toString();
+        ArrayList<String> userOriginCountryInput = (ArrayList) originCountryField.getChipValues();
 
-        if (userOriginCountryInput.length() >= 4) {
-            currentUser.setUserOriginCountry(userOriginCountryInput);
+        if (userOriginCountryInput.size() == 1) {
+            currentUser.setUserOriginCountry(userOriginCountryInput.get(0));
         } else {
             isCompleteCheck = false;
-            Toast.makeText(ProfileInfoSetupActivity.this, "Please enter a valid country name.", Toast.LENGTH_LONG).show();
+            Toast.makeText(ProfileInfoSetupActivity.this, "Please enter an origin country. Only one origin country is allowed.", Toast.LENGTH_LONG).show();
         }
 
         // deal with knownLanguages

@@ -176,7 +176,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_biography_field_layout">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <com.hootsuite.nachos.NachoTextView
                             android:id="@+id/activity_profile_info_setup_origin_country_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
