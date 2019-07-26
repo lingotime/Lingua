@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,7 +57,12 @@ public class ChatDetailsActivity extends AppCompatActivity {
         messages = new ArrayList<>();
 
         String chatId = getIntent().getStringExtra("chatId");
-        String name = getIntent().getStringExtra("name"); //TODO: show as title in toolbar, if chat is not a group show name of friend
+        String name = getIntent().getStringExtra("name");
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_chat_details_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(name);
+        getSupportActionBar().setIcon(R.drawable.video_outline);
 
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
@@ -113,5 +121,24 @@ public class ChatDetailsActivity extends AppCompatActivity {
             @Override
             public void onCancelled(FirebaseError firebaseError) {}
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_chat_details, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.chat_details_videochat_icon) {
+            // TODO: make call
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
