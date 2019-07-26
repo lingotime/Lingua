@@ -46,14 +46,11 @@ public class ChatDetailsActivity extends AppCompatActivity {
     private Button sendButton;
     private EditText etMessage;
 
-    private String chatId;
-    private String name;
-    private String otherUserId; // for the other user in the chat
-
     private String userId;
     private String userName;
 
     Firebase reference;
+    Chat chat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,15 +61,10 @@ public class ChatDetailsActivity extends AppCompatActivity {
         userId = prefs.getString("userId", "");
         userName = prefs.getString("userName", "");
 
-        Chat chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+        chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
 
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
-
-
-        chatId = getIntent().getStringExtra("chatId");
-        name = getIntent().getStringExtra("name");
-        otherUserId = getIntent().getStringExtra("otherUserId");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_chat_details_toolbar);
         setSupportActionBar(toolbar);
@@ -152,10 +144,15 @@ public class ChatDetailsActivity extends AppCompatActivity {
         if (id == R.id.chat_details_videochat_icon) {
             // intent to the video chat activity
             Intent intent = new Intent(this, VideoChatActivity.class);
-            intent.putExtra("chatID", chatId);
-            intent.putExtra("name", name);
-            // get the second user Id from the chat
-            intent.putExtra("otherUser", otherUserId);
+            intent.putExtra("chatID", chat.getId());
+            intent.putExtra("name", chat.getName());
+            // get the second user Id from the
+            for (int i = 0; i < chat.getUsers().size(); i++) {
+                String otherUserId = chat.getUsers().get(i);
+                if (otherUserId != userId) {
+                    intent.putExtra("otherUser", otherUserId);
+                }
+            }
             startActivity(intent);
             return true;
         }

@@ -80,15 +80,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             if (position != RecyclerView.NO_POSITION) {
                 Intent intent = new Intent(context, ChatDetailsActivity.class);
                 Chat chat = chats.get(position);
-                intent.putExtra("chatId", chat.getId());
-                intent.putExtra("name", chat.getName());
-                // to get the other user id
-                ArrayList<String> users = chat.getUsers();
-                for (int i = 0; i < users.size(); i++) {
-                    if (users.get(i) != userId) {
-                        intent.putExtra("otherUserId", users.get(i));
-                    }
-                }
                 intent.putExtra("chat", Parcels.wrap(chat));
                 context.startActivity(intent);
             }

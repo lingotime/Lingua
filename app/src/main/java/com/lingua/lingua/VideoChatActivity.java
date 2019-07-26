@@ -2,6 +2,7 @@ package com.lingua.lingua;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Camera;
 import android.os.Bundle;
@@ -87,8 +88,10 @@ public class VideoChatActivity extends AppCompatActivity {
         userId = prefs.getString("userId", "");
         username = prefs.getString("userName", "");
 
-        chatId = getIntent().getStringExtra("chatId");
-        roomName = getIntent().getStringExtra("name"); // the room will be set to this name
+        chatId = getIntent().getStringExtra("chatID");
+        Log.d(TAG, chatId);
+        String chatName = getIntent().getStringExtra("name"); // the room will be set to this name
+        roomName = chatId;
         receiverId = getIntent().getStringExtra("otherUser");
 
         // setting up Firebase to receive the messages to be sent
@@ -102,7 +105,10 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                room.disconnect();
+                room.disconnect(); 
+                // launch intent to return to go to the ChatDetailsActivity
+                Intent intent = new Intent(VideoChatActivity.this, ChatDetailsActivity.class);
+                startActivity(intent);
             }
         });
         // receive an intent with the conversation object with the 2 users for this call,
@@ -129,8 +135,10 @@ public class VideoChatActivity extends AppCompatActivity {
         // Prefer H264 if it is hardware available for encoding and decoding
         videoCodec = isH264Supported ? (new H264Codec()) : (new Vp9Codec());
         Log.i(TAG, "The video codec has been set");
+        Log.i(TAG, "The access token: " + tokenGenerator.token + " for " + username + " in the room " + roomName);
 
-        ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.token.toString())
+
+        ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.JwtToken)
                 .roomName(roomName)
                 .audioTracks(Collections.singletonList(localAudioTrack))
                 .videoTracks(Collections.singletonList(localVideoTrack))

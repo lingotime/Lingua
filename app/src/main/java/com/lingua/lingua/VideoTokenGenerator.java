@@ -1,5 +1,7 @@
 package com.lingua.lingua;
 
+import android.util.Log;
+
 import com.twilio.jwt.accesstoken.AccessToken;
 import com.twilio.jwt.accesstoken.VideoGrant;
 
@@ -15,21 +17,25 @@ public class VideoTokenGenerator {
 
     private String identity; // enter user's name here; preferably first
     private String roomName;
+    public String JwtToken;
+    private VideoGrant grant;
+    public AccessToken token;
 
     public VideoTokenGenerator(String userId, String roomName) {
         // takes care of adding the user
         this.identity = userId;
         this.roomName = roomName;
+        // Create Video grant
+        this.grant = new VideoGrant().setRoom(roomName);
+        // the name of the room will just be the two users appended
+
+        // Create access token
+        this.token = new AccessToken.Builder(
+                twilioAccountSid,
+                twilioApiKey,
+                twilioApiSecret
+        ).identity(identity).grant(grant).build();
+        this.JwtToken = this.token.toJwt();
+        Log.i("TokenGenerator", String.format("%s", this.JwtToken));
     }
-
-    // Create Video grant
-    private VideoGrant grant = new VideoGrant().setRoom("DailyStandup");
-    // the name of the room will just be the two users appended
-
-    // Create access token
-    public AccessToken token = new AccessToken.Builder(
-            twilioAccountSid,
-            twilioApiKey,
-            twilioApiSecret
-    ).identity(identity).grant(grant).build();
 }
