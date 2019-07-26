@@ -22,6 +22,8 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
+/* TODO: Add functionality for buttons */
+
 public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHolder> {
     Context context;
     List<User> userList;

@@ -1,7 +1,7 @@
 package com.lingua.lingua.activities;
 
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
@@ -19,7 +19,6 @@ import com.lingua.lingua.models.User;
 import org.parceler.Parcels;
 
 /* FINALIZED, DOCUMENTED, and TESTED: MainActivity displays a fragment, switchable with a bottom navigation. */
-/* TODO: Fix online persistence issue. */
 
 public class MainActivity extends AppCompatActivity {
     private User currentUser;
@@ -90,8 +89,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onResume() {
+        super.onResume();
+
+        // mark user as live
+        currentUser.setOnline(true);
+
+        // save update
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
 
         // mark user as dead
         currentUser.setOnline(false);
