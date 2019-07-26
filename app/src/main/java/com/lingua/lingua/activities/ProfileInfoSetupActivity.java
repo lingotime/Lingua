@@ -291,7 +291,7 @@ public class ProfileInfoSetupActivity extends AppCompatActivity {
         currentUser.setComplete(isCompleteCheck);
 
         // save
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
     }
 }

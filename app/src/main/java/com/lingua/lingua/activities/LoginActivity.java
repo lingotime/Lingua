@@ -123,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         String firebaseUserDisplayName = tempFirebaseUser.getDisplayName();
         String firebaseUserProfilePhotoURL = "https://graph.facebook.com" + tempFirebaseUser.getPhotoUrl().getPath() + "?type=large";
 
-        String databaseURL = "https://lingua-project.firebaseio.com/users.json";
+        String databaseURL = "https://lingua-project.firebaseio.com/users_clean.json";
 
         StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new Response.Listener<String>() {
             @Override
@@ -137,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                     createdUser.setComplete(false);
 
                     // save this new user in the database
-                    Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+                    Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
                     databaseReference.child(firebaseUserID).setValue(createdUser);
 
                     // proceed to set the next activity
@@ -165,7 +165,7 @@ public class LoginActivity extends AppCompatActivity {
                             createdUser.setComplete(false);
 
                             // save this new user in the database
-                            Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+                            Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
                             databaseReference.child(firebaseUserID).setValue(createdUser);
 
                             // proceed to set the next activity

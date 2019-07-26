@@ -66,7 +66,7 @@ public class ExploreFragment extends Fragment {
         ArrayList<String> languagesSelectedByUser = currentUser.getExploreLanguages();
         ArrayList<String> countriesSelectedByUser = currentUser.getExploreCountries();
 
-        String databaseURL = "https://lingua-project.firebaseio.com/users.json";
+        String databaseURL = "https://lingua-project.firebaseio.com/users_clean.json";
 
         // fetch users from database
         StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new Response.Listener<String>() {

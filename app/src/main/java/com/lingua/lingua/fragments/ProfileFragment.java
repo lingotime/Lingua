@@ -126,7 +126,7 @@ public class ProfileFragment extends Fragment {
                 }
             });
         } else {
-            knownLanguagesChip.performCloseIconClick();
+            knownLanguagesChips.removeView(knownLanguagesChip);
         }
 
         for (String knownLanguage : currentUser.getKnownLanguages()) {
@@ -144,7 +144,7 @@ public class ProfileFragment extends Fragment {
                 }
             });
         } else {
-            exploreLanguagesChip.performCloseIconClick();
+            exploreLanguagesChips.removeView(exploreLanguagesChip);
         }
 
         for (String exploreLanguage : currentUser.getExploreLanguages()) {
@@ -162,13 +162,13 @@ public class ProfileFragment extends Fragment {
                 }
             });
         } else {
-            knownCountriesChip.performCloseIconClick();
+            knownCountriesChips.removeView(knownCountriesChip);
         }
 
         for (String knownCountry : currentUser.getKnownCountries()) {
             Chip knownCountryChip = new Chip(getContext());
             knownCountryChip.setText(knownCountry);
-            knownCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(Country.COUNTRY_CODES.get(currentUser.getUserOriginCountry()) + "_round", "drawable", getActivity().getPackageName())));
+            knownCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(Country.COUNTRY_CODES.get(knownCountry) + "_round", "drawable", getActivity().getPackageName())));
             knownCountriesChips.addView(knownCountryChip);
         }
 
@@ -181,13 +181,13 @@ public class ProfileFragment extends Fragment {
                 }
             });
         } else {
-            exploreCountriesChip.performCloseIconClick();
+            exploreCountriesChips.removeView(exploreCountriesChip);
         }
 
         for (String exploreCountry : currentUser.getExploreCountries()) {
             Chip exploreCountryChip = new Chip(getContext());
             exploreCountryChip.setText(exploreCountry);
-            exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(Country.COUNTRY_CODES.get(currentUser.getUserOriginCountry()) + "_round", "drawable", getActivity().getPackageName())));
+            exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(Country.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
             exploreCountriesChips.addView(exploreCountryChip);
         }
     }
