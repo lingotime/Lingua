@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lingua.lingua.models.Chat;
 
 import java.util.ArrayList;
+import org.parceler.Parcels;
+
 import java.util.List;
 
 /*
@@ -87,6 +89,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         intent.putExtra("otherUserId", users.get(i));
                     }
                 }
+                intent.putExtra("chat", Parcels.wrap(chat));
                 context.startActivity(intent);
             }
         }

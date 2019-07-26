@@ -23,6 +23,8 @@ import com.firebase.client.FirebaseError;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.Message;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,8 +64,11 @@ public class ChatDetailsActivity extends AppCompatActivity {
         userId = prefs.getString("userId", "");
         userName = prefs.getString("userName", "");
 
+        Chat chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
+
 
         chatId = getIntent().getStringExtra("chatId");
         name = getIntent().getStringExtra("name");
@@ -71,11 +76,10 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_chat_details_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(name);
-        getSupportActionBar().setIcon(R.drawable.video_outline);
+        getSupportActionBar().setTitle(chat.getName());
 
         Firebase.setAndroidContext(this);
-        reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
+        reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chat.getId());
 
         adapter = new ChatDetailsAdapter(this, messages);
         rvMessages.setAdapter(adapter);
@@ -101,7 +105,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 etMessage.setText("");
 
                 // set this message to be the lastMessage of the chat
-                Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
+                Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getId());
                 chatReference.child("lastMessage").setValue( userName + ": " + messageText);
                 chatReference.child("lastMessageAt").setValue(timestamp);
             }

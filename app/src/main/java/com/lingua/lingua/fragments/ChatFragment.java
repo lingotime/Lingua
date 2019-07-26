@@ -135,12 +135,21 @@ public class ChatFragment extends Fragment {
                 String userName1 = chat.getString("user1");
                 String userName2 = chat.getString("user2");
                 String name;
+                // show name of user I'm texting as chat title
                 if (userName1.equals(currentUser.getFirstName())) {
                     name = userName2;
                 } else {
                     name = userName1;
                 }
-                chats.add(new Chat(id, name, lastMessage, lastMessageAt));
+                // get list of user ids in the chat
+                ArrayList<String> userIds = new ArrayList<>();
+                JSONObject users = chat.getJSONObject("users");
+                Iterator keys = users.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next().toString();
+                    userIds.add(key);
+                }
+                chats.add(new Chat(id, name, lastMessage, lastMessageAt, userIds));
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
