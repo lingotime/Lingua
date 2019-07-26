@@ -107,7 +107,6 @@ public class ExploreFragment extends Fragment {
                 }
                 adapter.notifyDataSetChanged();
                 swipeContainer.setRefreshing(false);
-
             } catch (JSONException e) {
                 Toast.makeText(getContext(), "No users to display", Toast.LENGTH_SHORT).show();
                 swipeContainer.setRefreshing(false);
