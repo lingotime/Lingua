@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.lingua.lingua"
         multiDexEnabled true
-        minSdkVersion 21
+        minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
         multiDexEnabled true

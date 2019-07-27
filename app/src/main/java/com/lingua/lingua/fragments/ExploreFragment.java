@@ -5,19 +5,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 import com.lingua.lingua.EndlessRecyclerViewScrollListener;
 import com.lingua.lingua.ExploreAdapter;
 import com.lingua.lingua.R;
@@ -26,10 +26,8 @@ import com.lingua.lingua.models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
-
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
 * Fragment that displays other people's profiles that match the user's target language or country for
@@ -37,20 +35,19 @@ import java.util.List;
 */
 
 public class ExploreFragment extends Fragment {
+    private User currentUser;
 
-    RecyclerView rvExplore;
-    private ExploreAdapter adapter;
-    private List<User> users;
-    private SwipeRefreshLayout swipeContainer;
+    ArrayList<User> usersList;
+    ArrayList<User> hiddenUsersList;
+    ExploreAdapter usersAdapter;
+
     private EndlessRecyclerViewScrollListener scrollListener;
-
-    User currentUser;
+    private SwipeRefreshLayout swipeContainer;
+    private RecyclerView historyTimeline;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
-        Log.i("ExploreFragment", currentUser.getId());
         return inflater.inflate(R.layout.fragment_explore, container, false);
     }
 
@@ -58,66 +55,167 @@ public class ExploreFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvExplore = view.findViewById(R.id.fragment_explore_rv);
-        users = new ArrayList<>();
-        queryUsers();
-        adapter = new ExploreAdapter(getContext(), users);
-        rvExplore.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        rvExplore.setLayoutManager(linearLayoutManager);
+        // associate views with java variables
+        swipeContainer = view.findViewById(R.id.fragment_explore_swipe_container);
+        historyTimeline = view.findViewById(R.id.fragment_explore_history_timeline);
 
-        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // TODO: load users
-            }
-        };
-        // Adds the scroll listener to RecyclerView
-        rvExplore.addOnScrollListener(scrollListener);
+        // unwrap the current user
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
-        swipeContainer = view.findViewById(R.id.exploreSwipeContainer);
-        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                adapter.clear();
-                queryUsers();
-            }
-        });
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+        // initialize the list of users
+        usersList = new ArrayList<User>();
+        hiddenUsersList = new ArrayList<User>();
+
+        // fetch compatible users who match criteria and load them into timeline
+        fetchCompatibleUsersAndLoad(currentUser);
     }
 
-    private void queryUsers() {
-        String url = "https://lingua-project.firebaseio.com/users.json";
-        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
-            try {
-                JSONObject object = new JSONObject(s);
-                Iterator keys = object.keys();
-                while (keys.hasNext()) {
-                    Object key = keys.next();
-                    JSONObject userObject = object.getJSONObject((String) key);
-                    String id = userObject.getString("id");
-                    String name = userObject.getString("firstName");
-                    User user = new User(id, name);
-                    users.add(user);
+    private void fetchCompatibleUsersAndLoad(User currentUser) {
+        // get criteria for users to be loaded into timeline
+        ArrayList<String> languagesSelectedByUser = currentUser.getExploreLanguages();
+        ArrayList<String> countriesSelectedByUser = currentUser.getExploreCountries();
+
+        String databaseURL = "https://lingua-project.firebaseio.com/users.json";
+
+        // fetch users from database
+        StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject usersJSONObject = new JSONObject(response);
+                    Iterator<String> usersJSONObjectKeys = usersJSONObject.keys();
+                    int usersJSONObjectCounter = 0;
+
+                    // iterate through users in the database
+                    while (usersJSONObjectKeys.hasNext()) {
+                        String userID = usersJSONObjectKeys.next();
+                        JSONObject userJSONObject = usersJSONObject.getJSONObject(userID);
+
+                        // convert JSONObject information to user
+                        Gson gson = new Gson();
+                        User generatedUser = gson.fromJson(userJSONObject.toString(), User.class);
+
+                        // get relevant information from user for matching
+                        ArrayList<String> languagesSelectedByGeneratedUser = generatedUser.getKnownLanguages();
+                        String countrySelectedByGeneratedUser = generatedUser.getOriginCountry();
+
+                        // filter user depending on criteria
+                        if (!(generatedUser.getId().equals(currentUser.getId())) && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countrySelectedByGeneratedUser) && actionNotTaken(generatedUser.getId())) {
+                            if (usersJSONObjectCounter < 20) {
+                                // add to the list of users
+                                usersList.add(generatedUser);
+
+                                // increment the user limiter
+                                usersJSONObjectCounter++;
+                            } else {
+                                // add to the hidden list of users
+                                hiddenUsersList.add(generatedUser);
+                            }
+                        }
+                    }
+
+                    // load matched users into timeline
+                    usersAdapter = new ExploreAdapter(getContext(), usersList, hiddenUsersList, currentUser);
+                    historyTimeline.setAdapter(usersAdapter);
+
+                    // set the layout
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+
+                    // prepare the endless scroll listener
+                    scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+                        @Override
+                        public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                            if (!hiddenUsersList.isEmpty()) {
+                                if (hiddenUsersList.size() > 20) {
+                                    usersList.addAll(hiddenUsersList.subList(0, 20));
+                                    hiddenUsersList.removeAll(hiddenUsersList.subList(0, 20));
+                                } else {
+                                    usersList.addAll(hiddenUsersList);
+                                    hiddenUsersList.clear();
+                                }
+                            }
+                        }
+                    };
+                    historyTimeline.addOnScrollListener(scrollListener);
+
+                    // display timeline
+                    historyTimeline.setLayoutManager(layoutManager);
+                } catch (JSONException exception) {
+                    Log.e("ExploreFragment", "firebase:onException", exception);
                 }
-                adapter.notifyDataSetChanged();
-                swipeContainer.setRefreshing(false);
-            } catch (JSONException e) {
-                Toast.makeText(getContext(), "No users to display", Toast.LENGTH_SHORT).show();
-                swipeContainer.setRefreshing(false);
-                e.printStackTrace();
             }
-        }, volleyError -> {
-            swipeContainer.setRefreshing(false);
-            Log.e("ExploreFragment", "" + volleyError);
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("ExploreFragment", "firebase:onError", error);
+            }
         });
 
-        RequestQueue rQueue = Volley.newRequestQueue(getContext());
-        rQueue.add(request);
+        RequestQueue databaseRequestQueue = Volley.newRequestQueue(getContext());
+        databaseRequestQueue.add(databaseRequest);
+    }
+
+    // ensure there is a language or country match between user and displayed user
+    private boolean matchExists(ArrayList<String> exploreLanguages, ArrayList<String> exploreCountries, ArrayList<String> knownLanguages, String originCountry) {
+        if (exploreLanguages.size() == 0 && exploreCountries.size() == 0) {
+            return true;
+        }
+
+        if (exploreLanguages != null && knownLanguages != null) {
+            for (String exploreLanguage : exploreLanguages) {
+                for (String knownLanguage : knownLanguages) {
+                    if (exploreLanguage.equals(knownLanguage)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        if (exploreCountries != null && originCountry != null) {
+            for (String exploreCountry : exploreCountries) {
+                if (exploreCountry.equals(originCountry)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // ensure there is no previous relationship between user and displayed user
+    private boolean actionNotTaken(String generatedUserID) {
+        if (currentUser.getConfirmedFriends() != null) {
+            for (String friendUserID : currentUser.getConfirmedFriends()) {
+                if (friendUserID.equals(generatedUserID)) {
+                    return false;
+                }
+            }
+        }
+
+        if (currentUser.getDeclinedUsers() != null) {
+            for (String declinedUserID : currentUser.getDeclinedUsers()) {
+                if (declinedUserID.equals(generatedUserID)) {
+                    return false;
+                }
+            }
+        }
+
+        if (currentUser.getPendingSentRequestFriends() != null) {
+            for (String pendingUserID : currentUser.getPendingSentRequestFriends()) {
+                if (pendingUserID.equals(generatedUserID)) {
+                    return false;
+                }
+            }
+        }
+
+        if (currentUser.getPendingReceivedRequestFriends() != null) {
+            for (String pendingUserID : currentUser.getPendingReceivedRequestFriends()) {
+                if (pendingUserID.equals(generatedUserID)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
