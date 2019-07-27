@@ -25,7 +25,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/* FINALIZED, DOCUMENTED, and TESTED ProfileFragment displays the current user's information. */
+/**
+* Fragment that displays the user's profile and allows them to edit it
+*/
 
 public class ProfileFragment extends Fragment {
     private User currentUser;

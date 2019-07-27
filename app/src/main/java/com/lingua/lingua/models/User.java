@@ -2,13 +2,11 @@ package com.lingua.lingua.models;
 
 import org.parceler.Parcel;
 
-import org.parceler.Parcel;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-/*
-Custom User class with basic info, language information, etc.
+/**
+* Custom User class with basic info, language information, etc.
  */
 
 @Parcel

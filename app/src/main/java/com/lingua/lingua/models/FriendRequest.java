@@ -1,9 +1,5 @@
 package com.lingua.lingua.models;
 
-/*
-Friend request class for pending friend requests, friend request should be deleted once user accepts or rejects the request
-*/
-
 public class FriendRequest {
 
     String id;

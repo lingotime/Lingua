@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
+/**
 Activity for chatting with a specific friend, the recycler view contains all the messages the user
 and that friend have exchanged and user can send messages from here
 */

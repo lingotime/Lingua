@@ -106,6 +106,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
 
     implementation 'org.eclipse.birt.runtime.3_7_1:org.apache.xerces:2.9.0'
+
+    // to support the swiping gestures for the chats
+    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
 }
 
 configurations {

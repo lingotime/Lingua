@@ -33,7 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/* TODO: "send friend request" function. */
+/**
+RecyclerView Adapter that adapts User objects to the viewholders in the recyclerview
+*/
 
 public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHolder> {
     private User currentUser;

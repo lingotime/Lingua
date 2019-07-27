@@ -1,13 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_marginBottom="0dp"
     android:layout_marginTop="0dp"
+    android:id="@+id/item_chat_swipe_layout"
     android:layout_height="wrap_content">
 
+    <!--The bottom view-->
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:tag="item_chat_bottom_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/item_chat_video_chat"
+            android:src="@drawable/camcorder"
+            android:layout_width="70dp"
+            android:clickable="true"
+            android:background="#f7e79c"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:layout_height="match_parent" />
+        <ImageView
+            android:id="@+id/item_chat_text_chat"
+            android:src="@drawable/comment"
+            android:layout_width="70dp"
+            android:clickable="true"
+            android:background="#4cd964"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:layout_height="match_parent" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <!--The surface view-->
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/item_chat_surface_view"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="wrap_content">
@@ -76,4 +104,4 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-</androidx.cardview.widget.CardView>
+</com.daimajia.swipe.SwipeLayout>

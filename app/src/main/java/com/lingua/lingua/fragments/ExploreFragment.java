@@ -29,7 +29,10 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-/* FINALIZED, DOCUMENTED, and TESTED ExploreFragment displays timeline of users matching stated profile criteria. */
+/**
+* Fragment that displays other people's profiles that match the user's target language or country for
+* the user to browse through and send friend requests
+*/
 
 public class ExploreFragment extends Fragment {
     private User currentUser;
