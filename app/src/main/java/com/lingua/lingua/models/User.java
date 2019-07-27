@@ -15,17 +15,16 @@ Custom User class with basic info, language information, etc.
 public class User {
     private String id;
     private String firstName;
-    private String lastName;
-    private Date birthDate;
+    private String birthDate;
     private String biographyText;
     private String originCountry;
     private String profilePhotoURL;
     private ArrayList<String> knownLanguages;
     private ArrayList<String> exploreLanguages;
-    private ArrayList<String> knownCountries;
     private ArrayList<String> exploreCountries;
     private HashMap<String, Integer> hoursSpoken;
     private ArrayList<String> confirmedFriends;
+    private ArrayList<String> declinedUsers;
     private ArrayList<String> pendingSentRequestFriends;
     private ArrayList<String> pendingReceivedRequestFriends;
     private boolean online;
@@ -58,19 +57,11 @@ public class User {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Date getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -114,14 +105,6 @@ public class User {
         this.exploreLanguages = exploreLanguages;
     }
 
-    public ArrayList<String> getKnownCountries() {
-        return knownCountries;
-    }
-
-    public void setKnownCountries(ArrayList<String> knownCountries) {
-        this.knownCountries = knownCountries;
-    }
-
     public ArrayList<String> getExploreCountries() {
         return exploreCountries;
     }
@@ -144,6 +127,14 @@ public class User {
 
     public void setConfirmedFriends(ArrayList<String> confirmedFriends) {
         this.confirmedFriends = confirmedFriends;
+    }
+
+    public ArrayList<String> getDeclinedUsers() {
+        return declinedUsers;
+    }
+
+    public void setDeclinedUsers(ArrayList<String> declinedUsers) {
+        this.declinedUsers = declinedUsers;
     }
 
     public ArrayList<String> getPendingSentRequestFriends() {

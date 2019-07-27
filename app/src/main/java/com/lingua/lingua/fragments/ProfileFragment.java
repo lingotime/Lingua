@@ -1,130 +1,165 @@
 package com.lingua.lingua.fragments;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lingua.lingua.CountryInformation;
-import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.ProfileCreationActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
-
 import org.parceler.Parcels;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-/*
-Fragment that displays the user's profile and allows them to edit it
-*/
+/* FINALIZED, DOCUMENTED, and TESTED ProfileFragment displays the current user's information. */
 
 public class ProfileFragment extends Fragment {
+    private User currentUser;
 
-    AppCompatImageView userImage;
-    TextView userName;
-
-    AppCompatImageView flagImage;
-    ChipGroup origin;
-    ChipGroup targetLangs;
-    ChipGroup targetCounts;
-    ChipGroup primaryLangs;
-    TextView dob;
-    FloatingActionButton editFab;
-    public final int EDIT_REQUEST_CODE = 250;
-
-    private final String TAG = "ProfileFragment";
-
-    User currentUser;
-
+    private TextView descriptionText;
+    private Button editButton;
+    private ImageView profileImage;
+    private TextView nameText;
+    private TextView birthdateText;
+    private TextView biographyText;
+    private TextView originCountryText;
+    private TextView knownLanguagesText;
+    private ChipGroup knownLanguagesChips;
+    private Chip knownLanguagesChip;
+    private TextView exploreLanguagesText;
+    private ChipGroup exploreLanguagesChips;
+    private Chip exploreLanguagesChip;
+    private TextView exploreCountriesText;
+    private ChipGroup exploreCountriesChips;
+    private Chip exploreCountriesChip;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
-        View v = inflater.inflate(R.layout.fragment_profile, container, false);
-        setHasOptionsMenu(true);
-        return v;
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_profile_appBar);
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
+        // associate views with java variables
+        descriptionText = view.findViewById(R.id.fragment_profile_description_text);
+        editButton = view.findViewById(R.id.fragment_profile_edit_button);
+        profileImage = view.findViewById(R.id.fragment_profile_profile_image);
+        nameText = view.findViewById(R.id.fragment_profile_name_text);
+        birthdateText = view.findViewById(R.id.fragment_profile_birthdate_text);
+        biographyText = view.findViewById(R.id.fragment_profile_biography_text);
+        originCountryText = view.findViewById(R.id.fragment_profile_origin_country_text);
+        knownLanguagesText = view.findViewById(R.id.fragment_profile_known_languages_text);
+        knownLanguagesChips = view.findViewById(R.id.fragment_profile_known_languages_chips);
+        knownLanguagesChip = view.findViewById(R.id.fragment_profile_known_languages_chip);
+        exploreLanguagesText = view.findViewById(R.id.fragment_profile_explore_languages_text);
+        exploreLanguagesChips = view.findViewById(R.id.fragment_profile_explore_languages_chips);
+        exploreLanguagesChip = view.findViewById(R.id.fragment_profile_explore_languages_chip);
+        exploreCountriesText = view.findViewById(R.id.fragment_profile_explore_countries_text);
+        exploreCountriesChips = view.findViewById(R.id.fragment_profile_explore_countries_chips);
+        exploreCountriesChip = view.findViewById(R.id.fragment_profile_explore_countries_chip);
 
-        dob = view.findViewById(R.id.fragment_profile_dob);
-        userImage = view.findViewById(R.id.fragment_profile_userImage);
-        userName = view.findViewById(R.id.fragment_profile_userName);
-        flagImage = view.findViewById(R.id.fragment_profile_originFlag);
-        origin = view.findViewById(R.id.fragment_profile_origin);
-        targetLangs = view.findViewById(R.id.fragment_profile_targetLangChips);
-        targetCounts = view.findViewById(R.id.fragment_profile_targetCountChips);
-        primaryLangs = view.findViewById(R.id.fragment_profile_primaryChips);
-        editFab = view.findViewById(R.id.fragment_profile_FAB);
+        // unwrap the current user
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
-        // TODO: Allow for the creation from the explore page to see other profiles, with User passed as Parcelables. In this scenario, the FAB visibility will be set to GONE
-
-        //TODO: Set the onclick function for the FAB - launches ProfileCreation activity
-        editFab.setOnClickListener(new View.OnClickListener() {
+        // load the profile creation page if edit button is clicked
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editProfile(view);
+                final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
+                intent.putExtra("user", Parcels.wrap(currentUser));
+                startActivity(intent);
             }
         });
 
+        // populate data from the current user
+        Glide.with(this).load(currentUser.getProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
 
-        // TODO: Set user information, and format the date for display
+        nameText.setText(currentUser.getFirstName());
 
-        //TODO: Set the action bar title as the name of the user, and include their picture
-    }
+        try {
+            SimpleDateFormat storedDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getBirthDate());
+            SimpleDateFormat displayDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            birthdateText.setText("Birth Date: " + displayDateFormat.format(userBirthDateAsDate));
+        } catch (ParseException exception) {
+            birthdateText.setText("Birth Date: Birthday unavailable.");
+            Log.e("ProfileFragment", "There was an issue parsing the user's registered birth date.");
+        }
 
-    // TODO: Format the flags so they fit more snugly into the chips and the collapsing toolbar
-    // add the country chips to the layout along with their flags
-    public void addCountryChips(String country, ChipGroup chipGroup) {
-        // creating each of the chips to represent the countries and the languages
-        Chip chip = new Chip(getContext());
-        chip.setText(country);
+        biographyText.setText("Bio: " + currentUser.getBiographyText());
 
-        // getting the drawable that represents the flag for the given country
-        String fileName = CountryInformation.COUNTRY_CODES.get(country);
-        int id = getContext().getResources().getIdentifier(fileName, "drawable", getContext().getPackageName());
-        Drawable drawable = getContext().getResources().getDrawable(id);
+        originCountryText.setText("Origin Country: " + currentUser.getOriginCountry());
 
-        // convert the drawable to an icon compat
+        if (currentUser.getKnownLanguages().isEmpty()) {
+            knownLanguagesChip.setText("Add a language...");
+            knownLanguagesChip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    editButton.performClick();
+                }
+            });
+        } else {
+            knownLanguagesChips.removeView(knownLanguagesChip);
+        }
 
-        chip.setChipIcon(drawable);
+        for (String knownLanguage : currentUser.getKnownLanguages()) {
+            Chip knownLanguageChip = new Chip(getContext());
+            knownLanguageChip.setText(knownLanguage);
+            knownLanguagesChips.addView(knownLanguageChip);
+        }
 
-        //adding the new chip to the given ChipGroup
-        chipGroup.addView(chip);
-    }
+        if (currentUser.getExploreLanguages().isEmpty()) {
+            exploreLanguagesChip.setText("Add a language...");
+            exploreLanguagesChip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    editButton.performClick();
+                }
+            });
+        } else {
+            exploreLanguagesChips.removeView(exploreLanguagesChip);
+        }
 
-    // add the language chips
-    public void addLangChips(String language, ChipGroup chipGroup) {
-        Chip chip = new Chip(getContext());
-        chip.setText(language);
-        chipGroup.addView(chip);
-    }
+        for (String exploreLanguage : currentUser.getExploreLanguages()) {
+            Chip exploreLanguageChip = new Chip(getContext());
+            exploreLanguageChip.setText(exploreLanguage);
+            exploreLanguagesChips.addView(exploreLanguageChip);
+        }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+        if (currentUser.getExploreCountries().isEmpty()) {
+            exploreCountriesChip.setText("Add a country...");
+            exploreCountriesChip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    editButton.performClick();
+                }
+            });
+        } else {
+            exploreCountriesChips.removeView(exploreCountriesChip);
+        }
 
-    public void editProfile(View view) {
-        Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
-        startActivityForResult(intent, EDIT_REQUEST_CODE);
+        for (String exploreCountry : currentUser.getExploreCountries()) {
+            Chip exploreCountryChip = new Chip(getContext());
+            exploreCountryChip.setText(exploreCountry);
+            exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
+            exploreCountriesChips.addView(exploreCountryChip);
+        }
     }
 }
