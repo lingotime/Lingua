@@ -1,9 +1,5 @@
 package com.lingua.lingua.models;
 
-/*
-Chat class
-*/
-
 import org.parceler.Parcel;
 
 import java.util.ArrayList;

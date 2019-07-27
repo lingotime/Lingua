@@ -32,8 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
-RecyclerView Adapter that adapts Friend Request objects to the viewholders in the recyclerview
+/**
+* RecyclerView Adapter that adapts Friend Request objects to the viewholders in the recyclerview
 */
 
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder> {
