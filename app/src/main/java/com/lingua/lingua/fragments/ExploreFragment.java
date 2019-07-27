@@ -97,7 +97,7 @@ public class ExploreFragment extends Fragment {
                         ArrayList<String> countriesSelectedByGeneratedUser = generatedUser.getKnownCountries();
 
                         // filter user depending on criteria
-                        if (!(generatedUser.getUserID().equals(currentUser.getUserID())) && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countriesSelectedByGeneratedUser) && actionNotTaken(generatedUser.getUserID())) {
+                        if (generatedUser.isComplete() && !(generatedUser.getUserID().equals(currentUser.getUserID())) && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countriesSelectedByGeneratedUser) && actionNotTaken(generatedUser.getUserID())) {
                             if (usersJSONObjectCounter < 20) {
                                 // add to the list of users
                                 usersList.add(generatedUser);
@@ -158,22 +158,18 @@ public class ExploreFragment extends Fragment {
             return true;
         }
 
-        if (exploreLanguages != null && knownLanguages != null) {
-            for (String exploreLanguage : exploreLanguages) {
-                for (String knownLanguage : knownLanguages) {
-                    if (exploreLanguage.equals(knownLanguage)) {
-                        return true;
-                    }
+        for (String exploreLanguage : exploreLanguages) {
+            for (String knownLanguage : knownLanguages) {
+                if (exploreLanguage.equals(knownLanguage)) {
+                    return true;
                 }
             }
         }
 
-        if (exploreCountries != null && knownCountries != null) {
-            for (String exploreCountry : exploreCountries) {
-                for (String knownCountry : knownCountries) {
-                    if (exploreCountry.equals(knownCountry)) {
-                        return true;
-                    }
+        for (String exploreCountry : exploreCountries) {
+            for (String knownCountry : knownCountries) {
+                if (exploreCountry.equals(knownCountry)) {
+                    return true;
                 }
             }
         }

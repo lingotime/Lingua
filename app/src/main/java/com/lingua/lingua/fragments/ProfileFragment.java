@@ -117,7 +117,7 @@ public class ProfileFragment extends Fragment {
 
         originCountryText.setText("Origin Country: " + currentUser.getUserOriginCountry());
 
-        if (currentUser.getKnownCountries().isEmpty()) {
+        if (currentUser.getKnownLanguages().isEmpty()) {
             knownLanguagesChip.setText("Add a language...");
             knownLanguagesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
