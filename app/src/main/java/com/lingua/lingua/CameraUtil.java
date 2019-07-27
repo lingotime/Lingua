@@ -1,20 +1,13 @@
 package com.lingua.lingua;
 
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
-
-import androidx.core.content.FileProvider;
 
 import java.io.File;
 
-/*
-Contains helper methods for getting image files from the camera and camera roll
+/**
+* Contains helper methods for getting image files from the camera and camera roll
 */
 
 public class CameraUtil {

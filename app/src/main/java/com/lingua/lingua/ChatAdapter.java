@@ -3,6 +3,7 @@ package com.lingua.lingua;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +13,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.swipe.SwipeLayout;
 import com.lingua.lingua.models.Chat;
 
-import java.util.ArrayList;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -58,9 +68,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
         Chat chat = chats.get(position);
-        tvName.setText(chat.getName());
         tvText.setText(chat.getLastMessage());
         tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastUpdatedAt()));
+
+        // fill in the user profile pic and name of the friend
+        for (String id : chat.getUsers()) {
+            if (!id.equals(userId)) {
+                getUserDetails(id);
+            }
+        }
 
         // to handle the SwipeLayout
         chatSwipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
@@ -136,5 +152,35 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     public void clear() {
         chats.clear();
         notifyDataSetChanged();
+    }
+
+    public void getUserDetails(String userId) {
+        String url = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
+        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+            try {
+                JSONObject object = new JSONObject(s);
+                String name = object.getString("firstName");
+                String profilePhotoURL = object.getString("profilePhotoURL");
+
+                // load profile pic
+                RequestOptions requestOptionsMedia = new RequestOptions();
+                requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
+                Glide.with(context)
+                        .load(profilePhotoURL)
+                        .apply(requestOptionsMedia)
+                        .into(ivProfile);
+
+                // set name
+                tvName.setText(name);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, volleyError -> {
+            Log.e("ChatAdapter", "" + volleyError);
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(context);
+        rQueue.add(request);
     }
 }
