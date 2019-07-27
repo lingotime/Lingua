@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-/*
+/**
 This class was given to us in the endless scrolling CodePath tutorial, will be used for the explore
 page so it doesn't attempt to load all the users at once
 */

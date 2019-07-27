@@ -40,7 +40,7 @@ import org.parceler.Parcels;
 
 import java.util.Arrays;
 
-/*
+/**
 Login activity that handles Facebook OAuth
 */
 

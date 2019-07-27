@@ -20,8 +20,8 @@ import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
 
-/*
-Main Activity with bottom navigation bar that handles switching between fragments
+/**
+* Main Activity with bottom navigation bar that handles switching between fragments
 */
 
 public class MainActivity extends AppCompatActivity {

@@ -31,9 +31,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/*
-Fragment that displays other people's profiles that match the user's target language or country for
-the user to browse through and send friend requests
+/**
+* Fragment that displays other people's profiles that match the user's target language or country for
+* the user to browse through and send friend requests
 */
 
 public class ExploreFragment extends Fragment {

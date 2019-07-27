@@ -25,8 +25,8 @@ import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
 
-/*
-Fragment that displays the user's profile and allows them to edit it
+/**
+* Fragment that displays the user's profile and allows them to edit it
 */
 
 public class ProfileFragment extends Fragment {

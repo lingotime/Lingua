@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
+/**
 RecyclerView Adapter that adapts User objects to the viewholders in the recyclerview
 */
 

@@ -15,7 +15,7 @@ import com.lingua.lingua.models.Message;
 
 import java.util.List;
 
-/*
+/**
 RecyclerView Adapter that adapts Message objects to the viewholders in the recyclerview
 */
 
