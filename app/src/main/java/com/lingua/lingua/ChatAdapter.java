@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -87,7 +88,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return chats.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener{
         public ViewHolder(View itemView) {
             super(itemView);
             chatSwipeLayout = itemView.findViewById(R.id.item_chat_swipe_layout);
@@ -97,7 +98,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             tvName = itemView.findViewById(R.id.item_chat_tv_name);
             tvText = itemView.findViewById(R.id.item_chat_tv_text);
             tvTimestamp = itemView.findViewById(R.id.item_chat_tv_timestamp);
-            itemView.setOnClickListener(this);
+            itemView.setOnTouchListener(this);
 
             textChatButton.setOnClickListener(new View.OnClickListener() {
                 // launch the chat details activity
@@ -137,15 +138,20 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         }
 
         @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            if (position != RecyclerView.NO_POSITION) {
-                Intent intent = new Intent(context, ChatDetailsActivity.class);
-                Chat chat = chats.get(position);
-                intent.putExtra("chat", Parcels.wrap(chat));
-                context.startActivity(intent);
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (motionEvent.equals(MotionEvent.ACTION_BUTTON_PRESS)) {
+                // this will be interpreted as a click for the recycler view items
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Intent intent = new Intent(context, ChatDetailsActivity.class);
+                    Chat chat = chats.get(position);
+                    intent.putExtra("chat", Parcels.wrap(chat));
+                    context.startActivity(intent);
+                }
             }
+            return false;
         }
+
     }
 
     // Clean all elements of the recycler
