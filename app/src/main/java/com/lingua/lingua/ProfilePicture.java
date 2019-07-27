@@ -140,7 +140,7 @@ public class ProfilePicture extends AppCompatActivity {
                                 currentUser.setProfilePhotoURL(profilePhotoURI.toString());
 
                                 // save updates
-                                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
+                                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
                                 databaseReference.child(currentUser.getId()).setValue(currentUser);
 
                                 // return to info setup activity

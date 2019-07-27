@@ -47,9 +47,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private ImageView profileImage;
     private EditText nameField;
     private EditText birthdateField;
-    private TextView boyText;
-    private Switch genderSwitch;
-    private TextView girlText;
     private TextInputEditText biographyField;
     private NachoTextView originCountryField;
     private NachoTextView knownLanguagesField;
@@ -67,9 +64,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.activity_profile_info_setup_profile_image);
         nameField = findViewById(R.id.activity_profile_info_setup_name_field);
         birthdateField = findViewById(R.id.activity_profile_info_setup_birthdate_field);
-        boyText = findViewById(R.id.activity_profile_info_setup_boy_text);
-        genderSwitch = findViewById(R.id.activity_profile_info_setup_gender_switch);
-        girlText = findViewById(R.id.activity_profile_info_setup_girl_text);
         biographyField = findViewById(R.id.activity_profile_info_setup_biography_field);
         originCountryField = findViewById(R.id.activity_profile_info_setup_origin_country_field);
         knownLanguagesField = findViewById(R.id.activity_profile_info_setup_known_languages_field);
@@ -242,7 +236,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         currentUser.setComplete(isCompleteCheck);
 
         // save
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getId()).setValue(currentUser);
     }
 }
