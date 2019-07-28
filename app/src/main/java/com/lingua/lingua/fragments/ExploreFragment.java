@@ -42,6 +42,8 @@ public class ExploreFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private RecyclerView historyTimeline;
 
+    private static final int NUMBER_OF_USERS_PER_LOAD = 20;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -75,9 +77,9 @@ public class ExploreFragment extends Fragment {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 if (!hiddenUsersList.isEmpty()) {
-                    if (hiddenUsersList.size() > 20) {
-                        usersList.addAll(hiddenUsersList.subList(0, 20));
-                        hiddenUsersList.removeAll(hiddenUsersList.subList(0, 20));
+                    if (hiddenUsersList.size() > NUMBER_OF_USERS_PER_LOAD) {
+                        usersList.addAll(hiddenUsersList.subList(0, NUMBER_OF_USERS_PER_LOAD));
+                        hiddenUsersList.removeAll(hiddenUsersList.subList(0, NUMBER_OF_USERS_PER_LOAD));
                     } else {
                         usersList.addAll(hiddenUsersList);
                         hiddenUsersList.clear();
@@ -114,7 +116,7 @@ public class ExploreFragment extends Fragment {
         ArrayList<String> languagesSelectedByUser = currentUser.getExploreLanguages();
         ArrayList<String> countriesSelectedByUser = currentUser.getExploreCountries();
 
-        String databaseURL = "https://lingua-project.firebaseio.com/users_clean.json";
+        String databaseURL = "https://lingua-project.firebaseio.com/users.json";
 
         // fetch users from database
         StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new Response.Listener<String>() {
@@ -157,7 +159,7 @@ public class ExploreFragment extends Fragment {
 
                         // filter user depending on criteria
                         if (generatedUser.isComplete() && !(generatedUser.getUserID().equals(currentUser.getUserID())) && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countriesSelectedByGeneratedUser) && actionNotTaken(generatedUser.getUserID())) {
-                            if (usersJSONObjectCounter < 20) {
+                            if (usersJSONObjectCounter < NUMBER_OF_USERS_PER_LOAD) {
                                 // add to the list of users
                                 usersList.add(generatedUser);
 

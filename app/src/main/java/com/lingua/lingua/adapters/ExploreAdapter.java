@@ -105,7 +105,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                         }
 
                         // save updated sent friend request user list to database
-                        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
+                        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
                         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
 
                         // remove user from displayed user list
@@ -140,7 +140,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                         }
 
                         // save updated declined user list to database
-                        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
+                        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
                         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
 
                         // remove user from displayed user list

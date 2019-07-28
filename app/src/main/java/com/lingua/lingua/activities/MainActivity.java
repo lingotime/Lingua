@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         currentUser.setOnline(true);
 
         // save update
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
     }
 
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         currentUser.setOnline(true);
 
         // save update
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
     }
 
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         currentUser.setOnline(false);
 
         // save update
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users_clean");
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
     }
 }
