@@ -37,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /* FINALIZED, DOCUMENTED, and TESTED. LoginActivity logs in a user with Facebook OAuth. */
@@ -153,6 +154,23 @@ public class LoginActivity extends AppCompatActivity {
                             // convert JSON object to User
                             Gson gson = new Gson();
                             User generatedUser = gson.fromJson(userJSONObject.toString(), User.class);
+
+                            // load blank values into null fields
+                            if (generatedUser.getKnownLanguages() == null) {
+                                generatedUser.setKnownLanguages(new ArrayList<String>());
+                            }
+
+                            if (generatedUser.getExploreLanguages() == null) {
+                                generatedUser.setExploreLanguages(new ArrayList<String>());
+                            }
+
+                            if (generatedUser.getKnownCountries() == null) {
+                                generatedUser.setKnownCountries(new ArrayList<String>());
+                            }
+
+                            if (generatedUser.getExploreCountries() == null) {
+                                generatedUser.setExploreCountries(new ArrayList<String>());
+                            }
 
                             // proceed to set next activity
                             loadNextStep(generatedUser);

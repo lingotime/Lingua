@@ -63,7 +63,52 @@ public class ExploreFragment extends Fragment {
         usersList = new ArrayList<User>();
         hiddenUsersList = new ArrayList<User>();
 
+        // set the adapter
+        usersAdapter = new ExploreAdapter(getContext(), usersList, hiddenUsersList, currentUser);
+        historyTimeline.setAdapter(usersAdapter);
+
+        // set the layout
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+
+        // prepare the endless scroll listener
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                if (!hiddenUsersList.isEmpty()) {
+                    if (hiddenUsersList.size() > 20) {
+                        usersList.addAll(hiddenUsersList.subList(0, 20));
+                        hiddenUsersList.removeAll(hiddenUsersList.subList(0, 20));
+                    } else {
+                        usersList.addAll(hiddenUsersList);
+                        hiddenUsersList.clear();
+                    }
+
+                    usersAdapter.notifyDataSetChanged();
+                }
+            }
+        };
+        historyTimeline.addOnScrollListener(scrollListener);
+
+        // display timeline
+        historyTimeline.setLayoutManager(layoutManager);
+
         // fetch compatible users who match criteria and load them into timeline
+        fetchCompatibleUsersAndLoad(currentUser);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // clear the user lists
+        usersList.clear();
+        hiddenUsersList.clear();
+        usersAdapter.notifyDataSetChanged();
+
+        // reset the scroll listener
+        scrollListener.resetState();
+
+        // refetch compatible users who match criteria and load them into timeline
         fetchCompatibleUsersAndLoad(currentUser);
     }
 
@@ -92,6 +137,23 @@ public class ExploreFragment extends Fragment {
                         Gson gson = new Gson();
                         User generatedUser = gson.fromJson(userJSONObject.toString(), User.class);
 
+                        // load blank values into null fields
+                        if (generatedUser.getKnownLanguages() == null) {
+                            generatedUser.setKnownLanguages(new ArrayList<String>());
+                        }
+
+                        if (generatedUser.getExploreLanguages() == null) {
+                            generatedUser.setExploreLanguages(new ArrayList<String>());
+                        }
+
+                        if (generatedUser.getKnownCountries() == null) {
+                            generatedUser.setKnownCountries(new ArrayList<String>());
+                        }
+
+                        if (generatedUser.getExploreCountries() == null) {
+                            generatedUser.setExploreCountries(new ArrayList<String>());
+                        }
+
                         // get relevant information from user for matching
                         ArrayList<String> languagesSelectedByGeneratedUser = generatedUser.getKnownLanguages();
                         ArrayList<String> countriesSelectedByGeneratedUser = generatedUser.getKnownCountries();
@@ -111,32 +173,7 @@ public class ExploreFragment extends Fragment {
                         }
                     }
 
-                    // load matched users into timeline
-                    usersAdapter = new ExploreAdapter(getContext(), usersList, hiddenUsersList, currentUser);
-                    historyTimeline.setAdapter(usersAdapter);
-
-                    // set the layout
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-
-                    // prepare the endless scroll listener
-                    scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
-                        @Override
-                        public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                            if (!hiddenUsersList.isEmpty()) {
-                                if (hiddenUsersList.size() > 20) {
-                                    usersList.addAll(hiddenUsersList.subList(0, 20));
-                                    hiddenUsersList.removeAll(hiddenUsersList.subList(0, 20));
-                                } else {
-                                    usersList.addAll(hiddenUsersList);
-                                    hiddenUsersList.clear();
-                                }
-                            }
-                        }
-                    };
-                    historyTimeline.addOnScrollListener(scrollListener);
-
-                    // display timeline
-                    historyTimeline.setLayoutManager(layoutManager);
+                    usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
                     Log.e("ExploreFragment", "firebase:onException", exception);
                 }
