@@ -91,9 +91,6 @@ public class ExploreFragment extends Fragment {
 
         // display timeline
         historyTimeline.setLayoutManager(layoutManager);
-
-        // fetch compatible users who match criteria and load them into timeline
-        fetchCompatibleUsersAndLoad(currentUser);
     }
 
     @Override
@@ -108,7 +105,7 @@ public class ExploreFragment extends Fragment {
         // reset the scroll listener
         scrollListener.resetState();
 
-        // refetch compatible users who match criteria and load them into timeline
+        // fetch compatible users who match criteria and load them into timeline
         fetchCompatibleUsersAndLoad(currentUser);
     }
 
