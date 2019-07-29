@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -77,7 +78,7 @@ public class ProfilePicture extends AppCompatActivity {
         });
 
         // load the current profile photo if one is available
-        Glide.with(this).load(currentUser.getProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
+        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
 
         // launch photos view if the "select photo" button is clicked
         selectPhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +103,7 @@ public class ProfilePicture extends AppCompatActivity {
                     // create references to cloud storage location
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     StorageReference storageReference = storage.getReference();
-                    StorageReference specificProfilesStorageReference = storageReference.child("profiles/" + currentUser.getId() + "_profile.jpg");
+                    StorageReference specificProfilesStorageReference = storageReference.child("profiles/" + currentUser.getUserID() + "_profile.jpg");
 
                     // upload the new profile photo
                     UploadTask uploadTask = specificProfilesStorageReference.putFile(localProfilePhotoFileURI);
@@ -137,11 +138,11 @@ public class ProfilePicture extends AppCompatActivity {
                                 Uri profilePhotoURI = task.getResult();
 
                                 // update the user's profile photo with the new profile photo URL link
-                                currentUser.setProfilePhotoURL(profilePhotoURI.toString());
+                                currentUser.setUserProfilePhotoURL(profilePhotoURI.toString());
 
                                 // save updates
                                 Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-                                databaseReference.child(currentUser.getId()).setValue(currentUser);
+                                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
 
                                 // return to info setup activity
                                 final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
@@ -169,6 +170,10 @@ public class ProfilePicture extends AppCompatActivity {
         if (requestCode == 1034) {
             if (resultCode == RESULT_OK) {
                 Bitmap localProfilePhoto = BitmapFactory.decodeFile(localProfilePhotoFile.getAbsolutePath());
+
+                Matrix rotationMatrix = new Matrix();
+                rotationMatrix.postRotate(-90);
+                localProfilePhoto = Bitmap.createBitmap(localProfilePhoto, 0, 0, localProfilePhoto.getWidth(), localProfilePhoto.getHeight(), rotationMatrix, true);
 
                 Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
             } else {

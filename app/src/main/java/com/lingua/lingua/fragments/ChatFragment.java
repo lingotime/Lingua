@@ -97,7 +97,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void queryChats() {
-        String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/chats.json";
+        String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/chats.json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
@@ -134,7 +134,7 @@ public class ChatFragment extends Fragment {
                 String userName2 = chat.getString("user2");
                 String name;
                 // show name of user I'm texting as chat title
-                if (userName1.equals(currentUser.getFirstName())) {
+                if (userName1.equals(currentUser.getUserName())) {
                     name = userName2;
                 } else {
                     name = userName1;

@@ -14,9 +14,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.facebook.login.LoginManager;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.auth.FirebaseAuth;
 import com.lingua.lingua.CountryInformation;
+import com.lingua.lingua.LoginActivity;
 import com.lingua.lingua.ProfileCreationActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
@@ -34,6 +37,7 @@ public class ProfileFragment extends Fragment {
 
     private TextView descriptionText;
     private Button editButton;
+    private Button exitButton;
     private ImageView profileImage;
     private TextView nameText;
     private TextView birthdateText;
@@ -62,6 +66,7 @@ public class ProfileFragment extends Fragment {
         // associate views with java variables
         descriptionText = view.findViewById(R.id.fragment_profile_description_text);
         editButton = view.findViewById(R.id.fragment_profile_edit_button);
+        exitButton = view.findViewById(R.id.fragment_profile_exit_button);
         profileImage = view.findViewById(R.id.fragment_profile_profile_image);
         nameText = view.findViewById(R.id.fragment_profile_name_text);
         birthdateText = view.findViewById(R.id.fragment_profile_birthdate_text);
@@ -90,14 +95,28 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        // populate data from the current user
-        Glide.with(this).load(currentUser.getProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
+        // log out if exit button is clicked
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
 
-        nameText.setText(currentUser.getFirstName());
+                LoginManager.getInstance().logOut();
+
+                final Intent intent = new Intent(getContext(), LoginActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
+
+        // populate data from the current user
+        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
+
+        nameText.setText(currentUser.getUserName());
 
         try {
             SimpleDateFormat storedDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-            Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getBirthDate());
+            Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getUserBirthDate());
             SimpleDateFormat displayDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             birthdateText.setText("Birth Date: " + displayDateFormat.format(userBirthDateAsDate));
         } catch (ParseException exception) {
@@ -105,9 +124,9 @@ public class ProfileFragment extends Fragment {
             Log.e("ProfileFragment", "There was an issue parsing the user's registered birth date.");
         }
 
-        biographyText.setText("Bio: " + currentUser.getBiographyText());
+        biographyText.setText("Bio: " + currentUser.getUserBiographyText());
 
-        originCountryText.setText("Origin Country: " + currentUser.getOriginCountry());
+        originCountryText.setText("Origin Country: " + currentUser.getUserOriginCountry());
 
         if (currentUser.getKnownLanguages().isEmpty()) {
             knownLanguagesChip.setText("Add a language...");

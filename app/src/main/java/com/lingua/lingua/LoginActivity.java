@@ -4,17 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
+import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -22,8 +16,6 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.facebook.login.widget.ProfilePictureView;
-import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -31,26 +23,32 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.Gson;
 import com.lingua.lingua.models.User;
-
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.firebase.client.Firebase;
+import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
-Login activity that handles Facebook OAuth
-*/
+/* FINALIZED, DOCUMENTED, and TESTED. LoginActivity logs in a user with Facebook OAuth. */
 
 public class LoginActivity extends AppCompatActivity {
     CallbackManager facebookLoginManager;
     Context context;
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
+    private TextView applicationNameText;
+    private ImageView applicationLogoImage;
     private LoginButton facebookLoginButton;
-    private ProfilePictureView facebookProfileImage;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,10 +64,10 @@ public class LoginActivity extends AppCompatActivity {
         firebaseUser = firebaseAuth.getCurrentUser();
 
         // associate views with java variables
-        facebookProfileImage = findViewById(R.id.activity_login_profile_image);
+        applicationNameText = findViewById(R.id.activity_login_app_name_text);
+        applicationLogoImage = findViewById(R.id.activity_login_app_logo_image);
         facebookLoginButton = findViewById(R.id.activity_login_facebook_button);
 
-        // check if already logged in
         // prepare firebase database
         Firebase.setAndroidContext(this);
 
@@ -78,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
             // log in
             extractUserAndLoadNextStep(firebaseUser);
         } else {
-            facebookLoginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
+            facebookLoginButton.setReadPermissions(Arrays.asList("public_profile"));
 
             // register a callback for logging in
             LoginManager.getInstance().registerCallback(facebookLoginManager, new FacebookCallback<LoginResult>() {
@@ -122,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
     private void extractUserAndLoadNextStep(FirebaseUser tempFirebaseUser) {
         // extract data from Firebase user object
         String firebaseUserID = tempFirebaseUser.getUid();
-        String firebaseUserDisplayName = tempFirebaseUser.getDisplayName();
+        String firebaseUserName = tempFirebaseUser.getDisplayName();
         String firebaseUserProfilePhotoURL = "https://graph.facebook.com" + tempFirebaseUser.getPhotoUrl().getPath() + "?type=large";
 
         String databaseURL = "https://lingua-project.firebaseio.com/users.json";
@@ -133,9 +131,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.equals("null")) {
                     // there are no users in the database, hence: new user
                     User createdUser = new User();
-                    createdUser.setId(firebaseUserID);
-                    createdUser.setFirstName(firebaseUserDisplayName);
-                    createdUser.setProfilePhotoURL(firebaseUserProfilePhotoURL);
+                    createdUser.setUserID(firebaseUserID);
+                    createdUser.setUserName(firebaseUserName);
+                    createdUser.setUserProfilePhotoURL(firebaseUserProfilePhotoURL);
                     createdUser.setComplete(false);
 
                     // save this new user in the database
@@ -156,14 +154,31 @@ public class LoginActivity extends AppCompatActivity {
                             Gson gson = new Gson();
                             User generatedUser = gson.fromJson(userJSONObject.toString(), User.class);
 
+                            // load blank values into null fields
+                            if (generatedUser.getKnownLanguages() == null) {
+                                generatedUser.setKnownLanguages(new ArrayList<String>());
+                            }
+
+                            if (generatedUser.getExploreLanguages() == null) {
+                                generatedUser.setExploreLanguages(new ArrayList<String>());
+                            }
+
+                            if (generatedUser.getKnownCountries() == null) {
+                                generatedUser.setKnownCountries(new ArrayList<String>());
+                            }
+
+                            if (generatedUser.getExploreCountries() == null) {
+                                generatedUser.setExploreCountries(new ArrayList<String>());
+                            }
+
                             // proceed to set next activity
                             loadNextStep(generatedUser);
                         } else {
                             // user not found in database, hence: new user
                             User createdUser = new User();
-                            createdUser.setId(firebaseUserID);
-                            createdUser.setFirstName(firebaseUserDisplayName);
-                            createdUser.setProfilePhotoURL(firebaseUserProfilePhotoURL);
+                            createdUser.setUserID(firebaseUserID);
+                            createdUser.setUserName(firebaseUserName);
+                            createdUser.setUserProfilePhotoURL(firebaseUserProfilePhotoURL);
                             createdUser.setComplete(false);
 
                             // save this new user in the database
