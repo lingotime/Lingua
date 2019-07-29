@@ -27,6 +27,7 @@ import com.lingua.lingua.R;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -161,5 +162,25 @@ public class ChatFragment extends Fragment {
 
         RequestQueue rQueue = Volley.newRequestQueue(context);
         rQueue.add(chatInfoRequest);
+    }
+
+    // to query the languages for each of the users
+    public void queryLanguages(String userId) {
+        String userUrl = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
+        StringRequest userInfoRequest = new StringRequest(Request.Method.GET, userUrl, s -> {
+            try {
+                JSONObject user = new JSONObject(s);
+                Log.i("ChatFragment", "User loaded");
+                JSONArray exploreLanguages = user.getJSONArray("exploreLanguages");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, volleyError -> {
+            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
+            Log.e("ChatFragment", "user not loading " + volleyError);
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(getContext());
+        rQueue.add(userInfoRequest);
     }
 }

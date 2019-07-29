@@ -5,17 +5,24 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -23,11 +30,16 @@ import com.firebase.client.FirebaseError;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.Message;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -142,6 +154,19 @@ public class ChatDetailsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.chat_details_videochat_icon) {
+            // get the combined list of the users' target languages
+            ArrayList<String> languages; // from which the call language will be selected
+            String learningUser; // this represents the user for whom one of their target languages was chosen and who will therefore be learning
+            for (int i = 0; i < chat.getUsers().size(); i++) {
+                // query the database each of the users' languages
+
+            }
+
+            // a dialog box to allow the person initiating the call to select the language in which the call will be made
+            AlertDialog.Builder languageSelection = new AlertDialog.Builder(this);
+            languageSelection.setTitle("Choose the language");
+
+
             // intent to the video chat activity
             Intent intent = new Intent(this, VideoChatActivity.class);
             intent.putExtra("chatID", chat.getId());

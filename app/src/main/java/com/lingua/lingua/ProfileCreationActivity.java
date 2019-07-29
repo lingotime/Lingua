@@ -95,27 +95,8 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // prepopulate data from the current user
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
-        if (currentUser.getBiographyText() != null) {
-            bio.setText(currentUser.getBiographyText());
-        }
-
-        if (currentUser.getOriginCountry() != null) {
-            ArrayList list = new ArrayList();
-            list.add(currentUser.getOriginCountry());
-            originCountry.setText(list);
-        }
-
-        if (currentUser.getKnownLanguages() != null) {
-            currentLanguages.setText(currentUser.getKnownLanguages());
-        }
-
-        if (currentUser.getExploreLanguages() != null) {
-            targetLanguages.setText(currentUser.getExploreLanguages());
-        }
-
-        if (currentUser.getExploreCountries() != null) {
-            targetCountries.setText(currentUser.getExploreCountries());
-        }
+        // refactored - now should load user data with the flags associated with the chips
+        loadInfo();
 
         // TODO: create adapters with a list of the possibilities for autocompletion and set it upon creation
 
@@ -222,19 +203,31 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
     protected void loadInfo() {
         // loads the user info from the current logged in user
-        Date userDob = null;
-        List<String> userOriginCountry = new ArrayList<String>();
-        List<String> userPrimaryLanguages = new ArrayList<String>();
-        List<String> userTargetLanguages = new ArrayList<String>();
-        List<String> userTargetCountries = new ArrayList<String>();
-        String userBio = null;
 
-        //dob.setText(userDob.toString());
-        // the data fields with the chips must be entered as a list of Strings
-        originCountry.setText(userOriginCountry);
-        currentLanguages.setText(userPrimaryLanguages);
-        targetCountries.setText(userTargetCountries);
-        targetLanguages.setText(userTargetLanguages);
-        bio.setText(userBio);
+        if (currentUser.getBiographyText() != null) {
+            bio.setText(currentUser.getBiographyText());
+        }
+
+        if (currentUser.getOriginCountry() != null) {
+            List<String> userOriginCountry = new ArrayList<>();
+            userOriginCountry.add(currentUser.getOriginCountry());
+            originCountry.setText(userOriginCountry);
+        }
+
+        if (currentUser.getKnownLanguages() != null) {
+            List<String> userPrimaryLanguages = currentUser.getKnownLanguages();
+            currentLanguages.setText(userPrimaryLanguages);
+        }
+
+        if (currentUser.getExploreLanguages() != null) {
+            List<String> userTargetLanguages = currentUser.getExploreLanguages();
+            targetLanguages.setText(userTargetLanguages);
+        }
+
+        if (currentUser.getExploreCountries() != null) {
+            List<String> userTargetCountries = currentUser.getExploreCountries();
+            targetCountries.setText(userTargetCountries);
+        }
+
     }
 }

@@ -50,6 +50,9 @@ import java.util.Map;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
+/**
+ * Chat used to generate the video chat rooms and tokens for 2 different users, at the moment. Multiway and monitoring will soon be enabled
+ */
 
 public class VideoChatActivity extends AppCompatActivity {
 
