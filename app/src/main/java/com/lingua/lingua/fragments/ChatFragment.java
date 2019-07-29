@@ -27,6 +27,7 @@ import com.lingua.lingua.R;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -51,6 +52,7 @@ public class ChatFragment extends Fragment {
     // used to implement the actions for swiping left or right on each chat object
 
     User currentUser;
+
 
     @Nullable
     @Override

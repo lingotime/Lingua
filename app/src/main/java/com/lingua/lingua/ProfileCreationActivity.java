@@ -37,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
 
@@ -74,44 +75,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // unwrap the current user
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
-        // prepopulate data from the current user
-        if (currentUser.getFirstName() != null) {
-            nameField.setText(currentUser.getFirstName());
-        }
-
-        if (currentUser.getBirthDate() != null) {
-            try {
-                SimpleDateFormat storedDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-                Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getBirthDate());
-                SimpleDateFormat displayDateFormat = new SimpleDateFormat("MM/dd/yyyy");
-                birthdateField.setText(displayDateFormat.format(userBirthDateAsDate));
-            } catch (ParseException exception) {
-                Log.e("ProfileSetupActivity", "There was an issue parsing the user's registered birth date.");
-            }
-        }
-
-        if (currentUser.getBiographyText() != null) {
-            biographyField.setText(currentUser.getBiographyText());
-        }
-
-        if (currentUser.getOriginCountry() != null) {
-            originCountryField.setText(new ArrayList<String>(Arrays.asList(currentUser.getOriginCountry())));
-        }
-
-        Glide.with(this).load(currentUser.getProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
-
-        if (currentUser.getKnownLanguages() != null) {
-            knownLanguagesField.setText(currentUser.getKnownLanguages());
-        }
-
-        if (currentUser.getExploreLanguages() != null) {
-            exploreLanguagesField.setText(currentUser.getExploreLanguages());
-        }
-
-        if (currentUser.getExploreCountries() != null) {
-            exploreCountriesField.setText(currentUser.getExploreCountries());
-        }
-
         // enable the profile image to be clickable
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,6 +96,29 @@ public class ProfileCreationActivity extends AppCompatActivity {
         knownLanguagesField.setAdapter(languagesAdapter);
         exploreLanguagesField.setAdapter(languagesAdapter);
         exploreCountriesField.setAdapter(countriesAdapter);
+
+        originCountryField.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
+            @Override
+            public ChipSpan createChip(@NonNull Context context, @NonNull CharSequence text, Object data) {
+                Drawable flagDrawable;
+                try {
+                    // attempt to load correct flag icon
+                    String flagPhotoFileName = CountryInformation.COUNTRY_CODES.get(text.toString()) + "_round";
+                    flagDrawable = getResources().getDrawable(getResources().getIdentifier(flagPhotoFileName, "drawable", getPackageName()));
+                } catch (Exception exception) {
+                    // load United Nations flag icon if error occurs
+                    String flagPhotoFileName = "un_round";
+                    flagDrawable = getResources().getDrawable(getResources().getIdentifier(flagPhotoFileName, "drawable", getPackageName()));
+                }
+                return new ChipSpan(context, text, flagDrawable, data);
+            }
+
+            @Override
+            public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
+                super.configureChip(chip, chipConfiguration);
+                chip.setShowIconOnLeft(true);
+            }
+        }, ChipSpan.class));
 
         // set a flag icon with each country chip entered
         exploreCountriesField.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
@@ -173,6 +159,9 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // refactored - now should load user data with the flags associated with the chips
+        loadInfo();
     }
 
     private void saveData() {
@@ -238,5 +227,52 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // save
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getId()).setValue(currentUser);
+
+    }
+
+    protected void loadInfo() {
+        // loads the user info from the current logged in user
+        // prepopulate data from the current user
+        if (currentUser.getFirstName() != null) {
+            nameField.setText(currentUser.getFirstName());
+        }
+
+        if (currentUser.getBirthDate() != null) {
+            try {
+                SimpleDateFormat storedDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+                Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getBirthDate());
+                SimpleDateFormat displayDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                birthdateField.setText(displayDateFormat.format(userBirthDateAsDate));
+            } catch (ParseException exception) {
+                Log.e("ProfileSetupActivity", "There was an issue parsing the user's registered birth date.");
+            }
+        }
+
+        if (currentUser.getBiographyText() != null) {
+            biographyField.setText(currentUser.getBiographyText());
+        }
+
+        Glide.with(this).load(currentUser.getProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
+
+        if (currentUser.getOriginCountry() != null) {
+            List<String> userOriginCountry = new ArrayList<>();
+            userOriginCountry.add(currentUser.getOriginCountry());
+            originCountryField.setText(userOriginCountry);
+        }
+
+        if (currentUser.getKnownLanguages() != null) {
+            List<String> userPrimaryLanguages = currentUser.getKnownLanguages();
+            knownLanguagesField.setText(userPrimaryLanguages);
+        }
+
+        if (currentUser.getExploreLanguages() != null) {
+            List<String> userTargetLanguages = currentUser.getExploreLanguages();
+            exploreLanguagesField.setText(userTargetLanguages);
+        }
+
+        if (currentUser.getExploreCountries() != null) {
+            List<String> userTargetCountries = currentUser.getExploreCountries();
+            exploreCountriesField.setText(userTargetCountries);
+        }
     }
 }
