@@ -39,7 +39,6 @@ public class ExploreFragment extends Fragment {
     ExploreAdapter usersAdapter;
 
     private EndlessRecyclerViewScrollListener scrollListener;
-    private SwipeRefreshLayout swipeContainer;
     private RecyclerView historyTimeline;
 
     private static final int NUMBER_OF_USERS_PER_LOAD = 20;
@@ -54,8 +53,7 @@ public class ExploreFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // associate views with java variables
-        swipeContainer = view.findViewById(R.id.fragment_explore_swipe_container);
+        // associate view with java variable
         historyTimeline = view.findViewById(R.id.fragment_explore_history_timeline);
 
         // unwrap the current user

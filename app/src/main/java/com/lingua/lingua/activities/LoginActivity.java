@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
             // log in
             extractUserAndLoadNextStep(firebaseUser);
         } else {
-            facebookLoginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
+            facebookLoginButton.setReadPermissions(Arrays.asList("public_profile"));
 
             // register a callback for logging in
             LoginManager.getInstance().registerCallback(facebookLoginManager, new FacebookCallback<LoginResult>() {
@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
     private void extractUserAndLoadNextStep(FirebaseUser tempFirebaseUser) {
         // extract data from Firebase user object
         String firebaseUserID = tempFirebaseUser.getUid();
-        String firebaseUserDisplayName = tempFirebaseUser.getDisplayName();
+        String firebaseUserName = tempFirebaseUser.getDisplayName();
         String firebaseUserProfilePhotoURL = "https://graph.facebook.com" + tempFirebaseUser.getPhotoUrl().getPath() + "?type=large";
 
         String databaseURL = "https://lingua-project.firebaseio.com/users.json";
@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                     // there are no users in the database, hence: new user
                     User createdUser = new User();
                     createdUser.setUserID(firebaseUserID);
-                    createdUser.setUserName(firebaseUserDisplayName);
+                    createdUser.setUserName(firebaseUserName);
                     createdUser.setUserProfilePhotoURL(firebaseUserProfilePhotoURL);
                     createdUser.setComplete(false);
 
@@ -178,7 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                             // user not found in database, hence: new user
                             User createdUser = new User();
                             createdUser.setUserID(firebaseUserID);
-                            createdUser.setUserName(firebaseUserDisplayName);
+                            createdUser.setUserName(firebaseUserName);
                             createdUser.setUserProfilePhotoURL(firebaseUserProfilePhotoURL);
                             createdUser.setComplete(false);
 
