@@ -95,21 +95,26 @@ public class ProfileCreationActivity extends AppCompatActivity {
         }
 
         if (currentUser.getUserOriginCountry() != null) {
-            originCountryField.setText(new ArrayList<String>(Arrays.asList(currentUser.getUserOriginCountry())));
+            List<String> userOriginCountry = new ArrayList<>();
+            userOriginCountry.add(currentUser.getOriginCountry());
+            originCountryField.setText(userOriginCountry);
         }
 
         Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
 
         if (currentUser.getKnownLanguages() != null) {
-            knownLanguagesField.setText(currentUser.getKnownLanguages());
+            List<String> userPrimaryLanguages = currentUser.getKnownLanguages();
+            knownLanguagesField.setText(userPrimaryLanguages);
         }
 
         if (currentUser.getExploreLanguages() != null) {
-            exploreLanguagesField.setText(currentUser.getExploreLanguages());
+            List<String> userTargetLanguages = currentUser.getExploreLanguages();
+            exploreLanguagesField.setText(userTargetLanguages);
         }
 
         if (currentUser.getExploreCountries() != null) {
-            exploreCountriesField.setText(currentUser.getExploreCountries());
+            List<String> userTargetCountries = currentUser.getExploreCountries();
+            exploreCountriesField.setText(userTargetCountries);
         }
 
         // enable the profile image to be clickable

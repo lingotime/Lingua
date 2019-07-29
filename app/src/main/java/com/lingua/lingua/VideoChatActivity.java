@@ -50,6 +50,9 @@ import java.util.Map;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
+/**
+ * Chat used to generate the video chat rooms and tokens for 2 different users, at the moment. Multiway and monitoring will soon be enabled
+ */
 
 public class VideoChatActivity extends AppCompatActivity {
 
@@ -73,6 +76,7 @@ public class VideoChatActivity extends AppCompatActivity {
     private String username;
     private String chatId;
     private String receiverId; // id of the second user in the chat
+    private String videoChatLanguage;
     private Firebase reference;
 
 
@@ -93,6 +97,7 @@ public class VideoChatActivity extends AppCompatActivity {
         String chatName = getIntent().getStringExtra("name"); // the room will be set to this name
         roomName = chatId;
         receiverId = getIntent().getStringExtra("otherUser");
+        videoChatLanguage = getIntent().getStringExtra("language");
 
         // setting up Firebase to receive the messages to be sent
         Firebase.setAndroidContext(VideoChatActivity.this);
@@ -244,8 +249,6 @@ public class VideoChatActivity extends AppCompatActivity {
                     public void onVideoTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
                         // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
                         moveLocalVideoToSmallView();
-
-                        remoteVideoView.setMirror(false);
                         remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
                     }
 
@@ -310,6 +313,8 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onParticipantDisconnected(@NonNull Room room, @NonNull RemoteParticipant remoteParticipant) {
                 Log.i(TAG, "participant disconnected" + remoteParticipant.getIdentity());
+                // move the local participant to the main view
+                moveLocalVideoToMainView();
             }
 
             @Override
@@ -371,6 +376,7 @@ public class VideoChatActivity extends AppCompatActivity {
     }
 
     public void moveLocalVideoToSmallView() {
+        remoteVideoView.setMirror(false);
         // moves the local participant's local video track from the main view to make space for the remote participant
         if (localVideoView.getVisibility() == View.GONE) {
             localVideoView.setVisibility(View.VISIBLE);
@@ -385,6 +391,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     public void moveLocalVideoToMainView() {
         // moves the local participant's video track from the smaller view when there is no longer a remote participant
+        localVideoView.setMirror(false);
         if (localVideoView.getVisibility() == View.VISIBLE) {
             localVideoView.setVisibility(View.GONE);
             if (localVideoTrack != null) {

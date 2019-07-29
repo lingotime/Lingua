@@ -1,6 +1,7 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -9,9 +10,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -25,10 +29,13 @@ import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.swipe.SwipeLayout;
 import com.lingua.lingua.models.Chat;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,7 +55,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private TextView tvText;
     private TextView tvTimestamp;
 
+
     String userId, userName;
+
+    // the list of languages needed to be learned between the 2 members of the chat
+    ArrayList<String> languagesToBeLearned = new ArrayList<>();
 
     public ChatAdapter(Context context, List<Chat> chats) {
         this.context = context;
@@ -109,6 +120,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         Intent intent = new Intent(context, ChatDetailsActivity.class);
                         Chat chat = chats.get(position);
                         intent.putExtra("chat", Parcels.wrap(chat));
+                        ArrayList<String> chatUsers = chat.getUsers();
+                        for (int i = 0; i < chatUsers.size(); i++) {
+                            // gets a list of the languages that both users are trying to learn in order to build the dialog single selection box
+                            queryLanguages(chatUsers.get(i));
+
+                        }
+                        intent.putExtra("languages", languagesToBeLearned);
                         context.startActivity(intent);
                     }
                 }
@@ -121,17 +139,44 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         Chat chat = chats.get(position);
-                        Intent intent = new Intent(context, VideoChatActivity.class);
-                        intent.putExtra("chatID", chat.getId());
-                        intent.putExtra("name", chat.getName());
-                        // get the second user Id from the
-                        for (int i = 0; i < chat.getUsers().size(); i++) {
-                            String otherUserId = chat.getUsers().get(i);
-                            if (otherUserId != userId) {
-                                intent.putExtra("otherUser", otherUserId);
+
+                        // creating the dialog for selecting the language of the call
+                        languagesToBeLearned.add("Cultural Exchange");
+
+                        // a dialog box to allow the person initiating the call to select the language in which the call will be made
+                        AlertDialog.Builder languageSelection = new AlertDialog.Builder(context);
+                        languageSelection.setTitle("Choose the language");
+                        languageSelection.setSingleChoiceItems((ListAdapter) languagesToBeLearned, 0, null);
+                        languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(context, VideoChatActivity.class);
+                                intent.putExtra("language", languagesToBeLearned.get(i));
+                                // intent to the video chat activity
+                                intent.putExtra("chatID", chat.getId());
+                                intent.putExtra("name", chat.getName());
+                                // get the second user Id from the
+                                ArrayList<String> chatUsers = chat.getUsers();
+                                for (int index = 0; index < chatUsers.size(); index++) {
+                                    String otherUserId = chatUsers.get(index);
+                                    if (otherUserId != userId) {
+                                        intent.putExtra("otherUser", otherUserId);
+                                    }
+                                }
+                                context.startActivity(intent);
                             }
-                        }
-                        context.startActivity(intent);
+                        });
+                        languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(context, "Video chat canceled", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        AlertDialog dialog = languageSelection.create();
+                        dialog.setCanceledOnTouchOutside(true);
+                        dialog.show();
+
                     }
                 }
             });
@@ -188,5 +233,28 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         RequestQueue rQueue = Volley.newRequestQueue(context);
         rQueue.add(request);
+    }
+
+    // to query the languages for each of the users
+    public void queryLanguages(String userId) {
+        String userUrl = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
+        StringRequest userInfoRequest = new StringRequest(Request.Method.GET, userUrl, s -> {
+            try {
+                JSONObject user = new JSONObject(s);
+                Log.i("ChatFragment", "User loaded");
+                JSONArray exploreLanguages = user.getJSONArray("exploreLanguages");
+                for (int i = 0; i < exploreLanguages.length(); i++) {
+                    languagesToBeLearned.add((String) exploreLanguages.get(i));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, volleyError -> {
+            Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show();
+            Log.e("ChatFragment", "user not loading " + volleyError);
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(context);
+        rQueue.add(userInfoRequest);
     }
 }

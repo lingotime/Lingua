@@ -126,6 +126,7 @@
                             android:id="@+id/activity_profile_info_setup_biography_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="20dp"
                             android:hint="Add a short bio..."
                             android:maxLines="3" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -147,6 +148,7 @@
                             android:id="@+id/activity_profile_info_setup_origin_country_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="20dp"
                             android:hint="What country are you from?"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -168,6 +170,7 @@
                             android:id="@+id/activity_profile_info_setup_known_languages_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="20dp"
                             android:hint="What languages do you know?"
                             android:maxLines="3" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -188,6 +191,7 @@
                         <com.hootsuite.nachos.NachoTextView
                             android:id="@+id/activity_profile_info_setup_explore_languages_field"
                             android:layout_width="match_parent"
+                            android:minHeight="20dp"
                             android:layout_height="wrap_content"
                             android:hint="What languages do you want to learn?"
                             android:maxLines="3" />
@@ -209,6 +213,7 @@
                         <com.hootsuite.nachos.NachoTextView
                             android:id="@+id/activity_profile_info_setup_explore_countries_field"
                             android:layout_width="match_parent"
+                            android:minHeight="20dp"
                             android:layout_height="wrap_content"
                             android:hint="What countries do you want to explore?"
                             android:maxLines="3" />
