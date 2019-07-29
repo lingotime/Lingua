@@ -176,7 +176,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         AlertDialog dialog = languageSelection.create();
                         dialog.setCanceledOnTouchOutside(true);
                         dialog.show();
-                        
+
                     }
                 }
             });
