@@ -310,6 +310,8 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onParticipantDisconnected(@NonNull Room room, @NonNull RemoteParticipant remoteParticipant) {
                 Log.i(TAG, "participant disconnected" + remoteParticipant.getIdentity());
+                // move the local participant to the main view
+                moveLocalVideoToMainView();
             }
 
             @Override
