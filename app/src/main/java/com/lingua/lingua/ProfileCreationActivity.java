@@ -37,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
 
@@ -96,7 +97,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         if (currentUser.getUserOriginCountry() != null) {
             List<String> userOriginCountry = new ArrayList<>();
-            userOriginCountry.add(currentUser.getOriginCountry());
+            userOriginCountry.add(currentUser.getUserOriginCountry());
             originCountryField.setText(userOriginCountry);
         }
 
@@ -138,6 +139,30 @@ public class ProfileCreationActivity extends AppCompatActivity {
         knownLanguagesField.setAdapter(languagesAdapter);
         exploreLanguagesField.setAdapter(languagesAdapter);
         exploreCountriesField.setAdapter(countriesAdapter);
+
+        // set a flag icon with each country chip entered
+        originCountryField.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
+            @Override
+            public ChipSpan createChip(@NonNull Context context, @NonNull CharSequence text, Object data) {
+                Drawable flagDrawable;
+                try {
+                    // attempt to load correct flag icon
+                    String flagPhotoFileName = CountryInformation.COUNTRY_CODES.get(text.toString()) + "_round";
+                    flagDrawable = getResources().getDrawable(getResources().getIdentifier(flagPhotoFileName, "drawable", getPackageName()));
+                } catch (Exception exception) {
+                    // load United Nations flag icon if error occurs
+                    String flagPhotoFileName = "un_round";
+                    flagDrawable = getResources().getDrawable(getResources().getIdentifier(flagPhotoFileName, "drawable", getPackageName()));
+                }
+                return new ChipSpan(context, text, flagDrawable, data);
+            }
+
+            @Override
+            public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
+                super.configureChip(chip, chipConfiguration);
+                chip.setShowIconOnLeft(true);
+            }
+        }, ChipSpan.class));
 
         // set a flag icon with each country chip entered
         exploreCountriesField.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {

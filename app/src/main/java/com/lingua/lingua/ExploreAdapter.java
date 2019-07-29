@@ -104,6 +104,35 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
                     // ensure current card number is associated with a card
                     if (position != RecyclerView.NO_POSITION) {
+                        // process send friend request ... Marta's code
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                        final View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
+                        dialogBuilder.setView(dialogView);
+
+                        dialogBuilder.setTitle("Send friend request to " + usersList.get(position).getUserName());
+                        dialogBuilder.setMessage("Say hi and tell " + usersList.get(position).getUserName() + " a little about yourself!");
+                        dialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditText editText = dialogView.findViewById(R.id.dialog_friend_request_et);
+                                String message = editText.getText().toString();
+                                if (!message.equals("")) {
+                                    sendFriendRequest(message, usersList.get(position).getUserID(), usersList.get(position).getUserName());
+                                } else {
+                                    Toast.makeText(context, "Can't send a friend request without any text, say hi!", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Log.d("ExploreAdapter", "Cancelled friend request");
+                            }
+                        });
+                        AlertDialog dialog = dialogBuilder.create();
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.show();
+
                         // add user to sent friend request user list
                         if (currentUser.getPendingSentFriendRequests() == null) {
                             currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(usersList.get(position).getUserID())));
@@ -184,6 +213,32 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             countryText.setText("from " + user.getUserOriginCountry());
             ageText.setText(getAge(user.getUserBirthDate()) + " years old");
             biographyText.setText(user.getUserBiographyText());
+        }
+
+        private void sendFriendRequest(String message, String receiverId, String receiverName) {
+
+            Firebase.setAndroidContext(context);
+            Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
+
+            // save friend request
+            String friendRequestId = reference.child("friend-requests").push().getKey();
+
+            Map<String, String> map = new HashMap<>();
+            map.put("message", message);
+            map.put("senderId", currentUser.getUserID());
+            map.put("receiverId", receiverId);
+            map.put("receiverName", receiverName);
+            map.put("senderName", currentUser.getUserName());
+            map.put("timestamp", new Date().toString());
+            map.put("id", friendRequestId);
+
+            reference.child("friend-requests").child(friendRequestId).setValue(map);
+
+            // save friend request reference in user objects
+            reference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
+            reference.child("users").child(receiverId).child("received-friend-requests").child(friendRequestId).setValue(true);
+
+            Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();
         }
 
         private int getAge(String birthDateString) {
