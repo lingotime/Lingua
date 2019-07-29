@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -44,6 +45,7 @@ public class ProfilePhotoSetupActivity extends AppCompatActivity {
     private Button takePhotoButton;
     private Button selectPhotoButton;
     private ImageView profilePreviewImage;
+    private ImageView rotationArrowButton;
     private Button setProfilePhotoButton;
 
     @Override
@@ -55,6 +57,7 @@ public class ProfilePhotoSetupActivity extends AppCompatActivity {
         takePhotoButton = findViewById(R.id.activity_profile_photo_setup_take_photo_button);
         selectPhotoButton = findViewById(R.id.activity_profile_photo_setup_select_photo_button);
         profilePreviewImage = findViewById(R.id.activity_profile_photo_setup_profile_image_preview);
+        rotationArrowButton = findViewById(R.id.activity_profile_photo_setup_rotation_arrow_button);
         setProfilePhotoButton = findViewById(R.id.activity_profile_photo_setup_set_photo_button);
 
         // unwrap the current user
@@ -76,9 +79,6 @@ public class ProfilePhotoSetupActivity extends AppCompatActivity {
             }
         });
 
-        // load the current profile photo if one is available
-        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
-
         // launch photos view if the "select photo" button is clicked
         selectPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +87,25 @@ public class ProfilePhotoSetupActivity extends AppCompatActivity {
 
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(intent, 1046);
+                }
+            }
+        });
+
+        // load the current profile photo if one is available
+        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
+
+        // rotate new profile photo if the "rotate" arrow is clicked
+        rotationArrowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (localProfilePhotoFile != null) {
+                    Bitmap localProfilePhoto = BitmapFactory.decodeFile(localProfilePhotoFile.getAbsolutePath());
+
+                    Matrix rotationMatrix = new Matrix();
+                    rotationMatrix.postRotate(90);
+                    localProfilePhoto = Bitmap.createBitmap(localProfilePhoto, 0, 0, localProfilePhoto.getWidth(), localProfilePhoto.getHeight(), rotationMatrix, true);
+
+                    Glide.with(getApplicationContext()).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
                 }
             }
         });
@@ -169,6 +188,10 @@ public class ProfilePhotoSetupActivity extends AppCompatActivity {
         if (requestCode == 1034) {
             if (resultCode == RESULT_OK) {
                 Bitmap localProfilePhoto = BitmapFactory.decodeFile(localProfilePhotoFile.getAbsolutePath());
+
+                Matrix rotationMatrix = new Matrix();
+                rotationMatrix.postRotate(-90);
+                localProfilePhoto = Bitmap.createBitmap(localProfilePhoto, 0, 0, localProfilePhoto.getWidth(), localProfilePhoto.getHeight(), rotationMatrix, true);
 
                 Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
             } else {

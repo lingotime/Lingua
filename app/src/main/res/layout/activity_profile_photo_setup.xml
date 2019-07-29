@@ -3,6 +3,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -38,6 +39,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_profile_photo_setup_select_photo_button"
         app:srcCompat="@drawable/man" />
+
+    <ImageView
+        android:id="@+id/activity_profile_photo_setup_rotation_arrow_button"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:rotation="-90"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activity_profile_photo_setup_profile_image_preview"
+        app:srcCompat="@drawable/bent_arrow" />
 
     <Button
         android:id="@+id/activity_profile_photo_setup_set_photo_button"
