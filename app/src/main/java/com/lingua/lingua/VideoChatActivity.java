@@ -76,6 +76,7 @@ public class VideoChatActivity extends AppCompatActivity {
     private String username;
     private String chatId;
     private String receiverId; // id of the second user in the chat
+    private String videoChatLanguage;
     private Firebase reference;
 
 
@@ -96,6 +97,7 @@ public class VideoChatActivity extends AppCompatActivity {
         String chatName = getIntent().getStringExtra("name"); // the room will be set to this name
         roomName = chatId;
         receiverId = getIntent().getStringExtra("otherUser");
+        videoChatLanguage = getIntent().getStringExtra("language");
 
         // setting up Firebase to receive the messages to be sent
         Firebase.setAndroidContext(VideoChatActivity.this);

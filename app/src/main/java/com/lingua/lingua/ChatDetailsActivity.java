@@ -1,6 +1,7 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -64,6 +66,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
     Firebase reference;
     Chat chat;
 
+    private ArrayList<String> languagesToBeLearned;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +78,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         userName = prefs.getString("userName", "");
 
         chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+        languagesToBeLearned = getIntent().getStringArrayListExtra("languages");
 
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
@@ -154,31 +159,44 @@ public class ChatDetailsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.chat_details_videochat_icon) {
-            // get the combined list of the users' target languages
-            ArrayList<String> languages; // from which the call language will be selected
-            String learningUser; // this represents the user for whom one of their target languages was chosen and who will therefore be learning
-            for (int i = 0; i < chat.getUsers().size(); i++) {
-                // query the database each of the users' languages
+            // TODO: Implement a way for the user who's learning to be kept track of
 
-            }
+            languagesToBeLearned.add("Cultural Exchange");
 
             // a dialog box to allow the person initiating the call to select the language in which the call will be made
             AlertDialog.Builder languageSelection = new AlertDialog.Builder(this);
             languageSelection.setTitle("Choose the language");
-
-
-            // intent to the video chat activity
-            Intent intent = new Intent(this, VideoChatActivity.class);
-            intent.putExtra("chatID", chat.getId());
-            intent.putExtra("name", chat.getName());
-            // get the second user Id from the
-            for (int i = 0; i < chat.getUsers().size(); i++) {
-                String otherUserId = chat.getUsers().get(i);
-                if (otherUserId != userId) {
-                    intent.putExtra("otherUser", otherUserId);
+            languageSelection.setSingleChoiceItems((ListAdapter) languagesToBeLearned, 0, null);
+            languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(ChatDetailsActivity.this, VideoChatActivity.class);
+                    intent.putExtra("language", languagesToBeLearned.get(i));
+                    // intent to the video chat activity
+                    intent.putExtra("chatID", chat.getId());
+                    intent.putExtra("name", chat.getName());
+                    // get the second user Id from the
+                    ArrayList<String> chatUsers = chat.getUsers();
+                    for (int index = 0; index < chatUsers.size(); index++) {
+                        String otherUserId = chatUsers.get(index);
+                        if (otherUserId != userId) {
+                            intent.putExtra("otherUser", otherUserId);
+                        }
+                    }
+                    startActivity(intent);
                 }
-            }
-            startActivity(intent);
+            });
+            languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Toast.makeText(ChatDetailsActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            AlertDialog dialog = languageSelection.create();
+            dialog.setCanceledOnTouchOutside(true);
+            dialog.show();
+
             return true;
         }
         return super.onOptionsItemSelected(item);
