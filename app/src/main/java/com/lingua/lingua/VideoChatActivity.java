@@ -249,8 +249,6 @@ public class VideoChatActivity extends AppCompatActivity {
                     public void onVideoTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
                         // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
                         moveLocalVideoToSmallView();
-
-                        remoteVideoView.setMirror(false);
                         remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
                     }
 
@@ -378,6 +376,7 @@ public class VideoChatActivity extends AppCompatActivity {
     }
 
     public void moveLocalVideoToSmallView() {
+        remoteVideoView.setMirror(false);
         // moves the local participant's local video track from the main view to make space for the remote participant
         if (localVideoView.getVisibility() == View.GONE) {
             localVideoView.setVisibility(View.VISIBLE);
@@ -392,6 +391,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     public void moveLocalVideoToMainView() {
         // moves the local participant's video track from the smaller view when there is no longer a remote participant
+        localVideoView.setMirror(false);
         if (localVideoView.getVisibility() == View.VISIBLE) {
             localVideoView.setVisibility(View.GONE);
             if (localVideoTrack != null) {
