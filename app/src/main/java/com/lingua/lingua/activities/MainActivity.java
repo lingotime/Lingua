@@ -14,6 +14,7 @@ import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.ConnectFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
+import com.lingua.lingua.fragments.SearchFragment;
 import com.lingua.lingua.models.User;
 import org.parceler.Parcels;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         // manage fragments
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final Fragment exploreFragment = new ExploreFragment();
+        final Fragment searchFragment = new SearchFragment();
         final Fragment chatFragment = new ChatFragment();
         final Fragment connectFragment = new ConnectFragment();
         final Fragment profileFragment = new ProfileFragment();
@@ -47,10 +49,11 @@ public class MainActivity extends AppCompatActivity {
         // prepare fragments with user parcel
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", Parcels.wrap(currentUser));
+        exploreFragment.setArguments(bundle);
+        searchFragment.setArguments(bundle);
         chatFragment.setArguments(bundle);
         connectFragment.setArguments(bundle);
         profileFragment.setArguments(bundle);
-        exploreFragment.setArguments(bundle);
 
         // set initial fragment as "Explore"
         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, exploreFragment).commit();
@@ -63,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.Search:
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, searchFragment).commit();
+                        return true;
                     case R.id.Chat:
                         fragmentManager.beginTransaction().replace(R.id.activity_main_fragment_frame, chatFragment).commit();
                         return true;

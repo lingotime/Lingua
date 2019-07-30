@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,7 +21,6 @@ import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.ExploreAdapter;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.supports.EndlessRecyclerViewScrollListener;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;

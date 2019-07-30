@@ -9,6 +9,13 @@
         android:visible="true"
         app:showAsAction="always" />
     <item
+        android:id="@+id/Search"
+        android:enabled="true"
+        android:icon="@drawable/magnifying_glass"
+        android:title="Search"
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/Chat"
         android:enabled="true"
         android:icon="@drawable/message"
