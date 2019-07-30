@@ -85,7 +85,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_chat_details_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(chat.getName());
+//        getSupportActionBar().setTitle(chat.getName());
 
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chat.getId());

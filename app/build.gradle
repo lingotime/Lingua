@@ -37,6 +37,8 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
     googleServices { disableVersionCheck = true }
 }
@@ -100,7 +102,7 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt:0.4'
     implementation "com.twilio.sdk:twilio:7.14.0"
     implementation 'pub.devrel:easypermissions:3.0.0'
-    
+
     // Other support
     implementation 'com.google.firebase:firebase-storage:18.1.1'
     implementation 'com.google.code.gson:gson:2.8.5'
@@ -118,4 +120,3 @@ dependencies {
 configurations {
     all*.exclude group: 'com.google.guava', module: 'listenablefuture'
 }
-
