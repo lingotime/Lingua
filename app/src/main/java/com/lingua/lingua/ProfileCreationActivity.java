@@ -225,6 +225,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         currentUser.setComplete(isCompleteCheck);
 
         // save
+        Firebase.setAndroidContext(this);
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getId()).setValue(currentUser);
 

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -139,8 +140,6 @@ public class VideoChatActivity extends AppCompatActivity {
 
         // Prefer H264 if it is hardware available for encoding and decoding
         videoCodec = isH264Supported ? (new H264Codec()) : (new Vp9Codec());
-        Log.i(TAG, "The video codec has been set");
-        Log.i(TAG, "The access token: " + tokenGenerator.token + " for " + username + " in the room " + roomName);
 
 
         ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.JwtToken)
@@ -149,7 +148,7 @@ public class VideoChatActivity extends AppCompatActivity {
                 .videoTracks(Collections.singletonList(localVideoTrack))
                 .preferVideoCodecs(Collections.singletonList(videoCodec))
                 .build();
-        Log.i(TAG, "Connection options generated");
+
         room = Video.connect(this, connectOptions, new Room.Listener() {
             @Override
             public void onConnected(Room room) {
@@ -164,10 +163,11 @@ public class VideoChatActivity extends AppCompatActivity {
                     // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
                     moveLocalVideoToSmallView();
 
-                    remoteVideoView.setMirror(false);
                     // for now, only allows for 2 people in the room and allows for them to alter their views from the main screen to the one toggled to the bottom left
                     RemoteVideoTrackPublication remoteVideoTrackPublication = room.getRemoteParticipants().get(0).getRemoteVideoTracks().get(0);
+                    Log.d(TAG, String.format("Number of remote video tracks: %s", room.getRemoteParticipants().get(0).getRemoteVideoTracks().size()));
                     // only render tracks to which the local participant is subscribed
+                    Toast.makeText(VideoChatActivity.this, String.format("Remote participants: %s", room.getRemoteParticipants().size()), Toast.LENGTH_SHORT).show();
                     if (remoteVideoTrackPublication.isTrackSubscribed()) {
                         remoteVideoTrackPublication.getRemoteVideoTrack().addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
                     }
