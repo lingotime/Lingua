@@ -45,12 +45,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         User currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
-        Log.i("MainActivity", currentUser.getId());
-        Log.i("MainActivity", currentUser.getFirstName());
+        Log.i("MainActivity", currentUser.getUserID());
+        Log.i("MainActivity", currentUser.getUserName());
 
         SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
-        prefs.edit().putString("userId", currentUser.getId()).apply();
-        prefs.edit().putString("userName", currentUser.getFirstName()).apply();
+        prefs.edit().putString("userId", currentUser.getUserID()).apply();
+        prefs.edit().putString("userName", currentUser.getUserName()).apply();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 

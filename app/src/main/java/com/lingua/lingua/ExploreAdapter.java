@@ -19,8 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
-import com.lingua.lingua.R;
-import com.lingua.lingua.models.Country;
 import com.lingua.lingua.models.User;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -73,8 +71,8 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         User user = usersList.get(position);
 
         // load user flag and profile photo into place
-        Glide.with(context).load(context.getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(user.getOriginCountry()), "drawable", context.getPackageName())).into(flagImage);
-        Glide.with(context).load(user.getProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePhotoImage);
+        Glide.with(context).load(context.getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(user.getUserOriginCountry()), "drawable", context.getPackageName())).into(flagImage);
+        Glide.with(context).load(user.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePhotoImage);
 
         // load user live status into place
         if (user.isOnline()) {
@@ -85,10 +83,10 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
         // load other user information into place
         // use getAge() helper method to convert birth date to age
-        nameText.setText(user.getFirstName());
-        countryText.setText("from " + user.getOriginCountry());
-        ageText.setText(getAge(user.getBirthDate()) + " years old");
-        biographyText.setText(user.getBiographyText());
+        nameText.setText(user.getUserName());
+        countryText.setText("from " + user.getUserOriginCountry());
+        ageText.setText(getAge(user.getUserBirthDate()) + " years old");
+        biographyText.setText(user.getUserBiographyText());
 
         // send user a friend request, remove them from view, and add a new user to timeline
         sendRequestButton.setOnClickListener(new View.OnClickListener() {
@@ -99,15 +97,15 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 final View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
                 dialogBuilder.setView(dialogView);
 
-                dialogBuilder.setTitle("Send friend request to " + user.getFirstName());
-                dialogBuilder.setMessage("Say hi and tell " + user.getFirstName() + " a little about yourself!");
+                dialogBuilder.setTitle("Send friend request to " + user.getUserName());
+                dialogBuilder.setMessage("Say hi and tell " + user.getUserName() + " a little about yourself!");
                 dialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText editText = dialogView.findViewById(R.id.dialog_friend_request_et);
                         String message = editText.getText().toString();
                         if (!message.equals("")) {
-                            sendFriendRequest(message, user.getId(), user.getFirstName());
+                            sendFriendRequest(message, user.getUserID(), user.getUserName());
                         } else {
                             Toast.makeText(context, "Can't send a friend request without any text, say hi!", Toast.LENGTH_LONG).show();
                         }
@@ -124,15 +122,15 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 dialog.show();
 
                 // add user to sent friend request user list
-                if (currentUser.getPendingSentRequestFriends() == null) {
-                    currentUser.setPendingSentRequestFriends(new ArrayList<String>(Arrays.asList(usersList.get(position).getId())));
+                if (currentUser.getPendingSentFriendRequests() == null) {
+                    currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(usersList.get(position).getUserID())));
                 } else {
-                    currentUser.getPendingSentRequestFriends().add(usersList.get(position).getId());
+                    currentUser.getPendingSentFriendRequests().add(usersList.get(position).getUserID());
                 }
 
                 // save updated sent friend request user list to database
                 Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-                databaseReference.child(currentUser.getId()).setValue(currentUser);
+                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
 
                 // remove user from displayed user list
                 usersList.remove(position);
@@ -154,14 +152,14 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             public void onClick(View view) {
                 // add user to declined user list
                 if (currentUser.getDeclinedUsers() == null) {
-                    currentUser.setDeclinedUsers(new ArrayList<String>(Arrays.asList(usersList.get(position).getId())));
+                    currentUser.setDeclinedUsers(new ArrayList<String>(Arrays.asList(usersList.get(position).getUserID())));
                 } else {
-                    currentUser.getDeclinedUsers().add(usersList.get(position).getId());
+                    currentUser.getDeclinedUsers().add(usersList.get(position).getUserID());
                 }
 
                 // save updated declined user list to database
                 Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-                databaseReference.child(currentUser.getId()).setValue(currentUser);
+                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
 
                 // remove user from displayed user list
                 usersList.remove(position);
@@ -193,17 +191,17 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
         Map<String, String> map = new HashMap<>();
         map.put("message", message);
-        map.put("senderId", currentUser.getId());
+        map.put("senderId", currentUser.getUserID());
         map.put("receiverId", receiverId);
         map.put("receiverName", receiverName);
-        map.put("senderName", currentUser.getFirstName());
+        map.put("senderName", currentUser.getUserName());
         map.put("timestamp", new Date().toString());
         map.put("id", friendRequestId);
 
         reference.child("friend-requests").child(friendRequestId).setValue(map);
 
         // save friend request reference in user objects
-        reference.child("users").child(currentUser.getId()).child("sent-friend-requests").child(friendRequestId).setValue(true);
+        reference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
         reference.child("users").child(receiverId).child("received-friend-requests").child(friendRequestId).setValue(true);
 
         Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();

@@ -29,7 +29,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 import org.parceler.Parcels;
 import java.io.File;
@@ -77,7 +76,7 @@ public class ProfilePicture extends AppCompatActivity {
         });
 
         // load the current profile photo if one is available
-        Glide.with(this).load(currentUser.getProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
+        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
 
         // launch photos view if the "select photo" button is clicked
         selectPhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +101,7 @@ public class ProfilePicture extends AppCompatActivity {
                     // create references to cloud storage location
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     StorageReference storageReference = storage.getReference();
-                    StorageReference specificProfilesStorageReference = storageReference.child("profiles/" + currentUser.getId() + "_profile.jpg");
+                    StorageReference specificProfilesStorageReference = storageReference.child("profiles/" + currentUser.getUserID() + "_profile.jpg");
 
                     // upload the new profile photo
                     UploadTask uploadTask = specificProfilesStorageReference.putFile(localProfilePhotoFileURI);
@@ -137,11 +136,11 @@ public class ProfilePicture extends AppCompatActivity {
                                 Uri profilePhotoURI = task.getResult();
 
                                 // update the user's profile photo with the new profile photo URL link
-                                currentUser.setProfilePhotoURL(profilePhotoURI.toString());
+                                currentUser.setUserProfilePhotoURL(profilePhotoURI.toString());
 
                                 // save updates
                                 Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-                                databaseReference.child(currentUser.getId()).setValue(currentUser);
+                                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
 
                                 // return to info setup activity
                                 final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);

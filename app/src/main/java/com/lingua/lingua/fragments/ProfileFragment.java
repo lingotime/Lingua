@@ -110,13 +110,13 @@ public class ProfileFragment extends Fragment {
         });
 
         // populate data from the current user
-        Glide.with(this).load(currentUser.getProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
+        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
 
-        nameText.setText(currentUser.getFirstName());
+        nameText.setText(currentUser.getUserName());
 
         try {
             SimpleDateFormat storedDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-            Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getBirthDate());
+            Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getUserBirthDate());
             SimpleDateFormat displayDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             birthdateText.setText("Birth Date: " + displayDateFormat.format(userBirthDateAsDate));
         } catch (ParseException exception) {
@@ -124,9 +124,9 @@ public class ProfileFragment extends Fragment {
             Log.e("ProfileFragment", "There was an issue parsing the user's registered birth date.");
         }
 
-        biographyText.setText("Bio: " + currentUser.getBiographyText());
+        biographyText.setText("Bio: " + currentUser.getUserBiographyText());
 
-        originCountryText.setText("Origin Country: " + currentUser.getOriginCountry());
+        originCountryText.setText("Origin Country: " + currentUser.getUserOriginCountry());
 
         if (currentUser.getKnownLanguages().isEmpty()) {
             knownLanguagesChip.setText("Add a language...");

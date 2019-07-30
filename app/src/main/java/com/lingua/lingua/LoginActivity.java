@@ -133,9 +133,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.equals("null")) {
                     // there are no users in the database, hence: new user
                     User createdUser = new User();
-                    createdUser.setId(firebaseUserID);
-                    createdUser.setFirstName(firebaseUserDisplayName);
-                    createdUser.setProfilePhotoURL(firebaseUserProfilePhotoURL);
+                    createdUser.setUserID(firebaseUserID);
+                    createdUser.setUserName(firebaseUserDisplayName);
+                    createdUser.setUserProfilePhotoURL(firebaseUserProfilePhotoURL);
                     createdUser.setComplete(false);
 
                     // save this new user in the database
@@ -161,9 +161,9 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // user not found in database, hence: new user
                             User createdUser = new User();
-                            createdUser.setId(firebaseUserID);
-                            createdUser.setFirstName(firebaseUserDisplayName);
-                            createdUser.setProfilePhotoURL(firebaseUserProfilePhotoURL);
+                            createdUser.setUserID(firebaseUserID);
+                            createdUser.setUserName(firebaseUserDisplayName);
+                            createdUser.setUserProfilePhotoURL(firebaseUserProfilePhotoURL);
                             createdUser.setComplete(false);
 
                             // save this new user in the database

@@ -97,10 +97,10 @@ public class ExploreFragment extends Fragment {
 
                         // get relevant information from user for matching
                         ArrayList<String> languagesSelectedByGeneratedUser = generatedUser.getKnownLanguages();
-                        String countrySelectedByGeneratedUser = generatedUser.getOriginCountry();
+                        String countrySelectedByGeneratedUser = generatedUser.getUserOriginCountry();
 
                         // filter user depending on criteria
-                        if (!(generatedUser.getId().equals(currentUser.getId())) && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countrySelectedByGeneratedUser) && actionNotTaken(generatedUser.getId())) {
+                        if (!(generatedUser.getUserID().equals(currentUser.getUserID())) && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countrySelectedByGeneratedUser) && actionNotTaken(generatedUser.getUserID())) {
                             if (usersJSONObjectCounter < 20) {
                                 // add to the list of users
                                 usersList.add(generatedUser);
@@ -184,8 +184,8 @@ public class ExploreFragment extends Fragment {
 
     // ensure there is no previous relationship between user and displayed user
     private boolean actionNotTaken(String generatedUserID) {
-        if (currentUser.getConfirmedFriends() != null) {
-            for (String friendUserID : currentUser.getConfirmedFriends()) {
+        if (currentUser.getFriends() != null) {
+            for (String friendUserID : currentUser.getFriends()) {
                 if (friendUserID.equals(generatedUserID)) {
                     return false;
                 }
@@ -200,16 +200,16 @@ public class ExploreFragment extends Fragment {
             }
         }
 
-        if (currentUser.getPendingSentRequestFriends() != null) {
-            for (String pendingUserID : currentUser.getPendingSentRequestFriends()) {
+        if (currentUser.getPendingSentFriendRequests() != null) {
+            for (String pendingUserID : currentUser.getPendingSentFriendRequests()) {
                 if (pendingUserID.equals(generatedUserID)) {
                     return false;
                 }
             }
         }
 
-        if (currentUser.getPendingReceivedRequestFriends() != null) {
-            for (String pendingUserID : currentUser.getPendingReceivedRequestFriends()) {
+        if (currentUser.getPendingReceivedFriendRequests() != null) {
+            for (String pendingUserID : currentUser.getPendingReceivedFriendRequests()) {
                 if (pendingUserID.equals(generatedUserID)) {
                     return false;
                 }

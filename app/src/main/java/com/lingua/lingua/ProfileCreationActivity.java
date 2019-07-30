@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -24,18 +23,11 @@ import com.hootsuite.nachos.NachoTextView;
 import com.hootsuite.nachos.chip.ChipSpan;
 import com.hootsuite.nachos.chip.ChipSpanChipCreator;
 import com.hootsuite.nachos.tokenizer.SpanChipTokenizer;
-import com.lingua.lingua.CountryInformation;
-import com.lingua.lingua.MainActivity;
-import com.lingua.lingua.ProfilePicture;
-import com.lingua.lingua.R;
-import com.lingua.lingua.models.Country;
-import com.lingua.lingua.models.Language;
 import com.lingua.lingua.models.User;
 import org.parceler.Parcels;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -171,7 +163,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         String userNameInput = nameField.getText().toString();
 
         if (userNameInput.length() >= 5 && userNameInput.contains(" ")) {
-            currentUser.setFirstName(userNameInput);
+            currentUser.setUserName(userNameInput);
         } else {
             isCompleteCheck = false;
             Toast.makeText(ProfileCreationActivity.this, "Please enter a valid full name.", Toast.LENGTH_LONG).show();
@@ -183,7 +175,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         try {
             SimpleDateFormat inputDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             Date userBirthDateInputAsDate = inputDateFormat.parse(userBirthDateInput);
-            currentUser.setBirthDate(userBirthDateInputAsDate.toString());
+            currentUser.setUserBirthDate(userBirthDateInputAsDate.toString());
         } catch (ParseException exception) {
             isCompleteCheck = false;
             Toast.makeText(ProfileCreationActivity.this, "Please enter a valid birth date. Format: mm/dd/yyyy", Toast.LENGTH_LONG).show();
@@ -193,7 +185,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         String userBiographyTextInput = biographyField.getText().toString();
 
         if (userBiographyTextInput.length() >= 4) {
-            currentUser.setBiographyText(userBiographyTextInput);
+            currentUser.setUserBiographyText(userBiographyTextInput);
         } else {
             isCompleteCheck = false;
             Toast.makeText(ProfileCreationActivity.this, "Please enter a biography that is at least four characters.", Toast.LENGTH_LONG).show();
@@ -203,7 +195,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         ArrayList<String> userOriginCountryInput = (ArrayList) originCountryField.getChipValues();
 
         if (userOriginCountryInput.size() == 1) {
-            currentUser.setOriginCountry(userOriginCountryInput.get(0));
+            currentUser.setUserOriginCountry(userOriginCountryInput.get(0));
         } else {
             isCompleteCheck = false;
             Toast.makeText(ProfileCreationActivity.this, "Please enter an origin country. Only one origin country is allowed.", Toast.LENGTH_LONG).show();
@@ -227,21 +219,21 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // save
         Firebase.setAndroidContext(this);
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-        databaseReference.child(currentUser.getId()).setValue(currentUser);
+        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
 
     }
 
     protected void loadInfo() {
         // loads the user info from the current logged in user
         // prepopulate data from the current user
-        if (currentUser.getFirstName() != null) {
-            nameField.setText(currentUser.getFirstName());
+        if (currentUser.getUserName() != null) {
+            nameField.setText(currentUser.getUserName());
         }
 
-        if (currentUser.getBirthDate() != null) {
+        if (currentUser.getUserBirthDate() != null) {
             try {
                 SimpleDateFormat storedDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-                Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getBirthDate());
+                Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getUserBirthDate());
                 SimpleDateFormat displayDateFormat = new SimpleDateFormat("MM/dd/yyyy");
                 birthdateField.setText(displayDateFormat.format(userBirthDateAsDate));
             } catch (ParseException exception) {
@@ -249,15 +241,15 @@ public class ProfileCreationActivity extends AppCompatActivity {
             }
         }
 
-        if (currentUser.getBiographyText() != null) {
-            biographyField.setText(currentUser.getBiographyText());
+        if (currentUser.getUserBiographyText() != null) {
+            biographyField.setText(currentUser.getUserBiographyText());
         }
 
-        Glide.with(this).load(currentUser.getProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
+        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
 
-        if (currentUser.getOriginCountry() != null) {
+        if (currentUser.getUserOriginCountry() != null) {
             List<String> userOriginCountry = new ArrayList<>();
-            userOriginCountry.add(currentUser.getOriginCountry());
+            userOriginCountry.add(currentUser.getUserOriginCountry());
             originCountryField.setText(userOriginCountry);
         }
 

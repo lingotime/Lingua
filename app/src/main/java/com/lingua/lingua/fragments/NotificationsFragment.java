@@ -85,9 +85,9 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void queryFriendRequests() {
-        String urlReceived = "https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/received-friend-requests.json";
+        String urlReceived = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/received-friend-requests.json";
         queryFriendRequests(urlReceived);
-        String urlSent = "https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/sent-friend-requests.json";
+        String urlSent = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/sent-friend-requests.json";
         queryFriendRequests(urlSent);
     }
 
@@ -102,7 +102,7 @@ public class NotificationsFragment extends Fragment {
                 }
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-                if (url.equals("https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/received-friend-requests.json")) {
+                if (url.equals("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/received-friend-requests.json")) {
                     Toast.makeText(getContext(), "No new friend requests", Toast.LENGTH_SHORT).show();
                 }
                 swipeContainer.setRefreshing(false);

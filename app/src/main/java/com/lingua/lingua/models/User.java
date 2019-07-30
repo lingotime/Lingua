@@ -3,7 +3,6 @@ package com.lingua.lingua.models;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 /**
 * Custom User class with basic info, language information, etc.
@@ -11,80 +10,81 @@ import java.util.HashMap;
 
 @Parcel
 public class User {
-    private String id;
-    private String firstName;
-    private String birthDate;
-    private String biographyText;
-    private String originCountry;
-    private String profilePhotoURL;
+    private String userID;
+    private String userName;
+    private String userBirthDate;
+    private String userBiographyText;
+    private String userOriginCountry;
+    private String userProfilePhotoURL;
     private ArrayList<String> knownLanguages;
     private ArrayList<String> exploreLanguages;
     private ArrayList<String> exploreCountries;
-    private HashMap<String, Integer> hoursSpoken;
-    private ArrayList<String> confirmedFriends;
+    private HashMap<String, Integer> hoursSpokenPerLanguage;
+    private ArrayList<String> friends;
+    private ArrayList<String> pendingSentFriendRequests;
+    private ArrayList<String> pendingReceivedFriendRequests;
     private ArrayList<String> declinedUsers;
-    private ArrayList<String> pendingSentRequestFriends;
-    private ArrayList<String> pendingReceivedRequestFriends;
-    private boolean online;
+    private ArrayList<String> conversations;
     private boolean complete;
+    private boolean online;
 
     public User() {}
 
-    public User(String firstName) {
-        this.firstName = firstName;
+    public User(String userName) {
+        this.userName = userName;
     }
 
-    public User(String id, String firstName) {
-        this.id = id;
-        this.firstName = firstName;
+    public User(String userID, String userName) {
+        this.userID = userID;
+        this.userName = userName;
     }
 
-    public String getId() {
-        return id;
+    public String getUserID() {
+        return userID;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getBirthDate() {
-        return birthDate;
+    public String getUserBirthDate() {
+        return userBirthDate;
     }
 
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
+    public void setUserBirthDate(String userBirthDate) {
+        this.userBirthDate = userBirthDate;
     }
 
-    public String getBiographyText() {
-        return biographyText;
+    public String getUserBiographyText() {
+        return userBiographyText;
     }
 
-    public void setBiographyText(String biographyText) {
-        this.biographyText = biographyText;
+    public void setUserBiographyText(String userBiographyText) {
+        this.userBiographyText = userBiographyText;
     }
 
-    public String getOriginCountry() {
-        return originCountry;
+    public String getUserOriginCountry() {
+        return userOriginCountry;
     }
 
-    public void setOriginCountry(String originCountry) {
-        this.originCountry = originCountry;
+    public void setUserOriginCountry(String userOriginCountry) {
+        this.userOriginCountry = userOriginCountry;
     }
 
-    public String getProfilePhotoURL() {
-        return profilePhotoURL;
+    public String getUserProfilePhotoURL() {
+        return userProfilePhotoURL;
     }
 
-    public void setProfilePhotoURL(String profilePhotoURL) {
-        this.profilePhotoURL = profilePhotoURL;
+    public void setUserProfilePhotoURL(String userProfilePhotoURL) {
+        this.userProfilePhotoURL = userProfilePhotoURL;
     }
 
     public ArrayList<String> getKnownLanguages() {
@@ -111,20 +111,20 @@ public class User {
         this.exploreCountries = exploreCountries;
     }
 
-    public HashMap<String, Integer> getHoursSpoken() {
-        return hoursSpoken;
+    public HashMap<String, Integer> getHoursSpokenPerLanguage() {
+        return hoursSpokenPerLanguage;
     }
 
-    public void setHoursSpoken(HashMap<String, Integer> hoursSpoken) {
-        this.hoursSpoken = hoursSpoken;
+    public void setHoursSpokenPerLanguage(HashMap<String, Integer> hoursSpoken) {
+        this.hoursSpokenPerLanguage = hoursSpoken;
     }
 
-    public ArrayList<String> getConfirmedFriends() {
-        return confirmedFriends;
+    public ArrayList<String> getFriends() {
+        return friends;
     }
 
-    public void setConfirmedFriends(ArrayList<String> confirmedFriends) {
-        this.confirmedFriends = confirmedFriends;
+    public void setFriends(ArrayList<String> friends) {
+        this.friends = friends;
     }
 
     public ArrayList<String> getDeclinedUsers() {
@@ -135,20 +135,28 @@ public class User {
         this.declinedUsers = declinedUsers;
     }
 
-    public ArrayList<String> getPendingSentRequestFriends() {
-        return pendingSentRequestFriends;
+    public ArrayList<String> getPendingSentFriendRequests() {
+        return pendingSentFriendRequests;
     }
 
-    public void setPendingSentRequestFriends(ArrayList<String> pendingSentRequestFriends) {
-        this.pendingSentRequestFriends = pendingSentRequestFriends;
+    public void setPendingSentFriendRequests(ArrayList<String> pendingSentFriendRequests) {
+        this.pendingSentFriendRequests = pendingSentFriendRequests;
     }
 
-    public ArrayList<String> getPendingReceivedRequestFriends() {
-        return pendingReceivedRequestFriends;
+    public ArrayList<String> getPendingReceivedFriendRequests() {
+        return pendingReceivedFriendRequests;
     }
 
-    public void setPendingReceivedRequestFriends(ArrayList<String> pendingReceivedRequestFriends) {
-        this.pendingReceivedRequestFriends = pendingReceivedRequestFriends;
+    public void setPendingReceivedFriendRequests(ArrayList<String> pendingReceivedFriendRequests) {
+        this.pendingReceivedFriendRequests = pendingReceivedFriendRequests;
+    }
+
+    public ArrayList<String> getConversations() {
+        return conversations;
+    }
+
+    public void setConversations(ArrayList<String> conversations) {
+        this.conversations = conversations;
     }
 
     public boolean isOnline() {
