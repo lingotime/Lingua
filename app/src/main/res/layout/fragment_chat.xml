@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"></androidx.appcompat.widget.Toolbar>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/exploreSwipeContainer"
+        android:id="@+id/fragment_chat_swipe_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fragment_chat_toolbar"

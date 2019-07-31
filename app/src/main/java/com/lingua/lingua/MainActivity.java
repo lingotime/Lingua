@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -34,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     private static final String TAG = "MainActivity";
+    final FragmentManager fragmentManager = getSupportFragmentManager();
+    final Fragment profileFragment = new ProfileFragment();
+    final Fragment chatFragment = new ChatFragment();
+    final Fragment exploreFragment = new ExploreFragment();
+    final Fragment notificationsFragment = new NotificationsFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,14 +84,9 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", Parcels.wrap(currentUser));
 
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-        final Fragment profileFragment = new ProfileFragment();
         profileFragment.setArguments(bundle);
-        final Fragment chatFragment = new ChatFragment();
         chatFragment.setArguments(bundle);
-        final Fragment exploreFragment = new ExploreFragment();
         exploreFragment.setArguments(bundle);
-        final Fragment notificationsFragment = new NotificationsFragment();
         notificationsFragment.setArguments(bundle);
 
         fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
@@ -111,5 +112,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // display the right toolbar for each fragment
+        if (chatFragment != null && chatFragment.isVisible()) {
+            // Inflate the menu; this adds items to the toolbar if it is present.
+            getMenuInflater().inflate(R.menu.menu_chat_fragment, menu);
+        } else if (profileFragment != null && profileFragment.isVisible()) {
+            getMenuInflater().inflate(R.menu.menu_profile_fragment, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.menu_main, menu);
+        }
+
+        return true;
     }
 }
