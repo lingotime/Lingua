@@ -10,9 +10,7 @@ public class Message {
     String receiverUser;
     String createdTime;
 
-    public Message() {
-        messageID = generateRandomID();
-    }
+    public Message() { }
 
     public String getMessageID() {
         return messageID;
@@ -52,22 +50,5 @@ public class Message {
 
     public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
-    }
-
-    private String generateRandomID() {
-        String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        int numberOfCharacters = 15;
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        while (numberOfCharacters != 0) {
-            int character = (int) (Math.random() * allowedCharacters.length());
-
-            stringBuilder.append(allowedCharacters.charAt(character));
-
-            numberOfCharacters--;
-        }
-
-        return stringBuilder.toString();
     }
 }

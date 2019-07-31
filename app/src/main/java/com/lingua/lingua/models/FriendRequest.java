@@ -11,9 +11,7 @@ public class FriendRequest {
     String createdTime;
     String respondedTime;
 
-    public FriendRequest() {
-        friendRequestID = generateRandomID();
-    }
+    public FriendRequest() { }
 
     public String getFriendRequestID() {
         return friendRequestID;
@@ -59,22 +57,5 @@ public class FriendRequest {
 
     public void setRespondedTime(String respondedTime) {
         this.respondedTime = respondedTime;
-    }
-
-    private String generateRandomID() {
-        String allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        int numberOfCharacters = 15;
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        while (numberOfCharacters != 0) {
-            int character = (int) (Math.random() * allowedCharacters.length());
-
-            stringBuilder.append(allowedCharacters.charAt(character));
-
-            numberOfCharacters--;
-        }
-
-        return stringBuilder.toString();
     }
 }

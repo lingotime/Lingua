@@ -1,13 +1,18 @@
 package com.lingua.lingua.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.R;
+import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -86,28 +92,38 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
                     // ensure current card number is associated with a card
                     if (position != RecyclerView.NO_POSITION) {
-                        // add user to sent friend request user list
-                        if (currentUser.getPendingSentFriendRequests() == null) {
-                            currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(usersList.get(position).getUserID())));
-                        } else {
-                            currentUser.getPendingSentFriendRequests().add(usersList.get(position).getUserID());
-                        }
+                        // get user associated with current card number
+                        User clickedUser = usersList.get(position);
 
-                        // save updated sent friend request user list to database
-                        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-                        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+                        // create a confirm dialog with an optional message field
+                        View confirmDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
+                        EditText confirmDialogMessageField = confirmDialogView.findViewById(R.id.dialog_friend_request_message_field);
 
-                        // remove user from displayed user list
-                        usersList.remove(position);
+                        // build the confirm dialog
+                        AlertDialog.Builder confirmDialogBuilder = new AlertDialog.Builder(context);
+                        confirmDialogBuilder.setView(confirmDialogView);
+                        confirmDialogBuilder.setTitle("Confirm Friend Request to " + clickedUser.getUserName());
+                        confirmDialogBuilder.setMessage("Send a message with your friend request.");
+                        confirmDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String friendRequestMessage = confirmDialogMessageField.getText().toString();
 
-                        // check if there are more users to load
-                        if (!hiddenUsersList.isEmpty()) {
-                            usersList.add(hiddenUsersList.get(0));
-                            hiddenUsersList.remove(0);
-                        }
+                                sendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
 
-                        // notify adapter of changes in data
-                        notifyDataSetChanged();
+                                dialogInterface.cancel();
+                            }
+                        });
+                        confirmDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+
+                        // display the confirm dialog
+                        AlertDialog confirmDialog = confirmDialogBuilder.create();
+                        confirmDialog.show();
                     }
                 }
             });
@@ -138,6 +154,58 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             }
 
             return 0;
+        }
+
+        private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage, int position) {
+            // ensure clicked user did not send friend request to current user while current user was typing
+            if (currentUser.getPendingReceivedFriendRequests() != null) {
+                for (String pendingReceivedFriendRequest : currentUser.getPendingReceivedFriendRequests()) {
+                    if (pendingReceivedFriendRequest.equals(clickedUser.getUserID())) {
+                        Toast.makeText(context, "You already received a friend request from this user.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+            }
+
+            // add clicked user to current user's sent friend request user list
+            if (currentUser.getPendingSentFriendRequests() == null) {
+                currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(clickedUser.getUserID())));
+            } else {
+                currentUser.getPendingSentFriendRequests().add(clickedUser.getUserID());
+            }
+
+            // add current user to clicked user's received friend request user list
+            if (clickedUser.getPendingReceivedFriendRequests() == null) {
+                clickedUser.setPendingReceivedFriendRequests(new ArrayList<String>(Arrays.asList(currentUser.getUserID())));
+            } else {
+                clickedUser.getPendingReceivedFriendRequests().add(currentUser.getUserID());
+            }
+
+            // create a new friend request object
+            FriendRequest friendRequest = new FriendRequest();
+            friendRequest.setFriendRequestStatus("Pending");
+            friendRequest.setSenderUser(currentUser.getUserID());
+            friendRequest.setReceiverUser(clickedUser.getUserID());
+            friendRequest.setCreatedTime((new Date()).toString());
+            friendRequest.setRespondedTime("Not Responded");
+
+            // save new friend request data to database
+            Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
+            databaseReference.child("users").child(currentUser.getUserID()).setValue(currentUser);
+            databaseReference.child("users").child(clickedUser.getUserID()).setValue(clickedUser);
+            databaseReference.child("friend-requests").child(databaseReference.child("friend-requests").push().getKey()).setValue(friendRequest);
+
+            // remove user from displayed user list
+            usersList.remove(position);
+
+            // check if there are more users to load
+            if (!hiddenUsersList.isEmpty()) {
+                usersList.add(hiddenUsersList.get(0));
+                hiddenUsersList.remove(0);
+            }
+
+            // notify adapter of changes in data
+            notifyDataSetChanged();
         }
     }
 }
