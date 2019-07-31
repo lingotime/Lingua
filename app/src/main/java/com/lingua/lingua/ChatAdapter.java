@@ -34,7 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -210,8 +209,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
-                String name = object.getString("firstName");
-                String profilePhotoURL = object.getString("profilePhotoURL");
+                String name = object.getString("userName");
+                String profilePhotoURL = object.getString("userProfilePhotoURL");
 
                 // load profile pic
                 RequestOptions requestOptionsMedia = new RequestOptions();

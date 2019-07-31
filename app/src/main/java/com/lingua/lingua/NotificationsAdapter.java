@@ -185,9 +185,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         chat.put("users", users);
 
-        chat.put("user1", friendRequest.getSenderName());
-        chat.put("user2", friendRequest.getReceiverName());
-
         reference.child("chats").child(chatId).setValue(chat);
 
         // add chat reference to users
@@ -210,7 +207,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
-                String profilePhotoURL = object.getString("profilePhotoURL");
+                String profilePhotoURL = object.getString("userProfilePhotoURL");
 
                 // load profile pic
                 RequestOptions requestOptionsMedia = new RequestOptions();
