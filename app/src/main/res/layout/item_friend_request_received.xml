@@ -9,7 +9,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/item_friend_request_card"
+        android:id="@+id/item_friend_request_received_card"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,7 +21,7 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/item_friend_request_profile_image"
+                android:id="@+id/item_friend_request_received_profile_image"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:layout_marginStart="10dp"
@@ -34,7 +34,7 @@
                 app:srcCompat="@drawable/man" />
 
             <TextView
-                android:id="@+id/item_friend_request_name_text"
+                android:id="@+id/item_friend_request_received_name_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -42,36 +42,34 @@
                 android:layout_marginTop="10dp"
                 android:text="[Username]"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/item_friend_request_profile_image"
+                app:layout_constraintStart_toEndOf="@+id/item_friend_request_received_profile_image"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/item_friend_request_timestamp_text"
+                android:id="@+id/item_friend_request_received_timestamp_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:text="[Timestamp]"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/item_friend_request_name_text" />
+                app:layout_constraintTop_toTopOf="@+id/item_friend_request_received_name_text" />
 
             <TextView
-                android:id="@+id/item_friend_request_type_text"
+                android:id="@+id/item_friend_request_received_type_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:text="[sent/received] a friend request."
+                android:text="sent a friend request."
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/item_friend_request_profile_image"
-                app:layout_constraintTop_toBottomOf="@+id/item_friend_request_name_text" />
+                app:layout_constraintStart_toEndOf="@+id/item_friend_request_received_profile_image"
+                app:layout_constraintTop_toBottomOf="@+id/item_friend_request_received_name_text" />
 
             <TextView
-                android:id="@+id/item_friend_request_message_text"
+                android:id="@+id/item_friend_request_received_message_text"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="10dp"
@@ -83,13 +81,13 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:text="[Message]"
-                app:layout_constraintBottom_toTopOf="@+id/item_friend_request_accept_button"
+                app:layout_constraintBottom_toTopOf="@+id/item_friend_request_received_accept_button"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/item_friend_request_profile_image"
-                app:layout_constraintTop_toBottomOf="@+id/item_friend_request_type_text" />
+                app:layout_constraintStart_toEndOf="@+id/item_friend_request_received_profile_image"
+                app:layout_constraintTop_toBottomOf="@+id/item_friend_request_received_type_text" />
 
             <Button
-                android:id="@+id/item_friend_request_accept_button"
+                android:id="@+id/item_friend_request_received_accept_button"
                 android:layout_width="125dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="20dp"
@@ -99,10 +97,10 @@
                 app:backgroundTint="#262E5B"
                 app:icon="@drawable/thumb_up"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/item_friend_request_profile_image" />
+                app:layout_constraintStart_toEndOf="@+id/item_friend_request_received_profile_image" />
 
             <Button
-                android:id="@+id/item_friend_request_reject_button"
+                android:id="@+id/item_friend_request_received_reject_button"
                 android:layout_width="125dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="20dp"
