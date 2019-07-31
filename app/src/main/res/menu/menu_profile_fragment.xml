@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/profile_fragment_edit"
+        android:enabled="true"
+        android:icon="@drawable/outline_edit_black_48dp"
+        android:title="Edit"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/profile_fragment_logout"
+        android:enabled="true"
+        android:visible="true"
+        android:title="Log out"
+        app:showAsAction="ifRoom" />
+</menu>

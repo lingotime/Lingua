@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -67,6 +68,22 @@ public class ChatFragment extends Fragment {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_chat_toolbar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Chats");
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                Log.i(TAG, String.valueOf(id));
+
+                if (id == R.id.chat_fragment_new_group) {
+                    Log.i(TAG,"new group clicked");
+                    //Intent intent = new Intent(context, FriendsActivity.class);
+                    //startActivity(intent);
+                }
+
+                return ChatFragment.super.onOptionsItemSelected(item);
+            }
+        });
 
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         chats = new ArrayList<>();
