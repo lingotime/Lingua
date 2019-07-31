@@ -3,7 +3,6 @@ package com.lingua.lingua;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.ListAdapter;
+
 
 import com.firebase.client.Firebase;
 import com.lingua.lingua.models.User;
@@ -43,18 +42,12 @@ import com.twilio.video.Vp8Codec;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
 
-import java.nio.charset.Charset;
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -146,7 +139,6 @@ public class VideoChatActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         videoChatLanguage = languageChoices[i].toString();
-                        // TODO: Count this towards the learning goals of one of the participants when the chat is complete
                         Log.d(TAG, "Starting connection");
                         Log.d(TAG, chatId);
                         connectToRoom(chatId);
@@ -187,28 +179,30 @@ public class VideoChatActivity extends AppCompatActivity {
         requestPermissions();
     }
 
-
+    // steps to be taken to adjust the view when the local participant is disconnected
     private void disconnectActions() {
-        // steps to be taken to adjust the view when the local participant is disconnected
         moveLocalVideoToMainView();
         connectionButton.setVisibility(View.VISIBLE);
         connectionButton.setEnabled(true);
         endTime = System.nanoTime();
 
-        if (!videoChatLanguage.equals("Cultural Exchange")) {
-            // adjust the user's language progress in this case
-            updateUserLanguageProgress(lengthOfCall(startTime, endTime));
+        // mark progress for the user if one of their explore languages is the one being spoken in the chat
+        if (currentUser.getExploreLanguages().contains(videoChatLanguage)) {
+            if (!videoChatLanguage.equals("Cultural Exchange")) {
+                // adjust the user's language progress in this case
+                updateUserLanguageProgress(lengthOfCall(startTime, endTime));
+            }
         }
     }
 
+    // calculates the length of the call and returns a value in minutes
     private double lengthOfCall(long start, long end) {
-        // calculates the length of the call and returns a value in minutes
         long duration = TimeUnit.MINUTES.convert(end-start, TimeUnit.NANOSECONDS);
         return Math.floor(duration);
     }
 
+    // storing the time spent speaking in the language chosen at the start of the activity
     private void updateUserLanguageProgress(double duration) {
-        // storing the time spent speaking in the language chosen at the start of the activity
         HashMap<String, Integer> hoursSpoken = currentUser.getHoursSpokenPerLanguage();
         if (hoursSpoken.containsKey(videoChatLanguage)) {
             // add to those already stored
@@ -342,8 +336,6 @@ public class VideoChatActivity extends AppCompatActivity {
 
             if (remoteVideoTrackPublication.isTrackSubscribed()) {
                 addRemoteParticipantVideo(remoteVideoTrackPublication.getRemoteVideoTrack());
-            } else {
-                Toast.makeText(VideoChatActivity.this, "Not subscribed to remote tracks", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -406,7 +398,6 @@ public class VideoChatActivity extends AppCompatActivity {
                 sendTextChat("Video chat with me!");
                 List<RemoteParticipant> remoteParticipants = room.getRemoteParticipants();
                 for (RemoteParticipant remoteParticipant : room.getRemoteParticipants()) {
-                    Toast.makeText(VideoChatActivity.this, "Adding remote participants", Toast.LENGTH_LONG).show();
                     addRemoteParticipant(remoteParticipant);
                     break;
                 }
@@ -415,7 +406,6 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
                 Log.i(TAG, "failure to connect");
-                Toast.makeText(VideoChatActivity.this, "Failed to connect", Toast.LENGTH_LONG).show();
                 // send a message to the other user detailing an attempted call
                 sendTextChat("I tried to call you :(");
             }
