@@ -41,7 +41,7 @@ public class SearchFragment extends Fragment {
     private SearchView searchBar;
     private RecyclerView resultsTimeline;
 
-    private static final int NUMBER_OF_USERS_PER_LOAD = 8;
+    private static final int NUMBER_OF_USERS_PER_LOAD = 6;
 
     @Nullable
     @Override
@@ -64,14 +64,14 @@ public class SearchFragment extends Fragment {
         usersList = new ArrayList<User>();
         hiddenUsersList = new ArrayList<User>();
 
-        // set text listeners for the search bar
+        // set a text change listener for the search bar
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String queriedName) {
                 // change the focus
                 searchBar.clearFocus();
 
-                // return status
+                // return success status
                 return true;
             }
 
@@ -88,7 +88,7 @@ public class SearchFragment extends Fragment {
                 // fetch compatible users who match criteria and load them into timeline
                 fetchCompatibleUsersAndLoad(currentUser, queriedName);
 
-                // return status
+                // return success status
                 return true;
             }
         });
@@ -127,7 +127,7 @@ public class SearchFragment extends Fragment {
     public void onPause() {
         super.onPause();
 
-        // clear the search bar
+        // clear the search bar and change the focus
         searchBar.setQuery("", true);
         searchBar.clearFocus();
     }
@@ -136,7 +136,7 @@ public class SearchFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        // clear the search bar
+        // clear the search bar and change the focus
         searchBar.setQuery("", true);
         searchBar.clearFocus();
     }
