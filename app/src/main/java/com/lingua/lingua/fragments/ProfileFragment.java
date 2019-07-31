@@ -4,14 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.login.LoginManager;
@@ -20,10 +23,13 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.LoginActivity;
+import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.ProfileCreationActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
+
 import org.parceler.Parcels;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,9 +41,6 @@ import java.util.Date;
 public class ProfileFragment extends Fragment {
     private User currentUser;
 
-    private TextView descriptionText;
-    private Button editButton;
-    private Button exitButton;
     private ImageView profileImage;
     private TextView nameText;
     private TextView birthdateText;
@@ -63,10 +66,44 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // unwrap the current user
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
+
+        // set the toolbar
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_profile_toolbar);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Profile");
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+
+                // (Fausto's methods)
+
+                if (id == R.id.profile_fragment_edit) {
+
+                    // load the profile creation page if edit button is clicked
+                    final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
+                    intent.putExtra("user", Parcels.wrap(currentUser));
+                    startActivity(intent);
+
+                } else if (id == R.id.profile_fragment_logout) {
+
+                    // log out if exit button is clicked
+                    FirebaseAuth.getInstance().signOut();
+
+                    LoginManager.getInstance().logOut();
+
+                    final Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+                return ProfileFragment.super.onOptionsItemSelected(item);
+            }
+        });
+
+
         // associate views with java variables
-        descriptionText = view.findViewById(R.id.fragment_profile_description_text);
-        editButton = view.findViewById(R.id.fragment_profile_edit_button);
-        exitButton = view.findViewById(R.id.fragment_profile_exit_button);
         profileImage = view.findViewById(R.id.fragment_profile_profile_image);
         nameText = view.findViewById(R.id.fragment_profile_name_text);
         birthdateText = view.findViewById(R.id.fragment_profile_birthdate_text);
@@ -84,30 +121,6 @@ public class ProfileFragment extends Fragment {
 
         // unwrap the current user
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
-
-        // load the profile creation page if edit button is clicked
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
-                intent.putExtra("user", Parcels.wrap(currentUser));
-                startActivity(intent);
-            }
-        });
-
-        // log out if exit button is clicked
-        exitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-
-                LoginManager.getInstance().logOut();
-
-                final Intent intent = new Intent(getContext(), LoginActivity.class);
-                startActivity(intent);
-                getActivity().finish();
-            }
-        });
 
         // populate data from the current user
         Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
@@ -128,59 +141,63 @@ public class ProfileFragment extends Fragment {
 
         originCountryText.setText("Origin Country: " + currentUser.getUserOriginCountry());
 
-        if (currentUser.getKnownLanguages().isEmpty()) {
+        if (currentUser.getKnownLanguages() == null) {
             knownLanguagesChip.setText("Add a language...");
             knownLanguagesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    editButton.performClick();
+                    goToEdit();
                 }
             });
         } else {
             knownLanguagesChips.removeView(knownLanguagesChip);
+            for (String knownLanguage : currentUser.getKnownLanguages()) {
+                Chip knownLanguageChip = new Chip(getContext());
+                knownLanguageChip.setText(knownLanguage);
+                knownLanguagesChips.addView(knownLanguageChip);
+            }
         }
 
-        for (String knownLanguage : currentUser.getKnownLanguages()) {
-            Chip knownLanguageChip = new Chip(getContext());
-            knownLanguageChip.setText(knownLanguage);
-            knownLanguagesChips.addView(knownLanguageChip);
-        }
-
-        if (currentUser.getExploreLanguages().isEmpty()) {
+        if (currentUser.getExploreLanguages() == null) {
             exploreLanguagesChip.setText("Add a language...");
             exploreLanguagesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    editButton.performClick();
+                    goToEdit();
                 }
             });
         } else {
             exploreLanguagesChips.removeView(exploreLanguagesChip);
+            for (String exploreLanguage : currentUser.getExploreLanguages()) {
+                Chip exploreLanguageChip = new Chip(getContext());
+                exploreLanguageChip.setText(exploreLanguage);
+                exploreLanguagesChips.addView(exploreLanguageChip);
+            }
         }
 
-        for (String exploreLanguage : currentUser.getExploreLanguages()) {
-            Chip exploreLanguageChip = new Chip(getContext());
-            exploreLanguageChip.setText(exploreLanguage);
-            exploreLanguagesChips.addView(exploreLanguageChip);
-        }
-
-        if (currentUser.getExploreCountries().isEmpty()) {
+        if (currentUser.getExploreCountries() == null) {
             exploreCountriesChip.setText("Add a country...");
             exploreCountriesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    editButton.performClick();
+                    goToEdit();
                 }
             });
         } else {
             exploreCountriesChips.removeView(exploreCountriesChip);
+            for (String exploreCountry : currentUser.getExploreCountries()) {
+                Chip exploreCountryChip = new Chip(getContext());
+                exploreCountryChip.setText(exploreCountry);
+                exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
+                exploreCountriesChips.addView(exploreCountryChip);
+            }
         }
-
-        for (String exploreCountry : currentUser.getExploreCountries()) {
-            Chip exploreCountryChip = new Chip(getContext());
-            exploreCountryChip.setText(exploreCountry);
-            exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
-            exploreCountriesChips.addView(exploreCountryChip);
-        }
+    }
+    
+    private void goToEdit() {
+        // load the profile creation page
+        final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
+        intent.putExtra("user", Parcels.wrap(currentUser));
+        startActivity(intent);
     }
 }
