@@ -19,6 +19,7 @@ import com.firebase.client.Firebase;
 import com.twilio.http.TwilioRestClient;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
+import com.twilio.video.EncodingParameters;
 import com.twilio.video.H264Codec;
 import com.twilio.video.LocalAudioTrack;
 import com.twilio.video.LocalParticipant;
@@ -166,14 +167,6 @@ public class VideoChatActivity extends AppCompatActivity {
             Log.d(TAG, "Token generated");
         }
 
-        //Check if H.264 is supported in this device
-        boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
-                MediaCodecVideoEncoder.isH264HwSupported();
-
-        // Prefer H264 if it is hardware available for encoding and decoding
-        videoCodec = isH264Supported ? (new H264Codec()) : (new Vp8Codec());
-
-
         ConnectOptions.Builder connectOptionsBuilder = new ConnectOptions.Builder(tokenGenerator.JwtToken).roomName(roomName);
         if (localAudioTrack != null) {
             connectOptionsBuilder
@@ -213,6 +206,13 @@ public class VideoChatActivity extends AppCompatActivity {
 
 
     private void getVideoAndAudioTracks() {
+        //Check if H.264 is supported in this device
+        boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
+                MediaCodecVideoEncoder.isH264HwSupported();
+
+        // Prefer H264 if it is hardware available for encoding and decoding
+        videoCodec = isH264Supported ? (new H264Codec()) : (new Vp8Codec());
+
         // Create an audio track
         localAudioTrack = LocalAudioTrack.create(this, true);
 
@@ -338,25 +338,6 @@ public class VideoChatActivity extends AppCompatActivity {
                     addRemoteParticipant(remoteParticipant);
                     break;
                 }
-
-                // check if the user already has a participant - then fix the rendering of the video tracks
-//                if (room.getRemoteParticipants().size() > 0) {
-//                    // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
-//                    moveLocalVideoToSmallView();
-//
-//                    // for now, only allows for 2 people in the room and allows for them to alter their views from the main screen to the one toggled to the bottom left
-//                    RemoteParticipant remoteParticipant = room.getRemoteParticipants().get(0);
-//                    RemoteVideoTrackPublication remoteVideoTrackPublication = remoteParticipant.getRemoteVideoTracks().get(0);
-//                    Log.d(TAG, String.valueOf(remoteVideoTrackPublication.isTrackSubscribed()));
-//                    Log.d(TAG, String.format("Number of remote video tracks: %s", room.getRemoteParticipants().get(0).getRemoteVideoTracks().size()));
-//                    // only render tracks to which the local participant is subscribed
-//                    Toast.makeText(VideoChatActivity.this, String.format("Remote participants: %s", room.getRemoteParticipants().size()), Toast.LENGTH_SHORT).show();
-//                    if (remoteVideoTrackPublication.isTrackSubscribed()) {
-//                        Toast.makeText(VideoChatActivity.this, "Track subscribed", Toast.LENGTH_LONG).show();
-//                        RemoteVideoTrack remoteVideoTrack = remoteVideoTrackPublication.getRemoteVideoTrack();
-//                        remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
-//                    }
-//                }
             }
 
             @Override
@@ -511,6 +492,79 @@ public class VideoChatActivity extends AppCompatActivity {
                 Log.i(TAG, "recording stopped");
             }
         };
+    }
+
+    private boolean checkCameraAndMicPermissions() {
+        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Check if H.264 is supported in this device
+        boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
+                MediaCodecVideoEncoder.isH264HwSupported();
+
+        // Prefer H264 if it is hardware available for encoding and decoding
+        videoCodec = isH264Supported ? (new H264Codec()) : (new Vp8Codec());
+
+        // recreate the video and audio tracks that were released when the app was put in the background
+        if (localVideoTrack == null && checkCameraAndMicPermissions()) {
+            localVideoTrack = LocalVideoTrack.create(this,
+                    true,
+                    cameraCapturer);
+            localVideoTrack.addRenderer(localVideoView);
+
+            // publish video and audio from the local user once they reopen the app
+            if (localParticipant != null) {
+                localParticipant.publishTrack(localVideoTrack);
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        /*
+         * Release the local video track before going in the background. This ensures that the
+         * camera can be used by other applications while this app is in the background.
+         */
+        if (localVideoTrack != null) {
+            // stop publishing video from the local participant's phone once they leave the app
+            if (localParticipant != null) {
+                localParticipant.unpublishTrack(localVideoTrack);
+            }
+
+            localVideoTrack.release();
+            localVideoTrack = null;
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // when activity is destroyed, release the audio and video tracks from the device, and disconnect the user from the room
+        if (room != null && room.getState() != Room.State.DISCONNECTED) {
+            room.disconnect();
+        }
+
+        /*
+         * Release the local audio and video tracks ensuring any memory allocated to audio
+         * or video is freed.
+         */
+        if (localAudioTrack != null) {
+            localAudioTrack.release();
+            localAudioTrack = null;
+        }
+        if (localVideoTrack != null) {
+            localVideoTrack.release();
+            localVideoTrack = null;
+        }
+
+        super.onDestroy();
     }
 
 }
