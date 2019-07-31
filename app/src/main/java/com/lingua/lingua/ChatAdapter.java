@@ -218,6 +218,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 Glide.with(context)
                         .load(profilePhotoURL)
                         .apply(requestOptionsMedia)
+                        .fallback(R.drawable.com_facebook_profile_picture_blank_square)
                         .into(ivProfile);
 
                 // set name

@@ -215,6 +215,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 Glide.with(context)
                         .load(profilePhotoURL)
                         .apply(requestOptionsMedia)
+                        .fallback(R.drawable.com_facebook_profile_picture_blank_square)
                         .into(ivProfile);
 
             } catch (JSONException e) {
