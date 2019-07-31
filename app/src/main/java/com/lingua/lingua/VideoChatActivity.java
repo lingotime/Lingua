@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.client.Firebase;
-import com.google.android.material.snackbar.Snackbar;
 import com.twilio.http.TwilioRestClient;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
@@ -41,11 +41,13 @@ import com.twilio.video.Vp8Codec;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
 
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -74,7 +76,8 @@ public class VideoChatActivity extends AppCompatActivity {
     private List<RemoteParticipant> remoteParticipants;
     private LocalParticipant localParticipant;
     private static final int RC_VIDEO_APP_PERM = 124;
-    private ImageButton disconnect;
+    private ImageButton connectionButton;
+    private ImageButton disconnectionButton;
     private final static String TAG = "VideoChatActivity";
     // just for the initial test
     private VideoCodec videoCodec;
@@ -85,10 +88,6 @@ public class VideoChatActivity extends AppCompatActivity {
     private String receiverId; // id of the second user in the chat
     private String videoChatLanguage;
     private Firebase reference;
-    private TwilioRestClient client = new TwilioRestClient.Builder(ACCOUNT_SID, AUTH_TOKEN)
-            .accountSid("AC7fe7368cc5a508f2c044c3eb1df3a52b")
-            .build();
-
 
 
 
@@ -115,20 +114,49 @@ public class VideoChatActivity extends AppCompatActivity {
 
         localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
-        disconnect = (ImageButton) findViewById(R.id.activity_video_chat_end_call);
+        connectionButton = (ImageButton) findViewById(R.id.activity_video_chat_connect);
+        disconnectionButton = (ImageButton) findViewById(R.id.activity_video_chat_disconnect);
 
-        disconnect.setOnClickListener(new View.OnClickListener() {
+
+        connectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (room != null) {
-                    room.disconnect();
-                }
-                Intent intent = new Intent(VideoChatActivity.this, ChatDetailsActivity.class);
-                startActivity(intent);
+
+                Log.d(TAG, "Starting connection");
+                Log.d(TAG, chatId);
+                connectToRoom(chatId);
+                connectionButton.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
+                connectionButton.setEnabled(false);
             }
         });
-        // receive an intent with the conversation object with the 2 users for this call,
 
+
+        disconnectionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (room != null) {
+                    room.disconnect();
+                    moveLocalVideoToMainView();
+                    connectionButton.setVisibility(View.VISIBLE);
+                    connectionButton.setEnabled(true);
+                }
+            }
+        });
+
+        Log.i(TAG, "Inflated the layout for video activity");
+        requestPermissions();
+    }
+
+    // generates a random string for the room name
+    private String randomString() {
+        byte[] array = new byte[7]; // length is bounded by 7
+        new Random().nextBytes(array);
+        String generatedString = new String(array, Charset.forName("UTF-8"));
+        return generatedString;
+    }
+
+    private void connectToRoom(String roomName) {
 
         // generate the Twilio room and token with the given chat name and the current user as the first identity
         tokenGenerator = new VideoTokenGenerator(userId, roomName);
@@ -138,28 +166,12 @@ public class VideoChatActivity extends AppCompatActivity {
             Log.d(TAG, "Token generated");
         }
 
-        Log.i(TAG, "Inflated the layout for video activity");
-        requestPermissions();
-    }
-
-    private void connectToRoom(String roomName, VideoTokenGenerator tokenGenerator) {
-
         //Check if H.264 is supported in this device
         boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
                 MediaCodecVideoEncoder.isH264HwSupported();
 
         // Prefer H264 if it is hardware available for encoding and decoding
         videoCodec = isH264Supported ? (new H264Codec()) : (new Vp8Codec());
-
-        // try to see if the room already exists
-
-        ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.JwtToken)
-                .roomName(roomName)
-                .audioTracks(Collections.singletonList(localAudioTrack))
-                .videoTracks(Collections.singletonList(localVideoTrack))
-                .preferVideoCodecs(Collections.singletonList(videoCodec))
-                .enableAutomaticSubscription(true)
-                .build();
 
 
         ConnectOptions.Builder connectOptionsBuilder = new ConnectOptions.Builder(tokenGenerator.JwtToken).roomName(roomName);
@@ -173,7 +185,7 @@ public class VideoChatActivity extends AppCompatActivity {
         connectOptionsBuilder.preferVideoCodecs(Collections.singletonList(videoCodec));
         connectOptionsBuilder.enableAutomaticSubscription(true);
 
-        room = Video.connect(this, connectOptions, roomListener());
+        room = Video.connect(this, connectOptionsBuilder.build(), roomListener());
 
     }
 
@@ -193,7 +205,6 @@ public class VideoChatActivity extends AppCompatActivity {
             // after permission is granted, initialise the video and audio tracks
             Log.i(TAG, "Permission granted");
             getVideoAndAudioTracks();
-            connectToRoom(roomName, tokenGenerator); // and generate the token and the room
         } else {
             // prompt to ask for mic and camera permission
             EasyPermissions.requestPermissions(this, "Lingua needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);
@@ -261,6 +272,8 @@ public class VideoChatActivity extends AppCompatActivity {
 
             if (remoteVideoTrackPublication.isTrackSubscribed()) {
                 addRemoteParticipantVideo(remoteVideoTrackPublication.getRemoteVideoTrack());
+            } else {
+                Toast.makeText(VideoChatActivity.this, "Not subscribed to remote tracks", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -318,10 +331,13 @@ public class VideoChatActivity extends AppCompatActivity {
                 }
 
                 Log.i(TAG, "Connected to " + room.getName());
-
-
                 // send a message to the other user to notify them of the creation of the room
                 sendTextChat("Video chat with me!");
+                for (RemoteParticipant remoteParticipant : room.getRemoteParticipants()) {
+                    Toast.makeText(VideoChatActivity.this, "Adding remote participants", Toast.LENGTH_LONG).show();
+                    addRemoteParticipant(remoteParticipant);
+                    break;
+                }
 
                 // check if the user already has a participant - then fix the rendering of the video tracks
 //                if (room.getRemoteParticipants().size() > 0) {
@@ -341,17 +357,12 @@ public class VideoChatActivity extends AppCompatActivity {
 //                        remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
 //                    }
 //                }
-
-                for (RemoteParticipant remoteParticipant : room.getRemoteParticipants()) {
-                    addRemoteParticipant(remoteParticipant);
-                    break;
-                }
             }
 
             @Override
             public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
                 Log.i(TAG, "failure to connect");
-
+                Toast.makeText(VideoChatActivity.this, "Failed to connect", Toast.LENGTH_LONG).show();
                 // send a message to the other user detailing an attempted call
                 sendTextChat("I tried to call you :(");
             }
@@ -368,15 +379,9 @@ public class VideoChatActivity extends AppCompatActivity {
 
             @Override
             public void onDisconnected(@NonNull Room room, @Nullable TwilioException twilioException) {
-                if (localVideoTrack != null) {
-                    localParticipant.unpublishTrack(localVideoTrack);
-                    localParticipant.unpublishTrack(localAudioTrack);
-                }
                 localParticipant = null;
                 Log.i(TAG, "disconnected");
                 // These tracks are released to ensure that memory allocated to them is freed
-                localAudioTrack.release();
-                localVideoTrack.release();
 
             }
 

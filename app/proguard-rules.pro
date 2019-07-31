@@ -20,5 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class org.webrtc.** { *; }
+-dontwarn org.webrtc.**
 -keep class com.twilio.video.** { *; }
+-keep class com.twilio.common.** { *; }
 -keepattributes InnerClasses
