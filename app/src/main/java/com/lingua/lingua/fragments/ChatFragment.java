@@ -86,7 +86,7 @@ public class ChatFragment extends Fragment {
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         chats = new ArrayList<>();
 
-        adapter = new ChatAdapter(getContext(), chats);
+        adapter = new ChatAdapter(getContext(), chats, currentUser);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         rvChats.addItemDecoration(itemDecoration);
         rvChats.setAdapter(adapter);

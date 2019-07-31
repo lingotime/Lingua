@@ -32,6 +32,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.lingua.lingua.models.Chat;
+import com.lingua.lingua.models.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,17 +61,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
 
     String userId, userName;
+    User currentUser;
 
     // the list of languages needed to be learned between the 2 members of the chat
     ArrayList<String> languagesToBeLearned = new ArrayList<>();
 
-    public ChatAdapter(Context context, List<Chat> chats) {
+    public ChatAdapter(Context context, List<Chat> chats, User user) {
         this.context = context;
         this.chats = chats;
 
-        SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
-        userId = prefs.getString("userId", "");
-        userName = prefs.getString("userName", "");
+        userId = currentUser.getUserID();
+        userName = currentUser.getUserName();
+        currentUser = user;
     }
 
     @NonNull
@@ -151,6 +153,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         Intent intent = new Intent(context, ChatDetailsActivity.class);
                         Chat chat = chats.get(position);
                         intent.putExtra("chat", Parcels.wrap(chat));
+                        intent.putExtra("user", Parcels.wrap(currentUser));
                         ArrayList<String> chatUsers = chat.getUsers();
                         for (int i = 0; i < chatUsers.size(); i++) {
                             // gets a list of the languages that both users are trying to learn in order to build the dialog single selection box
@@ -174,10 +177,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         // creating the dialog for selecting the language of the call
                         languagesToBeLearned.add("Cultural Exchange");
                         Intent intent = new Intent(context, VideoChatActivity.class);
-                        intent.putExtra("language", languagesToBeLearned.get(0));
+                        intent.putExtra("languages", languagesToBeLearned);
                         // intent to the video chat activity
                         intent.putExtra("chatID", chat.getId());
                         intent.putExtra("name", chat.getName());
+                        intent.putExtra("user", Parcels.wrap(currentUser));
                         // get the second user Id from the
                         ArrayList<String> chatUsers = chat.getUsers();
                         for (int index = 0; index < chatUsers.size(); index++) {
@@ -187,41 +191,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                             }
                         }
                         context.startActivity(intent);
-
-                        // a dialog box to allow the person initiating the call to select the language in which the call will be made
-//                        AlertDialog.Builder languageSelection = new AlertDialog.Builder(context);
-//                        languageSelection.setTitle("Choose the language");
-//                        languageSelection.setSingleChoiceItems((ListAdapter) languagesToBeLearned, 0, null);
-//                        languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                Intent intent = new Intent(context, VideoChatActivity.class);
-//                                intent.putExtra("language", languagesToBeLearned.get(i));
-//                                // intent to the video chat activity
-//                                intent.putExtra("chatID", chat.getId());
-//                                intent.putExtra("name", chat.getName());
-//                                // get the second user Id from the
-//                                ArrayList<String> chatUsers = chat.getUsers();
-//                                for (int index = 0; index < chatUsers.size(); index++) {
-//                                    String otherUserId = chatUsers.get(index);
-//                                    if (otherUserId != userId) {
-//                                        intent.putExtra("otherUser", otherUserId);
-//                                    }
-//                                }
-//                                context.startActivity(intent);
-//                            }
-//                        });
-//                        languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                Toast.makeText(context, "Video chat canceled", Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-//
-//                        AlertDialog dialog = languageSelection.create();
-//                        dialog.setCanceledOnTouchOutside(true);
-//                        dialog.show();
-
                     }
                 }
             });
