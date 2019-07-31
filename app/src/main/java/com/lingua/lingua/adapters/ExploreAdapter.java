@@ -79,17 +79,17 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         public ViewHolder(View userItemView) {
             super(userItemView);
 
-            card = userItemView.findViewById(R.id.item_user_card);
-            flagImage = userItemView.findViewById(R.id.item_user_flag);
-            profilePhotoImage = userItemView.findViewById(R.id.item_user_profile_image);
-            liveStatusSignal = userItemView.findViewById(R.id.item_user_live_signal_image);
-            nameText = userItemView.findViewById(R.id.item_user_name_text);
-            countryText = userItemView.findViewById(R.id.item_user_country_text);
-            ageText = userItemView.findViewById(R.id.item_user_age_text);
-            genderText = userItemView.findViewById(R.id.item_user_gender_text);
-            biographyText = userItemView.findViewById(R.id.item_user_biography_text);
-            sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
-            removeButton = userItemView.findViewById(R.id.item_user_remove_button);
+            card = userItemView.findViewById(R.id.item_user_explore_card);
+            flagImage = userItemView.findViewById(R.id.item_user_explore_flag);
+            profilePhotoImage = userItemView.findViewById(R.id.item_user_explore_profile_image);
+            liveStatusSignal = userItemView.findViewById(R.id.item_user_explore_live_signal_image);
+            nameText = userItemView.findViewById(R.id.item_user_explore_name_text);
+            countryText = userItemView.findViewById(R.id.item_user_explore_country_text);
+            ageText = userItemView.findViewById(R.id.item_user_explore_age_text);
+            genderText = userItemView.findViewById(R.id.item_user_explore_gender_text);
+            biographyText = userItemView.findViewById(R.id.item_user_explore_biography_text);
+            sendRequestButton = userItemView.findViewById(R.id.item_user_explore_send_request_button);
+            removeButton = userItemView.findViewById(R.id.item_user_explore_remove_button);
 
             // send user a friend request, remove them from view, and add a new user to timeline
             sendRequestButton.setOnClickListener(new View.OnClickListener() {

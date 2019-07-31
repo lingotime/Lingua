@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lingua.lingua.R;
 import com.lingua.lingua.activities.TextChatActivity;
 import com.lingua.lingua.models.Conversation;
-import com.lingua.lingua.models.User;
 
 import java.util.List;
 
@@ -60,7 +59,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ViewHolder(View itemView) {
             super(itemView);
-            ivProfile = itemView.findViewById(R.id.item_user_profile_image);
+            ivProfile = itemView.findViewById(R.id.item_user_explore_profile_image);
             tvName = itemView.findViewById(R.id.item_conversation_name_text);
             tvText = itemView.findViewById(R.id.item_conversation_message_text);
             tvTimestamp = itemView.findViewById(R.id.item_conversation_timestamp_text);
