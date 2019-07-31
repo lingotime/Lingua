@@ -77,8 +77,6 @@ public class ChatFragment extends Fragment {
 
                 if (id == R.id.chat_fragment_new_group) {
                     Log.i(TAG,"new group clicked");
-                    //Intent intent = new Intent(context, FriendsActivity.class);
-                    //startActivity(intent);
                 }
 
                 return ChatFragment.super.onOptionsItemSelected(item);
