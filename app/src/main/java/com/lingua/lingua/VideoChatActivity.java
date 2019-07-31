@@ -39,10 +39,12 @@ import com.twilio.video.VideoTrack;
 import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 
+import org.parceler.Parcels;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -105,12 +107,13 @@ public class VideoChatActivity extends AppCompatActivity {
         Log.d(TAG, chatId);
         String chatName = getIntent().getStringExtra("name"); // the room will be set to this name
         receiverId = getIntent().getStringExtra("otherUser");
-        currentUser = getIntent().getParcelableExtra("user");
+        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
         roomName = chatId;
         receiverId = getIntent().getStringExtra("otherUser");
-        possibleChatLanguages = getIntent().getStringArrayListExtra("languages"); // the languages from which the users will choose to speak in (or cultural exchange)
-        CharSequence[] languageChoices = possibleChatLanguages.toArray(new CharSequence[possibleChatLanguages.size()]);
+        possibleChatLanguages = getIntent().getStringArrayListExtra("languages"); // the languages from which the users will choose to speak in (or cultural exchange)'
+
+        String[] languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
 
         // setting up Firebase to receive the messages to be sent
         Firebase.setAndroidContext(VideoChatActivity.this);
@@ -134,11 +137,15 @@ public class VideoChatActivity extends AppCompatActivity {
                 // a dialog box to allow the person initiating the call to select the language in which the call will be made
                 AlertDialog.Builder languageSelection = new AlertDialog.Builder(VideoChatActivity.this);
                 languageSelection.setTitle("Choose the language");
-                languageSelection.setSingleChoiceItems(languageChoices, -1, null);
+                languageSelection.setSingleChoiceItems(languageChoices, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        videoChatLanguage = Arrays.asList(languageChoices).get(i);
+                    }
+                });
                 languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        videoChatLanguage = languageChoices[i].toString();
                         Log.d(TAG, "Starting connection");
                         Log.d(TAG, chatId);
                         connectToRoom(chatId);

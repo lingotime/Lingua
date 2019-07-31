@@ -70,9 +70,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         this.context = context;
         this.chats = chats;
 
+        currentUser = user;
         userId = currentUser.getUserID();
         userName = currentUser.getUserName();
-        currentUser = user;
     }
 
     @NonNull
@@ -99,6 +99,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         chatSwipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
 
         // set an event listener to update the last message and timestamp of the chat if there is a change
+        Firebase.setAndroidContext(context);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getId());
         reference.addChildEventListener(new ChildEventListener() {
             @Override

@@ -81,7 +81,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
         chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
         languagesToBeLearned = getIntent().getStringArrayListExtra("languages");
-        currentUser = getIntent().getParcelableExtra("user");
+        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
