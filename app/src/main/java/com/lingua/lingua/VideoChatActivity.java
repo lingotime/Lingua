@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.client.Firebase;
+import com.google.android.material.snackbar.Snackbar;
 import com.twilio.http.TwilioRestClient;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
@@ -33,8 +34,9 @@ import com.twilio.video.Room;
 import com.twilio.video.TwilioException;
 import com.twilio.video.Video;
 import com.twilio.video.VideoCodec;
+import com.twilio.video.VideoTrack;
 import com.twilio.video.VideoView;
-import com.twilio.video.Vp9Codec;
+import com.twilio.video.Vp8Codec;
 
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
@@ -56,6 +58,10 @@ import com.twilio.rest.video.v1.RoomFetcher;
  */
 
 public class VideoChatActivity extends AppCompatActivity {
+
+    // confidential information for Twilio login
+    private final static String ACCOUNT_SID = "AC7fe7368cc5a508f2c044c3eb1df3a52b";
+    private final static String AUTH_TOKEN = "f933a72c1d1b0dced4a40e88aceb5305";
 
     private VideoTokenGenerator tokenGenerator;
     private VideoTokenGenerator secondTokenGenerator; // for the second user in the chat
@@ -79,7 +85,7 @@ public class VideoChatActivity extends AppCompatActivity {
     private String receiverId; // id of the second user in the chat
     private String videoChatLanguage;
     private Firebase reference;
-    private TwilioRestClient client = new TwilioRestClient.Builder("lingua", "lingua")
+    private TwilioRestClient client = new TwilioRestClient.Builder(ACCOUNT_SID, AUTH_TOKEN)
             .accountSid("AC7fe7368cc5a508f2c044c3eb1df3a52b")
             .build();
 
@@ -114,8 +120,9 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                room.disconnect();
-                // launch intent to return to go to the ChatDetailsActivity
+                if (room != null) {
+                    room.disconnect();
+                }
                 Intent intent = new Intent(VideoChatActivity.this, ChatDetailsActivity.class);
                 startActivity(intent);
             }
@@ -135,14 +142,14 @@ public class VideoChatActivity extends AppCompatActivity {
         requestPermissions();
     }
 
-    public void connectToRoom(String roomName, VideoTokenGenerator tokenGenerator) {
+    private void connectToRoom(String roomName, VideoTokenGenerator tokenGenerator) {
 
         //Check if H.264 is supported in this device
         boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
                 MediaCodecVideoEncoder.isH264HwSupported();
 
         // Prefer H264 if it is hardware available for encoding and decoding
-        videoCodec = isH264Supported ? (new H264Codec()) : (new Vp9Codec());
+        videoCodec = isH264Supported ? (new H264Codec()) : (new Vp8Codec());
 
         // try to see if the room already exists
 
@@ -155,9 +162,18 @@ public class VideoChatActivity extends AppCompatActivity {
                 .build();
 
 
-        com.twilio.rest.video.v1.Room room = new RoomFetcher(chatId).fetch(client);
+        ConnectOptions.Builder connectOptionsBuilder = new ConnectOptions.Builder(tokenGenerator.JwtToken).roomName(roomName);
+        if (localAudioTrack != null) {
+            connectOptionsBuilder
+                    .audioTracks(Collections.singletonList(localAudioTrack));
+        }
+        if (localVideoTrack != null) {
+            connectOptionsBuilder.videoTracks(Collections.singletonList(localVideoTrack));
+        }
+        connectOptionsBuilder.preferVideoCodecs(Collections.singletonList(videoCodec));
+        connectOptionsBuilder.enableAutomaticSubscription(true);
 
-        Room room = Video.connect(this, connectOptions, roomListener());
+        room = Video.connect(this, connectOptions, roomListener());
 
     }
 
@@ -185,7 +201,7 @@ public class VideoChatActivity extends AppCompatActivity {
     }
 
 
-    public void getVideoAndAudioTracks() {
+    private void getVideoAndAudioTracks() {
         // Create an audio track
         localAudioTrack = LocalAudioTrack.create(this, true);
 
@@ -199,20 +215,20 @@ public class VideoChatActivity extends AppCompatActivity {
         // getting the publisher container (for the local participant) and setting visibility to gone before the other participant enters the chat)
         localVideoView.setVisibility(View.GONE);
 
+        // show the camera output from the user in the main screen
+        remoteVideoView.setMirror(true);
         // Rendering a local video track requires an implementation of VideoRenderer
         // Render a local video track to preview your camera
         localVideoTrack.addRenderer(remoteVideoView);
-        // show the camera output from the user in the main screen
-        remoteVideoView.setMirror(true);
     }
 
-    public void moveLocalVideoToSmallView() {
+    private void moveLocalVideoToSmallView() {
         // moves the local participant's local video track from the main view to make space for the remote participant
         if (localVideoView.getVisibility() == View.GONE) {
             localVideoView.setVisibility(View.VISIBLE);
             if (localVideoTrack != null) {
-                localVideoTrack.removeRenderer(remoteVideoView);
-                localVideoTrack.addRenderer(localVideoView);
+                localVideoTrack.removeRenderer(remoteVideoView); // remove from the main view where the remote participant will be added
+                localVideoTrack.addRenderer(localVideoView); // add to the smaller view
             }
             localVideoView.setMirror(true);
         }
@@ -220,7 +236,7 @@ public class VideoChatActivity extends AppCompatActivity {
     }
 
 
-    public void moveLocalVideoToMainView() {
+    private void moveLocalVideoToMainView() {
         // moves the local participant's video track from the smaller view when there is no longer a remote participant
         if (localVideoView.getVisibility() == View.VISIBLE) {
             localVideoView.setVisibility(View.GONE);
@@ -233,7 +249,50 @@ public class VideoChatActivity extends AppCompatActivity {
         localVideoView.setMirror(false);
     }
 
-    public void sendTextChat(String messageText) {
+    private void addRemoteParticipant(RemoteParticipant remoteParticipant) {
+        if (localVideoView.getVisibility() == View.VISIBLE) {
+            return;
+        }
+
+        if (remoteParticipant.getRemoteVideoTracks().size() > 0) {
+            RemoteVideoTrackPublication remoteVideoTrackPublication =
+                    remoteParticipant.getRemoteVideoTracks().get(0);
+
+
+            if (remoteVideoTrackPublication.isTrackSubscribed()) {
+                addRemoteParticipantVideo(remoteVideoTrackPublication.getRemoteVideoTrack());
+            }
+        }
+
+    }
+
+    private void addRemoteParticipantVideo(VideoTrack videoTrack) {
+        moveLocalVideoToSmallView();
+        remoteVideoView.setMirror(false);
+        videoTrack.addRenderer(remoteVideoView);
+    }
+
+    private void removeRemoteParticipant(RemoteParticipant remoteParticipant) {
+        if (!remoteParticipant.getRemoteVideoTracks().isEmpty()) {
+            RemoteVideoTrackPublication remoteVideoTrackPublication =
+                    remoteParticipant.getRemoteVideoTracks().get(0);
+
+            /*
+             * Remove video only if subscribed to participant track
+             */
+            if (remoteVideoTrackPublication.isTrackSubscribed()) {
+                removeParticipantVideo(remoteVideoTrackPublication.getRemoteVideoTrack());
+            }
+        }
+        moveLocalVideoToMainView();
+    }
+
+    private void removeParticipantVideo(VideoTrack videoTrack) {
+        videoTrack.removeRenderer(remoteVideoView);
+    }
+
+
+    private void sendTextChat(String messageText) {
         String timestamp = new Date().toString();
         // save message
         Map<String, String> map = new HashMap<>();
@@ -265,22 +324,27 @@ public class VideoChatActivity extends AppCompatActivity {
                 sendTextChat("Video chat with me!");
 
                 // check if the user already has a participant - then fix the rendering of the video tracks
-                if (room.getRemoteParticipants().size() > 0) {
-                    // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
-                    moveLocalVideoToSmallView();
+//                if (room.getRemoteParticipants().size() > 0) {
+//                    // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
+//                    moveLocalVideoToSmallView();
+//
+//                    // for now, only allows for 2 people in the room and allows for them to alter their views from the main screen to the one toggled to the bottom left
+//                    RemoteParticipant remoteParticipant = room.getRemoteParticipants().get(0);
+//                    RemoteVideoTrackPublication remoteVideoTrackPublication = remoteParticipant.getRemoteVideoTracks().get(0);
+//                    Log.d(TAG, String.valueOf(remoteVideoTrackPublication.isTrackSubscribed()));
+//                    Log.d(TAG, String.format("Number of remote video tracks: %s", room.getRemoteParticipants().get(0).getRemoteVideoTracks().size()));
+//                    // only render tracks to which the local participant is subscribed
+//                    Toast.makeText(VideoChatActivity.this, String.format("Remote participants: %s", room.getRemoteParticipants().size()), Toast.LENGTH_SHORT).show();
+//                    if (remoteVideoTrackPublication.isTrackSubscribed()) {
+//                        Toast.makeText(VideoChatActivity.this, "Track subscribed", Toast.LENGTH_LONG).show();
+//                        RemoteVideoTrack remoteVideoTrack = remoteVideoTrackPublication.getRemoteVideoTrack();
+//                        remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
+//                    }
+//                }
 
-                    // for now, only allows for 2 people in the room and allows for them to alter their views from the main screen to the one toggled to the bottom left
-                    RemoteParticipant remoteParticipant = room.getRemoteParticipants().get(0);
-                    RemoteVideoTrackPublication remoteVideoTrackPublication = remoteParticipant.getRemoteVideoTracks().get(0);
-                    Log.d(TAG, String.valueOf(remoteVideoTrackPublication.isTrackSubscribed()));
-                    Log.d(TAG, String.format("Number of remote video tracks: %s", room.getRemoteParticipants().get(0).getRemoteVideoTracks().size()));
-                    // only render tracks to which the local participant is subscribed
-                    Toast.makeText(VideoChatActivity.this, String.format("Remote participants: %s", room.getRemoteParticipants().size()), Toast.LENGTH_SHORT).show();
-                    if (remoteVideoTrackPublication.isTrackSubscribed()) {
-                        Toast.makeText(VideoChatActivity.this, "Track subscribed", Toast.LENGTH_LONG).show();
-                        RemoteVideoTrack remoteVideoTrack = remoteVideoTrackPublication.getRemoteVideoTrack();
-                        remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
-                    }
+                for (RemoteParticipant remoteParticipant : room.getRemoteParticipants()) {
+                    addRemoteParticipant(remoteParticipant);
+                    break;
                 }
             }
 
@@ -308,10 +372,12 @@ public class VideoChatActivity extends AppCompatActivity {
                     localParticipant.unpublishTrack(localVideoTrack);
                     localParticipant.unpublishTrack(localAudioTrack);
                 }
+                localParticipant = null;
                 Log.i(TAG, "disconnected");
                 // These tracks are released to ensure that memory allocated to them is freed
                 localAudioTrack.release();
                 localVideoTrack.release();
+
             }
 
             @Override
@@ -322,6 +388,7 @@ public class VideoChatActivity extends AppCompatActivity {
                 remoteParticipants = room.getRemoteParticipants();
                 // use getIdentity to receive the identity strings associated with each user
                 // to set a listener for the new participant that has been added to the room
+                addRemoteParticipant(remoteParticipant);
                 remoteParticipant.setListener(new RemoteParticipant.Listener() {
                     @Override
                     public void onAudioTrackPublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication) {
@@ -361,8 +428,7 @@ public class VideoChatActivity extends AppCompatActivity {
                     @Override
                     public void onVideoTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
                         // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
-                        moveLocalVideoToSmallView();
-                        remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
+                        addRemoteParticipantVideo(remoteVideoTrack);
                     }
 
                     @Override
@@ -427,7 +493,7 @@ public class VideoChatActivity extends AppCompatActivity {
             public void onParticipantDisconnected(@NonNull Room room, @NonNull RemoteParticipant remoteParticipant) {
                 Log.i(TAG, "participant disconnected" + remoteParticipant.getIdentity());
                 // move the local participant to the main view
-                moveLocalVideoToMainView();
+                removeRemoteParticipant(remoteParticipant);
             }
 
             @Override
