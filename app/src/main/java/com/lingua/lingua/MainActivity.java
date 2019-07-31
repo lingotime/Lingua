@@ -6,13 +6,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
@@ -28,6 +34,7 @@ import org.parceler.Parcels;
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
+    private static final String TAG = "MainActivity";
     final FragmentManager fragmentManager = getSupportFragmentManager();
     final Fragment profileFragment = new ProfileFragment();
     final Fragment chatFragment = new ChatFragment();
@@ -39,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // re-enable FCM for push notifications
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+
+
         User currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
         Log.i("MainActivity", currentUser.getUserID());
         Log.i("MainActivity", currentUser.getUserName());
@@ -48,6 +59,27 @@ public class MainActivity extends AppCompatActivity {
         prefs.edit().putString("userName", currentUser.getUserName()).apply();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        // retrieving the device token so that the notifications can be sent to the local user
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String deviceToken = task.getResult().getToken();
+                        // TODO: Implement pushing this device token to the current user's object in the database
+
+                        // Log and toast
+                        String msg = "Device token retrieved";
+                        Log.d(TAG, msg + deviceToken);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", Parcels.wrap(currentUser));
