@@ -195,7 +195,7 @@ public class VideoChatActivity extends AppCompatActivity {
         connectionButton.setEnabled(true);
         endTime = System.nanoTime();
 
-        if (videoChatLanguage != "Cultural Exchange") {
+        if (!videoChatLanguage.equals("Cultural Exchange")) {
             // adjust the user's language progress in this case
             updateUserLanguageProgress(lengthOfCall(startTime, endTime));
         }
@@ -216,7 +216,11 @@ public class VideoChatActivity extends AppCompatActivity {
         } else {
             hoursSpoken.put(videoChatLanguage, (int) duration);
         }
+
+        // update the local current user object
         currentUser.setHoursSpokenPerLanguage(hoursSpoken);
+
+        // update in the database
         Firebase.setAndroidContext(this);
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
@@ -419,6 +423,8 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onReconnecting(@NonNull Room room, @NonNull TwilioException twilioException) {
                 Log.i(TAG, "reconnecting");
+                // in the case that a connection failure caused the call to stop, restart tracking the user's progress
+                startTime = System.nanoTime();
             }
 
             @Override
