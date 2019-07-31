@@ -133,6 +133,10 @@ dependencies {
 
     // to support Twilio notify push notifications
     implementation "com.google.firebase:firebase-messaging:19.0.1"
+    api 'com.android.support:appcompat-v7:27.1.1'
+    api 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    api 'com.squareup.retrofit2:converter-jackson:2.0.0-beta4'
+    implementation group: "com.twilio.sdk", name: "twilio", version: "7.40.1"
 
 }
 
