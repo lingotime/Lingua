@@ -128,7 +128,7 @@ public class ProfileFragment extends Fragment {
 
         originCountryText.setText("Origin Country: " + currentUser.getUserOriginCountry());
 
-        if (currentUser.getKnownLanguages().isEmpty()) {
+        if (currentUser.getKnownLanguages() == null) {
             knownLanguagesChip.setText("Add a language...");
             knownLanguagesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -138,15 +138,14 @@ public class ProfileFragment extends Fragment {
             });
         } else {
             knownLanguagesChips.removeView(knownLanguagesChip);
+            for (String knownLanguage : currentUser.getKnownLanguages()) {
+                Chip knownLanguageChip = new Chip(getContext());
+                knownLanguageChip.setText(knownLanguage);
+                knownLanguagesChips.addView(knownLanguageChip);
+            }
         }
 
-        for (String knownLanguage : currentUser.getKnownLanguages()) {
-            Chip knownLanguageChip = new Chip(getContext());
-            knownLanguageChip.setText(knownLanguage);
-            knownLanguagesChips.addView(knownLanguageChip);
-        }
-
-        if (currentUser.getExploreLanguages().isEmpty()) {
+        if (currentUser.getExploreLanguages() == null) {
             exploreLanguagesChip.setText("Add a language...");
             exploreLanguagesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -156,15 +155,14 @@ public class ProfileFragment extends Fragment {
             });
         } else {
             exploreLanguagesChips.removeView(exploreLanguagesChip);
+            for (String exploreLanguage : currentUser.getExploreLanguages()) {
+                Chip exploreLanguageChip = new Chip(getContext());
+                exploreLanguageChip.setText(exploreLanguage);
+                exploreLanguagesChips.addView(exploreLanguageChip);
+            }
         }
 
-        for (String exploreLanguage : currentUser.getExploreLanguages()) {
-            Chip exploreLanguageChip = new Chip(getContext());
-            exploreLanguageChip.setText(exploreLanguage);
-            exploreLanguagesChips.addView(exploreLanguageChip);
-        }
-
-        if (currentUser.getExploreCountries().isEmpty()) {
+        if (currentUser.getExploreCountries() == null) {
             exploreCountriesChip.setText("Add a country...");
             exploreCountriesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -174,13 +172,12 @@ public class ProfileFragment extends Fragment {
             });
         } else {
             exploreCountriesChips.removeView(exploreCountriesChip);
-        }
-
-        for (String exploreCountry : currentUser.getExploreCountries()) {
-            Chip exploreCountryChip = new Chip(getContext());
-            exploreCountryChip.setText(exploreCountry);
-            exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
-            exploreCountriesChips.addView(exploreCountryChip);
+            for (String exploreCountry : currentUser.getExploreCountries()) {
+                Chip exploreCountryChip = new Chip(getContext());
+                exploreCountryChip.setText(exploreCountry);
+                exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
+                exploreCountriesChips.addView(exploreCountryChip);
+            }
         }
     }
 }
