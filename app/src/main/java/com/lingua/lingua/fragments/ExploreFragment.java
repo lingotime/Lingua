@@ -95,6 +95,19 @@ public class ExploreFragment extends Fragment {
                         Gson gson = new Gson();
                         User generatedUser = gson.fromJson(userJSONObject.toString(), User.class);
 
+                        // load blank values into null fields
+                        if (generatedUser.getKnownLanguages() == null) {
+                            generatedUser.setKnownLanguages(new ArrayList<String>());
+                        }
+
+                        if (generatedUser.getExploreLanguages() == null) {
+                            generatedUser.setExploreLanguages(new ArrayList<String>());
+                        }
+
+                        if (generatedUser.getExploreCountries() == null) {
+                            generatedUser.setExploreCountries(new ArrayList<String>());
+                        }
+
                         // get relevant information from user for matching
                         ArrayList<String> languagesSelectedByGeneratedUser = generatedUser.getKnownLanguages();
                         String countrySelectedByGeneratedUser = generatedUser.getUserOriginCountry();
