@@ -106,16 +106,10 @@ public class NotificationsFragment extends Fragment {
                 }
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-<<<<<<< HEAD
                 if (url.equals("https://lingua-project.firebaseio.com/users/" + userId + "/received-friend-requests.json")) {
                     Toast.makeText(getContext(), "No new friend requests", Toast.LENGTH_SHORT).show();
                 }
                 swipeContainer.setRefreshing(false);
-=======
-                if (url.equals("https://lingua-project.firebaseio.com/users/" + currentUser.getId() + "/received-friend-requests.json")) {
-                    Toast.makeText(getContext(), "No new friend requests", Toast.LENGTH_SHORT).show();
-                }
->>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
                 e.printStackTrace();
             }
         }, volleyError -> {

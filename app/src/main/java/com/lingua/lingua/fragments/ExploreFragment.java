@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -212,18 +211,11 @@ public class ExploreFragment extends Fragment {
             }
         }
 
-<<<<<<< HEAD
         if (currentUser.getPendingReceivedFriendRequests() != null) {
             for (String pendingUserID : currentUser.getPendingReceivedFriendRequests()) {
                 if (pendingUserID.equals(generatedUserID)) {
                     return false;
                 }
-=======
-            } catch (JSONException e) {
-                swipeContainer.setRefreshing(false);
-                Toast.makeText(getContext(), "No users to display", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
->>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
             }
         }
 
