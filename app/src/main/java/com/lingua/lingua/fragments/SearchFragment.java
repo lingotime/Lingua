@@ -1,5 +1,6 @@
 package com.lingua.lingua.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import java.util.Iterator;
 public class SearchFragment extends Fragment {
     private User currentUser;
 
+    Context context;
     ArrayList<User> usersList;
     ArrayList<User> hiddenUsersList;
     SearchAdapter usersAdapter;
@@ -59,6 +61,9 @@ public class SearchFragment extends Fragment {
 
         // unwrap the current user
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
+
+        // set the context
+        context = getContext();
 
         // initialize the list of users
         usersList = new ArrayList<User>();
@@ -94,11 +99,11 @@ public class SearchFragment extends Fragment {
         });
 
         // set the adapter
-        usersAdapter = new SearchAdapter(getContext(), usersList, hiddenUsersList, currentUser);
+        usersAdapter = new SearchAdapter(context, usersList, hiddenUsersList, currentUser);
         resultsTimeline.setAdapter(usersAdapter);
 
         // set the layout
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
 
         // prepare the endless scroll listener
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
@@ -209,7 +214,7 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        RequestQueue databaseRequestQueue = Volley.newRequestQueue(getContext());
+        RequestQueue databaseRequestQueue = Volley.newRequestQueue(context);
         databaseRequestQueue.add(databaseRequest);
     }
 

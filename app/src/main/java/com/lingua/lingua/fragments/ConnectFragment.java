@@ -1,5 +1,6 @@
 package com.lingua.lingua.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.ConnectAdapter;
@@ -28,12 +34,14 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /* FINALIZED, DOCUMENTED, and TESTED ConnectFragment displays pending sent and received friend request notifications. */
 
 public class ConnectFragment extends Fragment {
     private User currentUser;
 
+    Context context;
     ArrayList<FriendRequest> friendRequestsList;
     ArrayList<FriendRequest> hiddenFriendRequestsList;
     ConnectAdapter friendRequestsAdapter;
@@ -61,16 +69,19 @@ public class ConnectFragment extends Fragment {
         // unwrap the current user
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
+        // set the context
+        context = getContext();
+
         // initialize the list of friend requests
         friendRequestsList = new ArrayList<FriendRequest>();
         hiddenFriendRequestsList = new ArrayList<FriendRequest>();
 
         // set the adapter
-        friendRequestsAdapter = new ConnectAdapter(getContext(), friendRequestsList, hiddenFriendRequestsList, currentUser);
+        friendRequestsAdapter = new ConnectAdapter(context, friendRequestsList, hiddenFriendRequestsList, currentUser);
         historyTimeline.setAdapter(friendRequestsAdapter);
 
         // set the layout
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
 
         // prepare the endless scroll listener
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
@@ -93,22 +104,54 @@ public class ConnectFragment extends Fragment {
 
         // display timeline
         historyTimeline.setLayoutManager(layoutManager);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+        // create a database reference
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(currentUser.getUserID());
 
-        // clear the friend request lists
-        friendRequestsList.clear();
-        hiddenFriendRequestsList.clear();
-        friendRequestsAdapter.notifyDataSetChanged();
+        // prepare the database listener
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // get the updated user
+                User updatedUser = dataSnapshot.getValue(User.class);
 
-        // reset the scroll listener
-        scrollListener.resetState();
+                // load blank values into null fields
+                if (updatedUser.getKnownLanguages() == null) {
+                    updatedUser.setKnownLanguages(new ArrayList<String>());
+                }
 
-        // fetch friend requests and load them into timeline
-        fetchCompatibleFriendRequestsAndLoad(currentUser);
+                if (updatedUser.getExploreLanguages() == null) {
+                    updatedUser.setExploreLanguages(new ArrayList<String>());
+                }
+
+                if (updatedUser.getKnownCountries() == null) {
+                    updatedUser.setKnownCountries(new ArrayList<String>());
+                }
+
+                if (updatedUser.getExploreCountries() == null) {
+                    updatedUser.setExploreCountries(new ArrayList<String>());
+                }
+
+                // update the current user
+                currentUser = updatedUser;
+
+                // clear the friend request lists
+                friendRequestsList.clear();
+                hiddenFriendRequestsList.clear();
+                friendRequestsAdapter.notifyDataSetChanged();
+
+                // reset the scroll listener
+                scrollListener.resetState();
+
+                // fetch friend requests and load them into timeline
+                fetchCompatibleFriendRequestsAndLoad(currentUser);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("ConnectFragment", "firebase:onError");
+            }
+        });
     }
 
     private void fetchCompatibleFriendRequestsAndLoad(User currentUser) {
@@ -143,14 +186,48 @@ public class ConnectFragment extends Fragment {
                         // filter friend request depending on criteria
                         if ((senderUserID.equals(currentUserID) || receiverUserID.equals(currentUserID)) && (status.equals("Pending") || status.equals("Accepted"))) {
                             if (friendRequestsJSONObjectCounter < NUMBER_OF_FRIEND_REQUESTS_PER_LOAD) {
-                                // add to the list of friend requests
-                                friendRequestsList.add(generatedFriendRequest);
+                                // check to ensure friend request is not loaded in the list of friend requests
+                                boolean isLoaded = false;
+
+                                for (FriendRequest loadedFriendRequest : friendRequestsList) {
+                                    if (loadedFriendRequest.getFriendRequestID().equals(generatedFriendRequest.getFriendRequestID())) {
+                                        isLoaded = true;
+                                    }
+                                }
+
+                                for (FriendRequest loadedFriendRequest : hiddenFriendRequestsList) {
+                                    if (loadedFriendRequest.getFriendRequestID().equals(generatedFriendRequest.getFriendRequestID())) {
+                                        isLoaded = true;
+                                    }
+                                }
+
+                                // if friend request is not loaded, add to the list of friend requests
+                                if (!isLoaded) {
+                                    friendRequestsList.add(generatedFriendRequest);
+                                }
 
                                 // increment the friend request limiter
                                 friendRequestsJSONObjectCounter++;
                             } else {
-                                // add to the hidden list of friend requests
-                                hiddenFriendRequestsList.add(generatedFriendRequest);
+                                // check to ensure friend request is not loaded in the list of friend requests
+                                boolean isLoaded = false;
+
+                                for (FriendRequest loadedFriendRequest : friendRequestsList) {
+                                    if (loadedFriendRequest.getFriendRequestID().equals(generatedFriendRequest.getFriendRequestID())) {
+                                        isLoaded = true;
+                                    }
+                                }
+
+                                for (FriendRequest loadedFriendRequest : hiddenFriendRequestsList) {
+                                    if (loadedFriendRequest.getFriendRequestID().equals(generatedFriendRequest.getFriendRequestID())) {
+                                        isLoaded = true;
+                                    }
+                                }
+
+                                // if friend request is not loaded, add to the hidden list of friend requests
+                                if (!isLoaded) {
+                                    hiddenFriendRequestsList.add(generatedFriendRequest);
+                                }
                             }
                         }
                     }
@@ -167,7 +244,7 @@ public class ConnectFragment extends Fragment {
             }
         });
 
-        RequestQueue databaseRequestQueue = Volley.newRequestQueue(getContext());
+        RequestQueue databaseRequestQueue = Volley.newRequestQueue(context);
         databaseRequestQueue.add(databaseRequest);
     }
 }

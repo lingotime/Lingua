@@ -20,6 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.firebase.client.Firebase;
 import com.google.gson.Gson;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.FriendRequest;
@@ -29,10 +30,12 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/* TODO: Implement button functionality, have a database listener, and order chronologically. */
+/* TODO: Order friend requests chronologically, comment code. */
 
 public class ConnectAdapter extends RecyclerView.Adapter<ConnectAdapter.ViewHolder> {
     private User currentUser;
@@ -122,7 +125,63 @@ public class ConnectAdapter extends RecyclerView.Adapter<ConnectAdapter.ViewHold
                 cancelButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // TODO
+                        int position = getAdapterPosition();
+
+                        if (position != RecyclerView.NO_POSITION) {
+                            String databaseURL = "https://lingua-project.firebaseio.com/users.json";
+
+                            StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    try {
+                                        FriendRequest clickedFriendRequest = friendRequestsList.get(position);
+                                        clickedFriendRequest.setFriendRequestStatus("Canceled");
+                                        clickedFriendRequest.setRespondedTime((new Date()).toString());
+
+                                        JSONObject usersJSONObject = new JSONObject(response);
+                                        JSONObject receiverUserJSONObject = usersJSONObject.getJSONObject(clickedFriendRequest.getReceiverUser());
+
+                                        Gson gson = new Gson();
+                                        User receiverUser = gson.fromJson(receiverUserJSONObject.toString(), User.class);
+
+                                        if (receiverUser.getKnownLanguages() == null) {
+                                            receiverUser.setKnownLanguages(new ArrayList<String>());
+                                        }
+
+                                        if (receiverUser.getExploreLanguages() == null) {
+                                            receiverUser.setExploreLanguages(new ArrayList<String>());
+                                        }
+
+                                        if (receiverUser.getKnownCountries() == null) {
+                                            receiverUser.setKnownCountries(new ArrayList<String>());
+                                        }
+
+                                        if (receiverUser.getExploreCountries() == null) {
+                                            receiverUser.setExploreCountries(new ArrayList<String>());
+                                        }
+
+                                        currentUser.getPendingSentFriendRequests().remove(receiverUser.getUserID());
+                                        receiverUser.getPendingReceivedFriendRequests().remove(currentUser.getUserID());
+
+                                        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
+
+                                        databaseReference.child("users").child(currentUser.getUserID()).setValue(currentUser);
+                                        databaseReference.child("users").child(receiverUser.getUserID()).setValue(receiverUser);
+                                        databaseReference.child("friend-requests").child(clickedFriendRequest.getFriendRequestID()).setValue(clickedFriendRequest);
+                                    } catch (JSONException exception) {
+                                        Log.e("ConnectAdapter", "firebase:onException", exception);
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e("ConnectAdapter", "firebase:onError", error);
+                                }
+                            });
+
+                            RequestQueue databaseRequestQueue = Volley.newRequestQueue(context);
+                            databaseRequestQueue.add(databaseRequest);
+                        }
                     }
                 });
             } else if (friendRequestItemViewType == FRIEND_REQUEST_RECEIVED) {
@@ -138,14 +197,152 @@ public class ConnectAdapter extends RecyclerView.Adapter<ConnectAdapter.ViewHold
                 acceptButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // TODO
+                        int position = getAdapterPosition();
+
+                        if (position != RecyclerView.NO_POSITION) {
+                            String databaseURL = "https://lingua-project.firebaseio.com/users.json";
+
+                            StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    try {
+                                        FriendRequest clickedFriendRequest = friendRequestsList.get(position);
+                                        clickedFriendRequest.setFriendRequestStatus("Accepted");
+                                        clickedFriendRequest.setRespondedTime((new Date()).toString());
+
+                                        JSONObject usersJSONObject = new JSONObject(response);
+                                        JSONObject senderUserJSONObject = usersJSONObject.getJSONObject(clickedFriendRequest.getSenderUser());
+
+                                        Gson gson = new Gson();
+                                        User senderUser = gson.fromJson(senderUserJSONObject.toString(), User.class);
+
+                                        if (senderUser.getKnownLanguages() == null) {
+                                            senderUser.setKnownLanguages(new ArrayList<String>());
+                                        }
+
+                                        if (senderUser.getExploreLanguages() == null) {
+                                            senderUser.setExploreLanguages(new ArrayList<String>());
+                                        }
+
+                                        if (senderUser.getKnownCountries() == null) {
+                                            senderUser.setKnownCountries(new ArrayList<String>());
+                                        }
+
+                                        if (senderUser.getExploreCountries() == null) {
+                                            senderUser.setExploreCountries(new ArrayList<String>());
+                                        }
+
+                                        currentUser.getPendingReceivedFriendRequests().remove(senderUser.getUserID());
+
+                                        if (currentUser.getFriends() == null) {
+                                            currentUser.setFriends(new ArrayList<String>(Arrays.asList(senderUser.getUserID())));
+                                        } else {
+                                            currentUser.getFriends().add(senderUser.getUserID());
+                                        }
+
+                                        senderUser.getPendingSentFriendRequests().remove(currentUser.getUserID());
+
+                                        if (senderUser.getFriends() == null) {
+                                            senderUser.setFriends(new ArrayList<String>(Arrays.asList(currentUser.getUserID())));
+                                        } else {
+                                            senderUser.getFriends().add(currentUser.getUserID());
+                                        }
+
+                                        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
+
+                                        databaseReference.child("users").child(currentUser.getUserID()).setValue(currentUser);
+                                        databaseReference.child("users").child(senderUser.getUserID()).setValue(senderUser);
+                                        databaseReference.child("friend-requests").child(clickedFriendRequest.getFriendRequestID()).setValue(clickedFriendRequest);
+                                    } catch (JSONException exception) {
+                                        Log.e("ConnectAdapter", "firebase:onException", exception);
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e("ConnectAdapter", "firebase:onError", error);
+                                }
+                            });
+
+                            RequestQueue databaseRequestQueue = Volley.newRequestQueue(context);
+                            databaseRequestQueue.add(databaseRequest);
+                        }
                     }
                 });
 
                 rejectButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // TODO
+                        int position = getAdapterPosition();
+
+                        if (position != RecyclerView.NO_POSITION) {
+                            String databaseURL = "https://lingua-project.firebaseio.com/users.json";
+
+                            StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    try {
+                                        FriendRequest clickedFriendRequest = friendRequestsList.get(position);
+                                        clickedFriendRequest.setFriendRequestStatus("Rejected");
+                                        clickedFriendRequest.setRespondedTime((new Date()).toString());
+
+                                        JSONObject usersJSONObject = new JSONObject(response);
+                                        JSONObject senderUserJSONObject = usersJSONObject.getJSONObject(clickedFriendRequest.getSenderUser());
+
+                                        Gson gson = new Gson();
+                                        User senderUser = gson.fromJson(senderUserJSONObject.toString(), User.class);
+
+                                        if (senderUser.getKnownLanguages() == null) {
+                                            senderUser.setKnownLanguages(new ArrayList<String>());
+                                        }
+
+                                        if (senderUser.getExploreLanguages() == null) {
+                                            senderUser.setExploreLanguages(new ArrayList<String>());
+                                        }
+
+                                        if (senderUser.getKnownCountries() == null) {
+                                            senderUser.setKnownCountries(new ArrayList<String>());
+                                        }
+
+                                        if (senderUser.getExploreCountries() == null) {
+                                            senderUser.setExploreCountries(new ArrayList<String>());
+                                        }
+
+                                        currentUser.getPendingReceivedFriendRequests().remove(senderUser.getUserID());
+
+                                        if (currentUser.getDeclinedUsers() == null) {
+                                            currentUser.setDeclinedUsers(new ArrayList<String>(Arrays.asList(senderUser.getUserID())));
+                                        } else if (!currentUser.getDeclinedUsers().contains(senderUser.getUserID())) {
+                                            currentUser.getDeclinedUsers().add(senderUser.getUserID());
+                                        }
+
+                                        senderUser.getPendingSentFriendRequests().remove(currentUser.getUserID());
+
+                                        if (senderUser.getDeclinedUsers() == null) {
+                                            senderUser.setDeclinedUsers(new ArrayList<String>(Arrays.asList(currentUser.getUserID())));
+                                        } else if (!senderUser.getDeclinedUsers().contains(currentUser.getUserID())) {
+                                            senderUser.getDeclinedUsers().add(currentUser.getUserID());
+                                        }
+
+                                        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
+
+                                        databaseReference.child("users").child(currentUser.getUserID()).setValue(currentUser);
+                                        databaseReference.child("users").child(senderUser.getUserID()).setValue(senderUser);
+                                        databaseReference.child("friend-requests").child(clickedFriendRequest.getFriendRequestID()).setValue(clickedFriendRequest);
+                                    } catch (JSONException exception) {
+                                        Log.e("ConnectAdapter", "firebase:onException", exception);
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e("ConnectAdapter", "firebase:onError", error);
+                                }
+                            });
+
+                            RequestQueue databaseRequestQueue = Volley.newRequestQueue(context);
+                            databaseRequestQueue.add(databaseRequest);
+                        }
                     }
                 });
             } else if (friendRequestItemViewType == FRIEND_REQUEST_ACCEPTED) {
@@ -159,7 +356,7 @@ public class ConnectAdapter extends RecyclerView.Adapter<ConnectAdapter.ViewHold
                 startConversationButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // TODO
+                        // TODO: Create a conversation and open it
                     }
                 });
             }
