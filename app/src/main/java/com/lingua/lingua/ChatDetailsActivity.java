@@ -162,15 +162,9 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
         if (id == R.id.chat_details_videochat_icon) {
             Intent intent = new Intent(ChatDetailsActivity.this, VideoChatActivity.class);
-            intent.putExtra("languages", languagesToBeLearned);
             // intent to the video chat activity
-            intent.putExtra("chatID", chat.getId());
-            intent.putExtra("name", chat.getName());
+            intent.putExtra("chat", Parcels.wrap(chat));
             intent.putExtra("user", Parcels.wrap(currentUser));
-            // get the second user Id from the
-            ArrayList<String> chatUsers = chat.getUsers();
-            chatUsers.remove(currentUser.getUserID());
-            intent.putExtra("otherChatMembers", chatUsers);
             startActivity(intent);
 
             return true;

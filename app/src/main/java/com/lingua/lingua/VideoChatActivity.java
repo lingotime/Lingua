@@ -21,6 +21,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
+import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
@@ -91,9 +92,10 @@ public class VideoChatActivity extends AppCompatActivity {
     private ArrayList<String> chatMembers; // excluding the current user
     private String videoChatLanguage;
     private Firebase reference;
-    private ArrayList<String> possibleChatLanguages;
+    private ArrayList<String> possibleChatLanguages = new ArrayList<>();
 
     User currentUser;
+    Chat currentChat;
 
     // variables to keep track of the length of the call
     private long startTime = 0;
@@ -111,14 +113,29 @@ public class VideoChatActivity extends AppCompatActivity {
         userId = prefs.getString("userId", "");
         username = prefs.getString("userName", "");
 
-        chatId = getIntent().getStringExtra("chatID");
-        Log.d(TAG, chatId);
+        currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+        chatId = currentChat.getId();
         String chatName = getIntent().getStringExtra("name"); // the room will be set to this name
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
-        chatMembers = getIntent().getStringArrayListExtra("otherChatMembers");
+        chatMembers = currentChat.getUsers();
+        chatMembers.remove(userId);
 
         roomName = chatId;
-        possibleChatLanguages = getIntent().getStringArrayListExtra("languages"); // the languages from which the users will choose to speak in (or cultural exchange)'
+
+
+        // to get all the possible explore languages from the users in the chat
+        if (currentUser.getExploreLanguages() != null) {
+            possibleChatLanguages.addAll(currentUser.getExploreLanguages());
+        }
+        // query the rest of the users in the chat to determine and add all of their explore languages
+        for (int index = 0; index < chatMembers.size(); index ++) {
+            try {
+                queryLanguages(chatMembers.get(index));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        possibleChatLanguages.add("Cultural Exchange");
 
         String[] languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
 
@@ -213,7 +230,7 @@ public class VideoChatActivity extends AppCompatActivity {
         synchronized (userInfoRequest) {
             RequestQueue rQueue = Volley.newRequestQueue(this);
             rQueue.add(userInfoRequest);
-            userInfoRequest.wait(100);
+            userInfoRequest.wait(500);
         }
     }
 
