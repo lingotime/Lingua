@@ -197,7 +197,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             }
         }
 
-        chat.put("exploreLanguages", new JSONArray(exploreLanguages));
+        chat.put("exploreLanguages", exploreLanguages);
 
         Map<String, String> users = new HashMap<>();
         users.put(friendRequest.getSenderId(), "true");

@@ -18,11 +18,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Notification;
 import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  RecyclerView Adapter that adapts User objects to the viewholders in the recyclerview
@@ -218,6 +225,11 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         map.put("id", friendRequestId);
 
         reference.child("friend-requests").child(friendRequestId).setValue(map);
+        if (currentUser.getExploreLanguages() != null) {
+            ArrayList<String> languages = currentUser.getExploreLanguages();
+            reference.child("friend-requests").child(friendRequestId).child("exploreLanguages").setValue(languages);
+        }
+
 
         // save friend request reference in user objects...Marta's way
         reference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
