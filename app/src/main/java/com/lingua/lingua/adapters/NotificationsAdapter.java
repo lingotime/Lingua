@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -23,11 +23,16 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.lingua.lingua.DateUtil;
+import com.lingua.lingua.R;
 import com.lingua.lingua.models.FriendRequest;
+import com.lingua.lingua.models.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +46,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     private Context context;
     private List<FriendRequest> friendRequests;
     Firebase reference;
+    private User user;
+
+    // for the explore languages
 
     private ImageView ivProfile;
     private TextView tvMessage, tvName, tvTimestamp, tvDescription;
@@ -48,13 +56,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     String userId;
 
-    private static final int TYPE_HEADER = 0;
     private static final int TYPE_RECEIVED_FRIEND_REQUESTS = 1;
     private static final int TYPE_SENT_FRIEND_REQUESTS = 2;
 
-    public NotificationsAdapter(Context context, List<FriendRequest> friendRequests) {
+    public NotificationsAdapter(Context context, List<FriendRequest> friendRequests, User user) {
         this.context = context;
         this.friendRequests = friendRequests;
+        this.user = user;
 
         Firebase.setAndroidContext(context);
         reference = new Firebase("https://lingua-project.firebaseio.com");
@@ -98,14 +106,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 @Override
                 public void onClick(View view) {
                     acceptFriendRequest(friendRequest);
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                 }
             });
 
             rejectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                     Toast.makeText(context, "Friend request rejected", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -119,7 +127,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                     Toast.makeText(context, "Friend request deleted", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -158,7 +166,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
     }
 
-    public void deleteFriendRequest(FriendRequest friendRequest, int position) {
+    public void deleteFriendRequest(FriendRequest friendRequest) {
         //delete from friend-requests
         reference.child("friend-requests").child(friendRequest.getId()).removeValue();;
 
@@ -166,8 +174,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("users").child(friendRequest.getSenderId()).child("sent-friend-requests").child(friendRequest.getId()).removeValue();
         reference.child("users").child(friendRequest.getReceiverId()).child("received-friend-requests").child(friendRequest.getId()).removeValue();
 
-        friendRequests.remove(position);
-        notifyItemRemoved(position);
+        friendRequests.remove(friendRequest);
+        notifyDataSetChanged();
     }
 
     public void acceptFriendRequest(FriendRequest friendRequest) {
@@ -178,6 +186,18 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         chat.put("lastMessage", friendRequest.getMessage());
         chat.put("lastMessageAt", friendRequest.getTimestamp());
         chat.put("id", chatId);
+
+        // handling the explore languages
+        ArrayList<String> exploreLanguages = friendRequest.getExploreLanguages();
+        // iterating and adding to avoid duplicates
+        ArrayList<String> currentUserExploreLanguages = user.getExploreLanguages();
+        for (int index = 0; index < currentUserExploreLanguages.size(); index ++) {
+            if (!exploreLanguages.contains(currentUserExploreLanguages.get(index))) {
+                exploreLanguages.add(currentUserExploreLanguages.get(index));
+            }
+        }
+
+        chat.put("exploreLanguages", new JSONArray(exploreLanguages));
 
         Map<String, String> users = new HashMap<>();
         users.put(friendRequest.getSenderId(), "true");

@@ -10,6 +10,9 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:allowBackup="true"
@@ -21,13 +24,15 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
 
-        <service
-            android:name=".FCMConfig"
-            android:exported="false">
+        <!-- [START fcm_listener] -->
+        <service android:name=".fcm.NotifyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
+        </service> <!-- [END fcm_listener] -->
+        <service
+            android:name=".notifyAPI.BindingIntentService"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -48,6 +53,7 @@
             android:name=".ProfileCreationActivity"
             android:windowSoftInputMode="adjustResize" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
         <activity android:name=".MainActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -93,7 +93,9 @@ dependencies {
 
     implementation 'androidx.palette:palette:1.0.0'
 
+    // Firebase support
     implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-messaging:18.0.0'
 
     implementation 'com.google.firebase:firebase-auth:18.1.0'
     implementation 'com.google.firebase:firebase-database:18.0.1'
@@ -133,6 +135,12 @@ dependencies {
 
     // to support Twilio notify push notifications
     implementation "com.google.firebase:firebase-messaging:19.0.1"
+    api 'com.android.support:appcompat-v7:27.1.1'
+    api 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    api 'com.squareup.retrofit2:converter-jackson:2.0.0-beta4'
+    implementation group: "com.twilio.sdk", name: "twilio", version: "7.40.1"
+    implementation 'com.google.firebase:firebase-storage:18.0.0'
+    implementation 'com.google.code.gson:gson:2.2.4'
 
 }
 

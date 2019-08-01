@@ -44,6 +44,13 @@ public class MainActivity extends AppCompatActivity {
     final Fragment exploreFragment = new ExploreFragment();
     final Fragment notificationsFragment = new NotificationsFragment();
 
+    // Strings for creating a binding for push notifications for the device
+    public static final String BINDING_REGISTRATION = "BINDING_REGISTRATION";
+    public static final String BINDING_SUCCEEDED = "BINDING_SUCCEEDED";
+    public static final String BINDING_RESPONSE = "BINDING_RESPONSE";
+
+    private WakefulBroadcastReceiver bindingBroadcastReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,9 +100,18 @@ public class MainActivity extends AppCompatActivity {
         exploreFragment.setArguments(bundle);
         notificationsFragment.setArguments(bundle);
 
-        fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
+        // load the right fragment depending on intent extras
+        String fragmentToLoad = getIntent().getStringExtra("fragment");
 
-        bottomNavigationView.setSelectedItemId(R.id.explore);
+        if (fragmentToLoad != null && fragmentToLoad.equals("profile")) {
+            fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.profile);
+        } else if (fragmentToLoad != null && fragmentToLoad.equals("notifications")) {
+            fragmentManager.beginTransaction().replace(R.id.flContainer, notificationsFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.notifications);
+        } else {
+            fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
+        }
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -122,12 +138,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        registerBinding();
+
+        bindingBroadcastReceiver = new WakefulBroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean succeeded = intent.getBooleanExtra(BINDING_SUCCEEDED, false);
+                String message = intent.getStringExtra(BINDING_RESPONSE);
+                if (message == null) {
+                    message = "";
+                }
+
+                if (succeeded) {
+                    Log.d(TAG, "Binding registered. " + message);
+                } else {
+                    Log.e(TAG, "Binding failed. " + message);
+                }
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(bindingBroadcastReceiver,
+                new IntentFilter(BINDING_REGISTRATION));
+
         // mark user as live
         currentUser.setOnline(true);
 
         // save update
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+    }
+
+    /**
+     * Start the IntentService to register this app identity (the user ID) with Twilio Notify
+     */
+    public void registerBinding() {
+        Intent intent = new Intent(this, BindingIntentService.class);
+        intent.putExtra(IDENTITY, currentUser.getUserID());
+        startService(intent);
     }
 
     @Override

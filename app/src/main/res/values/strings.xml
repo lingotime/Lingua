@@ -15,4 +15,5 @@
     <string name="what_languages_do_you_speak">What languages do you speak?</string>
     <string name="languages_to_learn">Languages to learn</string>
     <string name="for_cultural_exchange">For cultural exchange</string>
+    <string name="base_url_string">YOUR_TWILIO_FUNCTIONS_URL</string>
 </resources>

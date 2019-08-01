@@ -22,12 +22,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.lingua.lingua.ChatAdapter;
+import com.lingua.lingua.adapters.ChatAdapter;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -86,7 +87,7 @@ public class ChatFragment extends Fragment {
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         chats = new ArrayList<>();
 
-        adapter = new ChatAdapter(getContext(), chats);
+        adapter = new ChatAdapter(getContext(), chats, currentUser);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         rvChats.addItemDecoration(itemDecoration);
         rvChats.setAdapter(adapter);
@@ -107,6 +108,7 @@ public class ChatFragment extends Fragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+
 
         queryChats();
     }
@@ -154,7 +156,12 @@ public class ChatFragment extends Fragment {
                     Log.d(TAG, key);
                     userIds.add(key);
                 }
-                chats.add(new Chat(id, null, lastMessage, lastMessageAt, userIds));
+                JSONArray exploreLanguages = chat.getJSONArray("exploreLanguages");
+                ArrayList<String> chatExploreLanguages = new ArrayList<>();
+                for (int i = 0; i < exploreLanguages.length(); i++) {
+                    chatExploreLanguages.add(exploreLanguages.getString(i));
+                }
+                chats.add(new Chat(id, null, lastMessage, lastMessageAt, userIds, chatExploreLanguages));
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
