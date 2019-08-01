@@ -12,6 +12,7 @@
         android:id="@+id/item_friend_request_accepted_card"
         android:layout_width="match_parent"
         android:layout_height="125dp"
+        app:cardCornerRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
