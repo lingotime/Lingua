@@ -27,6 +27,7 @@ import com.lingua.lingua.adapters.NotificationsAdapter;
 import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -139,7 +140,13 @@ public class NotificationsFragment extends Fragment {
                 String receiverId = object.getString("receiverId");
                 String receiverName = object.getString("receiverName");
                 String timestamp = object.getString("timestamp");
-                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp, id, currentUser.getExploreLanguages());
+                JSONArray objectExploreLanguages = object.getJSONArray("exploreLanguages");
+
+                ArrayList<String> exploreLanguages = new ArrayList<>();
+                for (int index = 0; index < objectExploreLanguages.length(); index++) {
+                    exploreLanguages.add((String) objectExploreLanguages.get(index));
+                }
+                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp, id, exploreLanguages);
                 friendRequests.add(friendRequest);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
