@@ -163,12 +163,6 @@ public class VideoChatActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         connectToRoom(roomName);
-                        connectionButton.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
-                        connectionButton.setEnabled(false);
-
-                        // enable button for disconnection to end the call
-                        disconnectionButton.setVisibility(View.VISIBLE);
-                        disconnectionButton.setEnabled(true);
                     }
                 });
                 languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -200,31 +194,16 @@ public class VideoChatActivity extends AppCompatActivity {
         requestPermissions();
     }
 
-    // to query the languages for each of the users
-    private void queryLanguages(String userId) throws InterruptedException {
-        String userUrl = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
-        StringRequest userInfoRequest = new StringRequest(Request.Method.GET, userUrl, s -> {
-            try {
-                JSONObject user = new JSONObject(s);
-                JSONArray exploreLanguages = user.getJSONArray("exploreLanguages");
-                for (int i = 0; i < exploreLanguages.length(); i++) {
-                    possibleChatLanguages.add((String) exploreLanguages.get(i));
-                }
+    // UI options to take when the user has been connected to the room
+    private void connectActions() {
+        connectionButton.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
+        connectionButton.setEnabled(false);
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, volleyError -> {
-            Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
-            Log.e("ChatFragment", "user not loading " + volleyError);
-        });
-
-        synchronized (userInfoRequest) {
-            RequestQueue rQueue = Volley.newRequestQueue(this);
-            rQueue.add(userInfoRequest);
-            userInfoRequest.wait(500);
-        }
+        // enable button for disconnection to end the call
+        disconnectionButton.setVisibility(View.VISIBLE);
+        disconnectionButton.setEnabled(true);
     }
+
 
     // steps to be taken to adjust the view when the local participant is disconnected
     private void disconnectActions() {
@@ -272,11 +251,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
         // generate the Twilio room and token with the given chat name and the current user as the first identity
         tokenGenerator = new VideoTokenGenerator(userId, roomName);
-        if (tokenGenerator.token == null) {
-            Log.d(TAG, "Token object not generated");
-        } else {
-            Log.d(TAG, "Token generated");
-        }
+        Log.i(TAG, tokenGenerator.JwtToken);
 
         ConnectOptions.Builder connectOptionsBuilder = new ConnectOptions.Builder(tokenGenerator.JwtToken).roomName(roomName);
         if (localAudioTrack != null) {
@@ -436,6 +411,7 @@ public class VideoChatActivity extends AppCompatActivity {
         return new Room.Listener() {
             @Override
             public void onConnected(Room room) {
+                connectActions();
                 localParticipant = room.getLocalParticipant();
                 localParticipant.publishTrack(localVideoTrack);
                 localParticipant.publishTrack(localAudioTrack);
@@ -453,6 +429,8 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
                 Log.i(TAG, "failure to connect");
+                Log.i(TAG, twilioException.toString());
+                Toast.makeText(VideoChatActivity.this, "Failure to connect", Toast.LENGTH_LONG).show();
                 // send a message to the other user detailing an attempted call
                 sendTextChat("I tried to call you :(");
             }
