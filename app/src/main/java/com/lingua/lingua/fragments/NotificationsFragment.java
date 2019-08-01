@@ -63,7 +63,7 @@ public class NotificationsFragment extends Fragment {
 
         rvNotifications = view.findViewById(R.id.fragment_notifications_rv);
         friendRequests = new ArrayList<>();
-        adapter = new NotificationsAdapter(getContext(), friendRequests);
+        adapter = new NotificationsAdapter(getContext(), friendRequests, currentUser);
         rvNotifications.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvNotifications.setLayoutManager(linearLayoutManager);
@@ -130,7 +130,7 @@ public class NotificationsFragment extends Fragment {
                 String receiverId = object.getString("receiverId");
                 String receiverName = object.getString("receiverName");
                 String timestamp = object.getString("timestamp");
-                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp, id);
+                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp, id, currentUser.getExploreLanguages());
                 friendRequests.add(friendRequest);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {

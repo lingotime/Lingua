@@ -24,6 +24,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.models.FriendRequest;
+import com.lingua.lingua.models.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +42,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     private Context context;
     private List<FriendRequest> friendRequests;
     Firebase reference;
+    private User user;
+
+    // for the explore languages
 
     private ImageView ivProfile;
     private TextView tvMessage, tvName, tvTimestamp, tvDescription;
@@ -52,9 +56,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     private static final int TYPE_RECEIVED_FRIEND_REQUESTS = 1;
     private static final int TYPE_SENT_FRIEND_REQUESTS = 2;
 
-    public NotificationsAdapter(Context context, List<FriendRequest> friendRequests) {
+    public NotificationsAdapter(Context context, List<FriendRequest> friendRequests, User user) {
         this.context = context;
         this.friendRequests = friendRequests;
+        this.user = user;
 
         Firebase.setAndroidContext(context);
         reference = new Firebase("https://lingua-project.firebaseio.com");
@@ -178,6 +183,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         chat.put("lastMessage", friendRequest.getMessage());
         chat.put("lastMessageAt", friendRequest.getTimestamp());
         chat.put("id", chatId);
+
 
         Map<String, String> users = new HashMap<>();
         users.put(friendRequest.getSenderId(), "true");
