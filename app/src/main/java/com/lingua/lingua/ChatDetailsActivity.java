@@ -162,9 +162,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.chat_details_videochat_icon) {
-            // TODO: Implement a way for the user who's learning to be kept track of
-
-            languagesToBeLearned.add("Cultural Exchange");
             Intent intent = new Intent(ChatDetailsActivity.this, VideoChatActivity.class);
             intent.putExtra("languages", languagesToBeLearned);
             // intent to the video chat activity

@@ -161,6 +161,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                             queryLanguages(chatUsers.get(i));
 
                         }
+                        languagesToBeLearned.add("Cultural Exchange");
                         intent.putExtra("languages", languagesToBeLearned);
                         context.startActivity(intent);
                     }
@@ -176,9 +177,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         Chat chat = chats.get(position);
 
                         // creating the dialog for selecting the language of the call
-                        languagesToBeLearned.add("Cultural Exchange");
                         Intent intent = new Intent(context, VideoChatActivity.class);
-                        intent.putExtra("languages", languagesToBeLearned);
                         // intent to the video chat activity
                         intent.putExtra("chatID", chat.getId());
                         intent.putExtra("name", chat.getName());
@@ -187,10 +186,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         ArrayList<String> chatUsers = chat.getUsers();
                         for (int index = 0; index < chatUsers.size(); index++) {
                             String otherUserId = chatUsers.get(index);
+                            queryLanguages(otherUserId);
                             if (otherUserId != userId) {
                                 intent.putExtra("otherUser", otherUserId);
                             }
+
                         }
+                        languagesToBeLearned.add("Cultural Exchange");
+                        intent.putExtra("languages", languagesToBeLearned);
                         context.startActivity(intent);
                     }
                 }
@@ -257,11 +260,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         StringRequest userInfoRequest = new StringRequest(Request.Method.GET, userUrl, s -> {
             try {
                 JSONObject user = new JSONObject(s);
-                Log.i("ChatFragment", "User loaded");
                 JSONArray exploreLanguages = user.getJSONArray("exploreLanguages");
                 for (int i = 0; i < exploreLanguages.length(); i++) {
                     languagesToBeLearned.add((String) exploreLanguages.get(i));
                 }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
