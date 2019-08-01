@@ -124,16 +124,8 @@ public class VideoChatActivity extends AppCompatActivity {
 
 
         // to get all the possible explore languages from the users in the chat
-        if (currentUser.getExploreLanguages() != null) {
-            possibleChatLanguages.addAll(currentUser.getExploreLanguages());
-        }
-        // query the rest of the users in the chat to determine and add all of their explore languages
-        for (int index = 0; index < chatMembers.size(); index ++) {
-            try {
-                queryLanguages(chatMembers.get(index));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (currentChat.getExploreLanguages() != null) {
+            possibleChatLanguages.addAll(currentChat.getExploreLanguages());
         }
         possibleChatLanguages.add("Cultural Exchange");
 
