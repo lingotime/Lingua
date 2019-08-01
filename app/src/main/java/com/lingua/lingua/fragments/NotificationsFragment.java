@@ -1,5 +1,7 @@
 package com.lingua.lingua.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,8 +22,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.MainActivity;
-import com.lingua.lingua.NotificationsAdapter;
 import com.lingua.lingua.R;
+import com.lingua.lingua.adapters.NotificationsAdapter;
 import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 
@@ -43,13 +45,20 @@ public class NotificationsFragment extends Fragment {
     private NotificationsAdapter adapter;
     private List<FriendRequest> friendRequests;
     private SwipeRefreshLayout swipeContainer;
+    private User currentUser;
 
-    User currentUser;
+    String userId;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        SharedPreferences prefs = getContext().getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        userId = prefs.getString("userId", "");
+        Log.d("NotificationsFragment", userId);
+
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
+
         return inflater.inflate(R.layout.fragment_notifications, container, false);
     }
 
@@ -85,9 +94,9 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void queryFriendRequests() {
-        String urlReceived = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/received-friend-requests.json";
+        String urlReceived = "https://lingua-project.firebaseio.com/users/" + userId + "/received-friend-requests.json";
         queryFriendRequests(urlReceived);
-        String urlSent = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/sent-friend-requests.json";
+        String urlSent = "https://lingua-project.firebaseio.com/users/" + userId + "/sent-friend-requests.json";
         queryFriendRequests(urlSent);
     }
 
@@ -102,7 +111,7 @@ public class NotificationsFragment extends Fragment {
                 }
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-                if (url.equals("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/received-friend-requests.json")) {
+                if (url.equals("https://lingua-project.firebaseio.com/users/" + userId + "/received-friend-requests.json")) {
                     Toast.makeText(getContext(), "No new friend requests", Toast.LENGTH_SHORT).show();
                 }
                 swipeContainer.setRefreshing(false);
