@@ -12,7 +12,7 @@ import retrofit2.http.POST;
 public class TwilioFunctionsAPI {
     // The URL below should be the domain for your Twilio Functions, without the trailing slash:
     // Example: https://sturdy-concrete-1234.twil.io
-    public final static String BASE_SERVER_URL = "https://glaucous-frog-6820.twil.io";
+    public final static String BASE_SERVER_URL = "https://manatee-bloodhound-4936.twil.io";
 
     /**
      * A resource defined to register Notify bindings using the Twilio Notify Quickstart Template
