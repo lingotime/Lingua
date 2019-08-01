@@ -11,11 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.firebase.client.Firebase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
+import com.lingua.lingua.fragments.SearchFragment;
 import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
@@ -25,7 +27,7 @@ import org.parceler.Parcels;
 */
 
 public class MainActivity extends AppCompatActivity {
-
+    private User currentUser;
     BottomNavigationView bottomNavigationView;
 
     @Override
@@ -33,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        User currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
+        currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
         Log.i("MainActivity", currentUser.getUserID());
         Log.i("MainActivity", currentUser.getUserName());
 
@@ -55,8 +57,12 @@ public class MainActivity extends AppCompatActivity {
         exploreFragment.setArguments(bundle);
         final Fragment notificationsFragment = new NotificationsFragment();
         notificationsFragment.setArguments(bundle);
+        final Fragment searchFragment = new SearchFragment();
+        searchFragment.setArguments(bundle);
 
         fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
+
+        bottomNavigationView.setSelectedItemId(R.id.explore);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -64,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.explore:
                         fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
+                        return true;
+                    case R.id.search:
+                        fragmentManager.beginTransaction().replace(R.id.flContainer, searchFragment).commit();
                         return true;
                     case R.id.chat:
                         fragmentManager.beginTransaction().replace(R.id.flContainer, chatFragment).commit();
@@ -79,5 +88,36 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // mark user as live
+        currentUser.setOnline(true);
+
+        // save update
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // mark user as live
+        currentUser.setOnline(true);
+
+        // save update
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // mark user as dead
+        currentUser.setOnline(false);
+
+        // save update
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
     }
 }

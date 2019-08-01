@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
@@ -92,57 +91,43 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         sendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // process send friend request ... Marta's code
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-                final View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
-                dialogBuilder.setView(dialogView);
+                // ensure current card number is associated with a card
+                if (position != RecyclerView.NO_POSITION) {
+                    // get user associated with current card number
+                    User clickedUser = usersList.get(position);
 
-                dialogBuilder.setTitle("Send friend request to " + user.getUserName());
-                dialogBuilder.setMessage("Say hi and tell " + user.getUserName() + " a little about yourself!");
-                dialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText editText = dialogView.findViewById(R.id.dialog_friend_request_et);
-                        String message = editText.getText().toString();
-                        if (!message.equals("")) {
-                            sendFriendRequest(message, user.getUserID(), user.getUserName());
-                        } else {
-                            Toast.makeText(context, "Can't send a friend request without any text, say hi!", Toast.LENGTH_LONG).show();
+                    // create a confirm dialog with an optional message field
+                    View confirmDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
+                    EditText confirmDialogMessageField = confirmDialogView.findViewById(R.id.dialog_friend_request_et);
+
+                    // build the confirm dialog
+                    AlertDialog.Builder confirmDialogBuilder = new AlertDialog.Builder(context);
+                    confirmDialogBuilder.setView(confirmDialogView);
+                    confirmDialogBuilder.setTitle("Confirm Friend Request to " + clickedUser.getUserName());
+                    confirmDialogBuilder.setMessage("Send a message with your friend request.");
+                    confirmDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String friendRequestMessage = confirmDialogMessageField.getText().toString();
+
+                            if (!friendRequestMessage.equals("")) {
+                                sendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
+                            }
+
+                            dialogInterface.cancel();
                         }
-                    }
-                });
-                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.d("ExploreAdapter", "Cancelled friend request");
-                    }
-                });
-                AlertDialog dialog = dialogBuilder.create();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
+                    });
+                    confirmDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
 
-                // add user to sent friend request user list
-                if (currentUser.getPendingSentFriendRequests() == null) {
-                    currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(usersList.get(position).getUserID())));
-                } else {
-                    currentUser.getPendingSentFriendRequests().add(usersList.get(position).getUserID());
+                    // display the confirm dialog
+                    AlertDialog confirmDialog = confirmDialogBuilder.create();
+                    confirmDialog.show();
                 }
-
-                // save updated sent friend request user list to database
-                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
-
-                // remove user from displayed user list
-                usersList.remove(position);
-
-                // check if there are more users to load
-                if (!hiddenUsersList.isEmpty()) {
-                    usersList.add(hiddenUsersList.get(0));
-                    hiddenUsersList.remove(0);
-                }
-
-                // notify adapter of changes in data
-                notifyDataSetChanged();
             }
         });
 
@@ -181,30 +166,69 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         return usersList.size();
     }
 
-    private void sendFriendRequest(String message, String receiverId, String receiverName) {
+    private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage, int position) {
+        // ensure clicked user did not send friend request to current user while current user was typing
+        if (currentUser.getPendingReceivedFriendRequests() != null) {
+            for (String pendingReceivedFriendRequest : currentUser.getPendingReceivedFriendRequests()) {
+                if (pendingReceivedFriendRequest.equals(clickedUser.getUserID())) {
+                    Toast.makeText(context, "You already received a friend request from this user.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        }
 
         Firebase.setAndroidContext(context);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
 
-        // save friend request
+        // add clicked user to current user's sent friend request user list...Fausto's way
+        if (currentUser.getPendingSentFriendRequests() == null) {
+            currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(clickedUser.getUserID())));
+        } else {
+            currentUser.getPendingSentFriendRequests().add(clickedUser.getUserID());
+        }
+
+        // add current user to clicked user's received friend request user list...Fausto's way
+        if (clickedUser.getPendingReceivedFriendRequests() == null) {
+            clickedUser.setPendingReceivedFriendRequests(new ArrayList<String>(Arrays.asList(currentUser.getUserID())));
+        } else {
+            clickedUser.getPendingReceivedFriendRequests().add(currentUser.getUserID());
+        }
+
+        // save new friend request data to database...Fausto's way
+        reference.child("users").child(currentUser.getUserID()).setValue(currentUser);
+        reference.child("users").child(clickedUser.getUserID()).setValue(clickedUser);
+
+        // save friend request...Marta's way
         String friendRequestId = reference.child("friend-requests").push().getKey();
 
         Map<String, String> map = new HashMap<>();
-        map.put("message", message);
+        map.put("message", friendRequestMessage);
         map.put("senderId", currentUser.getUserID());
-        map.put("receiverId", receiverId);
-        map.put("receiverName", receiverName);
+        map.put("receiverId", clickedUser.getUserID());
+        map.put("receiverName", clickedUser.getUserName());
         map.put("senderName", currentUser.getUserName());
         map.put("timestamp", new Date().toString());
         map.put("id", friendRequestId);
 
         reference.child("friend-requests").child(friendRequestId).setValue(map);
 
-        // save friend request reference in user objects
+        // save friend request reference in user objects...Marta's way
         reference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
-        reference.child("users").child(receiverId).child("received-friend-requests").child(friendRequestId).setValue(true);
+        reference.child("users").child(clickedUser.getUserID()).child("received-friend-requests").child(friendRequestId).setValue(true);
 
         Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();
+
+        // remove user from displayed user list
+        usersList.remove(position);
+
+        // check if there are more users to load
+        if (!hiddenUsersList.isEmpty()) {
+            usersList.add(hiddenUsersList.get(0));
+            hiddenUsersList.remove(0);
+        }
+
+        // notify adapter of changes in data
+        notifyDataSetChanged();
     }
 
     private int getAge(String birthDateString) {
