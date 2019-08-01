@@ -6,6 +6,7 @@ import org.parceler.Parcel;
 public class FriendRequest {
     String friendRequestID;
     String friendRequestStatus;
+    String friendRequestMessage;
     String senderUser;
     String receiverUser;
     String createdTime;
@@ -27,6 +28,14 @@ public class FriendRequest {
 
     public void setFriendRequestStatus(String friendRequestStatus) {
         this.friendRequestStatus = friendRequestStatus;
+    }
+
+    public String getFriendRequestMessage() {
+        return friendRequestMessage;
+    }
+
+    public void setFriendRequestMessage(String friendRequestMessage) {
+        this.friendRequestMessage = friendRequestMessage;
     }
 
     public String getSenderUser() {

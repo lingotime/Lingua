@@ -1,35 +1,48 @@
 package com.lingua.lingua.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.lingua.lingua.adapters.ConnectAdapter;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 import com.lingua.lingua.R;
+import com.lingua.lingua.adapters.ConnectAdapter;
 import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
-
+import com.lingua.lingua.supports.EndlessRecyclerViewScrollListener;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.parceler.Parcels;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
-/*
-Fragment that displays pending friend requests, and possibly in the future also missed calls.
-*/
+/* FINALIZED, DOCUMENTED, and TESTED ConnectFragment displays pending sent and received friend request notifications. */
 
 public class ConnectFragment extends Fragment {
+    private User currentUser;
 
-    RecyclerView rvNotifications;
-    private ConnectAdapter adapter;
-    private List<FriendRequest> friendRequests;
-    private SwipeRefreshLayout swipeContainer;
+    ArrayList<FriendRequest> friendRequestsList;
+    ArrayList<FriendRequest> hiddenFriendRequestsList;
+    ConnectAdapter friendRequestsAdapter;
+
+    private EndlessRecyclerViewScrollListener scrollListener;
+    private TextView descriptionText;
+    private RecyclerView historyTimeline;
+
+    private static final int NUMBER_OF_FRIEND_REQUESTS_PER_LOAD = 6;
 
     @Nullable
     @Override
@@ -41,32 +54,120 @@ public class ConnectFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvNotifications = view.findViewById(R.id.fragment_connect_history_timeline);
-        friendRequests = new ArrayList<>();
+        // associate views with java variables
+        descriptionText = view.findViewById(R.id.fragment_connect_description_text);
+        historyTimeline = view.findViewById(R.id.fragment_connect_history_timeline);
 
-        //FriendRequest friendRequest = new FriendRequest("hi girl! let's connect", new User("Cristina"), new User("Marta"));
+        // unwrap the current user
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
-        for (int i = 0; i < 10; i++) {
-            //friendRequests.add(friendRequest);
-        }
+        // initialize the list of friend requests
+        friendRequestsList = new ArrayList<FriendRequest>();
+        hiddenFriendRequestsList = new ArrayList<FriendRequest>();
 
-        adapter = new ConnectAdapter(getContext(), friendRequests);
-        rvNotifications.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        rvNotifications.setLayoutManager(linearLayoutManager);
+        // set the adapter
+        friendRequestsAdapter = new ConnectAdapter(getContext(), friendRequestsList, hiddenFriendRequestsList, currentUser);
+        historyTimeline.setAdapter(friendRequestsAdapter);
 
-        swipeContainer = view.findViewById(R.id.fragment_chat_swipe_container);
-        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        // set the layout
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+
+        // prepare the endless scroll listener
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
-            public void onRefresh() {
-                // adapter.clear();
-                // TODO: load users
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                if (!hiddenFriendRequestsList.isEmpty()) {
+                    if (hiddenFriendRequestsList.size() > NUMBER_OF_FRIEND_REQUESTS_PER_LOAD) {
+                        friendRequestsList.addAll(hiddenFriendRequestsList.subList(0, NUMBER_OF_FRIEND_REQUESTS_PER_LOAD));
+                        hiddenFriendRequestsList.removeAll(hiddenFriendRequestsList.subList(0, NUMBER_OF_FRIEND_REQUESTS_PER_LOAD));
+                    } else {
+                        friendRequestsList.addAll(hiddenFriendRequestsList);
+                        hiddenFriendRequestsList.clear();
+                    }
+
+                    friendRequestsAdapter.notifyDataSetChanged();
+                }
+            }
+        };
+        historyTimeline.addOnScrollListener(scrollListener);
+
+        // display timeline
+        historyTimeline.setLayoutManager(layoutManager);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // clear the friend request lists
+        friendRequestsList.clear();
+        hiddenFriendRequestsList.clear();
+        friendRequestsAdapter.notifyDataSetChanged();
+
+        // reset the scroll listener
+        scrollListener.resetState();
+
+        // fetch friend requests and load them into timeline
+        fetchCompatibleFriendRequestsAndLoad(currentUser);
+    }
+
+    private void fetchCompatibleFriendRequestsAndLoad(User currentUser) {
+        // get criteria for friend requests to be loaded into timeline
+        String currentUserID = currentUser.getUserID();
+
+        String databaseURL = "https://lingua-project.firebaseio.com/friend-requests.json";
+
+        // fetch friend requests from database
+        StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject friendRequestsJSONObject = new JSONObject(response);
+                    Iterator<String> friendRequestsJSONObjectKeys = friendRequestsJSONObject.keys();
+                    int friendRequestsJSONObjectCounter = 0;
+
+                    // iterate through friend requests in the database
+                    while (friendRequestsJSONObjectKeys.hasNext()) {
+                        String friendRequestID = friendRequestsJSONObjectKeys.next();
+                        JSONObject friendRequestJSONObject = friendRequestsJSONObject.getJSONObject(friendRequestID);
+
+                        // convert JSONObject information to friend request
+                        Gson gson = new Gson();
+                        FriendRequest generatedFriendRequest = gson.fromJson(friendRequestJSONObject.toString(), FriendRequest.class);
+
+                        // get relevant information from friend request for matching
+                        String status = generatedFriendRequest.getFriendRequestStatus();
+                        String senderUserID = generatedFriendRequest.getSenderUser();
+                        String receiverUserID = generatedFriendRequest.getReceiverUser();
+
+                        // filter friend request depending on criteria
+                        if ((senderUserID.equals(currentUserID) || receiverUserID.equals(currentUserID)) && (status.equals("Pending") || status.equals("Accepted"))) {
+                            if (friendRequestsJSONObjectCounter < NUMBER_OF_FRIEND_REQUESTS_PER_LOAD) {
+                                // add to the list of friend requests
+                                friendRequestsList.add(generatedFriendRequest);
+
+                                // increment the friend request limiter
+                                friendRequestsJSONObjectCounter++;
+                            } else {
+                                // add to the hidden list of friend requests
+                                hiddenFriendRequestsList.add(generatedFriendRequest);
+                            }
+                        }
+                    }
+
+                    friendRequestsAdapter.notifyDataSetChanged();
+                } catch (JSONException exception) {
+                    Log.e("ConnectFragment", "firebase:onException", exception);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("ConnectFragment", "firebase:onError", error);
             }
         });
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+
+        RequestQueue databaseRequestQueue = Volley.newRequestQueue(getContext());
+        databaseRequestQueue.add(databaseRequest);
     }
 }

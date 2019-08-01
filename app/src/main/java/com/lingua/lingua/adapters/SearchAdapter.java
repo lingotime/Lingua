@@ -181,19 +181,23 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 clickedUser.getPendingReceivedFriendRequests().add(currentUser.getUserID());
             }
 
+            // create a new database reference
+            Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
+
             // create a new friend request object
             FriendRequest friendRequest = new FriendRequest();
+            friendRequest.setFriendRequestID(databaseReference.child("friend-requests").push().getKey());
             friendRequest.setFriendRequestStatus("Pending");
+            friendRequest.setFriendRequestMessage(friendRequestMessage);
             friendRequest.setSenderUser(currentUser.getUserID());
             friendRequest.setReceiverUser(clickedUser.getUserID());
             friendRequest.setCreatedTime((new Date()).toString());
             friendRequest.setRespondedTime("Not Responded");
 
             // save new friend request data to database
-            Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
             databaseReference.child("users").child(currentUser.getUserID()).setValue(currentUser);
             databaseReference.child("users").child(clickedUser.getUserID()).setValue(clickedUser);
-            databaseReference.child("friend-requests").child(databaseReference.child("friend-requests").push().getKey()).setValue(friendRequest);
+            databaseReference.child("friend-requests").child(friendRequest.getFriendRequestID()).setValue(friendRequest);
 
             // remove user from displayed user list
             usersList.remove(position);
