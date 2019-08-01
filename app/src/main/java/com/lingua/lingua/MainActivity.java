@@ -16,15 +16,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.legacy.content.WakefulBroadcastReceiver;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-<<<<<<< HEAD
-import com.google.firebase.messaging.FirebaseMessaging;
-=======
->>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
 import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
@@ -34,11 +26,8 @@ import com.lingua.lingua.notifyAPI.BindingIntentService;
 
 import org.parceler.Parcels;
 
-<<<<<<< HEAD
 import static com.lingua.lingua.notifyAPI.BindingSharedPreferences.IDENTITY;
 
-=======
->>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
 /**
 * Main Activity with bottom navigation bar that handles switching between fragments
 */
@@ -68,42 +57,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-<<<<<<< HEAD
-        // re-enable FCM for push notifications
-        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
-
         currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
         Log.i("MainActivity", currentUser.getUserID());
         Log.i("MainActivity", currentUser.getUserName());
-=======
+
         User currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
->>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
 
         SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         prefs.edit().putString("userId", currentUser.getUserID()).apply();
         prefs.edit().putString("userName", currentUser.getUserName()).apply();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-
-        // retrieving the device token so that the notifications can be sent to the local user
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
-                            return;
-                        }
-
-                        // Get new Instance ID token
-                        String deviceToken = task.getResult().getToken();
-                        // TODO: Implement pushing this device token to the current user's object in the database
-
-                        // Log and toast
-                        String msg = "Device token retrieved";
-                        Log.d(TAG, msg + deviceToken);
-                    }
-                });
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", Parcels.wrap(currentUser));
@@ -148,8 +112,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-<<<<<<< HEAD
-        // create a binding for push notifications
         registerBinding();
 
         bindingBroadcastReceiver = new WakefulBroadcastReceiver() {
@@ -195,25 +157,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return true;
-=======
-        // get token for FCM (Firebase Cloud Messaging) notifications
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w("MainActivity", "getInstanceId failed", task.getException());
-                            return;
-                        }
-
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
-
-                        // Log and toast
-                        String msg = "InstanceID Token: " + token;
-                        Log.d("MainActivity", msg);
-                    }
-                });
->>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
     }
 }
