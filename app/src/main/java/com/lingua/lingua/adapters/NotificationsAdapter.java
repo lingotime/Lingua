@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -23,6 +23,8 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.lingua.lingua.DateUtil;
+import com.lingua.lingua.R;
 import com.lingua.lingua.models.FriendRequest;
 
 import org.json.JSONException;
@@ -48,7 +50,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     String userId;
 
-    private static final int TYPE_HEADER = 0;
     private static final int TYPE_RECEIVED_FRIEND_REQUESTS = 1;
     private static final int TYPE_SENT_FRIEND_REQUESTS = 2;
 
@@ -98,14 +99,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 @Override
                 public void onClick(View view) {
                     acceptFriendRequest(friendRequest);
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                 }
             });
 
             rejectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                     Toast.makeText(context, "Friend request rejected", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -119,7 +120,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                     Toast.makeText(context, "Friend request deleted", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -158,7 +159,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
     }
 
-    public void deleteFriendRequest(FriendRequest friendRequest, int position) {
+    public void deleteFriendRequest(FriendRequest friendRequest) {
         //delete from friend-requests
         reference.child("friend-requests").child(friendRequest.getId()).removeValue();;
 
@@ -166,8 +167,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("users").child(friendRequest.getSenderId()).child("sent-friend-requests").child(friendRequest.getId()).removeValue();
         reference.child("users").child(friendRequest.getReceiverId()).child("received-friend-requests").child(friendRequest.getId()).removeValue();
 
-        friendRequests.remove(position);
-        notifyItemRemoved(position);
+        friendRequests.remove(friendRequest);
+        notifyDataSetChanged();
     }
 
     public void acceptFriendRequest(FriendRequest friendRequest) {

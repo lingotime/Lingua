@@ -147,6 +147,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 if (currentUser.isComplete()) {
                     final Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
                     intent.putExtra("user", Parcels.wrap(currentUser));
+                    intent.putExtra("fragment", "profile");
                     startActivity(intent);
                 }
             }
