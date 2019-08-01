@@ -50,7 +50,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     String userId;
 
-    private static final int TYPE_HEADER = 0;
     private static final int TYPE_RECEIVED_FRIEND_REQUESTS = 1;
     private static final int TYPE_SENT_FRIEND_REQUESTS = 2;
 

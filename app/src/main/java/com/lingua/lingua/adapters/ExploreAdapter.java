@@ -115,7 +115,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                         EditText editText = dialogView.findViewById(R.id.dialog_friend_request_et);
                         String message = editText.getText().toString();
                         if (!message.equals("")) {
-                            sendFriendRequest(message, user.getUserID(), user.getUserName());
+                            sendFriendRequest(message, user.getUserID(), user.getUserName(), position);
                         } else {
                             Toast.makeText(context, "Can't send a friend request without any text, say hi!", Toast.LENGTH_LONG).show();
                         }
@@ -130,29 +130,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 AlertDialog dialog = dialogBuilder.create();
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.show();
-
-                // add user to sent friend request user list
-                if (currentUser.getPendingSentFriendRequests() == null) {
-                    currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(usersList.get(position).getUserID())));
-                } else {
-                    currentUser.getPendingSentFriendRequests().add(usersList.get(position).getUserID());
-                }
-
-                // save updated sent friend request user list to database
-                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
-
-                // remove user from displayed user list
-                usersList.remove(position);
-
-                // check if there are more users to load
-                if (!hiddenUsersList.isEmpty()) {
-                    usersList.add(hiddenUsersList.get(0));
-                    hiddenUsersList.remove(0);
-                }
-
-                // notify adapter of changes in data
-                notifyDataSetChanged();
             }
         });
 
@@ -191,7 +168,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         return usersList.size();
     }
 
-    private void sendFriendRequest(String message, String receiverId, String receiverName) {
+    private void sendFriendRequest(String message, String receiverId, String receiverName, int position) {
 
         Firebase.setAndroidContext(context);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
@@ -216,6 +193,11 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
         // send notification to other user
         sendFriendRequestNotification(receiverId);
+
+        // remove user from explore page
+        // TODO: add listener so this user's card is also removed from the other user's explore page
+        usersList.remove(position);
+        notifyDataSetChanged();
 
         Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();
     }
