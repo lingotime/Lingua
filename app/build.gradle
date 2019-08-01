@@ -93,13 +93,19 @@ dependencies {
 
     implementation 'androidx.palette:palette:1.0.0'
 
+    // Firebase support
     implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-messaging:18.0.0'
 
     implementation 'com.google.firebase:firebase-auth:18.1.0'
     implementation 'com.google.firebase:firebase-database:18.0.1'
 
     implementation 'com.firebase:firebase-client-android:2.5.2'
+<<<<<<< HEAD
     implementation 'com.android.volley:volley:1.1.1'
+=======
+    implementation 'com.android.volley:volley:1.1.0'
+>>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
 
     // Facebook support
     implementation 'com.facebook.android:facebook-login:5.1.1'
@@ -123,6 +129,7 @@ dependencies {
     implementation "com.koushikdutta.ion:ion:2.1.7"
 
     // Other support
+<<<<<<< HEAD
     implementation 'com.google.firebase:firebase-storage:18.1.1'
     implementation 'com.google.code.gson:gson:2.8.5'
 
@@ -137,6 +144,10 @@ dependencies {
     api 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
     api 'com.squareup.retrofit2:converter-jackson:2.0.0-beta4'
     implementation group: "com.twilio.sdk", name: "twilio", version: "7.40.1"
+=======
+    implementation 'com.google.firebase:firebase-storage:18.0.0'
+    implementation 'com.google.code.gson:gson:2.2.4'
+>>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
 
 }
 

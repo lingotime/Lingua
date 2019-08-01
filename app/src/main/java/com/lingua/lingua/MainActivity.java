@@ -21,7 +21,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+<<<<<<< HEAD
 import com.google.firebase.messaging.FirebaseMessaging;
+=======
+>>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
 import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
@@ -31,8 +34,11 @@ import com.lingua.lingua.notifyAPI.BindingIntentService;
 
 import org.parceler.Parcels;
 
+<<<<<<< HEAD
 import static com.lingua.lingua.notifyAPI.BindingSharedPreferences.IDENTITY;
 
+=======
+>>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
 /**
 * Main Activity with bottom navigation bar that handles switching between fragments
 */
@@ -62,12 +68,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+<<<<<<< HEAD
         // re-enable FCM for push notifications
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
 
         currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
         Log.i("MainActivity", currentUser.getUserID());
         Log.i("MainActivity", currentUser.getUserName());
+=======
+        User currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
+>>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
 
         SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         prefs.edit().putString("userId", currentUser.getUserID()).apply();
@@ -138,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+<<<<<<< HEAD
         // create a binding for push notifications
         registerBinding();
 
@@ -184,5 +195,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return true;
+=======
+        // get token for FCM (Firebase Cloud Messaging) notifications
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("MainActivity", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        String msg = "InstanceID Token: " + token;
+                        Log.d("MainActivity", msg);
+                    }
+                });
+>>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
     }
 }

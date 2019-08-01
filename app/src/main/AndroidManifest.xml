@@ -5,11 +5,17 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+=======
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+>>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
 
     <application
         android:allowBackup="true"
@@ -20,6 +26,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
+<<<<<<< HEAD
 
         <!-- [START fcm_listener] -->
         <service android:name=".fcm.NotifyFirebaseMessagingService">
@@ -50,6 +57,16 @@
             android:name=".ProfileCreationActivity"
             android:windowSoftInputMode="adjustResize" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
         <activity android:name=".MainActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+=======
+        <activity android:name=".VideoChatActivity" />
+        <activity android:name=".ProfilePicture" />
+
+        <activity
+            android:name=".ProfileCreationActivity"
+            android:windowSoftInputMode="adjustResize">
+        </activity> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+
+>>>>>>> 166537230c7481a45a5d1d958140b3640a0f7684
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -72,6 +89,23 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimary" />
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
