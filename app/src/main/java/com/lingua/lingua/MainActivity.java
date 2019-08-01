@@ -1,6 +1,8 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.legacy.content.WakefulBroadcastReceiver;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,8 +30,11 @@ import com.lingua.lingua.fragments.NotificationsFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
 import com.lingua.lingua.fragments.SearchFragment;
 import com.lingua.lingua.models.User;
+import com.lingua.lingua.notifyAPI.BindingIntentService;
 
 import org.parceler.Parcels;
+
+import static com.lingua.lingua.notifyAPI.BindingSharedPreferences.IDENTITY;
 
 /**
  * Main Activity with bottom navigation bar that handles switching between fragments

@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -18,7 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.lingua.lingua.CountryInformation;
+import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
+import com.lingua.lingua.notifyAPI.Notification;
+import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Period;
@@ -29,6 +34,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
 
 /**
  RecyclerView Adapter that adapts User objects to the viewholders in the recyclerview
@@ -217,7 +224,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         reference.child("users").child(clickedUser.getUserID()).child("received-friend-requests").child(friendRequestId).setValue(true);
 
         // send notification to other user
-        sendFriendRequestNotification(receiverId);
+        sendFriendRequestNotification(clickedUser.getUserID());
 
         Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();
 
