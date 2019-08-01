@@ -195,7 +195,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         sendFriendRequestNotification(receiverId);
 
         // remove user from explore page
-        // TODO: add listener so this user's card is also removed from the other user's explore page
+        // TODO: add event listener so this user's card is also removed from the other user's explore page
         usersList.remove(position);
         notifyDataSetChanged();
 

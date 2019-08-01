@@ -160,7 +160,7 @@ public class ExploreFragment extends Fragment {
 
     // ensure there is a language or country match between user and displayed user
     private boolean matchExists(ArrayList<String> exploreLanguages, ArrayList<String> exploreCountries, ArrayList<String> knownLanguages, String originCountry) {
-        if (exploreLanguages.size() == 0 && exploreCountries.size() == 0) {
+        if (exploreLanguages == null && exploreCountries == null) {
             return true;
         }
 

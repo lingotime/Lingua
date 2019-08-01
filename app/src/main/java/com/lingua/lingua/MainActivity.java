@@ -107,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
         if (fragmentToLoad != null && fragmentToLoad.equals("profile")) {
             fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.profile);
+        } else if (fragmentToLoad != null && fragmentToLoad.equals("notifications")) {
+            fragmentManager.beginTransaction().replace(R.id.flContainer, notificationsFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.notifications);
         } else {
             fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
         }

@@ -99,14 +99,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 @Override
                 public void onClick(View view) {
                     acceptFriendRequest(friendRequest);
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                 }
             });
 
             rejectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                     Toast.makeText(context, "Friend request rejected", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -120,7 +120,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                     Toast.makeText(context, "Friend request deleted", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -159,7 +159,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
     }
 
-    public void deleteFriendRequest(FriendRequest friendRequest, int position) {
+    public void deleteFriendRequest(FriendRequest friendRequest) {
         //delete from friend-requests
         reference.child("friend-requests").child(friendRequest.getId()).removeValue();;
 
@@ -167,8 +167,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("users").child(friendRequest.getSenderId()).child("sent-friend-requests").child(friendRequest.getId()).removeValue();
         reference.child("users").child(friendRequest.getReceiverId()).child("received-friend-requests").child(friendRequest.getId()).removeValue();
 
-        friendRequests.remove(position);
-        notifyItemRemoved(position);
+        friendRequests.remove(friendRequest);
+        notifyDataSetChanged();
     }
 
     public void acceptFriendRequest(FriendRequest friendRequest) {

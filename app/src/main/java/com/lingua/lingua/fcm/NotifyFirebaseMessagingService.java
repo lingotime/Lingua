@@ -72,6 +72,7 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
     private void showNotification(String title, String message) {
 
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("fragment", "notifications");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
