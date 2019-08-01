@@ -103,7 +103,13 @@ public class MainActivity extends AppCompatActivity {
         exploreFragment.setArguments(bundle);
         notificationsFragment.setArguments(bundle);
 
-        fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
+        String fragmentToLoad = getIntent().getStringExtra("fragment");
+        if (fragmentToLoad != null && fragmentToLoad.equals("profile")) {
+            fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.profile);
+        } else {
+            fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
+        }
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
