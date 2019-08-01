@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +14,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.firebase.client.Firebase;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
@@ -23,17 +30,28 @@ import com.lingua.lingua.models.User;
 import org.parceler.Parcels;
 
 /**
-* Main Activity with bottom navigation bar that handles switching between fragments
-*/
+ * Main Activity with bottom navigation bar that handles switching between fragments
+ */
 
 public class MainActivity extends AppCompatActivity {
     private User currentUser;
     BottomNavigationView bottomNavigationView;
+    private static final String TAG = "MainActivity";
+    final FragmentManager fragmentManager = getSupportFragmentManager();
+    final Fragment profileFragment = new ProfileFragment();
+    final Fragment searchFragment = new SearchFragment();
+    final Fragment chatFragment = new ChatFragment();
+    final Fragment exploreFragment = new ExploreFragment();
+    final Fragment notificationsFragment = new NotificationsFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // re-enable FCM for push notifications
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+
 
         currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
         Log.i("MainActivity", currentUser.getUserID());
@@ -45,20 +63,35 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
+        // retrieving the device token so that the notifications can be sent to the local user
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String deviceToken = task.getResult().getToken();
+                        // TODO: Implement pushing this device token to the current user's object in the database
+
+                        // Log and toast
+                        String msg = "Device token retrieved";
+                        Log.d(TAG, msg + deviceToken);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", Parcels.wrap(currentUser));
 
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-        final Fragment profileFragment = new ProfileFragment();
         profileFragment.setArguments(bundle);
-        final Fragment chatFragment = new ChatFragment();
-        chatFragment.setArguments(bundle);
-        final Fragment exploreFragment = new ExploreFragment();
-        exploreFragment.setArguments(bundle);
-        final Fragment notificationsFragment = new NotificationsFragment();
-        notificationsFragment.setArguments(bundle);
-        final Fragment searchFragment = new SearchFragment();
         searchFragment.setArguments(bundle);
+        chatFragment.setArguments(bundle);
+        exploreFragment.setArguments(bundle);
+        notificationsFragment.setArguments(bundle);
 
         fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
 
@@ -95,6 +128,21 @@ public class MainActivity extends AppCompatActivity {
         // save update
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // display the right toolbar for each fragment
+        if (chatFragment != null && chatFragment.isVisible()) {
+            // Inflate the menu; this adds items to the toolbar if it is present.
+            getMenuInflater().inflate(R.menu.menu_chat_fragment, menu);
+        } else if (profileFragment != null && profileFragment.isVisible()) {
+            getMenuInflater().inflate(R.menu.menu_profile_fragment, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.menu_main, menu);
+        }
+
+        return true;
     }
 
     @Override

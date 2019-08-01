@@ -2,20 +2,18 @@ package com.lingua.lingua;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Camera;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.client.Firebase;
-import com.lingua.lingua.models.Chat;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
 import com.twilio.video.H264Codec;
@@ -33,22 +31,24 @@ import com.twilio.video.Room;
 import com.twilio.video.TwilioException;
 import com.twilio.video.Video;
 import com.twilio.video.VideoCodec;
+import com.twilio.video.VideoTrack;
 import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
-import com.twilio.video.Vp9Codec;
 
-import org.parceler.Parcels;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
 
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+
 
 /**
  * Chat used to generate the video chat rooms and tokens for 2 different users, at the moment. Multiway and monitoring will soon be enabled
@@ -57,17 +57,16 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class VideoChatActivity extends AppCompatActivity {
 
     private VideoTokenGenerator tokenGenerator;
-    private VideoTokenGenerator secondTokenGenerator; // for the second user in the chat
     private Room room;
     private LocalAudioTrack localAudioTrack;
     private LocalVideoTrack localVideoTrack;
     private CameraCapturer cameraCapturer;
     private VideoView remoteVideoView;
     private VideoView localVideoView;
-    private List<RemoteParticipant> remoteParticipants;
     private LocalParticipant localParticipant;
     private static final int RC_VIDEO_APP_PERM = 124;
-    private ImageButton disconnect;
+    private ImageButton connectionButton;
+    private ImageButton disconnectionButton;
     private final static String TAG = "VideoChatActivity";
     // just for the initial test
     private VideoCodec videoCodec;
@@ -78,7 +77,6 @@ public class VideoChatActivity extends AppCompatActivity {
     private String receiverId; // id of the second user in the chat
     private String videoChatLanguage;
     private Firebase reference;
-
 
 
 
@@ -105,19 +103,49 @@ public class VideoChatActivity extends AppCompatActivity {
 
         localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
-        disconnect = (ImageButton) findViewById(R.id.activity_video_chat_end_call);
+        connectionButton = (ImageButton) findViewById(R.id.activity_video_chat_connect);
+        disconnectionButton = (ImageButton) findViewById(R.id.activity_video_chat_disconnect);
 
-        disconnect.setOnClickListener(new View.OnClickListener() {
+
+        connectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                room.disconnect();
-                // launch intent to return to go to the ChatDetailsActivity
-                Intent intent = new Intent(VideoChatActivity.this, ChatDetailsActivity.class);
-                startActivity(intent);
+
+                Log.d(TAG, "Starting connection");
+                Log.d(TAG, chatId);
+                connectToRoom(chatId);
+                connectionButton.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
+                connectionButton.setEnabled(false);
             }
         });
-        // receive an intent with the conversation object with the 2 users for this call,
 
+
+        disconnectionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (room != null) {
+                    room.disconnect();
+                    moveLocalVideoToMainView();
+                    connectionButton.setVisibility(View.VISIBLE);
+                    connectionButton.setEnabled(true);
+                }
+            }
+        });
+
+        Log.i(TAG, "Inflated the layout for video activity");
+        requestPermissions();
+    }
+
+    // generates a random string for the room name
+    private String randomString() {
+        byte[] array = new byte[7]; // length is bounded by 7
+        new Random().nextBytes(array);
+        String generatedString = new String(array, Charset.forName("UTF-8"));
+        return generatedString;
+    }
+
+    private void connectToRoom(String roomName) {
 
         // generate the Twilio room and token with the given chat name and the current user as the first identity
         tokenGenerator = new VideoTokenGenerator(userId, roomName);
@@ -127,206 +155,18 @@ public class VideoChatActivity extends AppCompatActivity {
             Log.d(TAG, "Token generated");
         }
 
-        Log.i(TAG, "Inflated the layout for video activity");
-        requestPermissions();
-    }
+        ConnectOptions.Builder connectOptionsBuilder = new ConnectOptions.Builder(tokenGenerator.JwtToken).roomName(roomName);
+        if (localAudioTrack != null) {
+            connectOptionsBuilder
+                    .audioTracks(Collections.singletonList(localAudioTrack));
+        }
+        if (localVideoTrack != null) {
+            connectOptionsBuilder.videoTracks(Collections.singletonList(localVideoTrack));
+        }
+        connectOptionsBuilder.preferVideoCodecs(Collections.singletonList(videoCodec));
+        connectOptionsBuilder.enableAutomaticSubscription(true);
 
-    public void connectToRoom(String roomName, VideoTokenGenerator tokenGenerator) {
-
-        //Check if H.264 is supported in this device
-        boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
-                MediaCodecVideoEncoder.isH264HwSupported();
-
-        // Prefer H264 if it is hardware available for encoding and decoding
-        videoCodec = isH264Supported ? (new H264Codec()) : (new Vp9Codec());
-        Log.i(TAG, "The video codec has been set");
-        Log.i(TAG, "The access token: " + tokenGenerator.token + " for " + username + " in the room " + roomName);
-
-
-        ConnectOptions connectOptions = new ConnectOptions.Builder(tokenGenerator.JwtToken)
-                .roomName(roomName)
-                .audioTracks(Collections.singletonList(localAudioTrack))
-                .videoTracks(Collections.singletonList(localVideoTrack))
-                .preferVideoCodecs(Collections.singletonList(videoCodec))
-                .build();
-        Log.i(TAG, "Connection options generated");
-        room = Video.connect(this, connectOptions, new Room.Listener() {
-            @Override
-            public void onConnected(Room room) {
-                Log.i(TAG, "Connected to " + room.getName());
-
-                // send a message to the other user to notify them of the creation of the room
-                sendTextChat("Video chat with me!");
-
-
-                // check if the user already has a participant - then fix the rendering of the video tracks
-                if (room.getRemoteParticipants().size() > 0) {
-                    // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
-                    moveLocalVideoToSmallView();
-
-                    remoteVideoView.setMirror(false);
-                    // for now, only allows for 2 people in the room and allows for them to alter their views from the main screen to the one toggled to the bottom left
-                    RemoteVideoTrackPublication remoteVideoTrackPublication = room.getRemoteParticipants().get(0).getRemoteVideoTracks().get(0);
-                    // only render tracks to which the local participant is subscribed
-                    if (remoteVideoTrackPublication.isTrackSubscribed()) {
-                        remoteVideoTrackPublication.getRemoteVideoTrack().addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
-                    }
-                }
-            }
-
-            @Override
-            public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
-                Log.i(TAG, "failure to connect");
-
-                // send a message to the other user detailing an attempted call
-                sendTextChat("I tried to call you :(");
-            }
-
-            @Override
-            public void onReconnecting(@NonNull Room room, @NonNull TwilioException twilioException) {
-                Log.i(TAG, "reconnecting");
-            }
-
-            @Override
-            public void onReconnected(@NonNull Room room) {
-                Log.i(TAG, "reconnected");
-            }
-
-            @Override
-            public void onDisconnected(@NonNull Room room, @Nullable TwilioException twilioException) {
-                Log.i(TAG, "disconnected");
-                // These tracks are released to ensure that memory allocated to them is freed
-                localAudioTrack.release();
-                localVideoTrack.release();
-            }
-
-            @Override
-            public void onParticipantConnected(@NonNull Room room, @NonNull RemoteParticipant remoteParticipant) {
-                Log.i(TAG, "new participant connected" + remoteParticipant.getIdentity());
-                // In the case that the connected callback is received, the LocalParticipant and the RemoteParticipant objects become available
-                localParticipant = room.getLocalParticipant();
-                remoteParticipants = room.getRemoteParticipants();
-                // use getIdentity to receive the identity strings associated with each user
-
-                // to set a listener for the new participant that has been added to the room
-                remoteParticipant.setListener(new RemoteParticipant.Listener() {
-                    @Override
-                    public void onAudioTrackPublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication) {
-
-                    }
-
-                    @Override
-                    public void onAudioTrackUnpublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication) {
-
-                    }
-
-                    @Override
-                    public void onAudioTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication, @NonNull RemoteAudioTrack remoteAudioTrack) {
-
-                    }
-
-                    @Override
-                    public void onAudioTrackSubscriptionFailed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication, @NonNull TwilioException twilioException) {
-
-                    }
-
-                    @Override
-                    public void onAudioTrackUnsubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication, @NonNull RemoteAudioTrack remoteAudioTrack) {
-
-                    }
-
-                    @Override
-                    public void onVideoTrackPublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication) {
-
-                    }
-
-                    @Override
-                    public void onVideoTrackUnpublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication) {
-
-                    }
-
-                    @Override
-                    public void onVideoTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
-                        // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
-                        moveLocalVideoToSmallView();
-                        remoteVideoTrack.addRenderer(remoteVideoView); // renders the added participant's video track to the main screen
-                    }
-
-                    @Override
-                    public void onVideoTrackSubscriptionFailed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull TwilioException twilioException) {
-
-                    }
-
-                    @Override
-                    public void onVideoTrackUnsubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
-                        remoteVideoTrack.removeRenderer(remoteVideoView); // removes the remote track from the view of the local participant once disconnected
-                        moveLocalVideoToMainView();
-
-                    }
-
-                    @Override
-                    public void onDataTrackPublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteDataTrackPublication remoteDataTrackPublication) {
-
-                    }
-
-                    @Override
-                    public void onDataTrackUnpublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteDataTrackPublication remoteDataTrackPublication) {
-
-                    }
-
-                    @Override
-                    public void onDataTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteDataTrackPublication remoteDataTrackPublication, @NonNull RemoteDataTrack remoteDataTrack) {
-
-                    }
-
-                    @Override
-                    public void onDataTrackSubscriptionFailed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteDataTrackPublication remoteDataTrackPublication, @NonNull TwilioException twilioException) {
-
-                    }
-
-                    @Override
-                    public void onDataTrackUnsubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteDataTrackPublication remoteDataTrackPublication, @NonNull RemoteDataTrack remoteDataTrack) {
-
-                    }
-
-                    @Override
-                    public void onAudioTrackEnabled(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication) {
-
-                    }
-
-                    @Override
-                    public void onAudioTrackDisabled(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication) {
-
-                    }
-
-                    @Override
-                    public void onVideoTrackEnabled(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication) {
-                    }
-
-                    @Override
-                    public void onVideoTrackDisabled(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onParticipantDisconnected(@NonNull Room room, @NonNull RemoteParticipant remoteParticipant) {
-                Log.i(TAG, "participant disconnected" + remoteParticipant.getIdentity());
-                // move the local participant to the main view
-                moveLocalVideoToMainView();
-            }
-
-            @Override
-            public void onRecordingStarted(@NonNull Room room) {
-                Log.i(TAG, "recording started");
-            }
-
-            @Override
-            public void onRecordingStopped(@NonNull Room room) {
-                Log.i(TAG, "recording stopped");
-            }
-        });
+        room = Video.connect(this, connectOptionsBuilder.build(), roomListener());
 
     }
 
@@ -346,7 +186,6 @@ public class VideoChatActivity extends AppCompatActivity {
             // after permission is granted, initialise the video and audio tracks
             Log.i(TAG, "Permission granted");
             getVideoAndAudioTracks();
-            connectToRoom(roomName, tokenGenerator); // and generate the token and the room
         } else {
             // prompt to ask for mic and camera permission
             EasyPermissions.requestPermissions(this, "Lingua needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);
@@ -354,7 +193,14 @@ public class VideoChatActivity extends AppCompatActivity {
     }
 
 
-    public void getVideoAndAudioTracks() {
+    private void getVideoAndAudioTracks() {
+        //Check if H.264 is supported in this device
+        boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
+                MediaCodecVideoEncoder.isH264HwSupported();
+
+        // Prefer H264 if it is hardware available for encoding and decoding
+        videoCodec = isH264Supported ? (new H264Codec()) : (new Vp8Codec());
+
         // Create an audio track
         localAudioTrack = LocalAudioTrack.create(this, true);
 
@@ -368,30 +214,29 @@ public class VideoChatActivity extends AppCompatActivity {
         // getting the publisher container (for the local participant) and setting visibility to gone before the other participant enters the chat)
         localVideoView.setVisibility(View.GONE);
 
+        // show the camera output from the user in the main screen
+        remoteVideoView.setMirror(true);
         // Rendering a local video track requires an implementation of VideoRenderer
         // Render a local video track to preview your camera
         localVideoTrack.addRenderer(remoteVideoView);
-        // show the camera output from the user in the main screen
-        remoteVideoView.setMirror(true);
     }
 
-    public void moveLocalVideoToSmallView() {
-        remoteVideoView.setMirror(false);
+    private void moveLocalVideoToSmallView() {
         // moves the local participant's local video track from the main view to make space for the remote participant
         if (localVideoView.getVisibility() == View.GONE) {
             localVideoView.setVisibility(View.VISIBLE);
             if (localVideoTrack != null) {
-                localVideoTrack.removeRenderer(remoteVideoView);
-                localVideoTrack.addRenderer(localVideoView);
+                localVideoTrack.removeRenderer(remoteVideoView); // remove from the main view where the remote participant will be added
+                localVideoTrack.addRenderer(localVideoView); // add to the smaller view
             }
             localVideoView.setMirror(true);
         }
+        remoteVideoView.setMirror(false);
     }
 
 
-    public void moveLocalVideoToMainView() {
+    private void moveLocalVideoToMainView() {
         // moves the local participant's video track from the smaller view when there is no longer a remote participant
-        localVideoView.setMirror(false);
         if (localVideoView.getVisibility() == View.VISIBLE) {
             localVideoView.setVisibility(View.GONE);
             if (localVideoTrack != null) {
@@ -400,9 +245,58 @@ public class VideoChatActivity extends AppCompatActivity {
             }
             remoteVideoView.setMirror(true);
         }
+        localVideoView.setMirror(false);
     }
 
-    public void sendTextChat(String messageText) {
+    private void addRemoteParticipant(RemoteParticipant remoteParticipant) {
+        if (localVideoView.getVisibility() == View.VISIBLE) {
+            return;
+        }
+
+        if (remoteParticipant.getRemoteVideoTracks().size() > 0) {
+            RemoteVideoTrackPublication remoteVideoTrackPublication =
+                    remoteParticipant.getRemoteVideoTracks().get(0);
+
+
+            if (remoteVideoTrackPublication.isTrackSubscribed()) {
+                addRemoteParticipantVideo(remoteVideoTrackPublication.getRemoteVideoTrack());
+            } else {
+                Toast.makeText(VideoChatActivity.this, "Not subscribed to remote tracks", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        // Start listening for participant events
+        remoteParticipant.setListener(remoteParticipantListener());
+
+    }
+
+    private void addRemoteParticipantVideo(VideoTrack videoTrack) {
+        moveLocalVideoToSmallView();
+        remoteVideoView.setMirror(false);
+        videoTrack.addRenderer(remoteVideoView);
+    }
+
+    private void removeRemoteParticipant(RemoteParticipant remoteParticipant) {
+        if (!remoteParticipant.getRemoteVideoTracks().isEmpty()) {
+            RemoteVideoTrackPublication remoteVideoTrackPublication =
+                    remoteParticipant.getRemoteVideoTracks().get(0);
+
+            /*
+             * Remove video only if subscribed to participant track
+             */
+            if (remoteVideoTrackPublication.isTrackSubscribed()) {
+                removeParticipantVideo(remoteVideoTrackPublication.getRemoteVideoTrack());
+            }
+        }
+        moveLocalVideoToMainView();
+    }
+
+    private void removeParticipantVideo(VideoTrack videoTrack) {
+        videoTrack.removeRenderer(remoteVideoView);
+    }
+
+
+    private void sendTextChat(String messageText) {
         String timestamp = new Date().toString();
         // save message
         Map<String, String> map = new HashMap<>();
@@ -415,6 +309,264 @@ public class VideoChatActivity extends AppCompatActivity {
         Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
         chatReference.child("lastMessage").setValue(username + ": " + messageText);
         chatReference.child("lastMessageAt").setValue(timestamp);
+    }
+
+    private Room.Listener roomListener() {
+        return new Room.Listener() {
+            @Override
+            public void onConnected(Room room) {
+                localParticipant = room.getLocalParticipant();
+                localParticipant.publishTrack(localVideoTrack);
+                localParticipant.publishTrack(localAudioTrack);
+
+                Log.i(TAG, "Connected to " + room.getName());
+                // send a message to the other user to notify them of the creation of the room
+                sendTextChat("Video chat with me!");
+                List<RemoteParticipant> remoteParticipants = room.getRemoteParticipants();
+                for (RemoteParticipant remoteParticipant : room.getRemoteParticipants()) {
+                    Toast.makeText(VideoChatActivity.this, "Adding remote participants", Toast.LENGTH_LONG).show();
+                    addRemoteParticipant(remoteParticipant);
+                    break;
+                }
+            }
+
+            @Override
+            public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
+                Log.i(TAG, "failure to connect");
+                Toast.makeText(VideoChatActivity.this, "Failed to connect", Toast.LENGTH_LONG).show();
+                // send a message to the other user detailing an attempted call
+                sendTextChat("I tried to call you :(");
+            }
+
+            @Override
+            public void onReconnecting(@NonNull Room room, @NonNull TwilioException twilioException) {
+                Log.i(TAG, "reconnecting");
+            }
+
+            @Override
+            public void onReconnected(@NonNull Room room) {
+                Log.i(TAG, "reconnected");
+            }
+
+            @Override
+            public void onDisconnected(@NonNull Room room, @Nullable TwilioException twilioException) {
+                localParticipant = null;
+                Log.i(TAG, "disconnected");
+            }
+
+            @Override
+            public void onParticipantConnected(@NonNull Room room, @NonNull RemoteParticipant remoteParticipant) {
+                Log.i(TAG, "new participant connected" + remoteParticipant.getIdentity());
+                // In the case that the connected callback is received, the LocalParticipant and the RemoteParticipant objects become available
+                localParticipant = room.getLocalParticipant();
+                // use getIdentity to receive the identity strings associated with each user
+                // to set a listener for the new participant that has been added to the room
+                addRemoteParticipant(remoteParticipant);
+                remoteParticipant.setListener(remoteParticipantListener());
+            }
+
+            @Override
+            public void onParticipantDisconnected(@NonNull Room room, @NonNull RemoteParticipant remoteParticipant) {
+                Log.i(TAG, "participant disconnected" + remoteParticipant.getIdentity());
+                // move the local participant to the main view
+                removeRemoteParticipant(remoteParticipant);
+                // disconnect the local participant if all the remote participants have been disconnected
+                if (room.getRemoteParticipants().size() == 0) {
+                    room.disconnect();
+                    moveLocalVideoToMainView();
+                    connectionButton.setVisibility(View.VISIBLE);
+                    connectionButton.setEnabled(true);
+                }
+
+            }
+
+            @Override
+            public void onRecordingStarted(@NonNull Room room) {
+                Log.i(TAG, "recording started");
+            }
+
+            @Override
+            public void onRecordingStopped(@NonNull Room room) {
+                Log.i(TAG, "recording stopped");
+            }
+        };
+    }
+
+    private boolean checkCameraAndMicPermissions() {
+        String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            return true;
+        }
+        return false;
+    }
+
+    // listener for the remote participant
+    private RemoteParticipant.Listener remoteParticipantListener() {
+        return new RemoteParticipant.Listener() {
+            @Override
+            public void onAudioTrackPublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication) {
+
+            }
+
+            @Override
+            public void onAudioTrackUnpublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication) {
+
+            }
+
+            @Override
+            public void onAudioTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication, @NonNull RemoteAudioTrack remoteAudioTrack) {
+
+            }
+
+            @Override
+            public void onAudioTrackSubscriptionFailed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication, @NonNull TwilioException twilioException) {
+
+            }
+
+            @Override
+            public void onAudioTrackUnsubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication, @NonNull RemoteAudioTrack remoteAudioTrack) {
+
+            }
+
+            @Override
+            public void onVideoTrackPublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication) {
+                addRemoteParticipantVideo(remoteVideoTrackPublication.getVideoTrack());
+            }
+
+            @Override
+            public void onVideoTrackUnpublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication) {
+                remoteVideoTrackPublication.getRemoteVideoTrack().removeRenderer(remoteVideoView);
+                moveLocalVideoToMainView();
+            }
+
+            @Override
+            public void onVideoTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
+                // render the local participant's video into the publisher container - the smaller video view in the corner of the screen
+                addRemoteParticipantVideo(remoteVideoTrack);
+            }
+
+            @Override
+            public void onVideoTrackSubscriptionFailed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull TwilioException twilioException) {
+
+            }
+
+            @Override
+            public void onVideoTrackUnsubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication, @NonNull RemoteVideoTrack remoteVideoTrack) {
+                remoteVideoTrack.removeRenderer(remoteVideoView); // removes the remote track from the view of the local participant once disconnected
+                moveLocalVideoToMainView();
+
+            }
+
+            @Override
+            public void onDataTrackPublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteDataTrackPublication remoteDataTrackPublication) {
+
+            }
+
+            @Override
+            public void onDataTrackUnpublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteDataTrackPublication remoteDataTrackPublication) {
+
+            }
+
+            @Override
+            public void onDataTrackSubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteDataTrackPublication remoteDataTrackPublication, @NonNull RemoteDataTrack remoteDataTrack) {
+
+            }
+
+            @Override
+            public void onDataTrackSubscriptionFailed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteDataTrackPublication remoteDataTrackPublication, @NonNull TwilioException twilioException) {
+
+            }
+
+            @Override
+            public void onDataTrackUnsubscribed(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteDataTrackPublication remoteDataTrackPublication, @NonNull RemoteDataTrack remoteDataTrack) {
+
+            }
+
+            @Override
+            public void onAudioTrackEnabled(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication) {
+
+            }
+
+            @Override
+            public void onAudioTrackDisabled(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteAudioTrackPublication remoteAudioTrackPublication) {
+
+            }
+
+            @Override
+            public void onVideoTrackEnabled(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication) {
+            }
+
+            @Override
+            public void onVideoTrackDisabled(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication) {
+
+            }
+        };
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Check if H.264 is supported in this device
+        boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
+                MediaCodecVideoEncoder.isH264HwSupported();
+
+        // Prefer H264 if it is hardware available for encoding and decoding
+        videoCodec = isH264Supported ? (new H264Codec()) : (new Vp8Codec());
+
+        // recreate the video and audio tracks that were released when the app was put in the background
+        if (localVideoTrack == null && checkCameraAndMicPermissions()) {
+            localVideoTrack = LocalVideoTrack.create(this,
+                    true,
+                    cameraCapturer);
+            localVideoTrack.addRenderer(localVideoView);
+
+            // publish video and audio from the local user once they reopen the app
+            if (localParticipant != null) {
+                localParticipant.publishTrack(localVideoTrack);
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        /*
+         * Release the local video track before going in the background. This ensures that the
+         * camera can be used by other applications while this app is in the background.
+         */
+        if (localVideoTrack != null) {
+            // stop publishing video from the local participant's phone once they leave the app
+            if (localParticipant != null) {
+                localParticipant.unpublishTrack(localVideoTrack);
+                localParticipant.unpublishTrack(localAudioTrack);
+            }
+
+            localVideoTrack.release();
+            localVideoTrack = null;
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // when activity is destroyed, release the audio and video tracks from the device, and disconnect the user from the room
+        if (room != null && room.getState() != Room.State.DISCONNECTED) {
+            room.disconnect();
+        }
+
+        /*
+         * Release the local audio and video tracks ensuring any memory allocated to audio
+         * or video is freed.
+         */
+        if (localAudioTrack != null) {
+            localAudioTrack.release();
+            localAudioTrack = null;
+        }
+        if (localVideoTrack != null) {
+            localVideoTrack.release();
+            localVideoTrack = null;
+        }
+
+        super.onDestroy();
     }
 
 }

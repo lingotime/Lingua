@@ -27,6 +27,10 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.swipe.SwipeLayout;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.lingua.lingua.models.Chat;
 
 import org.json.JSONArray;
@@ -34,7 +38,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,6 +95,34 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         // to handle the SwipeLayout
         chatSwipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
+
+        // set an event listener to update the last message and timestamp of the chat if there is a change
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getId());
+        reference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {}
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                String key = (String) dataSnapshot.getKey();
+                if (key.equals("lastMessage")) {
+                    String lastMessage = (String) dataSnapshot.getValue();
+                    tvText.setText(lastMessage);
+                } else if (key.equals("lastMessageAt")) {
+                    String lastMessageTimestamp = (String) dataSnapshot.getValue();
+                    tvTimestamp.setText(DateUtil.getRelativeTimeAgo(lastMessageTimestamp));
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {}
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {}
+        });
     }
 
     @Override
@@ -142,40 +173,54 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
                         // creating the dialog for selecting the language of the call
                         languagesToBeLearned.add("Cultural Exchange");
+                        Intent intent = new Intent(context, VideoChatActivity.class);
+                        intent.putExtra("language", languagesToBeLearned.get(0));
+                        // intent to the video chat activity
+                        intent.putExtra("chatID", chat.getId());
+                        intent.putExtra("name", chat.getName());
+                        // get the second user Id from the
+                        ArrayList<String> chatUsers = chat.getUsers();
+                        for (int index = 0; index < chatUsers.size(); index++) {
+                            String otherUserId = chatUsers.get(index);
+                            if (otherUserId != userId) {
+                                intent.putExtra("otherUser", otherUserId);
+                            }
+                        }
+                        context.startActivity(intent);
 
                         // a dialog box to allow the person initiating the call to select the language in which the call will be made
-                        AlertDialog.Builder languageSelection = new AlertDialog.Builder(context);
-                        languageSelection.setTitle("Choose the language");
-                        languageSelection.setSingleChoiceItems((ListAdapter) languagesToBeLearned, 0, null);
-                        languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(context, VideoChatActivity.class);
-                                intent.putExtra("language", languagesToBeLearned.get(i));
-                                // intent to the video chat activity
-                                intent.putExtra("chatID", chat.getId());
-                                intent.putExtra("name", chat.getName());
-                                // get the second user Id from the
-                                ArrayList<String> chatUsers = chat.getUsers();
-                                for (int index = 0; index < chatUsers.size(); index++) {
-                                    String otherUserId = chatUsers.get(index);
-                                    if (otherUserId != userId) {
-                                        intent.putExtra("otherUser", otherUserId);
-                                    }
-                                }
-                                context.startActivity(intent);
-                            }
-                        });
-                        languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(context, "Video chat canceled", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                        AlertDialog dialog = languageSelection.create();
-                        dialog.setCanceledOnTouchOutside(true);
-                        dialog.show();
+//                        AlertDialog.Builder languageSelection = new AlertDialog.Builder(context);
+//                        languageSelection.setTitle("Choose the language");
+//                        languageSelection.setSingleChoiceItems((ListAdapter) languagesToBeLearned, 0, null);
+//                        languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                Intent intent = new Intent(context, VideoChatActivity.class);
+//                                intent.putExtra("language", languagesToBeLearned.get(i));
+//                                // intent to the video chat activity
+//                                intent.putExtra("chatID", chat.getId());
+//                                intent.putExtra("name", chat.getName());
+//                                // get the second user Id from the
+//                                ArrayList<String> chatUsers = chat.getUsers();
+//                                for (int index = 0; index < chatUsers.size(); index++) {
+//                                    String otherUserId = chatUsers.get(index);
+//                                    if (otherUserId != userId) {
+//                                        intent.putExtra("otherUser", otherUserId);
+//                                    }
+//                                }
+//                                context.startActivity(intent);
+//                            }
+//                        });
+//                        languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                Toast.makeText(context, "Video chat canceled", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//
+//                        AlertDialog dialog = languageSelection.create();
+//                        dialog.setCanceledOnTouchOutside(true);
+//                        dialog.show();
 
                     }
                 }
@@ -210,8 +255,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
-                String name = object.getString("firstName");
-                String profilePhotoURL = object.getString("profilePhotoURL");
+                String name = object.getString("userName");
+                String profilePhotoURL = object.getString("userProfilePhotoURL");
 
                 // load profile pic
                 RequestOptions requestOptionsMedia = new RequestOptions();
@@ -219,6 +264,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 Glide.with(context)
                         .load(profilePhotoURL)
                         .apply(requestOptionsMedia)
+                        .fallback(R.drawable.com_facebook_profile_picture_blank_square)
                         .into(ivProfile);
 
                 // set name

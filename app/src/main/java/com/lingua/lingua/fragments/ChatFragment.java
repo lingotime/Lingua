@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -52,7 +53,6 @@ public class ChatFragment extends Fragment {
 
     User currentUser;
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,6 +69,20 @@ public class ChatFragment extends Fragment {
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Chats");
 
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                Log.i(TAG, String.valueOf(id));
+
+                if (id == R.id.chat_fragment_new_group) {
+                    Log.i(TAG,"new group clicked");
+                }
+
+                return ChatFragment.super.onOptionsItemSelected(item);
+            }
+        });
+
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         chats = new ArrayList<>();
 
@@ -79,7 +93,7 @@ public class ChatFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvChats.setLayoutManager(linearLayoutManager);
 
-        swipeContainer = view.findViewById(R.id.exploreSwipeContainer);
+        swipeContainer = view.findViewById(R.id.fragment_chat_swipe_container);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -131,15 +145,6 @@ public class ChatFragment extends Fragment {
                 Log.i("ChatFragment", chat.toString());
                 String lastMessage = chat.getString("lastMessage");
                 String lastMessageAt = chat.getString("lastMessageAt");
-                String userName1 = chat.getString("user1");
-                String userName2 = chat.getString("user2");
-                String name;
-                // show name of user I'm texting as chat title
-                if (userName1.equals(currentUser.getUserName())) {
-                    name = userName2;
-                } else {
-                    name = userName1;
-                }
                 // get list of user ids in the chat
                 ArrayList<String> userIds = new ArrayList<>();
                 JSONObject users = chat.getJSONObject("users");
@@ -149,7 +154,7 @@ public class ChatFragment extends Fragment {
                     Log.d(TAG, key);
                     userIds.add(key);
                 }
-                chats.add(new Chat(id, name, lastMessage, lastMessageAt, userIds));
+                chats.add(new Chat(id, null, lastMessage, lastMessageAt, userIds));
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();

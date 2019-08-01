@@ -18,6 +18,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -37,8 +38,27 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
     googleServices { disableVersionCheck = true }
+
+    // Specify that we want to split up the APK based on ABI
+    splits {
+        abi {
+            // Enable ABI split
+            enable true
+
+            // Clear list of ABIs
+            reset()
+
+            // Specify each architecture currently supported by the Video SDK
+            include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+
+            // Specify that we do not want an additional universal SDK
+            universalApk false
+        }
+    }
 }
 
 dependencies {
@@ -76,9 +96,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.0.1'
 
     implementation 'com.google.firebase:firebase-auth:18.1.0'
-    implementation 'com.google.firebase:firebase-database:18.0.0'
+    implementation 'com.google.firebase:firebase-database:18.0.1'
 
-    implementation 'com.firebase:firebase-client-android:2.5.2+'
+    implementation 'com.firebase:firebase-client-android:2.5.2'
     implementation 'com.android.volley:volley:1.1.1'
 
     // Facebook support
@@ -100,18 +120,22 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt:0.4'
     implementation "com.twilio.sdk:twilio:7.14.0"
     implementation 'pub.devrel:easypermissions:3.0.0'
-    
+    implementation "com.koushikdutta.ion:ion:2.1.7"
+
     // Other support
-    implementation 'com.google.firebase:firebase-storage:18.1.0'
+    implementation 'com.google.firebase:firebase-storage:18.1.1'
     implementation 'com.google.code.gson:gson:2.8.5'
 
     implementation 'org.eclipse.birt.runtime.3_7_1:org.apache.xerces:2.9.0'
 
     // to support the swiping gestures for the chats
     implementation "com.daimajia.swipelayout:library:1.2.0@aar"
+
+    // to support Twilio notify push notifications
+    implementation "com.google.firebase:firebase-messaging:19.0.1"
+
 }
 
 configurations {
     all*.exclude group: 'com.google.guava', module: 'listenablefuture'
 }
-

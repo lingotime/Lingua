@@ -11,8 +11,8 @@ public class VideoTokenGenerator {
 
     // Required for all types of tokens
     private String twilioAccountSid = "AC7fe7368cc5a508f2c044c3eb1df3a52b";
-    private String twilioApiKey = "SK17f5203ceff0da12c3a9cda73e2831c4";
-    private String twilioApiSecret = "rDXfaKJbOqlSGwCtF9ZlFZIBxkMjesUo";
+    private String twilioApiKey = "SK7ffe2775ebf31665a82cef864f3109b7";
+    private String twilioApiSecret = "Zj9ZJZtavyrk8JaVJqcx50MBsbiGYpnW";
 
 
     private String identity; // enter user's name here; preferably first

@@ -25,15 +25,25 @@
             </com.twilio.video.VideoView>
 
             <ImageButton
-                android:id="@+id/activity_video_chat_end_call"
+                android:id="@+id/activity_video_chat_connect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|bottom"
                 android:layout_marginBottom="16dp"
                 android:background="@android:color/transparent"
-                android:tint="@android:color/holo_red_dark"
                 app:srcCompat="@android:drawable/sym_action_call" />
-        </FrameLayout>
+
+            <ImageButton
+                android:id="@+id/activity_video_chat_disconnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:background="@android:color/transparent"
+                android:tint="@android:color/holo_red_dark"
+                app:srcCompat="@drawable/ic_call_end_white_24px"/>
 
         <FrameLayout
             android:layout_width="90dp"
@@ -42,13 +52,14 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
-            android:background="#FFFFFF"
+            android:backgroundTint="@android:color/transparent"
             android:padding="2dp">
         <com.twilio.video.VideoView
             android:id="@+id/activity_video_chat_publisher_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
         </FrameLayout>
+    </FrameLayout>
     </FrameLayout>
 
 </RelativeLayout>
