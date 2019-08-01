@@ -103,7 +103,9 @@ public class MainActivity extends AppCompatActivity {
         exploreFragment.setArguments(bundle);
         notificationsFragment.setArguments(bundle);
 
+        // load the right fragment depending on intent extras
         String fragmentToLoad = getIntent().getStringExtra("fragment");
+
         if (fragmentToLoad != null && fragmentToLoad.equals("profile")) {
             fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.profile);
