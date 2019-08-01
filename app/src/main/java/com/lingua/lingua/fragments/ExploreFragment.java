@@ -5,12 +5,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -19,13 +21,14 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.lingua.lingua.EndlessRecyclerViewScrollListener;
-import com.lingua.lingua.ExploreAdapter;
 import com.lingua.lingua.R;
+import com.lingua.lingua.adapters.ExploreAdapter;
 import com.lingua.lingua.models.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -157,7 +160,7 @@ public class ExploreFragment extends Fragment {
 
     // ensure there is a language or country match between user and displayed user
     private boolean matchExists(ArrayList<String> exploreLanguages, ArrayList<String> exploreCountries, ArrayList<String> knownLanguages, String originCountry) {
-        if (exploreLanguages.size() == 0 && exploreCountries.size() == 0) {
+        if (exploreLanguages == null && exploreCountries == null) {
             return true;
         }
 
