@@ -12,11 +12,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
@@ -47,8 +45,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
-RecyclerView Adapter that adapts User objects to the viewholders in the recyclerview
-*/
+ RecyclerView Adapter that adapts User objects to the viewholders in the recyclerview
+ */
 
 public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHolder> {
     private User currentUser;
@@ -107,34 +105,43 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         sendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // process send friend request ... Marta's code
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-                final View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
-                dialogBuilder.setView(dialogView);
+                // ensure current card number is associated with a card
+                if (position != RecyclerView.NO_POSITION) {
+                    // get user associated with current card number
+                    User clickedUser = usersList.get(position);
 
-                dialogBuilder.setTitle("Send friend request to " + user.getUserName());
-                dialogBuilder.setMessage("Say hi and tell " + user.getUserName() + " a little about yourself!");
-                dialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText editText = dialogView.findViewById(R.id.dialog_friend_request_et);
-                        String message = editText.getText().toString();
-                        if (!message.equals("")) {
-                            sendFriendRequest(message, user.getUserID(), user.getUserName(), position);
-                        } else {
-                            Toast.makeText(context, "Can't send a friend request without any text, say hi!", Toast.LENGTH_LONG).show();
+                    // create a confirm dialog with an optional message field
+                    View confirmDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
+                    EditText confirmDialogMessageField = confirmDialogView.findViewById(R.id.dialog_friend_request_et);
+
+                    // build the confirm dialog
+                    AlertDialog.Builder confirmDialogBuilder = new AlertDialog.Builder(context);
+                    confirmDialogBuilder.setView(confirmDialogView);
+                    confirmDialogBuilder.setTitle("Confirm Friend Request to " + clickedUser.getUserName());
+                    confirmDialogBuilder.setMessage("Send a message with your friend request.");
+                    confirmDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String friendRequestMessage = confirmDialogMessageField.getText().toString();
+
+                            if (!friendRequestMessage.equals("")) {
+                                sendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
+                            }
+
+                            dialogInterface.cancel();
                         }
-                    }
-                });
-                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.d("ExploreAdapter", "Cancelled friend request");
-                    }
-                });
-                AlertDialog dialog = dialogBuilder.create();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
+                    });
+                    confirmDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+                    // display the confirm dialog
+                    AlertDialog confirmDialog = confirmDialogBuilder.create();
+                    confirmDialog.show();
+                }
             }
         });
 
@@ -173,23 +180,49 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         return usersList.size();
     }
 
-    private void sendFriendRequest(String message, String receiverId, String receiverName, int position) {
+    private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage, int position) {
+        // ensure clicked user did not send friend request to current user while current user was typing
+        if (currentUser.getPendingReceivedFriendRequests() != null) {
+            for (String pendingReceivedFriendRequest : currentUser.getPendingReceivedFriendRequests()) {
+                if (pendingReceivedFriendRequest.equals(clickedUser.getUserID())) {
+                    Toast.makeText(context, "You already received a friend request from this user.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        }
 
         Firebase.setAndroidContext(context);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
 
-        // save friend request
+        // add clicked user to current user's sent friend request user list...Fausto's way
+        if (currentUser.getPendingSentFriendRequests() == null) {
+            currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(clickedUser.getUserID())));
+        } else {
+            currentUser.getPendingSentFriendRequests().add(clickedUser.getUserID());
+        }
+
+        // add current user to clicked user's received friend request user list...Fausto's way
+        if (clickedUser.getPendingReceivedFriendRequests() == null) {
+            clickedUser.setPendingReceivedFriendRequests(new ArrayList<String>(Arrays.asList(currentUser.getUserID())));
+        } else {
+            clickedUser.getPendingReceivedFriendRequests().add(currentUser.getUserID());
+        }
+
+        // save new friend request data to database...Fausto's way
+        reference.child("users").child(currentUser.getUserID()).setValue(currentUser);
+        reference.child("users").child(clickedUser.getUserID()).setValue(clickedUser);
+
+        // save friend request...Marta's way
         String friendRequestId = reference.child("friend-requests").push().getKey();
 
         Map<String, String> map = new HashMap<>();
-        map.put("message", message);
+        map.put("message", friendRequestMessage);
         map.put("senderId", currentUser.getUserID());
-        map.put("receiverId", receiverId);
-        map.put("receiverName", receiverName);
+        map.put("receiverId", clickedUser.getUserID());
+        map.put("receiverName", clickedUser.getUserName());
         map.put("senderName", currentUser.getUserName());
         map.put("timestamp", new Date().toString());
         map.put("id", friendRequestId);
-
 
         reference.child("friend-requests").child(friendRequestId).setValue(map);
         if (currentUser.getExploreLanguages() != null) {
@@ -198,19 +231,26 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         }
 
 
-        // save friend request reference in user objects
+        // save friend request reference in user objects...Marta's way
         reference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
-        reference.child("users").child(receiverId).child("received-friend-requests").child(friendRequestId).setValue(true);
+        reference.child("users").child(clickedUser.getUserID()).child("received-friend-requests").child(friendRequestId).setValue(true);
 
         // send notification to other user
-        sendFriendRequestNotification(receiverId);
-
-        // remove user from explore page
-        // TODO: add event listener so this user's card is also removed from the other user's explore page
-        usersList.remove(position);
-        notifyDataSetChanged();
+        sendFriendRequestNotification(clickedUser.getUserID());
 
         Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();
+
+        // remove user from displayed user list
+        usersList.remove(position);
+
+        // check if there are more users to load
+        if (!hiddenUsersList.isEmpty()) {
+            usersList.add(hiddenUsersList.get(0));
+            hiddenUsersList.remove(0);
+        }
+
+        // notify adapter of changes in data
+        notifyDataSetChanged();
     }
 
     private int getAge(String birthDateString) {
@@ -226,23 +266,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         }
 
         return 0;
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-        public ViewHolder(View userItemView) {
-            super(userItemView);
-
-            card = userItemView.findViewById(R.id.item_user_card);
-            flagImage = userItemView.findViewById(R.id.item_user_flag);
-            profilePhotoImage = userItemView.findViewById(R.id.item_user_profile_image);
-            liveStatusSignal = userItemView.findViewById(R.id.item_user_live_signal_image);
-            nameText = userItemView.findViewById(R.id.item_user_name_text);
-            countryText = userItemView.findViewById(R.id.item_user_country_text);
-            ageText = userItemView.findViewById(R.id.item_user_age_text);
-            biographyText = userItemView.findViewById(R.id.item_user_biography_text);
-            sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
-            removeButton = userItemView.findViewById(R.id.item_user_remove_button);
-        }
     }
 
     private void sendFriendRequestNotification(String userId) {
@@ -266,5 +289,22 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 Log.e("ExploreAdapter", message);
             }
         });
+    }
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+        public ViewHolder(View userItemView) {
+            super(userItemView);
+
+            card = userItemView.findViewById(R.id.item_user_card);
+            flagImage = userItemView.findViewById(R.id.item_user_flag);
+            profilePhotoImage = userItemView.findViewById(R.id.item_user_profile_image);
+            liveStatusSignal = userItemView.findViewById(R.id.item_user_live_signal_image);
+            nameText = userItemView.findViewById(R.id.item_user_name_text);
+            countryText = userItemView.findViewById(R.id.item_user_country_text);
+            ageText = userItemView.findViewById(R.id.item_user_age_text);
+            biographyText = userItemView.findViewById(R.id.item_user_biography_text);
+            sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
+            removeButton = userItemView.findViewById(R.id.item_user_remove_button);
+        }
     }
 }
