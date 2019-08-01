@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
@@ -31,6 +33,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.gson.Gson;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
@@ -39,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,8 +67,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     String userId, userName;
     User currentUser;
 
-    // the list of languages needed to be learned between the 2 members of the chat
-    ArrayList<String> languagesToBeLearned = new ArrayList<>();
+
 
     public ChatAdapter(Context context, List<Chat> chats, User user) {
         this.context = context;
@@ -155,14 +158,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         Chat chat = chats.get(position);
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));
-                        ArrayList<String> chatUsers = chat.getUsers();
-                        for (int i = 0; i < chatUsers.size(); i++) {
-                            // gets a list of the languages that both users are trying to learn in order to build the dialog single selection box
-                            queryLanguages(chatUsers.get(i));
-
-                        }
-                        languagesToBeLearned.add("Cultural Exchange");
-                        intent.putExtra("languages", languagesToBeLearned);
                         context.startActivity(intent);
                     }
                 }
@@ -184,16 +179,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         intent.putExtra("user", Parcels.wrap(currentUser));
                         // get the second user Id from the
                         ArrayList<String> chatUsers = chat.getUsers();
-                        for (int index = 0; index < chatUsers.size(); index++) {
-                            String otherUserId = chatUsers.get(index);
-                            queryLanguages(otherUserId);
-                            if (otherUserId != userId) {
-                                intent.putExtra("otherUser", otherUserId);
-                            }
-
-                        }
-                        languagesToBeLearned.add("Cultural Exchange");
-                        intent.putExtra("languages", languagesToBeLearned);
+                        chatUsers.remove(currentUser.getUserID());
+                        intent.putExtra("otherChatMembers", chatUsers);
                         context.startActivity(intent);
                     }
                 }
@@ -252,28 +239,5 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         RequestQueue rQueue = Volley.newRequestQueue(context);
         rQueue.add(request);
-    }
-
-    // to query the languages for each of the users
-    public void queryLanguages(String userId) {
-        String userUrl = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
-        StringRequest userInfoRequest = new StringRequest(Request.Method.GET, userUrl, s -> {
-            try {
-                JSONObject user = new JSONObject(s);
-                JSONArray exploreLanguages = user.getJSONArray("exploreLanguages");
-                for (int i = 0; i < exploreLanguages.length(); i++) {
-                    languagesToBeLearned.add((String) exploreLanguages.get(i));
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, volleyError -> {
-            Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show();
-            Log.e("ChatFragment", "user not loading " + volleyError);
-        });
-
-        RequestQueue rQueue = Volley.newRequestQueue(context);
-        rQueue.add(userInfoRequest);
     }
 }

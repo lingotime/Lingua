@@ -16,6 +16,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.models.User;
 import com.twilio.video.CameraCapturer;
@@ -39,10 +43,14 @@ import com.twilio.video.VideoTrack;
 import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,7 +88,7 @@ public class VideoChatActivity extends AppCompatActivity {
     private String userId;
     private String username;
     private String chatId;
-    private String receiverId; // id of the second user in the chat
+    private ArrayList<String> chatMembers; // excluding the current user
     private String videoChatLanguage;
     private Firebase reference;
     private ArrayList<String> possibleChatLanguages;
@@ -106,11 +114,10 @@ public class VideoChatActivity extends AppCompatActivity {
         chatId = getIntent().getStringExtra("chatID");
         Log.d(TAG, chatId);
         String chatName = getIntent().getStringExtra("name"); // the room will be set to this name
-        receiverId = getIntent().getStringExtra("otherUser");
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+        chatMembers = getIntent().getStringArrayListExtra("otherChatMembers");
 
         roomName = chatId;
-        receiverId = getIntent().getStringExtra("otherUser");
         possibleChatLanguages = getIntent().getStringArrayListExtra("languages"); // the languages from which the users will choose to speak in (or cultural exchange)'
 
         String[] languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
@@ -146,9 +153,7 @@ public class VideoChatActivity extends AppCompatActivity {
                 languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Log.d(TAG, "Starting connection");
-                        Log.d(TAG, chatId);
-                        connectToRoom(chatId);
+                        connectToRoom(roomName);
                         connectionButton.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
                         connectionButton.setEnabled(false);
 
@@ -184,6 +189,32 @@ public class VideoChatActivity extends AppCompatActivity {
 
         Log.i(TAG, "Inflated the layout for video activity");
         requestPermissions();
+    }
+
+    // to query the languages for each of the users
+    private void queryLanguages(String userId) throws InterruptedException {
+        String userUrl = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
+        StringRequest userInfoRequest = new StringRequest(Request.Method.GET, userUrl, s -> {
+            try {
+                JSONObject user = new JSONObject(s);
+                JSONArray exploreLanguages = user.getJSONArray("exploreLanguages");
+                for (int i = 0; i < exploreLanguages.length(); i++) {
+                    possibleChatLanguages.add((String) exploreLanguages.get(i));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, volleyError -> {
+            Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
+            Log.e("ChatFragment", "user not loading " + volleyError);
+        });
+
+        synchronized (userInfoRequest) {
+            RequestQueue rQueue = Volley.newRequestQueue(this);
+            rQueue.add(userInfoRequest);
+            userInfoRequest.wait(100);
+        }
     }
 
     // steps to be taken to adjust the view when the local participant is disconnected

@@ -80,7 +80,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
         userName = prefs.getString("userName", "");
 
         chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
-        languagesToBeLearned = getIntent().getStringArrayListExtra("languages");
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
         rvMessages = findViewById(R.id.activity_chat_details_rv);
@@ -170,12 +169,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
             intent.putExtra("user", Parcels.wrap(currentUser));
             // get the second user Id from the
             ArrayList<String> chatUsers = chat.getUsers();
-            for (int index = 0; index < chatUsers.size(); index++) {
-                String otherUserId = chatUsers.get(index);
-                if (otherUserId != userId) {
-                    intent.putExtra("otherUser", otherUserId);
-                }
-            }
+            chatUsers.remove(currentUser.getUserID());
+            intent.putExtra("otherChatMembers", chatUsers);
             startActivity(intent);
 
             return true;
