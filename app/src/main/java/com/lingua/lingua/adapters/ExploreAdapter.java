@@ -1,4 +1,4 @@
-package com.lingua.lingua;
+package com.lingua.lingua.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,10 +16,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.lingua.lingua.CountryInformation;
+import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
+import com.lingua.lingua.notifyAPI.Notification;
+import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Period;
@@ -30,6 +36,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
 RecyclerView Adapter that adapts User objects to the viewholders in the recyclerview
@@ -204,6 +214,9 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         reference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
         reference.child("users").child(receiverId).child("received-friend-requests").child(friendRequestId).setValue(true);
 
+        // send notification to other user
+        sendFriendRequestNotification(receiverId);
+
         Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();
     }
 
@@ -237,5 +250,28 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
             removeButton = userItemView.findViewById(R.id.item_user_remove_button);
         }
+    }
+
+    private void sendFriendRequestNotification(String userId) {
+        // send notification
+        Notification notification = new Notification(currentUser.getUserName() + " sent you a friend request!", userId);
+
+        TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!response.isSuccess()) {
+                    String message = "Sending notification failed: " + response.code() + " " + response.message();
+                    Log.e("ExploreAdapter", message);
+                } else {
+                    Log.i("ExploreAdapter", "Sending notification success: " + response.code() + " " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                String message = "Sending notification failed: " + t.getMessage();
+                Log.e("ExploreAdapter", message);
+            }
+        });
     }
 }

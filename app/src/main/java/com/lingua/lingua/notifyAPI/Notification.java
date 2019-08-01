@@ -5,12 +5,10 @@ package com.lingua.lingua.notifyAPI;
  * https://www.twilio.com/docs/api/notify/rest/notifications
  */
 public class Notification {
-    public final String title;
     public final String body;
     public final String identity;
 
-    public Notification (String title, String body, String identity) {
-        this.title = title;
+    public Notification (String body, String identity) {
         this.body = body;
         this.identity = identity;
     }

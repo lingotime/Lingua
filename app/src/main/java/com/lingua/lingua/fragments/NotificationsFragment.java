@@ -20,7 +20,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.MainActivity;
-import com.lingua.lingua.NotificationsAdapter;
+import com.lingua.lingua.adapters.NotificationsAdapter;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;

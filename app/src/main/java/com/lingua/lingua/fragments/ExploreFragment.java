@@ -19,7 +19,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.lingua.lingua.EndlessRecyclerViewScrollListener;
-import com.lingua.lingua.ExploreAdapter;
+import com.lingua.lingua.adapters.ExploreAdapter;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
