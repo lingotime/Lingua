@@ -25,9 +25,11 @@ import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.NotificationsAdapter;
 import com.lingua.lingua.models.FriendRequest;
+import com.lingua.lingua.models.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -43,6 +45,7 @@ public class NotificationsFragment extends Fragment {
     private NotificationsAdapter adapter;
     private List<FriendRequest> friendRequests;
     private SwipeRefreshLayout swipeContainer;
+    private User currentUser;
 
     String userId;
 
@@ -53,6 +56,8 @@ public class NotificationsFragment extends Fragment {
         SharedPreferences prefs = getContext().getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         userId = prefs.getString("userId", "");
         Log.d("NotificationsFragment", userId);
+
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
         return inflater.inflate(R.layout.fragment_notifications, container, false);
     }
@@ -67,7 +72,7 @@ public class NotificationsFragment extends Fragment {
 
         rvNotifications = view.findViewById(R.id.fragment_notifications_rv);
         friendRequests = new ArrayList<>();
-        adapter = new NotificationsAdapter(getContext(), friendRequests);
+        adapter = new NotificationsAdapter(getContext(), friendRequests, currentUser);
         rvNotifications.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvNotifications.setLayoutManager(linearLayoutManager);
@@ -134,7 +139,7 @@ public class NotificationsFragment extends Fragment {
                 String receiverId = object.getString("receiverId");
                 String receiverName = object.getString("receiverName");
                 String timestamp = object.getString("timestamp");
-                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp, id);
+                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp, id, currentUser.getExploreLanguages());
                 friendRequests.add(friendRequest);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {

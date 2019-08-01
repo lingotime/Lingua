@@ -37,10 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 /**
 RecyclerView Adapter that adapts User objects to the viewholders in the recyclerview
 */
@@ -184,6 +180,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         map.put("senderName", currentUser.getUserName());
         map.put("timestamp", new Date().toString());
         map.put("id", friendRequestId);
+
 
         reference.child("friend-requests").child(friendRequestId).setValue(map);
 

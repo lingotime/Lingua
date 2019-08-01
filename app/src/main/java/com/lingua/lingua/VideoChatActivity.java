@@ -2,6 +2,7 @@ package com.lingua.lingua;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,9 +12,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
+import com.lingua.lingua.models.Chat;
+import com.lingua.lingua.models.User;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
 import com.twilio.video.H264Codec;
@@ -35,16 +44,22 @@ import com.twilio.video.VideoTrack;
 import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.parceler.Parcels;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
 
-import java.nio.charset.Charset;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -74,9 +89,17 @@ public class VideoChatActivity extends AppCompatActivity {
     private String userId;
     private String username;
     private String chatId;
-    private String receiverId; // id of the second user in the chat
+    private ArrayList<String> chatMembers; // excluding the current user
     private String videoChatLanguage;
     private Firebase reference;
+    private ArrayList<String> possibleChatLanguages = new ArrayList<>();
+
+    User currentUser;
+    Chat currentChat;
+
+    // variables to keep track of the length of the call
+    private long startTime = 0;
+    private long endTime = 0;
 
 
 
@@ -90,12 +113,23 @@ public class VideoChatActivity extends AppCompatActivity {
         userId = prefs.getString("userId", "");
         username = prefs.getString("userName", "");
 
-        chatId = getIntent().getStringExtra("chatID");
-        Log.d(TAG, chatId);
+        currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+        chatId = currentChat.getId();
         String chatName = getIntent().getStringExtra("name"); // the room will be set to this name
+        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+        chatMembers = currentChat.getUsers();
+        chatMembers.remove(userId);
+
         roomName = chatId;
-        receiverId = getIntent().getStringExtra("otherUser");
-        videoChatLanguage = getIntent().getStringExtra("language");
+
+
+        // to get all the possible explore languages from the users in the chat
+        if (currentChat.getExploreLanguages() != null) {
+            possibleChatLanguages.addAll(currentChat.getExploreLanguages());
+        }
+        possibleChatLanguages.add("Cultural Exchange");
+
+        String[] languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
 
         // setting up Firebase to receive the messages to be sent
         Firebase.setAndroidContext(VideoChatActivity.this);
@@ -107,15 +141,46 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnectionButton = (ImageButton) findViewById(R.id.activity_video_chat_disconnect);
 
 
+        disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
+        disconnectionButton.setEnabled(false);
+
+
         connectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Log.d(TAG, "Starting connection");
-                Log.d(TAG, chatId);
-                connectToRoom(chatId);
-                connectionButton.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
-                connectionButton.setEnabled(false);
+                // first prompt the user initiating the call for the intended language
+                // a dialog box to allow the person initiating the call to select the language in which the call will be made
+                AlertDialog.Builder languageSelection = new AlertDialog.Builder(VideoChatActivity.this);
+                languageSelection.setTitle("Choose the language");
+                languageSelection.setSingleChoiceItems(languageChoices, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        videoChatLanguage = Arrays.asList(languageChoices).get(i);
+                    }
+                });
+                languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        connectToRoom(roomName);
+                        connectionButton.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
+                        connectionButton.setEnabled(false);
+
+                        // enable button for disconnection to end the call
+                        disconnectionButton.setVisibility(View.VISIBLE);
+                        disconnectionButton.setEnabled(true);
+                    }
+                });
+                languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                AlertDialog dialog = languageSelection.create();
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
             }
         });
 
@@ -126,9 +191,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
                 if (room != null) {
                     room.disconnect();
-                    moveLocalVideoToMainView();
-                    connectionButton.setVisibility(View.VISIBLE);
-                    connectionButton.setEnabled(true);
+                    disconnectActions();
                 }
             }
         });
@@ -137,13 +200,73 @@ public class VideoChatActivity extends AppCompatActivity {
         requestPermissions();
     }
 
-    // generates a random string for the room name
-    private String randomString() {
-        byte[] array = new byte[7]; // length is bounded by 7
-        new Random().nextBytes(array);
-        String generatedString = new String(array, Charset.forName("UTF-8"));
-        return generatedString;
+    // to query the languages for each of the users
+    private void queryLanguages(String userId) throws InterruptedException {
+        String userUrl = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
+        StringRequest userInfoRequest = new StringRequest(Request.Method.GET, userUrl, s -> {
+            try {
+                JSONObject user = new JSONObject(s);
+                JSONArray exploreLanguages = user.getJSONArray("exploreLanguages");
+                for (int i = 0; i < exploreLanguages.length(); i++) {
+                    possibleChatLanguages.add((String) exploreLanguages.get(i));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, volleyError -> {
+            Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
+            Log.e("ChatFragment", "user not loading " + volleyError);
+        });
+
+        synchronized (userInfoRequest) {
+            RequestQueue rQueue = Volley.newRequestQueue(this);
+            rQueue.add(userInfoRequest);
+            userInfoRequest.wait(500);
+        }
     }
+
+    // steps to be taken to adjust the view when the local participant is disconnected
+    private void disconnectActions() {
+        moveLocalVideoToMainView();
+        connectionButton.setVisibility(View.VISIBLE);
+        connectionButton.setEnabled(true);
+        endTime = System.nanoTime();
+
+        // mark progress for the user if one of their explore languages is the one being spoken in the chat
+        if (currentUser.getExploreLanguages().contains(videoChatLanguage)) {
+            if (!videoChatLanguage.equals("Cultural Exchange")) {
+                // adjust the user's language progress in this case
+                updateUserLanguageProgress(lengthOfCall(startTime, endTime));
+            }
+        }
+    }
+
+    // calculates the length of the call and returns a value in minutes
+    private double lengthOfCall(long start, long end) {
+        long duration = TimeUnit.MINUTES.convert(end-start, TimeUnit.NANOSECONDS);
+        return Math.floor(duration);
+    }
+
+    // storing the time spent speaking in the language chosen at the start of the activity
+    private void updateUserLanguageProgress(double duration) {
+        HashMap<String, Integer> hoursSpoken = currentUser.getHoursSpokenPerLanguage();
+        if (hoursSpoken.containsKey(videoChatLanguage)) {
+            // add to those already stored
+            hoursSpoken.put(videoChatLanguage, hoursSpoken.get(videoChatLanguage) + (int) duration);
+        } else {
+            hoursSpoken.put(videoChatLanguage, (int) duration);
+        }
+
+        // update the local current user object
+        currentUser.setHoursSpokenPerLanguage(hoursSpoken);
+
+        // update in the database
+        Firebase.setAndroidContext(this);
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
+        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+    }
+
 
     private void connectToRoom(String roomName) {
 
@@ -260,8 +383,6 @@ public class VideoChatActivity extends AppCompatActivity {
 
             if (remoteVideoTrackPublication.isTrackSubscribed()) {
                 addRemoteParticipantVideo(remoteVideoTrackPublication.getRemoteVideoTrack());
-            } else {
-                Toast.makeText(VideoChatActivity.this, "Not subscribed to remote tracks", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -324,7 +445,6 @@ public class VideoChatActivity extends AppCompatActivity {
                 sendTextChat("Video chat with me!");
                 List<RemoteParticipant> remoteParticipants = room.getRemoteParticipants();
                 for (RemoteParticipant remoteParticipant : room.getRemoteParticipants()) {
-                    Toast.makeText(VideoChatActivity.this, "Adding remote participants", Toast.LENGTH_LONG).show();
                     addRemoteParticipant(remoteParticipant);
                     break;
                 }
@@ -333,7 +453,6 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
                 Log.i(TAG, "failure to connect");
-                Toast.makeText(VideoChatActivity.this, "Failed to connect", Toast.LENGTH_LONG).show();
                 // send a message to the other user detailing an attempted call
                 sendTextChat("I tried to call you :(");
             }
@@ -341,6 +460,8 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onReconnecting(@NonNull Room room, @NonNull TwilioException twilioException) {
                 Log.i(TAG, "reconnecting");
+                // in the case that a connection failure caused the call to stop, restart tracking the user's progress
+                startTime = System.nanoTime();
             }
 
             @Override
@@ -351,7 +472,7 @@ public class VideoChatActivity extends AppCompatActivity {
             @Override
             public void onDisconnected(@NonNull Room room, @Nullable TwilioException twilioException) {
                 localParticipant = null;
-                Log.i(TAG, "disconnected");
+                disconnectActions();
             }
 
             @Override
@@ -363,6 +484,7 @@ public class VideoChatActivity extends AppCompatActivity {
                 // to set a listener for the new participant that has been added to the room
                 addRemoteParticipant(remoteParticipant);
                 remoteParticipant.setListener(remoteParticipantListener());
+                startTime = System.nanoTime(); // gets the start time of the call
             }
 
             @Override
@@ -373,11 +495,8 @@ public class VideoChatActivity extends AppCompatActivity {
                 // disconnect the local participant if all the remote participants have been disconnected
                 if (room.getRemoteParticipants().size() == 0) {
                     room.disconnect();
-                    moveLocalVideoToMainView();
-                    connectionButton.setVisibility(View.VISIBLE);
-                    connectionButton.setEnabled(true);
+                    disconnectActions();
                 }
-
             }
 
             @Override

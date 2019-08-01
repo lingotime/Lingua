@@ -23,6 +23,7 @@ import com.firebase.client.FirebaseError;
 import com.lingua.lingua.adapters.ChatDetailsAdapter;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.Message;
+import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
 
@@ -52,6 +53,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
 
     Firebase reference;
     Chat chat;
+    User currentUser;
 
     private ArrayList<String> languagesToBeLearned;
 
@@ -65,7 +67,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         userName = prefs.getString("userName", "");
 
         chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
-        languagesToBeLearned = getIntent().getStringArrayListExtra("languages");
+        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
         rvMessages = findViewById(R.id.activity_chat_details_rv);
         messages = new ArrayList<>();
@@ -146,57 +148,11 @@ public class ChatDetailsActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.chat_details_videochat_icon) {
-            // TODO: Implement a way for the user who's learning to be kept track of
-
-            languagesToBeLearned.add("Cultural Exchange");
             Intent intent = new Intent(ChatDetailsActivity.this, VideoChatActivity.class);
-            intent.putExtra("language", languagesToBeLearned.get(0));
             // intent to the video chat activity
-            intent.putExtra("chatID", chat.getId());
-            intent.putExtra("name", chat.getName());
-            // get the second user Id from the
-            ArrayList<String> chatUsers = chat.getUsers();
-            for (int index = 0; index < chatUsers.size(); index++) {
-                String otherUserId = chatUsers.get(index);
-                if (otherUserId != userId) {
-                    intent.putExtra("otherUser", otherUserId);
-                }
-            }
+            intent.putExtra("chat", Parcels.wrap(chat));
+            intent.putExtra("user", Parcels.wrap(currentUser));
             startActivity(intent);
-
-            // a dialog box to allow the person initiating the call to select the language in which the call will be made
-//            AlertDialog.Builder languageSelection = new AlertDialog.Builder(this);
-//            languageSelection.setTitle("Choose the language");
-//            languageSelection.setSingleChoiceItems((ListAdapter) languagesToBeLearned, 0, null);
-//            languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i) {
-//                    Intent intent = new Intent(ChatDetailsActivity.this, VideoChatActivity.class);
-//                    intent.putExtra("language", languagesToBeLearned.get(i));
-//                    // intent to the video chat activity
-//                    intent.putExtra("chatID", chat.getId());
-//                    intent.putExtra("name", chat.getName());
-//                    // get the second user Id from the
-//                    ArrayList<String> chatUsers = chat.getUsers();
-//                    for (int index = 0; index < chatUsers.size(); index++) {
-//                        String otherUserId = chatUsers.get(index);
-//                        if (otherUserId != userId) {
-//                            intent.putExtra("otherUser", otherUserId);
-//                        }
-//                    }
-//                    startActivity(intent);
-//                }
-//            });
-//            languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i) {
-//                    Toast.makeText(ChatDetailsActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//
-//            AlertDialog dialog = languageSelection.create();
-//            dialog.setCanceledOnTouchOutside(true);
-//            dialog.show();
 
             return true;
         }
