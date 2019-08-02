@@ -185,14 +185,15 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         // deal with userBirthDate
         String userBirthDateInput = birthdateField.getText().toString();
-
+        String userBirthDate = null;
         try {
             SimpleDateFormat inputDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             Date userBirthDateInputAsDate = inputDateFormat.parse(userBirthDateInput);
-            currentUser.setUserBirthDate(userBirthDateInputAsDate.toString());
+            userBirthDate = userBirthDateInputAsDate.toString();
+            currentUser.setUserBirthDate(userBirthDate);
         } catch (ParseException exception) {
             isCompleteCheck = false;
-            Toast.makeText(ProfileCreationActivity.this, "Please enter a valid birth date. Format: mm/dd/yyyy", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please enter a valid birth date. Format: mm/dd/yyyy", Toast.LENGTH_LONG).show();
         }
 
         // deal with userBiographyText
@@ -202,7 +203,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             currentUser.setUserBiographyText(userBiographyTextInput);
         } else {
             isCompleteCheck = false;
-            Toast.makeText(ProfileCreationActivity.this, "Please enter a biography that is at least four characters.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please enter a biography that is at least four characters.", Toast.LENGTH_LONG).show();
         }
 
         // deal with userOriginCountry
@@ -212,7 +213,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             currentUser.setUserOriginCountry(userOriginCountryInput.get(0));
         } else {
             isCompleteCheck = false;
-            Toast.makeText(ProfileCreationActivity.this, "Please enter an origin country. Only one origin country is allowed.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please enter an origin country. Only one origin country is allowed.", Toast.LENGTH_LONG).show();
         }
 
         // deal with knownLanguages
@@ -234,12 +235,14 @@ public class ProfileCreationActivity extends AppCompatActivity {
         if (isCompleteCheck) {
             Firebase.setAndroidContext(this);
             Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
-            databaseReference.child("complete").setValue(isCompleteCheck);
-            databaseReference.child("online").setValue("true");
+            databaseReference.child("complete").setValue(true);
+            databaseReference.child("online").setValue(true);
             databaseReference.child("knownLanguages").setValue(knownLanguagesInput);
             databaseReference.child("userBiographyText").setValue(userBiographyTextInput);
-            databaseReference.child("userBirthDate").setValue(userBirthDateInput);
+            databaseReference.child("userBirthDate").setValue(userBirthDate);
             databaseReference.child("userOriginCountry").setValue(userOriginCountryInput.get(0));
+            databaseReference.child("exploreLanguages").setValue(exploreLanguagesInput);
+            databaseReference.child("exploreCountries").setValue(exploreCountriesInput);
         }
     }
 
