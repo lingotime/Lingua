@@ -1,8 +1,10 @@
-package com.lingua.lingua;
+package com.lingua.lingua.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
 import java.text.ParseException;
@@ -157,6 +160,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         }
 
         private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage) {
+            // disable the button and change its text
+            sendRequestButton.setText("Friend Request Sent");
+            sendRequestButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+            sendRequestButton.setEnabled(false);
 
             Firebase.setAndroidContext(context);
             Firebase reference = new Firebase("https://lingua-project.firebaseio.com");

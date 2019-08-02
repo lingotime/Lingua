@@ -21,7 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.lingua.lingua.EndlessRecyclerViewScrollListener;
 import com.lingua.lingua.R;
-import com.lingua.lingua.SearchAdapter;
+import com.lingua.lingua.adapters.SearchAdapter;
 import com.lingua.lingua.models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
