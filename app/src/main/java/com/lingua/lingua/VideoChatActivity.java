@@ -23,6 +23,8 @@ import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
+import com.lingua.lingua.notifyAPI.Notification;
+import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
 import com.twilio.video.H264Codec;
@@ -62,6 +64,9 @@ import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -225,12 +230,19 @@ public class VideoChatActivity extends AppCompatActivity {
                 Firebase.setAndroidContext(VideoChatActivity.this);
                 Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/video-chats/" + roomName);
                 databaseReference.setValue(videoChatLanguage);
+                // send notifications to join to everyone in the chat
+                for (int index = 0; index < chatMembers.size(); index++) {
+                    Log.d("VideoPushNotifications", "Sending notification to " + chatMembers.get(index));
+                    sendVideoChatNotification(chatMembers.get(index));
+                }
             }
         });
         languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
+                // disconnect from the room if action not taken
+                disconnectActions();
             }
         });
 
@@ -353,6 +365,29 @@ public class VideoChatActivity extends AppCompatActivity {
 
     }
 
+    private void sendVideoChatNotification(String userId) {
+        // send notification
+        Notification notification = new Notification(currentUser.getUserName() + " would like to video chat!", userId);
+
+        TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!response.isSuccess()) {
+                    String message = "Sending notification failed: " + response.code() + " " + response.message();
+                    Log.e("ExploreAdapter", message);
+                } else {
+                    Log.i("ExploreAdapter", "Sending notification success: " + response.code() + " " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                String message = "Sending notification failed: " + t.getMessage();
+                Log.e("ExploreAdapter", message);
+            }
+        });
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -414,6 +449,7 @@ public class VideoChatActivity extends AppCompatActivity {
         }
         remoteVideoView.setMirror(false);
     }
+
 
 
     private void moveLocalVideoToMainView() {
@@ -510,7 +546,6 @@ public class VideoChatActivity extends AppCompatActivity {
                 Log.i(TAG, "Connected to " + room.getName());
                 // send a message to the other user to notify them of the creation of the room
                 sendTextChat("Video chat with me!");
-                List<RemoteParticipant> remoteParticipants = room.getRemoteParticipants();
                 for (RemoteParticipant remoteParticipant : room.getRemoteParticipants()) {
                     addRemoteParticipant(remoteParticipant);
                     break;
@@ -623,7 +658,9 @@ public class VideoChatActivity extends AppCompatActivity {
 
             @Override
             public void onVideoTrackUnpublished(@NonNull RemoteParticipant remoteParticipant, @NonNull RemoteVideoTrackPublication remoteVideoTrackPublication) {
-                remoteVideoTrackPublication.getRemoteVideoTrack().removeRenderer(remoteVideoView);
+                if (remoteVideoTrackPublication.getRemoteVideoTrack() != null) {
+                    remoteVideoTrackPublication.getRemoteVideoTrack().removeRenderer(remoteVideoView);
+                }
                 moveLocalVideoToMainView();
             }
 
