@@ -16,8 +16,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.models.Chat;
+import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
@@ -41,6 +46,8 @@ import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
@@ -99,6 +106,8 @@ public class VideoChatActivity extends AppCompatActivity {
     private long startTime = 0;
     private long endTime = 0;
 
+    private int currentDuration; // represents the number of minutes the user has already spoken in the language selected
+
 
 
     @Override
@@ -113,7 +122,6 @@ public class VideoChatActivity extends AppCompatActivity {
 
         currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
         chatId = currentChat.getId();
-        String chatName = getIntent().getStringExtra("name"); // the room will be set to this name
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         chatMembers = currentChat.getUsers();
         chatMembers.remove(userId);
@@ -161,6 +169,7 @@ public class VideoChatActivity extends AppCompatActivity {
                 languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        queryHoursSpokenInfo();
                         connectToRoom(roomName);
                     }
                 });
@@ -255,8 +264,26 @@ public class VideoChatActivity extends AppCompatActivity {
 
         // update in the database
         Firebase.setAndroidContext(this);
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId + "/hoursSpokenByLanguage.json");
+        databaseReference.child("hoursSpokenByLanguage").child(videoChatLanguage).setValue(duration + currentDuration);
+    }
+
+    private void queryHoursSpokenInfo() {
+        // get the number of hours the user has already spoken in this language
+        String url = "https://lingua-project.firebaseio.com/users/" + userId + "/hoursSpokenByLanguage.json";
+        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+            try {
+                JSONObject object = new JSONObject(s);
+                currentDuration = object.getInt(videoChatLanguage);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, volleyError -> {
+            Log.e("VideoChatActivity", "" + volleyError);
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(this);
+        rQueue.add(request);
     }
 
 
