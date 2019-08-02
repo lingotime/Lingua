@@ -4,7 +4,7 @@
     <item
         android:id="@+id/chat_details_videochat_icon"
         android:enabled="true"
-        android:icon="@drawable/video_outline"
+        android:icon="@drawable/baseline_videocam_black_48dp"
         android:iconTint="@android:color/black"
         android:title="Videochat"
         app:showAsAction="ifRoom" />
