@@ -253,13 +253,13 @@ public class VideoChatActivity extends AppCompatActivity {
         // update the local current user object
         // update in the database
         Firebase.setAndroidContext(this);
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId + "/hoursSpokenByLanguage.json");
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId);
         databaseReference.child("hoursSpokenByLanguage").child(videoChatLanguage).setValue(duration + currentDuration);
     }
 
     private void queryHoursSpokenInfo() {
         // get the number of hours the user has already spoken in this language
-        String url = "https://lingua-project.firebaseio.com/users/" + userId + "/hoursSpokenByLanguage.json";
+        String url = "https://lingua-project.firebaseio.com/users/" + userId + "/hoursSpokenByLanguage";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
