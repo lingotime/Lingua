@@ -7,10 +7,12 @@ package com.lingua.lingua.notifyAPI;
 public class Notification {
     public final String body;
     public final String identity;
+    public final String roomName; // variable added for notifications sent for video chat
 
-    public Notification (String body, String identity) {
+    public Notification (String body, String identity, String roomName) {
         this.body = body;
         this.identity = identity;
+        this.roomName = roomName;
     }
 
 }

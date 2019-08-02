@@ -229,7 +229,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
     private void sendFriendRequestNotification(String userId) {
         // send notification
-        Notification notification = new Notification(currentUser.getUserName() + " sent you a friend request!", userId);
+        Notification notification = new Notification(currentUser.getUserName() + " sent you a friend request!", userId, null); // null sent as the final parameter since this is not a video chat notification
 
         TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
             @Override

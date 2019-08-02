@@ -59,9 +59,8 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
 
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Body: " + body);
-        Log.d(TAG, "Title: " + title);
 
-        showNotification(title, body);
+        showNotification(body);
     }
 
     /**
@@ -69,7 +68,7 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param message GCM message received.
      */
-    private void showNotification(String title, String message) {
+    private void showNotification(String message) {
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("fragment", "notifications");

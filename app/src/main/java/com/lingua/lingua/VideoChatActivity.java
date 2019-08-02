@@ -14,13 +14,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
+import com.google.gson.Gson;
+import com.lingua.lingua.adapters.ExploreAdapter;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Notification;
@@ -47,6 +52,7 @@ import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -58,6 +64,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -127,7 +134,14 @@ public class VideoChatActivity extends AppCompatActivity {
 
         currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
         chatId = currentChat.getId();
-        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+        // the intent from the push notification will not have the user object
+        try {
+            currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            // if can't get the current user object, generate it from the user id
+
+        }
         chatMembers = currentChat.getUsers();
         chatMembers.remove(userId);
 
@@ -156,41 +170,6 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
         disconnectionButton.setEnabled(false);
 
-
-//        connectionButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                // first prompt the user initiating the call for the intended language
-//                // a dialog box to allow the person initiating the call to select the language in which the call will be made
-//                AlertDialog.Builder languageSelection = new AlertDialog.Builder(VideoChatActivity.this);
-//                languageSelection.setTitle("Choose the language");
-//                languageSelection.setSingleChoiceItems(languageChoices, -1, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        videoChatLanguage = Arrays.asList(languageChoices).get(i);
-//                    }
-//                });
-//                languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        connectToRoom(roomName);
-//                    }
-//                });
-//                languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//
-//                AlertDialog dialog = languageSelection.create();
-//                dialog.setCanceledOnTouchOutside(true);
-//                dialog.show();
-//            }
-//        });
-
-
         disconnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -212,6 +191,51 @@ public class VideoChatActivity extends AppCompatActivity {
 
         requestPermissions();
     }
+
+    // gets the information for the local user from the database and generates a local User object
+    private void generateTheLocalUserObject() {
+        String databaseURL = "https://lingua-project.firebaseio.com/users.json";
+
+        // fetch users from database
+        StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject usersJSONObject = new JSONObject(response);
+                    JSONObject userJSONObject = usersJSONObject.getJSONObject(userId);
+
+                    // convert JSONObject information to user
+                    Gson gson = new Gson();
+                    currentUser = gson.fromJson(userJSONObject.toString(), User.class);
+
+                    // load blank values into null fields
+                    if (currentUser.getKnownLanguages() == null) {
+                        currentUser.setKnownLanguages(new ArrayList<String>());
+                    }
+
+                    if (currentUser.getExploreLanguages() == null) {
+                        currentUser.setExploreLanguages(new ArrayList<String>());
+                    }
+
+                    if (currentUser.getExploreCountries() == null) {
+                        currentUser.setExploreCountries(new ArrayList<String>());
+                    }
+
+                } catch (JSONException e) {
+                    Log.e("VideoChatCurrentUser", e);
+                }
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VideoChatCurrentUser", error.toString());
+            }
+        });
+
+        RequestQueue databaseRequestQueue = Volley.newRequestQueue(this);
+        databaseRequestQueue.add(databaseRequest);
+    }
+
 
     private void callLanguageDialog() {
         // first prompt the user initiating the call for the intended language
@@ -309,8 +333,8 @@ public class VideoChatActivity extends AppCompatActivity {
                 JSONObject object = new JSONObject(s);
                 JSONObject hoursSpokenObject = object.getJSONObject("hoursSpokenByLanguage");
                 if (hoursSpokenObject != null) {
-                    if (object.has(videoChatLanguage)) {
-                        currentDuration = object.getInt(videoChatLanguage);
+                    if (hoursSpokenObject.has(videoChatLanguage)) {
+                        currentDuration = hoursSpokenObject.getInt(videoChatLanguage);
                     } else {
                         currentDuration = 0;
                     }
@@ -365,25 +389,25 @@ public class VideoChatActivity extends AppCompatActivity {
 
     }
 
-    private void sendVideoChatNotification(String userId) {
+    private void sendVideoChatNotification(String recipientId) {
         // send notification
-        Notification notification = new Notification(currentUser.getUserName() + " would like to video chat!", userId);
+        Notification notification = new Notification(userId + " would like to video chat!", recipientId, roomName);
 
         TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (!response.isSuccess()) {
                     String message = "Sending notification failed: " + response.code() + " " + response.message();
-                    Log.e("ExploreAdapter", message);
+                    Log.e("VideoPushNotification", message);
                 } else {
-                    Log.i("ExploreAdapter", "Sending notification success: " + response.code() + " " + response.message());
+                    Log.i("VideoPushNotification", "Sending notification success: " + response.code() + " " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 String message = "Sending notification failed: " + t.getMessage();
-                Log.e("ExploreAdapter", message);
+                Log.e("VideoPushNotification", message);
             }
         });
     }
