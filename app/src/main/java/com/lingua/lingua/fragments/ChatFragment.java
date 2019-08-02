@@ -31,7 +31,6 @@ public class ChatFragment extends Fragment {
     RecyclerView rvChats;
     private ChatAdapter adapter;
     private List<Conversation> chats;
-    private SwipeRefreshLayout swipeContainer;
 
     @Nullable
     @Override
@@ -57,20 +56,5 @@ public class ChatFragment extends Fragment {
         rvChats.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvChats.setLayoutManager(linearLayoutManager);
-
-        swipeContainer = view.findViewById(R.id.fragment_chat_history_timeline);
-        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // adapter.clear();
-                // TODO: load users
-            }
-        });
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
     }
 }

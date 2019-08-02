@@ -6,13 +6,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/item_conversation_card"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        app:cardCornerRadius="12dp"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="4dp"
+        app:cardMaxElevation="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
