@@ -28,7 +28,6 @@ import com.lingua.lingua.R;
 import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -202,7 +201,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         Map<String, String> users = new HashMap<>();
         users.put(friendRequest.getSenderId(), "true");
         users.put(friendRequest.getReceiverId(), "true");
-
         chat.put("users", users);
 
         reference.child("chats").child(chatId).setValue(chat);

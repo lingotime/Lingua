@@ -126,9 +126,10 @@
                             android:id="@+id/activity_profile_info_setup_biography_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:minHeight="20dp"
                             android:hint="Add a short bio..."
-                            android:maxLines="3" />
+                            android:maxLines="5"
+                            android:minHeight="60dp"
+                            android:padding="8dp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -137,9 +138,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="4dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_biography_field_layout">
@@ -148,9 +148,10 @@
                             android:id="@+id/activity_profile_info_setup_origin_country_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:minHeight="20dp"
                             android:hint="What country are you from?"
-                            android:maxLines="1" />
+                            android:maxLines="1"
+                            android:minHeight="20dp"
+                            android:padding="8dp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -159,9 +160,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="4dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_origin_country_field_layout">
@@ -170,9 +170,10 @@
                             android:id="@+id/activity_profile_info_setup_known_languages_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:minHeight="20dp"
                             android:hint="What languages do you know?"
-                            android:maxLines="3" />
+                            android:maxLines="3"
+                            android:minHeight="20dp"
+                            android:padding="8dp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -181,9 +182,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="4dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_known_languages_field_layout">
@@ -191,10 +191,11 @@
                         <com.hootsuite.nachos.NachoTextView
                             android:id="@+id/activity_profile_info_setup_explore_languages_field"
                             android:layout_width="match_parent"
-                            android:minHeight="20dp"
                             android:layout_height="wrap_content"
                             android:hint="What languages do you want to learn?"
-                            android:maxLines="3" />
+                            android:maxLines="3"
+                            android:minHeight="20dp"
+                            android:padding="8dp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -203,9 +204,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="4dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_explore_languages_field_layout">
@@ -213,10 +213,11 @@
                         <com.hootsuite.nachos.NachoTextView
                             android:id="@+id/activity_profile_info_setup_explore_countries_field"
                             android:layout_width="match_parent"
-                            android:minHeight="20dp"
                             android:layout_height="wrap_content"
                             android:hint="What countries do you want to explore?"
-                            android:maxLines="3" />
+                            android:maxLines="3"
+                            android:minHeight="20dp"
+                            android:padding="8dp" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -234,7 +235,8 @@
                         android:id="@+id/activity_profile_info_setup_continue_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Edit Profile and Continue"
+                        android:text="Save"
+                        android:textColor="@color/white"
                         app:backgroundTint="#262E5B"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

@@ -85,6 +85,7 @@ public class ProfileFragment extends Fragment {
                     // load the profile creation page if edit button is clicked
                     final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
                     intent.putExtra("user", Parcels.wrap(currentUser));
+                    intent.putExtra("purpose", "edit");
                     startActivity(intent);
 
                 } else if (id == R.id.profile_fragment_logout) {

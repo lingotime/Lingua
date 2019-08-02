@@ -85,6 +85,7 @@ public class ExploreFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 try {
+                    Log.i("ExploreFragment", response);
                     JSONObject usersJSONObject = new JSONObject(response);
                     Iterator<String> usersJSONObjectKeys = usersJSONObject.keys();
                     int usersJSONObjectCounter = 0;
@@ -178,6 +179,10 @@ public class ExploreFragment extends Fragment {
         }
 
         if (exploreLanguages != null && knownLanguages != null) {
+            if (exploreLanguages.size() == 0 && exploreLanguages.size() == 0) {
+                return true;
+            }
+
             for (String exploreLanguage : exploreLanguages) {
                 for (String knownLanguage : knownLanguages) {
                     if (exploreLanguage.equals(knownLanguage)) {
@@ -199,6 +204,7 @@ public class ExploreFragment extends Fragment {
     }
 
     // ensure there is no previous relationship between user and displayed user
+    // TODO: listener for pending friend requests
     private boolean actionNotTaken(String generatedUserID) {
         if (currentUser.getFriends() != null) {
             for (String friendUserID : currentUser.getFriends()) {
