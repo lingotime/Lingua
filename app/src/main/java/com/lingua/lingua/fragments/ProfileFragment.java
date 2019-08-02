@@ -136,7 +136,7 @@ public class ProfileFragment extends Fragment {
 
         originCountryText.setText("Origin Country: " + currentUser.getUserOriginCountry());
 
-        if (currentUser.getKnownLanguages() == null) {
+        if (currentUser.getKnownLanguages().isEmpty()) {
             knownLanguagesChip.setText("Add a language...");
             knownLanguagesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -153,7 +153,7 @@ public class ProfileFragment extends Fragment {
             }
         }
 
-        if (currentUser.getExploreLanguages() == null) {
+        if (currentUser.getExploreLanguages().isEmpty()) {
             exploreLanguagesChip.setText("Add a language...");
             exploreLanguagesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -170,7 +170,7 @@ public class ProfileFragment extends Fragment {
             }
         }
 
-        if (currentUser.getExploreCountries() == null) {
+        if (currentUser.getExploreCountries().isEmpty()) {
             exploreCountriesChip.setText("Add a country...");
             exploreCountriesChip.setOnClickListener(new View.OnClickListener() {
                 @Override

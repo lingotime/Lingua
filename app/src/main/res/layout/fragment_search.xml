@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="#848FBB"
         android:iconifiedByDefault="false"
-        android:queryHint="Search for a user..."
+        android:queryHint="Search for a country or language..."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
