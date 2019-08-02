@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
@@ -71,8 +73,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         private CardView card;
         private ImageView profilePhotoImage;
         private TextView nameText;
-        private TextView ageText;
-        private TextView countryText;
+        private TextView countryAndAgeText;
+        private ImageView flagImage;
         private Button sendRequestButton;
 
         public ViewHolder(View userItemView) {
@@ -81,8 +83,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             card = userItemView.findViewById(R.id.item_user_search_card);
             profilePhotoImage = userItemView.findViewById(R.id.item_user_search_profile_image);
             nameText = userItemView.findViewById(R.id.item_user_search_name_text);
-            ageText = userItemView.findViewById(R.id.item_user_search_age_text);
-            countryText = userItemView.findViewById(R.id.item_user_search_country_text);
+            countryAndAgeText = userItemView.findViewById(R.id.item_user_search_country_and_age_text);
+            flagImage = userItemView.findViewById(R.id.item_user_search_flag);
             sendRequestButton = userItemView.findViewById(R.id.item_user_search_send_request_button);
 
             // send user a friend request, remove them from view, and add a new user to timeline
@@ -134,14 +136,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         }
 
         public void bind(User user) {
-            // load user profile photo into place
+            // load user flag and profile photo into place
+            Glide.with(context).load(context.getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(user.getUserOriginCountry()) + "_round", "drawable", context.getPackageName())).placeholder(R.drawable.un_round).apply(RequestOptions.circleCropTransform()).into(flagImage);
             Glide.with(context).load(user.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePhotoImage);
 
             // load other user information into place
             // use getAge() helper method to convert birth date to age
             nameText.setText(user.getUserName());
-            ageText.setText(getAge(user.getUserBirthDate()) + " years old");
-            countryText.setText("from " + user.getUserOriginCountry());
+            countryAndAgeText.setText("from " + user.getUserOriginCountry() + ", " + getAge(user.getUserBirthDate()) + " years old");
         }
 
         private int getAge(String birthDateString) {
