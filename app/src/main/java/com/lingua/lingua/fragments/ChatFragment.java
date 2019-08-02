@@ -58,7 +58,7 @@ public class ChatFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvChats.setLayoutManager(linearLayoutManager);
 
-        swipeContainer = view.findViewById(R.id.fragment_chat_swipe_container);
+        swipeContainer = view.findViewById(R.id.fragment_chat_history_timeline);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
