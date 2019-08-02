@@ -99,10 +99,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
+                android:gravity="center"
                 android:text="[Biography]"
                 android:textColor="#000000"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -111,26 +110,15 @@
 
             <Button
                 android:id="@+id/item_user_send_request_button"
-                android:layout_width="150dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="20dp"
-                android:text="Send Friend Request"
-                app:backgroundTint="#262E5B"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_user_biography_text" />
-
-            <Button
-                android:id="@+id/item_user_remove_button"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:text="Remove User from View"
+                android:text="Send Friend Request"
                 app:backgroundTint="#262E5B"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/item_user_biography_text" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

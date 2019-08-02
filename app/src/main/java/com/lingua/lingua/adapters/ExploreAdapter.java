@@ -60,7 +60,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     private TextView ageText;
     private TextView biographyText;
     private Button sendRequestButton;
-    private Button removeButton;
 
     public ExploreAdapter(Context context, List<User> usersList, List<User> hiddenUsersList, User currentUser) {
         this.context = context;
@@ -139,35 +138,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                     AlertDialog confirmDialog = confirmDialogBuilder.create();
                     confirmDialog.show();
                 }
-            }
-        });
-
-        // remove user from view without friend request and add a new user to timeline
-        removeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // add user to declined user list
-                if (currentUser.getDeclinedUsers() == null) {
-                    currentUser.setDeclinedUsers(new ArrayList<String>(Arrays.asList(usersList.get(position).getUserID())));
-                } else {
-                    currentUser.getDeclinedUsers().add(usersList.get(position).getUserID());
-                }
-
-                // save updated declined user list to database
-                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
-
-                // remove user from displayed user list
-                usersList.remove(position);
-
-                // check if there are more users to load
-                if (!hiddenUsersList.isEmpty()) {
-                    usersList.add(hiddenUsersList.get(0));
-                    hiddenUsersList.remove(0);
-                }
-
-                // notify adapter of changes in data
-                notifyDataSetChanged();
             }
         });
     }
@@ -263,7 +233,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             ageText = userItemView.findViewById(R.id.item_user_age_text);
             biographyText = userItemView.findViewById(R.id.item_user_biography_text);
             sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
-            removeButton = userItemView.findViewById(R.id.item_user_remove_button);
         }
     }
 }
