@@ -58,6 +58,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     String userId, userName;
     User currentUser;
+    String nameToDisplay;
 
 
     public ChatAdapter(Context context, List<Chat> chats, User user) {
@@ -101,10 +102,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.d("ChatAdapter", s);
                 String key = (String) dataSnapshot.getKey();
                 if (key.equals("lastMessage")) {
-                    String lastMessage = (String) dataSnapshot.getValue();
-                    tvText.setText(lastMessage);
+                    // display last message with the other user's name or with "You: " if current user is the sender
+                    String lastMessageRaw = (String) dataSnapshot.getValue();
+                    if (lastMessageRaw != null && lastMessageRaw.startsWith(currentUser.getUserName())) {
+                        String lastMessage = "You" + lastMessageRaw.split(currentUser.getUserName())[1];
+                        tvText.setText(lastMessage);
+                    } else {
+                        tvText.setText(lastMessageRaw);
+                    }
                 } else if (key.equals("lastMessageAt")) {
                     String lastMessageTimestamp = (String) dataSnapshot.getValue();
                     tvTimestamp.setText(DateUtil.getRelativeTimeAgo(lastMessageTimestamp));
@@ -149,6 +157,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         Chat chat = chats.get(position);
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));
+                        intent.putExtra("nameToDisplay", nameToDisplay);
                         context.startActivity(intent);
                     }
                 }
@@ -165,6 +174,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         // creating the dialog for selecting the language of the call
                         Intent intent = new Intent(context, VideoChatActivity.class);
                         // intent to the video chat activity
+                        intent.putExtra("nameToDisplay", nameToDisplay);
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));
                         context.startActivity(intent);
@@ -214,6 +224,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         .into(ivProfile);
 
                 // set name
+                nameToDisplay = name;
                 tvName.setText(name);
 
             } catch (JSONException e) {
