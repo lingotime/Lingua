@@ -25,6 +25,7 @@ import com.lingua.lingua.fragments.ProfileFragment;
 import com.lingua.lingua.fragments.SearchFragment;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.BindingIntentService;
+import com.twilio.jwt.accesstoken.AccessToken;
 
 import org.parceler.Parcels;
 
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         currentUser.setOnline(true);
 
         // save update
+
         Firebase.setAndroidContext(this);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
         reference.child("online").setValue("true");
