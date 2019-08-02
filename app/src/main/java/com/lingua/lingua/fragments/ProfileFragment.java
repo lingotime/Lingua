@@ -72,7 +72,7 @@ public class ProfileFragment extends Fragment {
         // set the toolbar
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_profile_toolbar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Profile");
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
