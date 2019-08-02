@@ -81,15 +81,13 @@
                         app:layout_constraintTop_toTopOf="@+id/fragment_profile_profile_image" />
 
                     <TextView
-                        android:id="@+id/fragment_profile_birthdate_text"
+                        android:id="@+id/fragment_profile_age_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
-                        android:text="Birth Date: [Birthdate]"
+                        android:text="Age: [Age]"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/fragment_profile_profile_image"
                         app:layout_constraintTop_toBottomOf="@+id/fragment_profile_name_text" />
@@ -207,7 +205,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginLeft="20dp"
                         android:layout_marginTop="20dp"
-                        android:text="Explore countries:"
+                        android:text="Explore Countries:"
                         android:textStyle="italic"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/fragment_profile_explore_languages_chips" />

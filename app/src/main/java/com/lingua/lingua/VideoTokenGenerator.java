@@ -10,9 +10,9 @@ public class VideoTokenGenerator {
 
 
     // Required for all types of tokens
-    private String twilioAccountSid = String.valueOf(R.string.twilio_sid);
-    private String twilioApiKey = String.valueOf(R.string.twilio_api);
-    private String twilioApiSecret = String.valueOf(R.string.twilio_secret_key);
+    private String twilioAccountSid = ""; // String.valueOf(R.string.twilio_sid);
+    private String twilioApiKey = ""; // String.valueOf(R.string.twilio_api);
+    private String twilioApiSecret = ""; // String.valueOf(R.string.twilio_secret_key);
 
 
     private String identity; // enter user's name here; preferably first
