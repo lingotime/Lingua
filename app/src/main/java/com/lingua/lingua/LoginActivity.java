@@ -69,7 +69,6 @@ public class LoginActivity extends AppCompatActivity {
         // associate views with java variables
         facebookLoginButton = findViewById(R.id.activity_login_facebook_button);
 
-        // check if already logged in
         // prepare firebase database
         Firebase.setAndroidContext(this);
 
