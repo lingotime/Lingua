@@ -14,8 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.android.volley.Request;
@@ -25,7 +23,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
 import com.google.gson.Gson;
-import com.lingua.lingua.adapters.ExploreAdapter;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Notification;
@@ -52,7 +49,6 @@ import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -64,8 +60,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -140,7 +134,7 @@ public class VideoChatActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             // if can't get the current user object, generate it from the user id
-
+            generateTheLocalUserObject();
         }
         chatMembers = currentChat.getUsers();
         chatMembers.remove(userId);
@@ -194,15 +188,14 @@ public class VideoChatActivity extends AppCompatActivity {
 
     // gets the information for the local user from the database and generates a local User object
     private void generateTheLocalUserObject() {
-        String databaseURL = "https://lingua-project.firebaseio.com/users.json";
+        String databaseURL = "https://lingua-project.firebaseio.com/users" + userId;
 
         // fetch users from database
         StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
-                    JSONObject usersJSONObject = new JSONObject(response);
-                    JSONObject userJSONObject = usersJSONObject.getJSONObject(userId);
+                    JSONObject userJSONObject = new JSONObject(response);
 
                     // convert JSONObject information to user
                     Gson gson = new Gson();
@@ -222,7 +215,7 @@ public class VideoChatActivity extends AppCompatActivity {
                     }
 
                 } catch (JSONException e) {
-                    Log.e("VideoChatCurrentUser", e);
+                    Log.e("VideoChatCurrentUser", e.toString());
                 }
             }
         }, new com.android.volley.Response.ErrorListener() {
@@ -254,6 +247,7 @@ public class VideoChatActivity extends AppCompatActivity {
                 Firebase.setAndroidContext(VideoChatActivity.this);
                 Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/video-chats/" + roomName);
                 databaseReference.setValue(videoChatLanguage);
+
                 // send notifications to join to everyone in the chat
                 for (int index = 0; index < chatMembers.size(); index++) {
                     Log.d("VideoPushNotifications", "Sending notification to " + chatMembers.get(index));
@@ -802,10 +796,6 @@ public class VideoChatActivity extends AppCompatActivity {
             room.disconnect();
         }
 
-        /*
-         * Release the local audio and video tracks ensuring any memory allocated to audio
-         * or video is freed.
-         */
         if (localAudioTrack != null) {
             localAudioTrack.release();
             localAudioTrack = null;
