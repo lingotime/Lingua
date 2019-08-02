@@ -40,14 +40,11 @@ import com.twilio.video.VideoTrack;
 import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import org.parceler.Parcels;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,12 +69,17 @@ public class VideoChatActivity extends AppCompatActivity {
     private LocalAudioTrack localAudioTrack;
     private LocalVideoTrack localVideoTrack;
     private CameraCapturer cameraCapturer;
-    private VideoView remoteVideoView;
-    private VideoView localVideoView;
+
     private LocalParticipant localParticipant;
     private static final int RC_VIDEO_APP_PERM = 124;
+
+    // fields from the layout
     private ImageButton connectionButton;
     private ImageButton disconnectionButton;
+    private VideoView remoteVideoView;
+    private VideoView localVideoView;
+    private ImageButton switchCameraButton;
+
     private final static String TAG = "VideoChatActivity";
     // just for the initial test
     private VideoCodec videoCodec;
@@ -135,6 +137,7 @@ public class VideoChatActivity extends AppCompatActivity {
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
         connectionButton = (ImageButton) findViewById(R.id.activity_video_chat_connect);
         disconnectionButton = (ImageButton) findViewById(R.id.activity_video_chat_disconnect);
+        switchCameraButton = (ImageButton) findViewById(R.id.activity_video_switch_camera);
 
 
         disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
@@ -186,7 +189,14 @@ public class VideoChatActivity extends AppCompatActivity {
             }
         });
 
-        Log.i(TAG, "Inflated the layout for video activity");
+
+        switchCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switchCamera();
+            }
+        });
+
         requestPermissions();
     }
 
@@ -214,6 +224,13 @@ public class VideoChatActivity extends AppCompatActivity {
                 // adjust the user's language progress in this case
                 updateUserLanguageProgress(lengthOfCall(startTime, endTime));
             }
+        }
+    }
+
+    // finds out which camera is being used and switches to the other one
+    private void switchCamera() {
+        if (cameraCapturer != null) {
+            cameraCapturer.switchCamera();
         }
     }
 

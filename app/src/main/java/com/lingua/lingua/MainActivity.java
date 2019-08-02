@@ -155,10 +155,6 @@ public class MainActivity extends AppCompatActivity {
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
 
-        // TODO: Remove - testing the token generation
-        VideoTokenGenerator testToken = new VideoTokenGenerator("briana", "douglas", this.getString(R.string.twilio_sid), this.getString(R.string.twilio_api), this.getString(R.string.twilio_secret_key));
-        Log.i("TestToken", testToken.JwtToken);
-        String name = this.getString(R.string.myname);
     }
 
     /**
