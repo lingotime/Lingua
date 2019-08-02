@@ -19,13 +19,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
-import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.EndlessRecyclerViewScrollListener;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.SearchAdapter;
 import com.lingua.lingua.models.User;
-
-import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
