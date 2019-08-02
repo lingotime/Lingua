@@ -41,10 +41,22 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/item_user_profile_image"
+                android:id="@+id/item_user_profile_image_border"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_marginTop="50dp"
+                android:tint="#FFFFFF"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.502"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/circle" />
+
+            <ImageView
+                android:id="@+id/item_user_profile_image"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="75dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/item_user_flag"
@@ -52,14 +64,13 @@
 
             <ImageView
                 android:id="@+id/item_user_live_signal_image"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_marginStart="160dp"
-                android:layout_marginLeft="160dp"
-                android:tint="#43A738"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="110dp"
+                android:tint="#33C301"
                 app:layout_constraintBottom_toBottomOf="@+id/item_user_profile_image"
                 app:layout_constraintStart_toStartOf="@+id/item_user_profile_image"
-                app:srcCompat="@drawable/live_signal" />
+                app:srcCompat="@drawable/circle" />
 
             <TextView
                 android:id="@+id/item_user_name_text"
