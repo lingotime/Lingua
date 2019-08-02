@@ -3,8 +3,10 @@ package com.lingua.lingua;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -82,25 +84,25 @@ public class ChatDetailsActivity extends AppCompatActivity {
         etMessage = findViewById(R.id.activity_chat_details_et);
         sendButtonIcon.setColorFilter(Color.argb(255, 255, 255, 255));
 
+        // send message on button click
         sendButton.setOnClickListener(view -> {
             String messageText = etMessage.getText().toString();
-            String timestamp = new Date().toString();
-            if (!messageText.equals("")) {
-                // save message
-                Map<String, String> map = new HashMap<>();
-                map.put("message", messageText);
-                map.put("senderId", currentUser.getUserID());
-                map.put("timestamp", timestamp);
-                reference.push().setValue(map);
-                etMessage.setText("");
+            sendMessage(messageText);
+        });
 
-                // set this message to be the lastMessage of the chat
-                Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getId());
-                chatReference.child("lastMessage").setValue(currentUser.getUserName() + ": " + messageText);
-                chatReference.child("lastMessageAt").setValue(timestamp);
+        // send message on enter
+        etMessage.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    String messageText = etMessage.getText().toString();
+                    sendMessage(messageText);
+                    return true;
+                }
+                return false;
             }
         });
 
+        // if a message is added, show it in the recycler view
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -111,6 +113,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 String timestamp = map.get("timestamp").toString();
                 messages.add(new Message(senderId, message, timestamp));
                 adapter.notifyDataSetChanged();
+                linearLayoutManager.scrollToPosition(messages.size() - 1);
             }
 
             @Override
@@ -149,5 +152,23 @@ public class ChatDetailsActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendMessage(String messageText) {
+        String timestamp = new Date().toString();
+        if (!messageText.equals("")) {
+            // save message
+            Map<String, String> map = new HashMap<>();
+            map.put("message", messageText);
+            map.put("senderId", currentUser.getUserID());
+            map.put("timestamp", timestamp);
+            reference.push().setValue(map);
+            etMessage.setText("");
+
+            // set this message to be the lastMessage of the chat
+            Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getId());
+            chatReference.child("lastMessage").setValue(currentUser.getUserName() + ": " + messageText);
+            chatReference.child("lastMessageAt").setValue(timestamp);
+        }
     }
 }
