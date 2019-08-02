@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,12 +17,7 @@ import androidx.legacy.content.WakefulBroadcastReceiver;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.firebase.client.Firebase;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
@@ -41,6 +35,7 @@ import static com.lingua.lingua.notifyAPI.BindingSharedPreferences.IDENTITY;
  */
 
 public class MainActivity extends AppCompatActivity {
+
     private User currentUser;
     BottomNavigationView bottomNavigationView;
     private static final String TAG = "MainActivity";
@@ -63,10 +58,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // re-enable FCM for push notifications
-        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
-
-
         currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
         Log.i("MainActivity", currentUser.getUserID());
         Log.i("MainActivity", currentUser.getUserName());
@@ -76,27 +67,6 @@ public class MainActivity extends AppCompatActivity {
         prefs.edit().putString("userName", currentUser.getUserName()).apply();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-
-        // retrieving the device token so that the notifications can be sent to the local user
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
-                            return;
-                        }
-
-                        // Get new Instance ID token
-                        String deviceToken = task.getResult().getToken();
-                        // TODO: Implement pushing this device token to the current user's object in the database
-
-                        // Log and toast
-                        String msg = "Device token retrieved";
-                        Log.d(TAG, msg + deviceToken);
-                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                    }
-                });
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", Parcels.wrap(currentUser));
@@ -172,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
         currentUser.setOnline(true);
 
         // save update
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+        reference.child("online").setValue("true");
     }
 
     /**
@@ -204,23 +175,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // mark user as live
-        currentUser.setOnline(true);
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
 
-        // save update
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+        // mark user as live
+        reference.child("online").setValue("true");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        // mark user as dead
-        currentUser.setOnline(false);
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
 
-        // save update
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+        // mark user as live
+        reference.child("online").setValue("false");
     }
 }

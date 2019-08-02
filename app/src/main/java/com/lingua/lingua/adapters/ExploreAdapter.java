@@ -12,22 +12,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Notification;
 import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -125,7 +122,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                             String friendRequestMessage = confirmDialogMessageField.getText().toString();
 
                             if (!friendRequestMessage.equals("")) {
-                                sendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
+                                sendFriendRequest(currentUser, clickedUser, friendRequestMessage);
                             }
 
                             dialogInterface.cancel();
@@ -180,39 +177,12 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         return usersList.size();
     }
 
-    private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage, int position) {
-        // ensure clicked user did not send friend request to current user while current user was typing
-        if (currentUser.getPendingReceivedFriendRequests() != null) {
-            for (String pendingReceivedFriendRequest : currentUser.getPendingReceivedFriendRequests()) {
-                if (pendingReceivedFriendRequest.equals(clickedUser.getUserID())) {
-                    Toast.makeText(context, "You already received a friend request from this user.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-            }
-        }
+    private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage) {
 
         Firebase.setAndroidContext(context);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
 
-        // add clicked user to current user's sent friend request user list...Fausto's way
-        if (currentUser.getPendingSentFriendRequests() == null) {
-            currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(clickedUser.getUserID())));
-        } else {
-            currentUser.getPendingSentFriendRequests().add(clickedUser.getUserID());
-        }
-
-        // add current user to clicked user's received friend request user list...Fausto's way
-        if (clickedUser.getPendingReceivedFriendRequests() == null) {
-            clickedUser.setPendingReceivedFriendRequests(new ArrayList<String>(Arrays.asList(currentUser.getUserID())));
-        } else {
-            clickedUser.getPendingReceivedFriendRequests().add(currentUser.getUserID());
-        }
-
-        // save new friend request data to database...Fausto's way
-        reference.child("users").child(currentUser.getUserID()).setValue(currentUser);
-        reference.child("users").child(clickedUser.getUserID()).setValue(clickedUser);
-
-        // save friend request...Marta's way
+        // save friend request
         String friendRequestId = reference.child("friend-requests").push().getKey();
 
         Map<String, String> map = new HashMap<>();
@@ -230,8 +200,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             reference.child("friend-requests").child(friendRequestId).child("exploreLanguages").setValue(languages);
         }
 
-
-        // save friend request reference in user objects...Marta's way
+        // save friend request reference in user objects
         reference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
         reference.child("users").child(clickedUser.getUserID()).child("received-friend-requests").child(friendRequestId).setValue(true);
 
@@ -240,17 +209,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
         Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();
 
-        // remove user from displayed user list
-        usersList.remove(position);
-
-        // check if there are more users to load
-        if (!hiddenUsersList.isEmpty()) {
-            usersList.add(hiddenUsersList.get(0));
-            hiddenUsersList.remove(0);
-        }
-
-        // notify adapter of changes in data
-        notifyDataSetChanged();
+        //TODO: change button to "friend request sent"
     }
 
     private int getAge(String birthDateString) {
