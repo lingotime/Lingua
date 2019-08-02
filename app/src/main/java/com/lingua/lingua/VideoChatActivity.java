@@ -16,10 +16,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
@@ -250,7 +246,7 @@ public class VideoChatActivity extends AppCompatActivity {
     private void connectToRoom(String roomName) {
 
         // generate the Twilio room and token with the given chat name and the current user as the first identity
-        tokenGenerator = new VideoTokenGenerator(userId, roomName);
+        tokenGenerator = new VideoTokenGenerator(userId, roomName, this.getString(R.string.twilio_sid), this.getString(R.string.twilio_api), this.getString(R.string.twilio_secret_key));
         Log.i(TAG, tokenGenerator.JwtToken);
 
         ConnectOptions.Builder connectOptionsBuilder = new ConnectOptions.Builder(tokenGenerator.JwtToken).roomName(roomName);

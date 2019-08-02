@@ -31,6 +31,7 @@ import com.lingua.lingua.fragments.ProfileFragment;
 import com.lingua.lingua.fragments.SearchFragment;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.BindingIntentService;
+import com.twilio.jwt.accesstoken.AccessToken;
 
 import org.parceler.Parcels;
 
@@ -76,27 +77,6 @@ public class MainActivity extends AppCompatActivity {
         prefs.edit().putString("userName", currentUser.getUserName()).apply();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-
-        // retrieving the device token so that the notifications can be sent to the local user
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
-                            return;
-                        }
-
-                        // Get new Instance ID token
-                        String deviceToken = task.getResult().getToken();
-                        // TODO: Implement pushing this device token to the current user's object in the database
-
-                        // Log and toast
-                        String msg = "Device token retrieved";
-                        Log.d(TAG, msg + deviceToken);
-                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                    }
-                });
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", Parcels.wrap(currentUser));
@@ -174,6 +154,11 @@ public class MainActivity extends AppCompatActivity {
         // save update
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
         databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+
+        // TODO: Remove - testing the token generation
+        VideoTokenGenerator testToken = new VideoTokenGenerator("briana", "douglas", this.getString(R.string.twilio_sid), this.getString(R.string.twilio_api), this.getString(R.string.twilio_secret_key));
+        Log.i("TestToken", testToken.JwtToken);
+        String name = this.getString(R.string.myname);
     }
 
     /**
