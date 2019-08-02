@@ -143,9 +143,12 @@ public class NotificationsFragment extends Fragment {
                 JSONArray objectExploreLanguages = object.getJSONArray("exploreLanguages");
 
                 ArrayList<String> exploreLanguages = new ArrayList<>();
-                for (int index = 0; index < objectExploreLanguages.length(); index++) {
-                    exploreLanguages.add((String) objectExploreLanguages.get(index));
+                if (objectExploreLanguages != null) {
+                    for (int index = 0; index < objectExploreLanguages.length(); index++) {
+                        exploreLanguages.add((String) objectExploreLanguages.get(index));
+                    }
                 }
+
                 FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp, id, exploreLanguages);
                 friendRequests.add(friendRequest);
                 adapter.notifyDataSetChanged();

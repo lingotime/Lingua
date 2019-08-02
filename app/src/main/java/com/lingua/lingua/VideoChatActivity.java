@@ -133,11 +133,10 @@ public class VideoChatActivity extends AppCompatActivity {
             generateTheLocalUserObject();
             generateTheLocalChatObject();
         } else {
-            // intent passed in from either the chat fragment or the chat details activity with the parcelable extras
+            // intent passed in from either the chat fragment or the chat details activity with these parcelable extras
             currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
             currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         }
-        
 
         chatId = currentChat.getId();
         // the intent from the push notification will not have the user object
