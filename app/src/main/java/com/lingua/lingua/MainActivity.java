@@ -142,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
         currentUser.setOnline(true);
 
         // save update
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+        reference.child("online").setValue("true");
     }
 
     /**

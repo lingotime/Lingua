@@ -159,15 +159,15 @@ public class LoginActivity extends AppCompatActivity {
 
                             // load blank values into null
                             if (generatedUser.getKnownLanguages() == null) {
-                                generatedUser.setKnownLanguages(new ArrayList<String>());
+                                generatedUser.setKnownLanguages(new ArrayList<>());
                             }
 
                             if (generatedUser.getExploreLanguages() == null) {
-                                generatedUser.setExploreLanguages(new ArrayList<String>());
+                                generatedUser.setExploreLanguages(new ArrayList<>());
                             }
 
                             if (generatedUser.getExploreCountries() == null) {
-                                generatedUser.setExploreCountries(new ArrayList<String>());
+                                generatedUser.setExploreCountries(new ArrayList<>());
                             }
 
                             // proceed to set next activity

@@ -1,9 +1,5 @@
 package com.lingua.lingua;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,6 +14,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
@@ -30,7 +32,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.lingua.lingua.models.User;
+
 import org.parceler.Parcels;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -49,6 +53,8 @@ public class ProfilePicture extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_picture);
+
+        Firebase.setAndroidContext(this);
 
         // associate views with java variables
         takePhotoButton = findViewById(R.id.activity_profile_photo_setup_take_photo_button);
@@ -139,8 +145,8 @@ public class ProfilePicture extends AppCompatActivity {
                                 currentUser.setUserProfilePhotoURL(profilePhotoURI.toString());
 
                                 // save updates
-                                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-                                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+                                Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+                                reference.child("userProfilePhotoURL").setValue(profilePhotoURI.toString());
 
                                 // return to info setup activity
                                 final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
