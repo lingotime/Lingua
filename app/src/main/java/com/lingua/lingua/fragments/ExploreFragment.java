@@ -10,7 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
@@ -154,6 +156,10 @@ public class ExploreFragment extends Fragment {
                         }
                     };
                     historyTimeline.addOnScrollListener(scrollListener);
+
+                    // enable the snap helper for card snapping
+                    SnapHelper helper = new LinearSnapHelper();
+                    helper.attachToRecyclerView(historyTimeline);
 
                     // display timeline
                     historyTimeline.setLayoutManager(layoutManager);

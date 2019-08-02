@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:windowSoftInputMode="stateVisible|adjustResize"
+    android:windowSoftInputMode="adjustPan|adjustResize|stateVisible"
     tools:context=".ChatDetailsActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -15,6 +15,7 @@
         android:layout_below="@+id/activity_chat_details_toolbar"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:windowSoftInputMode="adjustPan|adjustResize|stateVisible"
         android:layout_marginTop="0dp"
         android:layout_marginRight="0dp"
         android:transcriptMode="alwaysScroll" />
@@ -56,13 +57,13 @@
 
         <Button
             android:id="@+id/activity_chat_details_button_send"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginTop="2dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:background="@drawable/blue_circle"
+            android:backgroundTint="@color/primaryBlue"
             app:iconTint="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -95,7 +96,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
-        android:background="?attr/colorPrimary"
+        android:elevation="8dp"
+        android:background="@color/white"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme" />
 

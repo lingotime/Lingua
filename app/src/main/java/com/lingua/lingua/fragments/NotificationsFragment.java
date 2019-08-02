@@ -56,7 +56,6 @@ public class NotificationsFragment extends Fragment {
 
         SharedPreferences prefs = getContext().getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         userId = prefs.getString("userId", "");
-        Log.d("NotificationsFragment", userId);
 
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
@@ -121,7 +120,7 @@ public class NotificationsFragment extends Fragment {
         }, volleyError -> {
             Toast.makeText(getContext(), "No connection", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
-            Log.e("ChatFragment", "" + volleyError);
+            Log.e("NotificationsFragment", "" + volleyError);
         });
 
         RequestQueue rQueue = Volley.newRequestQueue(getContext());
@@ -140,10 +139,11 @@ public class NotificationsFragment extends Fragment {
                 String receiverId = object.getString("receiverId");
                 String receiverName = object.getString("receiverName");
                 String timestamp = object.getString("timestamp");
-                JSONArray objectExploreLanguages = object.getJSONArray("exploreLanguages");
 
                 ArrayList<String> exploreLanguages = new ArrayList<>();
-                if (objectExploreLanguages != null) {
+
+                if (object.has("exploreLanguages")) {
+                    JSONArray objectExploreLanguages = object.getJSONArray("exploreLanguages");
                     for (int index = 0; index < objectExploreLanguages.length(); index++) {
                         exploreLanguages.add((String) objectExploreLanguages.get(index));
                     }
@@ -157,7 +157,7 @@ public class NotificationsFragment extends Fragment {
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Log.e("ChatFragment", "" + volleyError);
+            Log.e("NotificationsFragment", "" + volleyError);
             swipeContainer.setRefreshing(false);
         });
 

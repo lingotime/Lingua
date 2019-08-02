@@ -146,6 +146,9 @@ public class ChatFragment extends Fragment {
                 JSONObject chat = new JSONObject(s);
                 Log.i("ChatFragment", chat.toString());
                 String lastMessage = chat.getString("lastMessage");
+                if (lastMessage != null && lastMessage.startsWith(currentUser.getUserName())) {
+                    lastMessage = "You" + lastMessage.split(currentUser.getUserName())[1];
+                }
                 String lastMessageAt = chat.getString("lastMessageAt");
                 // get list of user ids in the chat
                 ArrayList<String> userIds = new ArrayList<>();
@@ -156,12 +159,14 @@ public class ChatFragment extends Fragment {
                     Log.d(TAG, key);
                     userIds.add(key);
                 }
-                JSONArray exploreLanguages = chat.getJSONArray("exploreLanguages");
-                ArrayList<String> chatExploreLanguages = new ArrayList<>();
-                for (int i = 0; i < exploreLanguages.length(); i++) {
-                    chatExploreLanguages.add(exploreLanguages.getString(i));
+                ArrayList<String> exploreLanguages = new ArrayList<>();
+                if (chat.has("exploreLanguages")) {
+                    JSONArray objectExploreLanguages = chat.getJSONArray("exploreLanguages");
+                    for (int index = 0; index < objectExploreLanguages.length(); index++) {
+                        exploreLanguages.add((String) objectExploreLanguages.get(index));
+                    }
                 }
-                chats.add(new Chat(id, null, lastMessage, lastMessageAt, userIds, chatExploreLanguages));
+                chats.add(new Chat(id, null, lastMessage, lastMessageAt, userIds, exploreLanguages));
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();

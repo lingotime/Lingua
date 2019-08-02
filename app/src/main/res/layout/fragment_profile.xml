@@ -12,9 +12,10 @@
         android:id="@+id/fragment_profile_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
+        android:background="@color/white"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
+        android:elevation="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></androidx.appcompat.widget.Toolbar>
@@ -46,7 +47,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/fragment_profile_card_1"
                 android:layout_width="match_parent"
-                android:layout_height="150dp">
+                android:layout_height="175dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -68,31 +69,51 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
                         android:text="[Username]"
                         android:textColor="#000000"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/fragment_profile_profile_image"
-                        app:layout_constraintTop_toTopOf="@+id/fragment_profile_profile_image" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/fragment_profile_birthdate_text"
+                        android:id="@+id/fragment_profile_age_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
-                        android:text="Birth Date: [Birthdate]"
+                        android:text="Age: [Age]"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/fragment_profile_profile_image"
                         app:layout_constraintTop_toBottomOf="@+id/fragment_profile_name_text" />
+
+                    <TextView
+                        android:id="@+id/fragment_profile_origin_country_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:text="Origin Country: [Country]"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/fragment_profile_profile_image"
+                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_age_text" />
+
+                    <TextView
+                        android:id="@+id/fragment_profile_biography_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:text="Bio: [Biography]"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/fragment_profile_profile_image"
+                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_origin_country_text" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -107,46 +128,15 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/fragment_profile_biography_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
-                        android:text="Bio: [Biography]"
-                        android:textSize="18sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/fragment_profile_origin_country_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
-                        android:text="Origin Country: [Country]"
-                        android:textSize="18sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_biography_text" />
-
-                    <TextView
                         android:id="@+id/fragment_profile_known_languages_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
                         android:layout_marginTop="20dp"
                         android:text="Known Languages:"
                         android:textStyle="italic"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_origin_country_text" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/fragment_profile_known_languages_chips"
@@ -207,7 +197,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginLeft="20dp"
                         android:layout_marginTop="20dp"
-                        android:text="Explore countries:"
+                        android:text="Explore Countries:"
                         android:textStyle="italic"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/fragment_profile_explore_languages_chips" />

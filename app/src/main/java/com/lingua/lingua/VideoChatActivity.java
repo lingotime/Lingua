@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -164,7 +163,6 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnectionButton = (ImageButton) findViewById(R.id.activity_video_chat_disconnect);
         switchCameraButton = (ImageButton) findViewById(R.id.activity_video_switch_camera);
 
-
         disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
         disconnectionButton.setEnabled(false);
 
@@ -179,13 +177,13 @@ public class VideoChatActivity extends AppCompatActivity {
             }
         });
 
-
         switchCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switchCamera();
             }
         });
+
 
         requestPermissions();
     }
@@ -609,7 +607,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
             @Override
             public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
-                Log.i(TAG, "failure to connect");
+                Log.i(TAG, "failure to connect: " + twilioException.toString());
                 Log.i(TAG, twilioException.toString());
                 Toast.makeText(VideoChatActivity.this, "Failure to connect", Toast.LENGTH_LONG).show();
                 // send a message to the other user detailing an attempted call
