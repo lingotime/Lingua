@@ -314,6 +314,23 @@ public class VideoChatActivity extends AppCompatActivity {
         rQueue.add(request);
     }
 
+    private void queryCallLanguage() {
+        String url = "https://lingua-project.firebaseio.com/video-chats";
+        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+            try {
+                JSONObject object = new JSONObject(s);
+                videoChatLanguage = object.getString(roomName);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, volleyError -> {
+            Log.e("VideoChatActivity", "" + volleyError);
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(this);
+        rQueue.add(request);
+    }
+
 
     private void connectToRoom(String roomName) {
 
@@ -481,6 +498,14 @@ public class VideoChatActivity extends AppCompatActivity {
                 localParticipant = room.getLocalParticipant();
                 localParticipant.publishTrack(localVideoTrack);
                 localParticipant.publishTrack(localAudioTrack);
+
+                // check if the local participant is the first one in the room and there are no remote participants, allow them to set the language for the chat
+                if (room.getRemoteParticipants().size() == 0) {
+                    callLanguageDialog();
+                } else {
+                    // get the video chat language from the database
+                    queryCallLanguage();
+                }
 
                 Log.i(TAG, "Connected to " + room.getName());
                 // send a message to the other user to notify them of the creation of the room
