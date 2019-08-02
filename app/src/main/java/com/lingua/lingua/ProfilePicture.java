@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -34,6 +36,9 @@ import org.parceler.Parcels;
 import java.io.File;
 import java.io.IOException;
 
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
+
 /* FINALIZED, DOCUMENTED, and TESTED ProfilePhotoSetupActivity allows a user to setup their account profile photo. */
 
 public class ProfilePicture extends AppCompatActivity {
@@ -44,6 +49,10 @@ public class ProfilePicture extends AppCompatActivity {
     private Button selectPhotoButton;
     private ImageView profilePreviewImage;
     private Button setProfilePhotoButton;
+    private static final int CAMERA_REQUEST_CODE = 1034;
+    private static final int PHOTO_GALLERY_REQUEST_CODE = 1046;
+    private static final int RC_VIDEO_APP_PERM = 124;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,15 +72,8 @@ public class ProfilePicture extends AppCompatActivity {
         takePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                localProfilePhotoFile = getProfilePhotoFile("profile_photo.jpg");
-
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(ProfilePicture.this, "com.lingua.fileprovider", localProfilePhotoFile));
-
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(intent, 1034);
-                }
+                // request permission before accessing the camera, and then launch it
+                requestPermissions();
             }
         });
 
@@ -85,7 +87,7 @@ public class ProfilePicture extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
                 if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(intent, 1046);
+                    startActivityForResult(intent, PHOTO_GALLERY_REQUEST_CODE);
                 }
             }
         });
@@ -165,7 +167,7 @@ public class ProfilePicture extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1034) {
+        if (requestCode == CAMERA_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Bitmap localProfilePhoto = BitmapFactory.decodeFile(localProfilePhotoFile.getAbsolutePath());
 
@@ -173,7 +175,7 @@ public class ProfilePicture extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "You did not take a photo.", Toast.LENGTH_LONG).show();
             }
-        } else if (requestCode == 1046) {
+        } else if (requestCode == PHOTO_GALLERY_REQUEST_CODE) {
             if (data != null) {
                 Uri localProfilePhotoURI = data.getData();
 
@@ -190,7 +192,35 @@ public class ProfilePicture extends AppCompatActivity {
         }
     }
 
-    private File getProfilePhotoFile(String fileName) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @AfterPermissionGranted(RC_VIDEO_APP_PERM)
+    private void requestPermissions() {
+        String[] perms = { Manifest.permission.CAMERA };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // launch the activity for the camera
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+            localProfilePhotoFile = getProfilePhotoFileFromCamera("profile_photo.jpg");
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(ProfilePicture.this, "com.lingua.fileprovider", localProfilePhotoFile));
+
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(intent, CAMERA_REQUEST_CODE);
+            }
+        } else {
+            // prompt to ask for mic and camera permission
+            EasyPermissions.requestPermissions(this, "Lingua needs access to your camera", RC_VIDEO_APP_PERM, perms);
+        }
+    }
+
+
+    private File getProfilePhotoFileFromCamera(String fileName) {
         // get the photo directory
         File mediaStorageDirectory = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Lingua");
 
