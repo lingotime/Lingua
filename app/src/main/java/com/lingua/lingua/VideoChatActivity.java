@@ -25,6 +25,7 @@ import com.firebase.client.Firebase;
 import com.google.gson.Gson;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
+import com.lingua.lingua.notifyAPI.Invite;
 import com.lingua.lingua.notifyAPI.Notification;
 import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
 import com.twilio.video.CameraCapturer;
@@ -126,16 +127,20 @@ public class VideoChatActivity extends AppCompatActivity {
         userId = prefs.getString("userId", "");
         username = prefs.getString("userName", "");
 
-        currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+        // check for roomName intent extra - means it comes from the push notification
+        roomName = getIntent().getStringExtra("roomName");
+        if (roomName != null) {
+            generateTheLocalUserObject();
+            generateTheLocalChatObject();
+        } else {
+            // intent passed in from either the chat fragment or the chat details activity with the parcelable extras
+            currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+            currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+        }
+        
+
         chatId = currentChat.getId();
         // the intent from the push notification will not have the user object
-        try {
-            currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            // if can't get the current user object, generate it from the user id
-            generateTheLocalUserObject();
-        }
         chatMembers = currentChat.getUsers();
         chatMembers.remove(userId);
 
@@ -228,6 +233,37 @@ public class VideoChatActivity extends AppCompatActivity {
         RequestQueue databaseRequestQueue = Volley.newRequestQueue(this);
         databaseRequestQueue.add(databaseRequest);
     }
+
+    // gets the information for the chat containing the video chat from the database and generates a local Chat object
+    private void generateTheLocalChatObject() {
+        String databaseURL = "https://lingua-project.firebaseio.com/users" + roomName;
+
+        // fetch users from database
+        StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject userJSONObject = new JSONObject(response);
+
+                    // convert JSONObject information to user
+                    Gson gson = new Gson();
+                    currentChat = gson.fromJson(userJSONObject.toString(), Chat.class);
+
+                } catch (JSONException e) {
+                    Log.e("VideoChatCurrentChat", e.toString());
+                }
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VideoChatCurrentChat", error.toString());
+            }
+        });
+
+        RequestQueue databaseRequestQueue = Volley.newRequestQueue(this);
+        databaseRequestQueue.add(databaseRequest);
+    }
+
 
 
     private void callLanguageDialog() {
@@ -384,8 +420,10 @@ public class VideoChatActivity extends AppCompatActivity {
     }
 
     private void sendVideoChatNotification(String recipientId) {
+        // creating the invite object
+        Invite invite = new Invite(userId, roomName);
         // send notification
-        Notification notification = new Notification(userId + " would like to video chat!", recipientId, roomName);
+        Notification notification = new Notification(username + " would like to video chat!", recipientId, invite.getMap());
 
         TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
             @Override
