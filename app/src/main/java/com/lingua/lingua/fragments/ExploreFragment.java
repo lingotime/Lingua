@@ -204,6 +204,7 @@ public class ExploreFragment extends Fragment {
     }
 
     // ensure there is no previous relationship between user and displayed user
+    // TODO: listener for pending friend requests
     private boolean actionNotTaken(String generatedUserID) {
         if (currentUser.getFriends() != null) {
             for (String friendUserID : currentUser.getFriends()) {
