@@ -32,6 +32,8 @@ import org.parceler.Parcels;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -43,7 +45,7 @@ public class ProfileFragment extends Fragment {
 
     private ImageView profileImage;
     private TextView nameText;
-    private TextView birthdateText;
+    private TextView ageText;
     private TextView biographyText;
     private TextView originCountryText;
     private TextView knownLanguagesText;
@@ -107,7 +109,7 @@ public class ProfileFragment extends Fragment {
         // associate views with java variables
         profileImage = view.findViewById(R.id.fragment_profile_profile_image);
         nameText = view.findViewById(R.id.fragment_profile_name_text);
-        birthdateText = view.findViewById(R.id.fragment_profile_birthdate_text);
+        ageText = view.findViewById(R.id.fragment_profile_age_text);
         biographyText = view.findViewById(R.id.fragment_profile_biography_text);
         originCountryText = view.findViewById(R.id.fragment_profile_origin_country_text);
         knownLanguagesText = view.findViewById(R.id.fragment_profile_known_languages_text);
@@ -128,21 +130,13 @@ public class ProfileFragment extends Fragment {
 
         nameText.setText(currentUser.getUserName());
 
-        try {
-            SimpleDateFormat storedDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-            Date userBirthDateAsDate = storedDateFormat.parse(currentUser.getUserBirthDate());
-            SimpleDateFormat displayDateFormat = new SimpleDateFormat("MM/dd/yyyy");
-            birthdateText.setText("Birth Date: " + displayDateFormat.format(userBirthDateAsDate));
-        } catch (ParseException exception) {
-            birthdateText.setText("Birth Date: Birthday unavailable.");
-            Log.e("ProfileFragment", "There was an issue parsing the user's registered birth date.");
-        }
+        ageText.setText("Age: " + getAge(currentUser.getUserBirthDate()) + " years old");
 
         biographyText.setText("Bio: " + currentUser.getUserBiographyText());
 
         originCountryText.setText("Origin Country: " + currentUser.getUserOriginCountry());
 
-        if (currentUser.getKnownLanguages() == null) {
+        if (currentUser.getKnownLanguages().isEmpty()) {
             knownLanguagesChip.setText("Add a language...");
             knownLanguagesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -159,7 +153,7 @@ public class ProfileFragment extends Fragment {
             }
         }
 
-        if (currentUser.getExploreLanguages() == null) {
+        if (currentUser.getExploreLanguages().isEmpty()) {
             exploreLanguagesChip.setText("Add a language...");
             exploreLanguagesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -176,7 +170,7 @@ public class ProfileFragment extends Fragment {
             }
         }
 
-        if (currentUser.getExploreCountries() == null) {
+        if (currentUser.getExploreCountries().isEmpty()) {
             exploreCountriesChip.setText("Add a country...");
             exploreCountriesChip.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -200,5 +194,20 @@ public class ProfileFragment extends Fragment {
         final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
         intent.putExtra("user", Parcels.wrap(currentUser));
         startActivity(intent);
+    }
+
+    private int getAge(String birthDateString) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+
+            Date birthDate = dateFormat.parse(birthDateString);
+            Date currentDate = new Date();
+
+            return Period.between(birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).getYears();
+        } catch (ParseException exception) {
+            Log.e("ExploreAdapter", "There was an issue parsing a user's registered birth date.");
+        }
+
+        return 0;
     }
 }

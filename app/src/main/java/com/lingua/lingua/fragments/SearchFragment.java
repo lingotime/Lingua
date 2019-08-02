@@ -21,7 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.lingua.lingua.EndlessRecyclerViewScrollListener;
 import com.lingua.lingua.R;
-import com.lingua.lingua.SearchAdapter;
+import com.lingua.lingua.adapters.SearchAdapter;
 import com.lingua.lingua.models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -146,7 +146,7 @@ public class SearchFragment extends Fragment {
         searchBar.clearFocus();
     }
 
-    private void fetchCompatibleUsersAndLoad(User currentUser, String queriedName) {
+    private void fetchCompatibleUsersAndLoad(User currentUser, String queriedText) {
         String databaseURL = "https://lingua-project.firebaseio.com/users.json";
 
         // fetch users from database
@@ -181,10 +181,11 @@ public class SearchFragment extends Fragment {
                         }
 
                         // get relevant information from user for matching
-                        String nameOfGeneratedUser = generatedUser.getUserName();
+                        String userOriginCountry = generatedUser.getUserOriginCountry();
+                        ArrayList<String> userKnownLanguages = generatedUser.getKnownLanguages();
 
                         // filter user depending on criteria
-                        if (generatedUser.isComplete() && !(generatedUser.getUserID().equals(currentUser.getUserID())) && nameOfGeneratedUser.toLowerCase().contains(queriedName.toLowerCase()) && actionNotTaken(generatedUser.getUserID())) {
+                        if (generatedUser.isComplete() && !(generatedUser.getUserID().equals(currentUser.getUserID())) && matchExists(userOriginCountry, userKnownLanguages, queriedText) && actionNotTaken(generatedUser.getUserID())) {
                             if (usersJSONObjectCounter < NUMBER_OF_USERS_PER_LOAD) {
                                 // add to the list of users
                                 usersList.add(generatedUser);
@@ -212,6 +213,21 @@ public class SearchFragment extends Fragment {
 
         RequestQueue databaseRequestQueue = Volley.newRequestQueue(context);
         databaseRequestQueue.add(databaseRequest);
+    }
+
+    // ensure there is a language or country match between generated user info and queried text
+    private boolean matchExists(String originCountry, ArrayList<String> knownLanguages, String queriedText) {
+        if (originCountry.toLowerCase().startsWith(queriedText.toLowerCase())) {
+            return true;
+        }
+
+        for (String knownLanguage : knownLanguages) {
+            if (knownLanguage.toLowerCase().startsWith(queriedText.toLowerCase())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // ensure there is no previous relationship between user and displayed user

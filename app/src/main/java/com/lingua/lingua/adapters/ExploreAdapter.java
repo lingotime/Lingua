@@ -3,6 +3,8 @@ package com.lingua.lingua.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
@@ -31,7 +35,6 @@ import java.text.SimpleDateFormat;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,14 +56,15 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     List<User> hiddenUsersList;
     private CardView card;
     private ImageView flagImage;
+    private ImageView profilePhotoImageBorder;
     private ImageView profilePhotoImage;
     private ImageView liveStatusSignal;
     private TextView nameText;
     private TextView countryText;
     private TextView ageText;
     private TextView biographyText;
+    private ChipGroup knownLanguagesChips;
     private Button sendRequestButton;
-    private Button removeButton;
 
     public ExploreAdapter(Context context, List<User> usersList, List<User> hiddenUsersList, User currentUser) {
         this.context = context;
@@ -97,6 +101,15 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         countryText.setText("from " + user.getUserOriginCountry());
         ageText.setText(getAge(user.getUserBirthDate()) + " years old");
         biographyText.setText(user.getUserBiographyText());
+
+        // load chips of known languages
+        if (user.getKnownLanguages() != null) {
+            for (String knownLanguage : user.getKnownLanguages()) {
+                Chip knownLanguageChip = new Chip(context);
+                knownLanguageChip.setText(knownLanguage);
+                knownLanguagesChips.addView(knownLanguageChip);
+            }
+        }
 
         // send user a friend request, remove them from view, and add a new user to timeline
         sendRequestButton.setOnClickListener(new View.OnClickListener() {
@@ -141,35 +154,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 }
             }
         });
-
-        // remove user from view without friend request and add a new user to timeline
-        removeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // add user to declined user list
-                if (currentUser.getDeclinedUsers() == null) {
-                    currentUser.setDeclinedUsers(new ArrayList<String>(Arrays.asList(usersList.get(position).getUserID())));
-                } else {
-                    currentUser.getDeclinedUsers().add(usersList.get(position).getUserID());
-                }
-
-                // save updated declined user list to database
-                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-                databaseReference.child(currentUser.getUserID()).setValue(currentUser);
-
-                // remove user from displayed user list
-                usersList.remove(position);
-
-                // check if there are more users to load
-                if (!hiddenUsersList.isEmpty()) {
-                    usersList.add(hiddenUsersList.get(0));
-                    hiddenUsersList.remove(0);
-                }
-
-                // notify adapter of changes in data
-                notifyDataSetChanged();
-            }
-        });
     }
 
     @Override
@@ -178,6 +162,10 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     }
 
     private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage) {
+        // disable the button and change its text
+        sendRequestButton.setText("Friend Request Sent");
+        sendRequestButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+        sendRequestButton.setEnabled(false);
 
         Firebase.setAndroidContext(context);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
@@ -256,14 +244,15 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
             card = userItemView.findViewById(R.id.item_user_card);
             flagImage = userItemView.findViewById(R.id.item_user_flag);
+            profilePhotoImageBorder = userItemView.findViewById(R.id.item_user_profile_image_border);
             profilePhotoImage = userItemView.findViewById(R.id.item_user_profile_image);
             liveStatusSignal = userItemView.findViewById(R.id.item_user_live_signal_image);
             nameText = userItemView.findViewById(R.id.item_user_name_text);
             countryText = userItemView.findViewById(R.id.item_user_country_text);
             ageText = userItemView.findViewById(R.id.item_user_age_text);
             biographyText = userItemView.findViewById(R.id.item_user_biography_text);
+            knownLanguagesChips = userItemView.findViewById(R.id.item_user_known_languages_chip_group);
             sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
-            removeButton = userItemView.findViewById(R.id.item_user_remove_button);
         }
     }
 }
