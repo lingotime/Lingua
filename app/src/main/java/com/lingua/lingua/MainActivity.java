@@ -18,7 +18,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.firebase.client.Firebase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
 import com.lingua.lingua.fragments.NotificationsFragment;
@@ -36,6 +35,7 @@ import static com.lingua.lingua.notifyAPI.BindingSharedPreferences.IDENTITY;
  */
 
 public class MainActivity extends AppCompatActivity {
+
     private User currentUser;
     BottomNavigationView bottomNavigationView;
     private static final String TAG = "MainActivity";
@@ -57,10 +57,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // re-enable FCM for push notifications
-        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
-
 
         currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
         Log.i("MainActivity", currentUser.getUserID());
@@ -178,23 +174,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // mark user as live
-        currentUser.setOnline(true);
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
 
-        // save update
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+        // mark user as live
+        reference.child("online").setValue("true");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        // mark user as dead
-        currentUser.setOnline(false);
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
 
-        // save update
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users");
-        databaseReference.child(currentUser.getUserID()).setValue(currentUser);
+        // mark user as live
+        reference.child("online").setValue("false");
     }
 }
