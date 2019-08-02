@@ -3,6 +3,8 @@ package com.lingua.lingua.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -148,6 +150,10 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     }
 
     private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage) {
+        // disable the button and change its text
+        sendRequestButton.setText("Friend Request Sent");
+        sendRequestButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+        sendRequestButton.setEnabled(false);
 
         Firebase.setAndroidContext(context);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
