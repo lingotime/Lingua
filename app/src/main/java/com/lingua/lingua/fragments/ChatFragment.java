@@ -146,6 +146,9 @@ public class ChatFragment extends Fragment {
                 JSONObject chat = new JSONObject(s);
                 Log.i("ChatFragment", chat.toString());
                 String lastMessage = chat.getString("lastMessage");
+                if (lastMessage != null && lastMessage.startsWith(currentUser.getUserName())) {
+                    lastMessage = "You" + lastMessage.split(currentUser.getUserName())[1];
+                }
                 String lastMessageAt = chat.getString("lastMessageAt");
                 // get list of user ids in the chat
                 ArrayList<String> userIds = new ArrayList<>();

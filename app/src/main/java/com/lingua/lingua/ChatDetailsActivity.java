@@ -46,9 +46,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
     private Button sendButton;
     private EditText etMessage;
 
-    private String userId;
-    private String userName;
-
     Firebase reference;
     Chat chat;
     User currentUser;
@@ -92,14 +89,14 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 // save message
                 Map<String, String> map = new HashMap<>();
                 map.put("message", messageText);
-                map.put("senderId", userId);
+                map.put("senderId", currentUser.getUserID());
                 map.put("timestamp", timestamp);
                 reference.push().setValue(map);
                 etMessage.setText("");
 
                 // set this message to be the lastMessage of the chat
                 Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getId());
-                chatReference.child("lastMessage").setValue( userName + ": " + messageText);
+                chatReference.child("lastMessage").setValue(currentUser.getUserName() + ": " + messageText);
                 chatReference.child("lastMessageAt").setValue(timestamp);
             }
         });
