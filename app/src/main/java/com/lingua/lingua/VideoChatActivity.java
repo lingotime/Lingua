@@ -100,6 +100,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     User currentUser;
     Chat currentChat;
+    String[] languageChoices;
 
     // variables to keep track of the length of the call
     private long startTime = 0;
@@ -134,7 +135,7 @@ public class VideoChatActivity extends AppCompatActivity {
         }
         possibleChatLanguages.add("Cultural Exchange");
 
-        String[] languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
+        languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
 
         // setting up Firebase to receive the messages to be sent
         Firebase.setAndroidContext(VideoChatActivity.this);
@@ -151,39 +152,38 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnectionButton.setEnabled(false);
 
 
-        connectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                // first prompt the user initiating the call for the intended language
-                // a dialog box to allow the person initiating the call to select the language in which the call will be made
-                AlertDialog.Builder languageSelection = new AlertDialog.Builder(VideoChatActivity.this);
-                languageSelection.setTitle("Choose the language");
-                languageSelection.setSingleChoiceItems(languageChoices, -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        videoChatLanguage = Arrays.asList(languageChoices).get(i);
-                    }
-                });
-                languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        queryHoursSpokenInfo();
-                        connectToRoom(roomName);
-                    }
-                });
-                languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                AlertDialog dialog = languageSelection.create();
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
-            }
-        });
+//        connectionButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                // first prompt the user initiating the call for the intended language
+//                // a dialog box to allow the person initiating the call to select the language in which the call will be made
+//                AlertDialog.Builder languageSelection = new AlertDialog.Builder(VideoChatActivity.this);
+//                languageSelection.setTitle("Choose the language");
+//                languageSelection.setSingleChoiceItems(languageChoices, -1, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        videoChatLanguage = Arrays.asList(languageChoices).get(i);
+//                    }
+//                });
+//                languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        connectToRoom(roomName);
+//                    }
+//                });
+//                languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//
+//                AlertDialog dialog = languageSelection.create();
+//                dialog.setCanceledOnTouchOutside(true);
+//                dialog.show();
+//            }
+//        });
 
 
         disconnectionButton.setOnClickListener(new View.OnClickListener() {
@@ -208,6 +208,37 @@ public class VideoChatActivity extends AppCompatActivity {
         requestPermissions();
     }
 
+    private void callLanguageDialog() {
+        // first prompt the user initiating the call for the intended language
+        // a dialog box to allow the person initiating the call to select the language in which the call will be made
+        AlertDialog.Builder languageSelection = new AlertDialog.Builder(VideoChatActivity.this);
+        languageSelection.setTitle("Choose the language");
+        languageSelection.setSingleChoiceItems(languageChoices, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                videoChatLanguage = Arrays.asList(languageChoices).get(i);
+            }
+        });
+        languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Firebase.setAndroidContext(VideoChatActivity.this);
+                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/video-chats/" + roomName);
+                databaseReference.setValue(videoChatLanguage);
+            }
+        });
+        languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AlertDialog dialog = languageSelection.create();
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+    }
+
     // UI options to take when the user has been connected to the room
     private void connectActions() {
         connectionButton.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
@@ -230,6 +261,7 @@ public class VideoChatActivity extends AppCompatActivity {
         if (currentUser.getExploreLanguages().contains(videoChatLanguage)) {
             if (!videoChatLanguage.equals("Cultural Exchange")) {
                 // adjust the user's language progress in this case
+                queryHoursSpokenInfo();
                 updateUserLanguageProgress(lengthOfCall(startTime, endTime));
             }
         }
@@ -259,14 +291,17 @@ public class VideoChatActivity extends AppCompatActivity {
 
     private void queryHoursSpokenInfo() {
         // get the number of hours the user has already spoken in this language
-        String url = "https://lingua-project.firebaseio.com/users/" + userId + "/hoursSpokenByLanguage";
+        String url = "https://lingua-project.firebaseio.com/users/" + userId;
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
-                if (object.has(videoChatLanguage)) {
-                    currentDuration = object.getInt(videoChatLanguage);
-                } else {
-                    currentDuration = 0;
+                JSONObject hoursSpokenObject = object.getJSONObject("hoursSpokenByLanguage");
+                if (hoursSpokenObject != null) {
+                    if (object.has(videoChatLanguage)) {
+                        currentDuration = object.getInt(videoChatLanguage);
+                    } else {
+                        currentDuration = 0;
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -310,13 +345,11 @@ public class VideoChatActivity extends AppCompatActivity {
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
     private void requestPermissions() {
-        Log.i(TAG, "Requesting permissions");
         String[] perms = { Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
-        Log.i(TAG, "Gathered permissions");
         if (EasyPermissions.hasPermissions(this, perms)) {
             // after permission is granted, initialise the video and audio tracks
-            Log.i(TAG, "Permission granted");
             getVideoAndAudioTracks();
+            connectToRoom(roomName);
         } else {
             // prompt to ask for mic and camera permission
             EasyPermissions.requestPermissions(this, "Lingua needs access to your camera and mic to make video calls", RC_VIDEO_APP_PERM, perms);
