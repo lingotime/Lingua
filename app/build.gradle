@@ -79,7 +79,7 @@ dependencies {
 
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.0.0'
     implementation 'com.google.android.material:material:1.1.0-alpha08'
-    implementation 'com.android.support:cardview-v7:21.0.+'
+    implementation 'androidx.cardview:cardview:1.0.0'
 
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
@@ -135,14 +135,12 @@ dependencies {
 
     // to support Twilio notify push notifications
     implementation "com.google.firebase:firebase-messaging:19.0.1"
-    api 'com.android.support:appcompat-v7:27.1.1'
+    api 'androidx.appcompat:appcompat:1.0.0'
     api 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
     api 'com.squareup.retrofit2:converter-jackson:2.0.0-beta4'
     implementation group: "com.twilio.sdk", name: "twilio", version: "7.40.1"
     implementation 'com.google.firebase:firebase-storage:18.0.0'
     implementation 'com.google.code.gson:gson:2.2.4'
-
-    implementation 'org.apache.commons:commons-lang3:3.4'
 }
 
 configurations {
