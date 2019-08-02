@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -51,7 +50,6 @@ import org.parceler.Parcels;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -140,10 +138,8 @@ public class VideoChatActivity extends AppCompatActivity {
         connectionButton = (ImageButton) findViewById(R.id.activity_video_chat_connect);
         disconnectionButton = (ImageButton) findViewById(R.id.activity_video_chat_disconnect);
 
-
         disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
         disconnectionButton.setEnabled(false);
-
 
         connectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,7 +212,7 @@ public class VideoChatActivity extends AppCompatActivity {
             }
         }, volleyError -> {
             Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
-            Log.e("ChatFragment", "user not loading " + volleyError);
+            Log.e("VideoChatActivity", "user not loading " + volleyError);
         });
 
         synchronized (userInfoRequest) {
@@ -452,7 +448,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
             @Override
             public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
-                Log.i(TAG, "failure to connect");
+                Log.i(TAG, "failure to connect: " + twilioException.toString());
                 // send a message to the other user detailing an attempted call
                 sendTextChat("I tried to call you :(");
             }

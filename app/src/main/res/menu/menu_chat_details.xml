@@ -5,6 +5,7 @@
         android:id="@+id/chat_details_videochat_icon"
         android:enabled="true"
         android:icon="@drawable/video_outline"
+        android:iconTint="@android:color/black"
         android:title="Videochat"
         app:showAsAction="ifRoom" />
 </menu>

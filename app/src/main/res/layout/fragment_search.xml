@@ -12,7 +12,7 @@
         android:id="@+id/fragment_search_search_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#848FBB"
+        android:background="@color/white"
         android:iconifiedByDefault="false"
         android:queryHint="Search for a user..."
         app:layout_constraintEnd_toEndOf="parent"
