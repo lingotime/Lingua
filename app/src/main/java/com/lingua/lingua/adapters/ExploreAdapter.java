@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
@@ -33,7 +35,6 @@ import java.text.SimpleDateFormat;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -55,12 +56,14 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     List<User> hiddenUsersList;
     private CardView card;
     private ImageView flagImage;
+    private ImageView profilePhotoImageBorder;
     private ImageView profilePhotoImage;
     private ImageView liveStatusSignal;
     private TextView nameText;
     private TextView countryText;
     private TextView ageText;
     private TextView biographyText;
+    private ChipGroup knownLanguagesChips;
     private Button sendRequestButton;
 
     public ExploreAdapter(Context context, List<User> usersList, List<User> hiddenUsersList, User currentUser) {
@@ -98,6 +101,15 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         countryText.setText("from " + user.getUserOriginCountry());
         ageText.setText(getAge(user.getUserBirthDate()) + " years old");
         biographyText.setText(user.getUserBiographyText());
+
+        // load chips of known languages
+        if (user.getKnownLanguages() != null) {
+            for (String knownLanguage : user.getKnownLanguages()) {
+                Chip knownLanguageChip = new Chip(context);
+                knownLanguageChip.setText(knownLanguage);
+                knownLanguagesChips.addView(knownLanguageChip);
+            }
+        }
 
         // send user a friend request, remove them from view, and add a new user to timeline
         sendRequestButton.setOnClickListener(new View.OnClickListener() {
@@ -232,12 +244,14 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
             card = userItemView.findViewById(R.id.item_user_card);
             flagImage = userItemView.findViewById(R.id.item_user_flag);
+            profilePhotoImageBorder = userItemView.findViewById(R.id.item_user_profile_image_border);
             profilePhotoImage = userItemView.findViewById(R.id.item_user_profile_image);
             liveStatusSignal = userItemView.findViewById(R.id.item_user_live_signal_image);
             nameText = userItemView.findViewById(R.id.item_user_name_text);
             countryText = userItemView.findViewById(R.id.item_user_country_text);
             ageText = userItemView.findViewById(R.id.item_user_age_text);
             biographyText = userItemView.findViewById(R.id.item_user_biography_text);
+            knownLanguagesChips = userItemView.findViewById(R.id.item_user_known_languages_chip_group);
             sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
         }
     }
