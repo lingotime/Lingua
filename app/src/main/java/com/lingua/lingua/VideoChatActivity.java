@@ -22,7 +22,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.models.Chat;
-import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 import com.twilio.video.CameraCapturer;
 import com.twilio.video.ConnectOptions;
@@ -251,17 +250,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     // storing the time spent speaking in the language chosen at the start of the activity
     private void updateUserLanguageProgress(double duration) {
-        HashMap<String, Integer> hoursSpoken = currentUser.getHoursSpokenPerLanguage();
-        if (hoursSpoken.containsKey(videoChatLanguage)) {
-            // add to those already stored
-            hoursSpoken.put(videoChatLanguage, hoursSpoken.get(videoChatLanguage) + (int) duration);
-        } else {
-            hoursSpoken.put(videoChatLanguage, (int) duration);
-        }
-
         // update the local current user object
-        currentUser.setHoursSpokenPerLanguage(hoursSpoken);
-
         // update in the database
         Firebase.setAndroidContext(this);
         Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId + "/hoursSpokenByLanguage.json");
@@ -274,7 +263,11 @@ public class VideoChatActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
-                currentDuration = object.getInt(videoChatLanguage);
+                if (object.has(videoChatLanguage)) {
+                    currentDuration = object.getInt(videoChatLanguage);
+                } else {
+                    currentDuration = 0;
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
