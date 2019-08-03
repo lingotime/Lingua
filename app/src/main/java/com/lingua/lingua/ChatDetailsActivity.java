@@ -113,7 +113,6 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 String timestamp = map.get("timestamp").toString();
                 messages.add(new Message(senderId, message, timestamp));
                 adapter.notifyDataSetChanged();
-                linearLayoutManager.scrollToPosition(messages.size() - 1);
             }
 
             @Override
