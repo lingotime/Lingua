@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_chat_fragment_group_icon"
+        android:id="@+id/menu_text_chat_activity_video_icon"
         android:enabled="true"
-        android:icon="@drawable/group"
+        android:icon="@drawable/camera"
         android:iconTint="#FFFFFF"
-        android:title="Group"
+        android:title="Video Chat"
         android:visible="true"
         app:showAsAction="always" />
 </menu>

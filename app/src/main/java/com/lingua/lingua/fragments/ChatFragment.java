@@ -76,7 +76,7 @@ public class ChatFragment extends Fragment {
                 int id = item.getItemId();
                 Log.i(TAG, String.valueOf(id));
 
-                if (id == R.id.chat_fragment_new_group) {
+                if (id == R.id.menu_chat_fragment_group_icon) {
                     Log.i(TAG,"new group clicked");
                 }
 

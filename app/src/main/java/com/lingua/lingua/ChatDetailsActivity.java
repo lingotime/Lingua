@@ -132,7 +132,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_chat_details, menu);
+        getMenuInflater().inflate(R.menu.menu_text_chat_activity, menu);
         return true;
     }
 
@@ -141,7 +141,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.chat_details_videochat_icon) {
+        if (id == R.id.menu_text_chat_activity_video_icon) {
             Intent intent = new Intent(ChatDetailsActivity.this, VideoChatActivity.class);
             // intent to the video chat activity
             intent.putExtra("chat", Parcels.wrap(chat));

@@ -25,7 +25,6 @@ import com.lingua.lingua.fragments.ProfileFragment;
 import com.lingua.lingua.fragments.SearchFragment;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.BindingIntentService;
-import com.twilio.jwt.accesstoken.AccessToken;
 
 import org.parceler.Parcels;
 
@@ -167,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (profileFragment != null && profileFragment.isVisible()) {
             getMenuInflater().inflate(R.menu.menu_profile_fragment, menu);
         } else {
-            getMenuInflater().inflate(R.menu.menu_main, menu);
+            getMenuInflater().inflate(R.menu.menu_default_fragments, menu);
         }
 
         return true;

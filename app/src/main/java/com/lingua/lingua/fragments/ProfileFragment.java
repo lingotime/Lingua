@@ -82,7 +82,7 @@ public class ProfileFragment extends Fragment {
 
                 // (Fausto's methods)
 
-                if (id == R.id.profile_fragment_edit) {
+                if (id == R.id.menu_profile_fragment_edit_icon) {
 
                     // load the profile creation page if edit button is clicked
                     final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
@@ -90,7 +90,7 @@ public class ProfileFragment extends Fragment {
                     intent.putExtra("purpose", "edit");
                     startActivity(intent);
 
-                } else if (id == R.id.profile_fragment_logout) {
+                } else if (id == R.id.menu_profile_fragment_log_out_icon) {
 
                     // log out if exit button is clicked
                     FirebaseAuth.getInstance().signOut();
