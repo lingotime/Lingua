@@ -1,5 +1,6 @@
 package com.lingua.lingua.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,20 +36,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
-* Fragment that displays other people's profiles that match the user's target language or country for
-* the user to browse through and send friend requests
-*/
+ * Fragment that displays other people's profiles that match the user's target language or country for
+ * the user to browse through and send friend requests
+ */
 
 public class ExploreFragment extends Fragment {
     private User currentUser;
 
+    Context context;
     ArrayList<User> usersList;
     ArrayList<User> hiddenUsersList;
     ExploreAdapter usersAdapter;
 
     private EndlessRecyclerViewScrollListener scrollListener;
-    private SwipeRefreshLayout swipeContainer;
     private RecyclerView historyTimeline;
+
+    private static final int NUMBER_OF_USERS_PER_LOAD = 20;
 
     @Nullable
     @Override
@@ -60,16 +63,64 @@ public class ExploreFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // associate views with java variables
-        swipeContainer = view.findViewById(R.id.fragment_explore_swipe_container);
+        // associate view with java variable
         historyTimeline = view.findViewById(R.id.fragment_explore_history_timeline);
 
         // unwrap the current user
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
+        // set the context
+        context = getContext();
+
         // initialize the list of users
         usersList = new ArrayList<User>();
         hiddenUsersList = new ArrayList<User>();
+
+        // set the adapter
+        usersAdapter = new ExploreAdapter(context, usersList, hiddenUsersList, currentUser);
+        historyTimeline.setAdapter(usersAdapter);
+
+        // set the layout
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+
+        // prepare the endless scroll listener
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                if (!hiddenUsersList.isEmpty()) {
+                    if (hiddenUsersList.size() > NUMBER_OF_USERS_PER_LOAD) {
+                        usersList.addAll(hiddenUsersList.subList(0, NUMBER_OF_USERS_PER_LOAD));
+                        hiddenUsersList.removeAll(hiddenUsersList.subList(0, NUMBER_OF_USERS_PER_LOAD));
+                    } else {
+                        usersList.addAll(hiddenUsersList);
+                        hiddenUsersList.clear();
+                    }
+
+                    usersAdapter.notifyDataSetChanged();
+                }
+            }
+        };
+        historyTimeline.addOnScrollListener(scrollListener);
+
+        // enable the snap helper for card snapping
+        SnapHelper helper = new LinearSnapHelper();
+        helper.attachToRecyclerView(historyTimeline);
+
+        // display timeline
+        historyTimeline.setLayoutManager(layoutManager);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // clear the user lists
+        usersList.clear();
+        hiddenUsersList.clear();
+        usersAdapter.notifyDataSetChanged();
+
+        // reset the scroll listener
+        scrollListener.resetState();
 
         // fetch compatible users who match criteria and load them into timeline
         fetchCompatibleUsersAndLoad(currentUser);
@@ -87,7 +138,6 @@ public class ExploreFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.i("ExploreFragment", response);
                     JSONObject usersJSONObject = new JSONObject(response);
                     Iterator<String> usersJSONObjectKeys = usersJSONObject.keys();
                     int usersJSONObjectCounter = 0;
@@ -116,11 +166,11 @@ public class ExploreFragment extends Fragment {
 
                         // get relevant information from user for matching
                         ArrayList<String> languagesSelectedByGeneratedUser = generatedUser.getKnownLanguages();
-                        String countrySelectedByGeneratedUser = generatedUser.getUserOriginCountry();
+                        String originCountrySelectedByGeneratedUser = generatedUser.getUserOriginCountry();
 
                         // filter user depending on criteria
-                        if (generatedUser.isComplete() && !(generatedUser.getUserID().equals(currentUser.getUserID())) && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, countrySelectedByGeneratedUser) && actionNotTaken(generatedUser.getUserID())) {
-                            if (usersJSONObjectCounter < 20) {
+                        if (generatedUser.isComplete() && !(generatedUser.getUserID().equals(currentUser.getUserID())) && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, originCountrySelectedByGeneratedUser) && actionNotTaken(generatedUser.getUserID())) {
+                            if (usersJSONObjectCounter < NUMBER_OF_USERS_PER_LOAD) {
                                 // add to the list of users
                                 usersList.add(generatedUser);
 
@@ -133,36 +183,7 @@ public class ExploreFragment extends Fragment {
                         }
                     }
 
-                    // load matched users into timeline
-                    usersAdapter = new ExploreAdapter(getContext(), usersList, hiddenUsersList, currentUser);
-                    historyTimeline.setAdapter(usersAdapter);
-
-                    // set the layout
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-
-                    // prepare the endless scroll listener
-                    scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
-                        @Override
-                        public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                            if (!hiddenUsersList.isEmpty()) {
-                                if (hiddenUsersList.size() > 20) {
-                                    usersList.addAll(hiddenUsersList.subList(0, 20));
-                                    hiddenUsersList.removeAll(hiddenUsersList.subList(0, 20));
-                                } else {
-                                    usersList.addAll(hiddenUsersList);
-                                    hiddenUsersList.clear();
-                                }
-                            }
-                        }
-                    };
-                    historyTimeline.addOnScrollListener(scrollListener);
-
-                    // enable the snap helper for card snapping
-                    SnapHelper helper = new LinearSnapHelper();
-                    helper.attachToRecyclerView(historyTimeline);
-
-                    // display timeline
-                    historyTimeline.setLayoutManager(layoutManager);
+                    usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
                     Log.e("ExploreFragment", "firebase:onException", exception);
                 }
@@ -174,35 +195,23 @@ public class ExploreFragment extends Fragment {
             }
         });
 
-        RequestQueue databaseRequestQueue = Volley.newRequestQueue(getContext());
+        RequestQueue databaseRequestQueue = Volley.newRequestQueue(context);
         databaseRequestQueue.add(databaseRequest);
     }
 
     // ensure there is a language or country match between user and displayed user
     private boolean matchExists(ArrayList<String> exploreLanguages, ArrayList<String> exploreCountries, ArrayList<String> knownLanguages, String originCountry) {
-        if (exploreLanguages == null && exploreCountries == null) {
-            return true;
-        }
-
-        if (exploreLanguages != null && knownLanguages != null) {
-            if (exploreLanguages.size() == 0 && exploreLanguages.size() == 0) {
-                return true;
-            }
-
-            for (String exploreLanguage : exploreLanguages) {
-                for (String knownLanguage : knownLanguages) {
-                    if (exploreLanguage.equals(knownLanguage)) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        if (exploreCountries != null && originCountry != null) {
-            for (String exploreCountry : exploreCountries) {
-                if (exploreCountry.equals(originCountry)) {
+        for (String exploreLanguage : exploreLanguages) {
+            for (String knownLanguage : knownLanguages) {
+                if (exploreLanguage.equals(knownLanguage)) {
                     return true;
                 }
+            }
+        }
+
+        for (String exploreCountry : exploreCountries) {
+            if (exploreCountry.equals(originCountry)) {
+                return true;
             }
         }
 
@@ -210,7 +219,6 @@ public class ExploreFragment extends Fragment {
     }
 
     // ensure there is no previous relationship between user and displayed user
-    // TODO: listener for pending friend requests
     private boolean actionNotTaken(String generatedUserID) {
         if (currentUser.getFriends() != null) {
             for (String friendUserID : currentUser.getFriends()) {
