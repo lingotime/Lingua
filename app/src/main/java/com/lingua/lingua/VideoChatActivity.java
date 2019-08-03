@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -145,12 +144,12 @@ public class VideoChatActivity extends AppCompatActivity {
 
         localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
-        connectionButton = (ImageView) findViewById(R.id.activity_video_chat_connect);
-        disconnectionButton = (ImageView) findViewById(R.id.activity_video_chat_disconnect);
-        switchCameraButton = (ImageView) findViewById(R.id.activity_video_switch_camera);
-        connectionButton2 = (ImageView) findViewById(R.id.activity_video_chat_connect_check);
-        disconnectionButton2 = (ImageView) findViewById(R.id.activity_video_chat_disconnect_cancel);
-        switchCameraButton2 = (ImageView) findViewById(R.id.activity_video_switch_camera_icon);
+        connectionButton = (ImageView) findViewById(R.id.activity_video_chat_connect_button);
+        disconnectionButton = (ImageView) findViewById(R.id.activity_video_chat_disconnect_button);
+        switchCameraButton = (ImageView) findViewById(R.id.activity_video_chat_switch_camera_button);
+        connectionButton2 = (ImageView) findViewById(R.id.activity_video_chat_connect_image);
+        disconnectionButton2 = (ImageView) findViewById(R.id.activity_video_chat_disconnect_image);
+        switchCameraButton2 = (ImageView) findViewById(R.id.activity_video_chat_switch_camera_image);
 
         disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
         disconnectionButton.setEnabled(false);

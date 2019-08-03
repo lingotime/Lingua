@@ -57,16 +57,16 @@ public class ChatDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_details);
+        setContentView(R.layout.activity_text_chat);
 
         chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         String nameToDisplay = getIntent().getStringExtra("nameToDisplay");
 
-        rvMessages = findViewById(R.id.activity_chat_details_rv);
+        rvMessages = findViewById(R.id.activity_text_chat_rv);
         messages = new ArrayList<>();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_chat_details_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_text_chat_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(nameToDisplay);
 
@@ -79,9 +79,9 @@ public class ChatDetailsActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true);
         rvMessages.setLayoutManager(linearLayoutManager);
 
-        sendButton = findViewById(R.id.activity_chat_details_button_send);
-        sendButtonIcon = findViewById(R.id.activity_chat_details_iv_send);
-        etMessage = findViewById(R.id.activity_chat_details_et);
+        sendButton = findViewById(R.id.activity_text_chat_button_send);
+        sendButtonIcon = findViewById(R.id.activity_text_chat_iv_send);
+        etMessage = findViewById(R.id.activity_text_chat_et);
         sendButtonIcon.setColorFilter(Color.argb(255, 255, 255, 255));
 
         // send message on button click

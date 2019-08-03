@@ -7,8 +7,8 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/fragment_notifications_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#FFFFFF"
+        android:layout_height="wrap_content"
+        android:background="@color/linguaWhite"
         android:elevation="8dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
@@ -21,7 +21,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_below="@+id/fragment_notifications_toolbar"
-        android:layout_alignParentStart="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,13 +29,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_notifications_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="0dp" />
+            android:layout_height="match_parent" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

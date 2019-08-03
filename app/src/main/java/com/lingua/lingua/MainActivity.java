@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         prefs.edit().putString("userId", currentUser.getUserID()).apply();
         prefs.edit().putString("userName", currentUser.getUserName()).apply();
 
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("user", Parcels.wrap(currentUser));
@@ -81,13 +81,13 @@ public class MainActivity extends AppCompatActivity {
         String fragmentToLoad = getIntent().getStringExtra("fragment");
 
         if (fragmentToLoad != null && fragmentToLoad.equals("profile")) {
-            fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, profileFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.profile);
         } else if (fragmentToLoad != null && fragmentToLoad.equals("notifications")) {
-            fragmentManager.beginTransaction().replace(R.id.flContainer, notificationsFragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, notificationsFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.notifications);
         } else {
-            fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
         }
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -95,19 +95,19 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.explore:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
                         return true;
                     case R.id.search:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, searchFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment).commit();
                         return true;
                     case R.id.chat:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, chatFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, chatFragment).commit();
                         return true;
                     case R.id.notifications:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, notificationsFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, notificationsFragment).commit();
                         return true;
                     case R.id.profile:
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, profileFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, profileFragment).commit();
                         return true;
                     default:
                         return true;

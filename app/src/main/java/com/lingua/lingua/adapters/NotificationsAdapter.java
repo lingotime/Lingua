@@ -159,7 +159,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             tvName = itemView.findViewById(R.id.friend_request_name);
             tvDescription = itemView.findViewById(R.id.friend_request_description_tv);
             acceptButton = itemView.findViewById(R.id.friend_request_accept_button);
-            rejectButton = itemView.findViewById(R.id.friend_request_reject_button);
+            rejectButton = itemView.findViewById(R.id.friend_request_decline_button);
             cancelButton = itemView.findViewById(R.id.friend_request_cancel_button);
             ivProfile = itemView.findViewById(R.id.friend_request_iv);
         }

@@ -1,119 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".VideoChatActivity">
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+    <com.twilio.video.VideoView
+        android:id="@+id/activity_video_chat_subscriber_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"></com.twilio.video.VideoView>
 
-        <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+    <com.twilio.video.VideoView
+        android:id="@+id/activity_video_chat_publisher_container"
+        android:layout_width="72dp"
+        android:layout_height="128dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="@+id/activity_video_chat_subscriber_container"
+        app:layout_constraintTop_toTopOf="@+id/activity_video_chat_subscriber_container" />
 
-            <com.twilio.video.VideoView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/activity_video_chat_subscriber_container">
-            </com.twilio.video.VideoView>
+    <ImageView
+        android:id="@+id/activity_video_chat_connect_button"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="50dp"
+        android:tint="@color/linguaWhite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/circle" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/activity_video_chat_connect_image"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:tint="@color/linguaGreen"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_video_chat_connect_button"
+        app:layout_constraintEnd_toEndOf="@+id/activity_video_chat_connect_button"
+        app:layout_constraintStart_toStartOf="@+id/activity_video_chat_connect_button"
+        app:layout_constraintTop_toTopOf="@+id/activity_video_chat_connect_button"
+        app:srcCompat="@drawable/check_mark" />
 
-                <ImageView
-                    android:id="@+id/activity_video_chat_connect"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginBottom="30dp"
-                    android:background="@android:color/transparent"
-                    android:tint="@android:color/holo_green_light"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:srcCompat="@drawable/circle" />
+    <ImageView
+        android:id="@+id/activity_video_chat_disconnect_button"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="50dp"
+        android:tint="@color/linguaWhite"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_video_chat_subscriber_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/circle" />
 
-                <ImageView
-                    android:id="@+id/activity_video_chat_connect_check"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:tint="#FFFFFF"
-                    app:layout_constraintBottom_toBottomOf="@+id/activity_video_chat_connect"
-                    app:layout_constraintEnd_toEndOf="@+id/activity_video_chat_connect"
-                    app:layout_constraintStart_toStartOf="@+id/activity_video_chat_connect"
-                    app:layout_constraintTop_toTopOf="@+id/activity_video_chat_connect"
-                    app:srcCompat="@drawable/check_mark" />
+    <ImageView
+        android:id="@+id/activity_video_chat_disconnect_image"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:tint="@color/linguaRed"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_video_chat_disconnect_button"
+        app:layout_constraintEnd_toEndOf="@+id/activity_video_chat_disconnect_button"
+        app:layout_constraintStart_toStartOf="@+id/activity_video_chat_disconnect_button"
+        app:layout_constraintTop_toTopOf="@+id/activity_video_chat_disconnect_button"
+        app:srcCompat="@drawable/cancel" />
 
-                <ImageView
-                    android:id="@+id/activity_video_chat_disconnect"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginBottom="30dp"
-                    android:background="@android:color/transparent"
-                    android:tint="@android:color/holo_red_light"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/activity_video_chat_connect"
-                    app:srcCompat="@drawable/circle" />
+    <ImageView
+        android:id="@+id/activity_video_chat_switch_camera_button"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:tint="@color/linguaBlack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/circle" />
 
-                <ImageView
-                    android:id="@+id/activity_video_chat_disconnect_cancel"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:tint="#FFFFFF"
-                    app:layout_constraintBottom_toBottomOf="@+id/activity_video_chat_disconnect"
-                    app:layout_constraintEnd_toEndOf="@+id/activity_video_chat_disconnect"
-                    app:layout_constraintStart_toStartOf="@+id/activity_video_chat_disconnect"
-                    app:layout_constraintTop_toTopOf="@+id/activity_video_chat_disconnect"
-                    app:srcCompat="@drawable/cancel" />
+    <ImageView
+        android:id="@+id/activity_video_chat_switch_camera_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:tint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_video_chat_switch_camera_button"
+        app:layout_constraintEnd_toEndOf="@+id/activity_video_chat_switch_camera_button"
+        app:layout_constraintStart_toStartOf="@+id/activity_video_chat_switch_camera_button"
+        app:layout_constraintTop_toTopOf="@+id/activity_video_chat_switch_camera_button"
+        app:srcCompat="@drawable/ic_switch_camera_24px" />
 
-                <ImageView
-                    android:id="@+id/activity_video_switch_camera"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_gravity="start|bottom"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginEnd="30dp"
-                    android:background="@android:color/transparent"
-                    android:tint="@android:color/holo_blue_light"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/circle" />
-
-                <ImageView
-                    android:id="@+id/activity_video_switch_camera_icon"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:tint="#FFFFFF"
-                    app:layout_constraintBottom_toBottomOf="@+id/activity_video_switch_camera"
-                    app:layout_constraintEnd_toEndOf="@+id/activity_video_switch_camera"
-                    app:layout_constraintStart_toStartOf="@+id/activity_video_switch_camera"
-                    app:layout_constraintTop_toTopOf="@+id/activity_video_switch_camera"
-                    app:srcCompat="@drawable/ic_switch_camera_24px" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <FrameLayout
-            android:layout_width="90dp"
-            android:layout_height="120dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@android:color/transparent"
-            android:padding="2dp">
-        <com.twilio.video.VideoView
-            android:id="@+id/activity_video_chat_publisher_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        </FrameLayout>
-    </FrameLayout>
-    </FrameLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
