@@ -65,7 +65,7 @@ public class SearchFragment extends Fragment {
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
         // set the toolbar
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_search_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.fragment_search_toolbar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Search");
 

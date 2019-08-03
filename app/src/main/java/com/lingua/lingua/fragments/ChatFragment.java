@@ -166,7 +166,14 @@ public class ChatFragment extends Fragment {
                         exploreLanguages.add((String) objectExploreLanguages.get(index));
                     }
                 }
-                chats.add(new Chat(id, null, lastMessage, lastMessageAt, userIds, exploreLanguages));
+
+                Chat chatOb = new Chat();
+                chatOb.setChatID(id);
+                chatOb.setLastTextChatTime(lastMessageAt);
+                chatOb.setChatParticipants(userIds);
+                chatOb.setLastTextMessage(lastMessage);
+                chatOb.setChatLanguages(exploreLanguages);
+                chats.add(chatOb);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -14,6 +14,7 @@ public class Chat {
     String firstVideoChatTime;
     String lastTextChatTime;
     String lastVideoChatTime;
+    String lastTextMessage;
 
     public Chat() { }
 
@@ -87,5 +88,13 @@ public class Chat {
 
     public void setLastVideoChatTime(String lastVideoChatTime) {
         this.lastVideoChatTime = lastVideoChatTime;
+    }
+
+    public String getLastTextMessage() {
+        return lastTextMessage;
+    }
+
+    public void setLastTextMessage(String lastTextMessage) {
+        this.lastTextMessage = lastTextMessage;
     }
 }

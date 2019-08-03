@@ -80,11 +80,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
         Chat chat = chats.get(position);
-        tvText.setText(chat.getLastMessage());
-        tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastUpdatedAt()));
+        tvText.setText(chat.getLastTextMessage());
+        tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastTextChatTime()));
 
         // fill in the user profile pic and name of the friend
-        for (String id : chat.getUsers()) {
+        for (String id : chat.getChatParticipants()) {
             if (!id.equals(userId)) {
                 getUserDetails(id);
             }
@@ -95,7 +95,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         // set an event listener to update the last message and timestamp of the chat if there is a change
         Firebase.setAndroidContext(context);
-        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getId());
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getChatID());
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {}
@@ -220,7 +220,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 Glide.with(context)
                         .load(profilePhotoURL)
                         .apply(requestOptionsMedia)
-                        .fallback(R.drawable.com_facebook_profile_picture_blank_square)
+                        .fallback(R.drawable.man)
                         .into(ivProfile);
 
                 // set name

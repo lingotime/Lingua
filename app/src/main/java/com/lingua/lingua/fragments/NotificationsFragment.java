@@ -66,7 +66,7 @@ public class NotificationsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_notifications_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.fragment_notifications_toolbar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Notifications");
 
@@ -148,7 +148,15 @@ public class NotificationsFragment extends Fragment {
                     }
                 }
 
-                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp, id, exploreLanguages);
+                FriendRequest friendRequest = new FriendRequest();
+                friendRequest.setFriendRequestMessage(message);
+                friendRequest.setSenderUser(senderId);
+                friendRequest.setSenderUserName(senderName);
+                friendRequest.setReceiverUser(receiverId);
+                friendRequest.setReceiverUserName(receiverName);
+                friendRequest.setCreatedTime(timestamp);
+                friendRequest.setFriendRequestID(id);
+                friendRequest.setExploreLanguages(exploreLanguages);
                 friendRequests.add(friendRequest);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {

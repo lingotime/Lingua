@@ -2,15 +2,20 @@ package com.lingua.lingua.models;
 
 import org.parceler.Parcel;
 
+import java.util.ArrayList;
+
 @Parcel
 public class FriendRequest {
     String friendRequestID;
     String friendRequestStatus;
     String friendRequestMessage;
     String senderUser;
+    String senderUserName;
     String receiverUser;
+    String receiverUserName;
     String createdTime;
     String respondedTime;
+    ArrayList<String> exploreLanguages;
 
     public FriendRequest() { }
 
@@ -66,5 +71,29 @@ public class FriendRequest {
 
     public void setRespondedTime(String respondedTime) {
         this.respondedTime = respondedTime;
+    }
+
+    public String getSenderUserName() {
+        return senderUserName;
+    }
+
+    public void setSenderUserName(String senderUserName) {
+        this.senderUserName = senderUserName;
+    }
+
+    public String getReceiverUserName() {
+        return receiverUserName;
+    }
+
+    public void setReceiverUserName(String receiverUserName) {
+        this.receiverUserName = receiverUserName;
+    }
+
+    public ArrayList<String> getExploreLanguages() {
+        return exploreLanguages;
+    }
+
+    public void setExploreLanguages(ArrayList<String> exploreLanguages) {
+        this.exploreLanguages = exploreLanguages;
     }
 }
