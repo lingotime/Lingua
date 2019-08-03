@@ -4,6 +4,7 @@ buildscript {
         jcenter()
         maven { url "https://jitpack.io" }
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.2'
         classpath 'com.google.gms:google-services:4.2.0'
@@ -18,7 +19,6 @@ allprojects {
 
         maven { url 'https://maven.google.com' }
         maven { url 'https://tokbox.bintray.com/maven' }
-
     }
 }
 
