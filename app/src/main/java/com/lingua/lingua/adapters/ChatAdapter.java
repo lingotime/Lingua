@@ -26,7 +26,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.lingua.lingua.ChatDetailsActivity;
+import com.lingua.lingua.TextChatActivity;
 import com.lingua.lingua.DateUtil;
 import com.lingua.lingua.R;
 import com.lingua.lingua.VideoChatActivity;
@@ -153,7 +153,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        Intent intent = new Intent(context, ChatDetailsActivity.class);
+                        Intent intent = new Intent(context, TextChatActivity.class);
                         Chat chat = chats.get(position);
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));
@@ -189,7 +189,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 // this will be interpreted as a click for the recycler view items
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
-                    Intent intent = new Intent(context, ChatDetailsActivity.class);
+                    Intent intent = new Intent(context, TextChatActivity.class);
                     Chat chat = chats.get(position);
                     intent.putExtra("chat", Parcels.wrap(chat));
                     context.startActivity(intent);

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,68 +36,77 @@ import static com.lingua.lingua.notifyAPI.BindingSharedPreferences.IDENTITY;
  */
 
 public class MainActivity extends AppCompatActivity {
-
     private User currentUser;
-    BottomNavigationView bottomNavigationView;
-    private static final String TAG = "MainActivity";
+
+    private FrameLayout fragmentFrame;
+    private BottomNavigationView bottomNavigationView;
+
     final FragmentManager fragmentManager = getSupportFragmentManager();
-    final Fragment profileFragment = new ProfileFragment();
+    final Fragment exploreFragment = new ExploreFragment();
     final Fragment searchFragment = new SearchFragment();
     final Fragment chatFragment = new ChatFragment();
-    final Fragment exploreFragment = new ExploreFragment();
     final Fragment notificationsFragment = new NotificationsFragment();
+    final Fragment profileFragment = new ProfileFragment();
+
+    private WakefulBroadcastReceiver bindingBroadcastReceiver;
+
+    private static final String TAG = "MainActivity";
 
     // Strings for creating a binding for push notifications for the device
     public static final String BINDING_REGISTRATION = "BINDING_REGISTRATION";
     public static final String BINDING_SUCCEEDED = "BINDING_SUCCEEDED";
     public static final String BINDING_RESPONSE = "BINDING_RESPONSE";
 
-    private WakefulBroadcastReceiver bindingBroadcastReceiver;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        currentUser = Parcels.unwrap(this.getIntent().getParcelableExtra("user"));
-        Log.i("MainActivity", currentUser.getUserID());
-        Log.i("MainActivity", currentUser.getUserName());
+        // associate views with java variables
+        fragmentFrame = findViewById(R.id.activity_main_container);
+        bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
 
+        // unwrap the current user
+        currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+
+        // prepare fragments with user parcel
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("user", Parcels.wrap(currentUser));
+        exploreFragment.setArguments(bundle);
+        searchFragment.setArguments(bundle);
+        chatFragment.setArguments(bundle);
+        notificationsFragment.setArguments(bundle);
+        profileFragment.setArguments(bundle);
+
+        // store some info globally
         SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         prefs.edit().putString("userId", currentUser.getUserID()).apply();
         prefs.edit().putString("userName", currentUser.getUserName()).apply();
 
-        bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
-
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("user", Parcels.wrap(currentUser));
-
-        profileFragment.setArguments(bundle);
-        searchFragment.setArguments(bundle);
-        chatFragment.setArguments(bundle);
-        exploreFragment.setArguments(bundle);
-        notificationsFragment.setArguments(bundle);
-
         // load the right fragment depending on intent extras
-        String fragmentToLoad = getIntent().getStringExtra("fragment");
+        String nextFragment = Parcels.unwrap(getIntent().getParcelableExtra("fragment"));
 
-        if (fragmentToLoad != null && fragmentToLoad.equals("profile")) {
-            fragmentManager.beginTransaction().replace(R.id.activity_main_container, profileFragment).commit();
-            bottomNavigationView.setSelectedItemId(R.id.profile);
-        } else if (fragmentToLoad != null && fragmentToLoad.equals("notifications")) {
+        if (nextFragment.equals("explore")) {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.explore);
+        } else if (nextFragment.equals("search")) {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.search);
+        } else if (nextFragment.equals("chat")) {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, chatFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.chat);
+        } else if (nextFragment.equals("notifications")) {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, notificationsFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.notifications);
-        } else {
-            fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
+        } else if (nextFragment.equals("profile")) {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, profileFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.profile);
         }
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.explore:
-                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
-                        return true;
                     case R.id.search:
                         fragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment).commit();
                         return true;
@@ -110,11 +120,11 @@ public class MainActivity extends AppCompatActivity {
                         fragmentManager.beginTransaction().replace(R.id.activity_main_container, profileFragment).commit();
                         return true;
                     default:
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
                         return true;
                 }
             }
         });
-
 
         registerBinding();
 
@@ -142,10 +152,9 @@ public class MainActivity extends AppCompatActivity {
         currentUser.setOnline(true);
 
         // save update
-
         Firebase.setAndroidContext(this);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
-        reference.child("online").setValue("true");
+        reference.child("online").setValue(currentUser.isOnline());
     }
 
     /**
@@ -161,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // display the right toolbar for each fragment
         if (chatFragment != null && chatFragment.isVisible()) {
-            // Inflate the menu; this adds items to the toolbar if it is present.
             getMenuInflater().inflate(R.menu.menu_chat_fragment, menu);
         } else if (profileFragment != null && profileFragment.isVisible()) {
             getMenuInflater().inflate(R.menu.menu_profile_fragment, menu);
@@ -180,7 +188,8 @@ public class MainActivity extends AppCompatActivity {
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
 
         // mark user as live
-        reference.child("online").setValue("true");
+        currentUser.setOnline(true);
+        reference.child("online").setValue(currentUser.isOnline());
     }
 
     @Override
@@ -190,7 +199,8 @@ public class MainActivity extends AppCompatActivity {
         Firebase.setAndroidContext(this);
         Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
 
-        // mark user as live
-        reference.child("online").setValue("false");
+        // mark user as dead
+        currentUser.setOnline(false);
+        reference.child("online").setValue(currentUser.isOnline());
     }
 }

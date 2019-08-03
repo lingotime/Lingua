@@ -122,17 +122,17 @@ public class VideoChatActivity extends AppCompatActivity {
         username = prefs.getString("userName", "");
 
         currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
-        chatId = currentChat.getId();
+        chatId = currentChat.getChatID();
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
-        chatMembers = currentChat.getUsers();
+        chatMembers = currentChat.getChatParticipants();
         chatMembers.remove(userId);
 
         roomName = chatId;
 
 
         // to get all the possible explore languages from the users in the chat
-        if (currentChat.getExploreLanguages() != null) {
-            possibleChatLanguages.addAll(currentChat.getExploreLanguages());
+        if (currentChat.getChatLanguages() != null) {
+            possibleChatLanguages.addAll(currentChat.getChatLanguages());
         }
         possibleChatLanguages.add("Cultural Exchange");
 
@@ -151,8 +151,44 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnectionButton2 = (ImageView) findViewById(R.id.activity_video_chat_disconnect_image);
         switchCameraButton2 = (ImageView) findViewById(R.id.activity_video_chat_switch_camera_image);
 
-        disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
+        disconnectionButton.setVisibility(View.INVISIBLE); // hides if a call has not yet begun
         disconnectionButton.setEnabled(false);
+        disconnectionButton2.setVisibility(View.INVISIBLE); // hides if a call has not yet begun
+        disconnectionButton2.setEnabled(false);
+
+        connectionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // first prompt the user initiating the call for the intended language
+                // a dialog box to allow the person initiating the call to select the language in which the call will be made
+                AlertDialog.Builder languageSelection = new AlertDialog.Builder(VideoChatActivity.this);
+                languageSelection.setTitle("Choose the language");
+                languageSelection.setSingleChoiceItems(languageChoices, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        videoChatLanguage = Arrays.asList(languageChoices).get(i);
+                    }
+                });
+                languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        queryHoursSpokenInfo();
+                        connectToRoom(roomName);
+                    }
+                });
+                languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                AlertDialog dialog = languageSelection.create();
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
+            }
+        });
 
         connectionButton2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,6 +224,17 @@ public class VideoChatActivity extends AppCompatActivity {
             }
         });
 
+        disconnectionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (room != null) {
+                    room.disconnect();
+                    disconnectActions();
+                }
+            }
+        });
+
 
         disconnectionButton2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,6 +247,12 @@ public class VideoChatActivity extends AppCompatActivity {
             }
         });
 
+        switchCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switchCamera();
+            }
+        });
 
         switchCameraButton2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,12 +266,16 @@ public class VideoChatActivity extends AppCompatActivity {
 
     // UI options to take when the user has been connected to the room
     private void connectActions() {
-        connectionButton.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
+        connectionButton.setVisibility(View.INVISIBLE); // once connected, remove the button from view to prevent more connection attempts
         connectionButton.setEnabled(false);
+        connectionButton2.setVisibility(View.INVISIBLE); // once connected, remove the button from view to prevent more connection attempts
+        connectionButton2.setEnabled(false);
 
         // enable button for disconnection to end the call
         disconnectionButton.setVisibility(View.VISIBLE);
         disconnectionButton.setEnabled(true);
+        disconnectionButton2.setVisibility(View.VISIBLE);
+        disconnectionButton2.setEnabled(true);
     }
 
 
@@ -227,6 +284,14 @@ public class VideoChatActivity extends AppCompatActivity {
         moveLocalVideoToMainView();
         connectionButton.setVisibility(View.VISIBLE);
         connectionButton.setEnabled(true);
+        connectionButton2.setVisibility(View.VISIBLE);
+        connectionButton2.setEnabled(true);
+
+        disconnectionButton.setVisibility(View.INVISIBLE);
+        disconnectionButton.setEnabled(false);
+        disconnectionButton2.setVisibility(View.INVISIBLE);
+        disconnectionButton2.setEnabled(false);
+
         endTime = System.nanoTime();
 
         // mark progress for the user if one of their explore languages is the one being spoken in the chat
@@ -346,7 +411,7 @@ public class VideoChatActivity extends AppCompatActivity {
         localVideoTrack = LocalVideoTrack.create(this, true, cameraCapturer);
 
         // getting the publisher container (for the local participant) and setting visibility to gone before the other participant enters the chat)
-        localVideoView.setVisibility(View.GONE);
+        localVideoView.setVisibility(View.INVISIBLE);
 
         // show the camera output from the user in the main screen
         remoteVideoView.setMirror(true);
@@ -357,7 +422,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     private void moveLocalVideoToSmallView() {
         // moves the local participant's local video track from the main view to make space for the remote participant
-        if (localVideoView.getVisibility() == View.GONE) {
+        if (localVideoView.getVisibility() == View.INVISIBLE) {
             localVideoView.setVisibility(View.VISIBLE);
             if (localVideoTrack != null) {
                 localVideoTrack.removeRenderer(remoteVideoView); // remove from the main view where the remote participant will be added
@@ -372,7 +437,7 @@ public class VideoChatActivity extends AppCompatActivity {
     private void moveLocalVideoToMainView() {
         // moves the local participant's video track from the smaller view when there is no longer a remote participant
         if (localVideoView.getVisibility() == View.VISIBLE) {
-            localVideoView.setVisibility(View.GONE);
+            localVideoView.setVisibility(View.INVISIBLE);
             if (localVideoTrack != null) {
                 localVideoTrack.removeRenderer(localVideoView);
                 localVideoTrack.addRenderer(remoteVideoView);
@@ -404,7 +469,6 @@ public class VideoChatActivity extends AppCompatActivity {
 
     private void addRemoteParticipantVideo(VideoTrack videoTrack) {
         moveLocalVideoToSmallView();
-        remoteVideoView.setMirror(false);
         videoTrack.addRenderer(remoteVideoView);
     }
 

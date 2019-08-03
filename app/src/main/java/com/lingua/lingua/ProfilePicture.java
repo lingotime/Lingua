@@ -59,6 +59,7 @@ public class ProfilePicture extends AppCompatActivity {
     private static final int PHOTO_GALLERY_REQUEST_CODE = 1046;
     private static final int RC_VIDEO_APP_PERM = 124;
 
+    private String nextFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,18 +76,16 @@ public class ProfilePicture extends AppCompatActivity {
 
         // unwrap the current user
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+        nextFragment = Parcels.unwrap(getIntent().getParcelableExtra("fragment"));
 
         // launch camera view if the "take photo" button is clicked
         takePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // request permission before accessing the camera, and then launch it
-                requestPermissions();
+                requestPermissionsAndLaunch();
             }
         });
-
-        // load the current profile photo if one is available
-        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
 
         // launch photos view if the "select photo" button is clicked
         selectPhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +98,9 @@ public class ProfilePicture extends AppCompatActivity {
                 }
             }
         });
+
+        // load the current profile photo if one is available
+        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
 
         // save new profile photo and return to previous page if the "set profile photo" button is clicked
         setProfilePhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -155,6 +157,7 @@ public class ProfilePicture extends AppCompatActivity {
                                 // return to info setup activity
                                 final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
                                 intent.putExtra("user", Parcels.wrap(currentUser));
+                                intent.putExtra("fragment", Parcels.wrap(nextFragment));
                                 startActivity(intent);
                             } else {
                                 Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
@@ -165,6 +168,7 @@ public class ProfilePicture extends AppCompatActivity {
                     // return to info setup activity
                     final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
                     intent.putExtra("user", Parcels.wrap(currentUser));
+                    intent.putExtra("fragment", Parcels.wrap(nextFragment));
                     startActivity(intent);
                 }
             }
@@ -202,13 +206,12 @@ public class ProfilePicture extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
-    private void requestPermissions() {
+    private void requestPermissionsAndLaunch() {
         String[] perms = { Manifest.permission.CAMERA };
         if (EasyPermissions.hasPermissions(this, perms)) {
             // launch the activity for the camera
@@ -223,7 +226,7 @@ public class ProfilePicture extends AppCompatActivity {
             }
         } else {
             // prompt to ask for mic and camera permission
-            EasyPermissions.requestPermissions(this, "Lingua needs access to your camera", RC_VIDEO_APP_PERM, perms);
+            EasyPermissions.requestPermissions(this, "Lingua needs access to your camera.", RC_VIDEO_APP_PERM, perms);
         }
     }
 

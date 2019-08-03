@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:windowSoftInputMode="adjustPan|adjustResize|stateVisible"
-    tools:context=".ChatDetailsActivity">
+    tools:context=".TextChatActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/activity_text_chat_toolbar"

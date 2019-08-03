@@ -51,7 +51,6 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
     private LoginButton facebookLoginButton;
-    private ProfilePictureView facebookProfileImage;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
             // log in
             extractUserAndLoadNextStep(firebaseUser);
         } else {
-            facebookLoginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
+            facebookLoginButton.setReadPermissions(Arrays.asList("public_profile"));
 
             // register a callback for logging in
             LoginManager.getInstance().registerCallback(facebookLoginManager, new FacebookCallback<LoginResult>() {
@@ -206,12 +205,14 @@ public class LoginActivity extends AppCompatActivity {
             // load the main page
             final Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("fragment", "explore");
             startActivity(intent);
             finish();
         } else {
             // load the profile creation page
             final Intent intent = new Intent(LoginActivity.this, ProfileCreationActivity.class);
             intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("fragment", "explore");
             startActivity(intent);
             finish();
         }

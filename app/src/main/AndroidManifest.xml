@@ -37,7 +37,7 @@
 
         <activity android:name=".MainActivity" />
 
-        <activity android:name=".ChatDetailsActivity" />
+        <activity android:name=".TextChatActivity" />
 
         <activity android:name=".VideoChatActivity" />
 

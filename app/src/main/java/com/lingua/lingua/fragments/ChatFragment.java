@@ -39,7 +39,7 @@ import java.util.List;
 
 /**
 * Fragment that displays the user's open chats (one with each friend) ordered by most recent, can click
-* on each chat to message that person in the ChatDetailsActivity
+* on each chat to message that person in the TextChatActivity
 */
 
 public class ChatFragment extends Fragment {

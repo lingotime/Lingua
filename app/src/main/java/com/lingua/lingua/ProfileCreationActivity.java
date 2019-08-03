@@ -47,20 +47,12 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private NachoTextView exploreCountriesField;
     private Button continueButton;
 
-    private boolean isFirstCreation;
+    private String nextFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_creation);
-
-        // determine if we are editing profile or creating for the first time
-        String purpose = getIntent().getStringExtra("purpose");
-        if (purpose != null && purpose.equals("edit")) {
-            isFirstCreation = false;
-        } else {
-            isFirstCreation = true;
-        }
 
         // associate views with java variables
         descriptionText = findViewById(R.id.activity_profile_info_setup_description_text);
@@ -74,8 +66,9 @@ public class ProfileCreationActivity extends AppCompatActivity {
         exploreCountriesField = findViewById(R.id.activity_profile_info_setup_explore_countries_field);
         continueButton = findViewById(R.id.activity_profile_info_setup_continue_button);
 
-        // unwrap the current user
+        // unwrap the current user and next fragment
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+        nextFragment = Parcels.unwrap(getIntent().getParcelableExtra("fragment"));
 
         // enable the profile image to be clickable
         profileImage.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +80,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 // proceed to photo setup activity
                 final Intent intent = new Intent(ProfileCreationActivity.this, ProfilePicture.class);
                 intent.putExtra("user", Parcels.wrap(currentUser));
+                intent.putExtra("fragment", Parcels.wrap(nextFragment));
                 startActivity(intent);
             }
         });
@@ -99,6 +93,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         exploreLanguagesField.setAdapter(languagesAdapter);
         exploreCountriesField.setAdapter(countriesAdapter);
 
+        // set a flag icon with each country chip entered
         originCountryField.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
             @Override
             public ChipSpan createChip(@NonNull Context context, @NonNull CharSequence text, Object data) {
@@ -157,10 +152,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 if (currentUser.isComplete()) {
                     final Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
                     intent.putExtra("user", Parcels.wrap(currentUser));
-                    // if we are editing an already existing profile, go to the profile fragment, otherwise explore fragment
-                    if (!isFirstCreation) {
-                        intent.putExtra("fragment", "profile");
-                    }
+                    intent.putExtra("fragment", Parcels.wrap(nextFragment));
                     startActivity(intent);
                 }
             }
@@ -231,19 +223,17 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // deal with isComplete
         currentUser.setComplete(isCompleteCheck);
 
-        // if isComplete save to database
-        if (isCompleteCheck) {
-            Firebase.setAndroidContext(this);
-            Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
-            databaseReference.child("complete").setValue(true);
-            databaseReference.child("online").setValue(true);
-            databaseReference.child("knownLanguages").setValue(knownLanguagesInput);
-            databaseReference.child("userBiographyText").setValue(userBiographyTextInput);
-            databaseReference.child("userBirthDate").setValue(userBirthDate);
-            databaseReference.child("userOriginCountry").setValue(userOriginCountryInput.get(0));
-            databaseReference.child("exploreLanguages").setValue(exploreLanguagesInput);
-            databaseReference.child("exploreCountries").setValue(exploreCountriesInput);
-        }
+        // save to database
+        Firebase.setAndroidContext(this);
+        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+        databaseReference.child("userName").setValue(currentUser.getUserName());
+        databaseReference.child("userBirthDate").setValue(currentUser.getUserBirthDate());
+        databaseReference.child("userBiographyText").setValue(currentUser.getUserBiographyText());
+        databaseReference.child("userOriginCountry").setValue(currentUser.getUserOriginCountry());
+        databaseReference.child("knownLanguages").setValue(currentUser.getKnownLanguages());
+        databaseReference.child("exploreLanguages").setValue(currentUser.getExploreLanguages());
+        databaseReference.child("exploreCountries").setValue(currentUser.getExploreCountries());
+        databaseReference.child("complete").setValue(currentUser.isComplete());
     }
 
     protected void loadInfo() {
