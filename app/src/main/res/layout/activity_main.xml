@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="0dp"
-        android:background="@color/white"
+        android:background="#FFFFFF"
         android:elevation="16dp"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/menu_bottom_navigation" />

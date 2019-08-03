@@ -13,24 +13,26 @@
         android:tag="item_chat_bottom_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
+
         <ImageView
             android:id="@+id/item_chat_video_chat"
-            android:src="@drawable/camcorder"
             android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorSecondary"
             android:clickable="true"
-            android:background="#f7e79c"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
-            android:layout_height="match_parent" />
+            android:src="@drawable/camcorder" />
+
         <ImageView
             android:id="@+id/item_chat_text_chat"
-            android:src="@drawable/comment"
             android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
             android:clickable="true"
-            android:background="#4cd964"
             android:paddingLeft="25dp"
             android:paddingRight="25dp"
-            android:layout_height="match_parent" />
+            android:src="@drawable/comment" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <!--The surface view-->
@@ -48,28 +50,27 @@
 
         <ImageView
             android:id="@+id/item_chat_iv"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/man" />
 
         <TextView
             android:id="@+id/item_chat_tv_text"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginRight="32dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="Hola que tal? No se que contarte, mas que tengo que ocupar extra espacio y no se que escribir..."
+            android:text="[Text]"
             app:layout_constraintBottom_toBottomOf="@+id/item_chat_iv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/item_chat_iv"
@@ -79,22 +80,20 @@
             android:id="@+id/item_chat_tv_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="5 min. ago"
+            android:layout_marginEnd="20dp"
+            android:text="[Timestamp]"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/item_chat_iv" />
 
         <TextView
             android:id="@+id/item_chat_tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="20dp"
+            android:text="[Name]"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             app:layout_constraintStart_toEndOf="@+id/item_chat_iv"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/item_chat_iv" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

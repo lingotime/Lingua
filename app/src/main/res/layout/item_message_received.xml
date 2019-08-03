@@ -15,8 +15,8 @@
         android:background="@drawable/rounded_rectangle_gray_message"
         android:maxWidth="240dp"
         android:padding="10dp"
-        android:text="Hi! How are you doing?"
-        android:textColor="@color/colorTextDark"
+        android:text="[Message]"
+        android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

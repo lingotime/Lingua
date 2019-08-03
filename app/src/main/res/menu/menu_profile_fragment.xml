@@ -5,13 +5,16 @@
         android:id="@+id/profile_fragment_edit"
         android:enabled="true"
         android:icon="@drawable/outline_edit_black_48dp"
+        android:iconTint="#FFFFFF"
         android:title="Edit"
         android:visible="true"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/profile_fragment_logout"
         android:enabled="true"
+        android:icon="@drawable/exit"
+        android:iconTint="#FFFFFF"
+        android:title="Exit"
         android:visible="true"
-        android:title="Log out"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>
