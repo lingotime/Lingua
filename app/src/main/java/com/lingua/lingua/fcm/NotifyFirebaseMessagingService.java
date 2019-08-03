@@ -51,6 +51,7 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
          * The Notify service adds the message body to the remote message data so that we can
          * show a simple notification.
          */
+        Log.d("VideoNotification", "Message received");
         String from = message.getFrom();
         Map<String, String> data = message.getData();
         Log.d(TAG, data.toString());
@@ -62,11 +63,15 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
 
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Body: " + body);
+        Log.d(TAG, senderId);
+        Log.d(TAG, roomName);
 
         if (senderId == null) {
+            Log.d("VideoNotification", "Sender ID is null");
             showNotification(body);
         } else {
             // video notification with added intents
+            Log.d("VideoNotification", "Firing notification now");
             showVideoNotification(body, roomName);
         }
     }
