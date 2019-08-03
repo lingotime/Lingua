@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/chat_fragment_new_group"
+        android:title="New Group"
         android:enabled="true"
+        android:icon="@drawable/group"
+        android:iconTint="#FFFFFF"
         android:visible="true"
-        android:title="New group"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>
