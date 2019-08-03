@@ -78,7 +78,7 @@
                             android:id="@+id/activity_profile_info_setup_name_field"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:ems="11"
+                            android:ems="10"
                             android:hint="What's your name?"
                             android:inputType="textPersonName"
                             android:maxLines="1"
@@ -88,7 +88,7 @@
                             android:id="@+id/activity_profile_info_setup_birthdate_field"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:ems="11"
+                            android:ems="10"
                             android:hint="When's your birthday?"
                             android:inputType="date"
                             android:maxLines="1" />
