@@ -135,15 +135,13 @@ public class VideoChatActivity extends AppCompatActivity {
             // intent passed in from either the chat fragment or the chat details activity with these parcelable extras
             currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
             currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+            chatId = currentChat.getId();
+            roomName = chatId;
         }
 
-        chatId = currentChat.getId();
         // the intent from the push notification will not have the user object
         chatMembers = currentChat.getUsers();
         chatMembers.remove(userId);
-
-        roomName = chatId;
-
 
         // to get all the possible explore languages from the users in the chat
         if (currentChat.getExploreLanguages() != null) {
