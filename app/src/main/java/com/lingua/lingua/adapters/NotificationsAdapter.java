@@ -265,36 +265,36 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             @Override
             public void onResponse(String response) {
                 try {
-                    // extract the sender user as a User object from the database request's response
+                    // extract the receiver user as a User object from the database request's response
                     JSONObject usersJSONObject = new JSONObject(response);
-                    JSONObject senderUserJSONObject = usersJSONObject.getJSONObject(friendRequest.getSenderUser());
+                    JSONObject receiverUserJSONObject = usersJSONObject.getJSONObject(friendRequest.getReceiverUser());
 
                     Gson gson = new Gson();
-                    User senderUser = gson.fromJson(senderUserJSONObject.toString(), User.class);
+                    User receiverUser = gson.fromJson(receiverUserJSONObject.toString(), User.class);
 
-                    if (senderUser.getKnownLanguages() == null) {
-                        senderUser.setKnownLanguages(new ArrayList<String>());
+                    if (receiverUser.getKnownLanguages() == null) {
+                        receiverUser.setKnownLanguages(new ArrayList<String>());
                     }
 
-                    if (senderUser.getExploreLanguages() == null) {
-                        senderUser.setExploreLanguages(new ArrayList<String>());
+                    if (receiverUser.getExploreLanguages() == null) {
+                        receiverUser.setExploreLanguages(new ArrayList<String>());
                     }
 
-                    if (senderUser.getExploreCountries() == null) {
-                        senderUser.setExploreCountries(new ArrayList<String>());
+                    if (receiverUser.getExploreCountries() == null) {
+                        receiverUser.setExploreCountries(new ArrayList<String>());
                     }
 
-                    // remove the sender user from the current user's pending received friend requests list
-                    user.getPendingReceivedFriendRequests().remove(senderUser.getUserID());
+                    // remove the receiver user from the current user's pending sent friend requests list
+                    user.getPendingSentFriendRequests().remove(receiverUser.getUserID());
 
                     // remove the current user from the sender user's pending sent friend requests list
-                    senderUser.getPendingSentFriendRequests().remove(user.getUserID());
+                    receiverUser.getPendingReceivedFriendRequests().remove(user.getUserID());
 
                     Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
 
                     // update the database
-                    databaseReference.child("users").child(user.getUserID()).child("pendingReceivedFriendRequests").setValue(user.getPendingReceivedFriendRequests());
-                    databaseReference.child("users").child(senderUser.getUserID()).child("pendingSentFriendRequests").setValue(senderUser.getPendingSentFriendRequests());
+                    databaseReference.child("users").child(user.getUserID()).child("pendingSentFriendRequests").setValue(user.getPendingSentFriendRequests());
+                    databaseReference.child("users").child(receiverUser.getUserID()).child("pendingReceiverFriendRequests").setValue(receiverUser.getPendingReceivedFriendRequests());
                 } catch (JSONException exception) {
                     Log.e("ConnectAdapter", "firebase:onException", exception);
                 }

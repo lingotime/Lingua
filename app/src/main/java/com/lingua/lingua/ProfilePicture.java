@@ -76,7 +76,8 @@ public class ProfilePicture extends AppCompatActivity {
 
         // unwrap the current user
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
-        nextFragment = Parcels.unwrap(getIntent().getParcelableExtra("fragment"));
+        nextFragment = getIntent().getStringExtra("fragment");
+        Log.e("TRUMP", nextFragment);
 
         // launch camera view if the "take photo" button is clicked
         takePhotoButton.setOnClickListener(new View.OnClickListener() {

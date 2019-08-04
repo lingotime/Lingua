@@ -90,6 +90,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             profilePhotoImage = userItemView.findViewById(R.id.item_user_search_profile_image);
             nameText = userItemView.findViewById(R.id.item_user_search_name_text);
             countryAndAgeText = userItemView.findViewById(R.id.item_user_search_country_and_age_text);
+            flagImage = userItemView.findViewById(R.id.item_user_search_flag);
             sendRequestButton = userItemView.findViewById(R.id.item_user_search_send_request_button);
 
             // send user a friend request, remove them from view, and add a new user to timeline
@@ -140,6 +141,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         public void bind(User user) {
             // load user flag and profile photo into place
+            Log.e("TRUMP", CountryInformation.COUNTRY_CODES.get(user.getUserOriginCountry()));
             Glide.with(context).load(context.getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(user.getUserOriginCountry()), "drawable", context.getPackageName())).apply(RequestOptions.circleCropTransform()).into(flagImage);
             Glide.with(context).load(user.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePhotoImage);
 

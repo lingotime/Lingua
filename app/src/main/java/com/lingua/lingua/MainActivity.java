@@ -84,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
         prefs.edit().putString("userName", currentUser.getUserName()).apply();
 
         // load the right fragment depending on intent extras
-        String nextFragment = Parcels.unwrap(getIntent().getParcelableExtra("fragment"));
+        String nextFragment = getIntent().getStringExtra("fragment");
+        Log.e("TRUMP", nextFragment);
 
         if (nextFragment.equals("explore")) {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();

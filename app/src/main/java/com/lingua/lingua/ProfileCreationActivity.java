@@ -68,7 +68,8 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         // unwrap the current user and next fragment
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
-        nextFragment = Parcels.unwrap(getIntent().getParcelableExtra("fragment"));
+        nextFragment = getIntent().getStringExtra("fragment");
+        Log.e("TRUMP", nextFragment);
 
         // enable the profile image to be clickable
         profileImage.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +81,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 // proceed to photo setup activity
                 final Intent intent = new Intent(ProfileCreationActivity.this, ProfilePicture.class);
                 intent.putExtra("user", Parcels.wrap(currentUser));
-                intent.putExtra("fragment", Parcels.wrap(nextFragment));
+                intent.putExtra("fragment", nextFragment);
                 startActivity(intent);
             }
         });
@@ -152,7 +153,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 if (currentUser.isComplete()) {
                     final Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
                     intent.putExtra("user", Parcels.wrap(currentUser));
-                    intent.putExtra("fragment", Parcels.wrap(nextFragment));
+                    intent.putExtra("fragment", nextFragment);
                     startActivity(intent);
                 }
             }
