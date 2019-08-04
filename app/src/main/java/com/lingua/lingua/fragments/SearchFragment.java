@@ -210,7 +210,7 @@ public class SearchFragment extends Fragment {
 
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
-                    Toast.makeText(getContext(), "No users to display", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
                     Log.e("SearchFragment", "firebase:onException", exception);
                 }
             }

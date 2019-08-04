@@ -58,7 +58,7 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
-        context = container.getContext();
+        context = getContext();
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
@@ -87,11 +87,11 @@ public class ChatFragment extends Fragment {
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         chats = new ArrayList<>();
 
-        adapter = new ChatAdapter(getContext(), chats, currentUser);
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        adapter = new ChatAdapter(context, chats, currentUser);
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         rvChats.addItemDecoration(itemDecoration);
         rvChats.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rvChats.setLayoutManager(linearLayoutManager);
 
         swipeContainer = view.findViewById(R.id.fragment_chat_swipe_container);
@@ -125,17 +125,17 @@ public class ChatFragment extends Fragment {
                 }
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-                Toast.makeText(getContext(), "No chats to display", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "No chats to display", Toast.LENGTH_LONG).show();
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Connection error", Toast.LENGTH_LONG).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });
 
-        RequestQueue rQueue = Volley.newRequestQueue(getContext());
+        RequestQueue rQueue = Volley.newRequestQueue(context);
         rQueue.add(request);
     }
 
@@ -179,7 +179,7 @@ public class ChatFragment extends Fragment {
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Connection error", Toast.LENGTH_LONG).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });

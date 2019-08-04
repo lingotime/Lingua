@@ -186,7 +186,7 @@ public class ExploreFragment extends Fragment {
 
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
-                    Toast.makeText(getContext(), "No users to display", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
                     Log.e("ExploreFragment", "firebase:onException", exception);
                 }
             }

@@ -1,5 +1,6 @@
 package com.lingua.lingua.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,7 @@ import java.util.Date;
 /* FINALIZED, DOCUMENTED, and TESTED ProfileFragment displays the current user's information. */
 
 public class ProfileFragment extends Fragment {
+    Context context;
     private User currentUser;
 
     private ImageView profileImage;
@@ -61,6 +63,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // set the context
+        context = getContext();
 
         // associate views with java variables
         profileImage = view.findViewById(R.id.fragment_profile_profile_image);
@@ -95,7 +100,7 @@ public class ProfileFragment extends Fragment {
                 if (id == R.id.menu_profile_fragment_edit_icon) {
 
                     // load the profile creation page if edit button is clicked
-                    final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
+                    final Intent intent = new Intent(context, ProfileCreationActivity.class);
                     intent.putExtra("user", Parcels.wrap(currentUser));
                     intent.putExtra("fragment", "profile");
                     startActivity(intent);
@@ -107,7 +112,7 @@ public class ProfileFragment extends Fragment {
 
                     LoginManager.getInstance().logOut();
 
-                    final Intent intent = new Intent(getContext(), LoginActivity.class);
+                    final Intent intent = new Intent(context, LoginActivity.class);
                     startActivity(intent);
                     getActivity().finish();
                 }
@@ -139,7 +144,7 @@ public class ProfileFragment extends Fragment {
         }
 
         for (String knownLanguage : currentUser.getKnownLanguages()) {
-            Chip knownLanguageChip = new Chip(getContext());
+            Chip knownLanguageChip = new Chip(context);
             knownLanguageChip.setText(knownLanguage);
             knownLanguagesChips.addView(knownLanguageChip);
         }
@@ -157,7 +162,7 @@ public class ProfileFragment extends Fragment {
         }
 
         for (String exploreLanguage : currentUser.getExploreLanguages()) {
-            Chip exploreLanguageChip = new Chip(getContext());
+            Chip exploreLanguageChip = new Chip(context);
             exploreLanguageChip.setText(exploreLanguage);
             exploreLanguagesChips.addView(exploreLanguageChip);
         }
@@ -175,7 +180,7 @@ public class ProfileFragment extends Fragment {
         }
 
         for (String exploreCountry : currentUser.getExploreCountries()) {
-            Chip exploreCountryChip = new Chip(getContext());
+            Chip exploreCountryChip = new Chip(context);
             exploreCountryChip.setText(exploreCountry);
             exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
             exploreCountriesChips.addView(exploreCountryChip);
@@ -184,7 +189,7 @@ public class ProfileFragment extends Fragment {
 
     private void goToEdit() {
         // load the profile creation page
-        final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
+        final Intent intent = new Intent(context, ProfileCreationActivity.class);
         intent.putExtra("user", Parcels.wrap(currentUser));
         intent.putExtra("fragment", "profile");
         startActivity(intent);
