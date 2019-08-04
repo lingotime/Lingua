@@ -113,6 +113,7 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
     // show a notification for video chat
     private void showVideoNotification(String message, String roomName) {
         Intent intent = new Intent(this, VideoChatActivity.class);
+        intent.setAction("Launch Push Notification");
         intent.putExtra("roomName", roomName);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

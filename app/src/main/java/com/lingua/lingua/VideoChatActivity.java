@@ -131,9 +131,10 @@ public class VideoChatActivity extends AppCompatActivity {
         userId = prefs.getString("userId", "");
         username = prefs.getString("userName", "");
 
-        // check for roomName intent extra - means it comes from the push notification
-        roomName = getIntent().getStringExtra("roomName");
-        if (roomName != null) {
+        // check for the intent action to see if the intent was launched from the chats or from a push notification
+
+        if (getIntent().getAction() == PUSH_NOTIFICATION_INTENT) {
+            roomName = getIntent().getStringExtra("roomName");
             generateTheLocalUserObject();
             generateTheLocalChatObject();
         } else {

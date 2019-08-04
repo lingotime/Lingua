@@ -65,7 +65,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     private TextView biographyText;
     private ChipGroup knownLanguagesChips;
     private Button sendRequestButton;
-    
+
     public ExploreAdapter(Context context, List<User> usersList, List<User> hiddenUsersList, User currentUser) {
         this.context = context;
         this.usersList = usersList;

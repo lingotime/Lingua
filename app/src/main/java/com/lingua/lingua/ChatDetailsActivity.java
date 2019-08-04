@@ -144,6 +144,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
         if (id == R.id.chat_details_videochat_icon) {
             Intent intent = new Intent(ChatDetailsActivity.this, VideoChatActivity.class);
             // intent to the video chat activity
+            intent.setAction("Launch from Chats");
             intent.putExtra("chat", Parcels.wrap(chat));
             intent.putExtra("user", Parcels.wrap(currentUser));
             startActivity(intent);
