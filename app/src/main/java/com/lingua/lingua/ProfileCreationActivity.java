@@ -169,6 +169,30 @@ public class ProfileCreationActivity extends AppCompatActivity {
         loadInfo();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as live
+        currentUser.setOnline(true);
+        reference.child("online").setValue(currentUser.isOnline());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as dead
+        currentUser.setOnline(false);
+        reference.child("online").setValue(currentUser.isOnline());
+    }
+
     private void saveData() {
         boolean isCompleteCheck = true;
 

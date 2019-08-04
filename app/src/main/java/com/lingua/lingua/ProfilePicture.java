@@ -152,7 +152,7 @@ public class ProfilePicture extends AppCompatActivity {
                                 setProfilePhotoButton.setText("Try Again");
                                 setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
                                 setProfilePhotoButton.setEnabled(true);
-                                
+
                                 Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
                                 return null;
                             }
@@ -174,7 +174,7 @@ public class ProfilePicture extends AppCompatActivity {
 
                                 // save updates
                                 Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
-                                reference.child("userProfilePhotoURL").setValue(profilePhotoURI.toString());
+                                reference.child("userProfilePhotoURL").setValue(currentUser.getUserProfilePhotoURL());
 
                                 // return to info setup activity
                                 final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
@@ -207,6 +207,30 @@ public class ProfilePicture extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as live
+        currentUser.setOnline(true);
+        reference.child("online").setValue(currentUser.isOnline());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as dead
+        currentUser.setOnline(false);
+        reference.child("online").setValue(currentUser.isOnline());
     }
 
     @Override
