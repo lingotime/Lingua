@@ -208,6 +208,10 @@ public class SearchFragment extends Fragment {
                         }
                     }
 
+                    if (usersList.isEmpty()) {
+                        Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
+                    }
+
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
                     Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
