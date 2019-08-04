@@ -69,7 +69,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // unwrap the current user and next fragment
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         nextFragment = getIntent().getStringExtra("fragment");
-        Log.e("TRUMP", nextFragment);
 
         // enable the profile image to be clickable
         profileImage.setOnClickListener(new View.OnClickListener() {
@@ -225,16 +224,18 @@ public class ProfileCreationActivity extends AppCompatActivity {
         currentUser.setComplete(isCompleteCheck);
 
         // save to database
-        Firebase.setAndroidContext(this);
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
-        databaseReference.child("userName").setValue(currentUser.getUserName());
-        databaseReference.child("userBirthDate").setValue(currentUser.getUserBirthDate());
-        databaseReference.child("userBiographyText").setValue(currentUser.getUserBiographyText());
-        databaseReference.child("userOriginCountry").setValue(currentUser.getUserOriginCountry());
-        databaseReference.child("knownLanguages").setValue(currentUser.getKnownLanguages());
-        databaseReference.child("exploreLanguages").setValue(currentUser.getExploreLanguages());
-        databaseReference.child("exploreCountries").setValue(currentUser.getExploreCountries());
-        databaseReference.child("complete").setValue(currentUser.isComplete());
+        if (currentUser.isComplete()) {
+            Firebase.setAndroidContext(this);
+            Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+            databaseReference.child("userName").setValue(currentUser.getUserName());
+            databaseReference.child("userBirthDate").setValue(currentUser.getUserBirthDate());
+            databaseReference.child("userBiographyText").setValue(currentUser.getUserBiographyText());
+            databaseReference.child("userOriginCountry").setValue(currentUser.getUserOriginCountry());
+            databaseReference.child("knownLanguages").setValue(currentUser.getKnownLanguages());
+            databaseReference.child("exploreLanguages").setValue(currentUser.getExploreLanguages());
+            databaseReference.child("exploreCountries").setValue(currentUser.getExploreCountries());
+            databaseReference.child("complete").setValue(currentUser.isComplete());
+        }
     }
 
     protected void loadInfo() {

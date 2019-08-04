@@ -77,7 +77,6 @@ public class ProfilePicture extends AppCompatActivity {
         // unwrap the current user
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         nextFragment = getIntent().getStringExtra("fragment");
-        Log.e("TRUMP", nextFragment);
 
         // launch camera view if the "take photo" button is clicked
         takePhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -158,7 +157,7 @@ public class ProfilePicture extends AppCompatActivity {
                                 // return to info setup activity
                                 final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
                                 intent.putExtra("user", Parcels.wrap(currentUser));
-                                intent.putExtra("fragment", Parcels.wrap(nextFragment));
+                                intent.putExtra("fragment", nextFragment);
                                 startActivity(intent);
                             } else {
                                 Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
@@ -169,7 +168,7 @@ public class ProfilePicture extends AppCompatActivity {
                     // return to info setup activity
                     final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
                     intent.putExtra("user", Parcels.wrap(currentUser));
-                    intent.putExtra("fragment", Parcels.wrap(nextFragment));
+                    intent.putExtra("fragment", nextFragment);
                     startActivity(intent);
                 }
             }

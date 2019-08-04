@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
 
         // load the right fragment depending on intent extras
         String nextFragment = getIntent().getStringExtra("fragment");
-        Log.e("TRUMP", nextFragment);
 
         if (nextFragment.equals("explore")) {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();

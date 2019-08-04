@@ -141,7 +141,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         public void bind(User user) {
             // load user flag and profile photo into place
-            Log.e("TRUMP", CountryInformation.COUNTRY_CODES.get(user.getUserOriginCountry()));
             Glide.with(context).load(context.getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(user.getUserOriginCountry()), "drawable", context.getPackageName())).apply(RequestOptions.circleCropTransform()).into(flagImage);
             Glide.with(context).load(user.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePhotoImage);
 
