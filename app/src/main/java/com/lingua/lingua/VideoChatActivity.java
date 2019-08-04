@@ -114,6 +114,9 @@ public class VideoChatActivity extends AppCompatActivity {
 
     private int currentDuration; // represents the number of minutes the user has already spoken in the language selected
 
+    // to handle the action attached to the intent - to distinguish between that coming from one of the chat activities and one coming from clicking a push notification
+    private final static String PUSH_NOTIFICATION_INTENT = "Launch Push Notification"; // launched from sending the notification
+    private final static String TEXT_CHAT_INTENT = "Launch From Chats"; // intent sent from the Chat Fragment or ChatDetailsActivity
 
 
     @Override
@@ -414,11 +417,12 @@ public class VideoChatActivity extends AppCompatActivity {
 
     }
 
+
     private void sendVideoChatNotification(String recipientId) {
         // creating the invite object
         Invite invite = new Invite(userId, roomName);
         // send notification
-        Notification notification = new Notification(username + " would like to video chat!", recipientId, invite.getMap());
+        Notification notification = new Notification("Join " + userId +" in " + roomName, username + " would like to video chat!", recipientId, invite.getMap(), "video-chat");
 
         TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
             @Override
