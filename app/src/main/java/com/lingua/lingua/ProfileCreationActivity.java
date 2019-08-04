@@ -121,6 +121,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
                 super.configureChip(chip, chipConfiguration);
                 chip.setShowIconOnLeft(true);
+                chip.setIconBackgroundColor(Color.WHITE);
             }
         }, ChipSpan.class));
 
@@ -145,6 +146,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
                 super.configureChip(chip, chipConfiguration);
                 chip.setShowIconOnLeft(true);
+                chip.setIconBackgroundColor(Color.WHITE);
             }
         }, ChipSpan.class));
 
