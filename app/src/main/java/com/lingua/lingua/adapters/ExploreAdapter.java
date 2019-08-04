@@ -65,7 +65,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     private TextView biographyText;
     private ChipGroup knownLanguagesChips;
     private Button sendRequestButton;
-
+    
     public ExploreAdapter(Context context, List<User> usersList, List<User> hiddenUsersList, User currentUser) {
         this.context = context;
         this.usersList = usersList;
@@ -217,7 +217,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
     private void sendFriendRequestNotification(String userId) {
         // send notification
-        Notification notification = new Notification("Friend request from " + currentUser.getUserID(), currentUser.getUserName() + " sent you a friend request!", userId, null, "friend-request"); // null sent as the final parameter since this is not a video chat notification
+        Notification notification = new Notification("Friend request from " + currentUser.getUserID(), currentUser.getUserName() + " sent you a friend request!", userId, null); // null sent as the final parameter since this is not a video chat notification
 
         TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
             @Override

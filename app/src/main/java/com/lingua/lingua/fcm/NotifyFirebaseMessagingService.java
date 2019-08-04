@@ -53,7 +53,7 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
          */
         String from = message.getFrom();
         Map<String,String> data = message.getData();
-        Log.d(TAG, message.toString());
+        Log.d("VideoNotification", data.toString());
 
         String title = data.get(NOTIFY_TITLE_DATA_KEY);
         Log.d("VideoNotification", title);

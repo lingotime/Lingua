@@ -2,6 +2,7 @@ package com.lingua.lingua.notifyAPI;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,14 +19,11 @@ public class Notification {
     public final String body;
     @SerializedName("Data")
     public final Map<String,String> data;
-    @SerializedName("Tag")
-    public final String tag;
 
-    public Notification (String title, String body, String identity, Map<String, String> data, String tag) {
+    public Notification (String title, String body, String identity, Map<String, String> data) {
         this.title = title;
         this.body = body;
         this.data = data;
         this.identity = identity;
-        this.tag = tag;
     }
 }
