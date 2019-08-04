@@ -30,13 +30,10 @@ import org.parceler.Parcels;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
 
@@ -210,7 +207,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             currentUser.setUserName(userNameInput);
         } else {
             isCompleteCheck = false;
-            Toast.makeText(ProfileCreationActivity.this, "Please enter a valid full name.", Toast.LENGTH_LONG).show();
+            nameField.setError("Please enter a valid full name.");
         }
 
         // deal with userBirthDate
@@ -223,7 +220,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             currentUser.setUserBirthDate(userBirthDate);
         } catch (ParseException exception) {
             isCompleteCheck = false;
-            Toast.makeText(this, "Please enter a valid birth date. Format: mm/dd/yyyy", Toast.LENGTH_LONG).show();
+            birthdateField.setError("Please enter a valid birth date. Format: mm/dd/yyyy");
         }
 
         // deal with userBiographyText
@@ -233,7 +230,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             currentUser.setUserBiographyText(userBiographyTextInput);
         } else {
             isCompleteCheck = false;
-            Toast.makeText(this, "Please enter a biography that is at least four characters.", Toast.LENGTH_LONG).show();
+            biographyField.setError("Please enter a biography that is at least four characters.");
         }
 
         // deal with userOriginCountry
@@ -243,7 +240,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             currentUser.setUserOriginCountry(userOriginCountryInput.get(0));
         } else {
             isCompleteCheck = false;
-            Toast.makeText(this, "Please enter an origin country. Only one origin country is allowed.", Toast.LENGTH_LONG).show();
+            originCountryField.setError("Please enter an origin country. Only one origin country is allowed.");
         }
 
         // deal with knownLanguages
