@@ -33,6 +33,9 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String NOTIFY_TITLE_DATA_KEY = "twi_title";
     private static final String NOTIFY_BODY_DATA_KEY = "twi_body";
 
+    private static final String FRIEND_REQUEST_NOTIFICATION = "friend-request";
+    private static final String VIDEO_CHAT_NOTIFICATION = "video-chat";
+
     @Override
     public void onNewToken(String s) {
         // Get updated InstanceID token.
@@ -51,19 +54,19 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
          * The Notify service adds the message body to the remote message data so that we can
          * show a simple notification.
          */
-        String from = message.getFrom();
         Map<String,String> data = message.getData();
-        Log.d("VideoNotification", data.toString());
 
         String title = data.get(NOTIFY_TITLE_DATA_KEY);
-        Log.d("VideoNotification", title);
-
+        String notificationType = checkTypeOfNotification(title);
         String body = data.get(NOTIFY_BODY_DATA_KEY);
-        Log.d("VideoNotification", String.format("Size of data: %s", data.size()));
-        String senderId = data.get("fromIdentity");
-        String roomName = data.get("roomName");
 
-
+        if (notificationType == FRIEND_REQUEST_NOTIFICATION) {
+            showNotification(body);
+        } else {
+            String senderId = data.get("fromIdentity");
+            String roomName = data.get("roomName");
+            showVideoNotification(body, roomName);
+        }
     }
 
     /**
@@ -148,6 +151,16 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
 
         int notificationId = (int) System.currentTimeMillis();
         notificationManager.notify(notificationId, notificationBuilder.build());
+    }
+
+    // to distinguish between the friend request and video chat notifications
+    private String checkTypeOfNotification(String title) {
+        String[] words = title.split(" ");
+        if (words[0] == "Friend") {
+            // friend request
+            return FRIEND_REQUEST_NOTIFICATION;
+        }
+        return VIDEO_CHAT_NOTIFICATION;
     }
 
 }
