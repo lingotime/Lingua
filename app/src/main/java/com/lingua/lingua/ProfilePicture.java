@@ -85,7 +85,7 @@ public class ProfilePicture extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // request permission before accessing the camera, and then launch it
-                requestPermissionsAndLaunch();
+                requestPermissionsAndLaunchCamera();
             }
         });
 
