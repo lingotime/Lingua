@@ -125,12 +125,12 @@ public class ChatFragment extends Fragment {
                 }
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-                Toast.makeText(getContext(), "No chats to display", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "No chats to display", Toast.LENGTH_LONG).show();
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_LONG).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });
@@ -179,7 +179,7 @@ public class ChatFragment extends Fragment {
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Connection error", Toast.LENGTH_LONG).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });

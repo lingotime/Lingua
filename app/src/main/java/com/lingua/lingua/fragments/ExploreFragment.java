@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -185,6 +186,7 @@ public class ExploreFragment extends Fragment {
 
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
+                    Toast.makeText(getContext(), "No users to display", Toast.LENGTH_LONG).show();
                     Log.e("ExploreFragment", "firebase:onException", exception);
                 }
             }

@@ -434,7 +434,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         reference.child("messages").child(chatId).push().setValue(message);
 
-        Toast.makeText(context, "Friend request accepted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Friend request accepted", Toast.LENGTH_LONG).show();
     }
 
     public void loadProfilePic(String userId) {

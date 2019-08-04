@@ -180,7 +180,7 @@ public class VideoChatActivity extends AppCompatActivity {
                 languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -214,7 +214,7 @@ public class VideoChatActivity extends AppCompatActivity {
                 languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_LONG).show();
                     }
                 });
 
