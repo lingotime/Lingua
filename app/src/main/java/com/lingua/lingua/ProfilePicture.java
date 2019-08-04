@@ -93,11 +93,8 @@ public class ProfilePicture extends AppCompatActivity {
         selectPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(intent, PHOTO_GALLERY_REQUEST_CODE);
-                }
+                // request permission before accessing the gallery, and then launch it
+                requestPermissionsAndLaunchGallery();
             }
         });
 
@@ -285,6 +282,40 @@ public class ProfilePicture extends AppCompatActivity {
         } else {
             // prompt to ask for mic and camera permission
             EasyPermissions.requestPermissions(this, "Lingua needs access to your camera.", RC_VIDEO_APP_PERM, perms);
+        }
+    }
+
+    private void requestPermissionsAndLaunchCamera() {
+        String[] perms = { Manifest.permission.CAMERA };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // launch the activity for the camera
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+            localProfilePhotoFile = getProfilePhotoFileFromCamera("profile_photo.jpg");
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(ProfilePicture.this, "com.lingua.fileprovider", localProfilePhotoFile));
+
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(intent, CAMERA_REQUEST_CODE);
+            }
+        } else {
+            // prompt to ask for mic and camera permission
+            EasyPermissions.requestPermissions(this, "Lingua needs access to your camera.", CAMERA_REQUEST_CODE, perms);
+        }
+    }
+
+    private void requestPermissionsAndLaunchGallery() {
+        String[] perms = { Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // launch the activity for the gallery
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(intent, PHOTO_GALLERY_REQUEST_CODE);
+            }
+        } else {
+            // prompt to ask for read and write photo permission
+            EasyPermissions.requestPermissions(this, "Lingua needs access to your photo gallery.", PHOTO_GALLERY_REQUEST_CODE, perms);
         }
     }
 
