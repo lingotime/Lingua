@@ -10,9 +10,11 @@ import android.Manifest;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -107,6 +109,11 @@ public class ProfilePicture extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (localProfilePhotoFile != null) {
+                    // disable the button and change its text
+                    setProfilePhotoButton.setText("Setting");
+                    setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+                    setProfilePhotoButton.setEnabled(false);
+
                     // get URI of the new profile photo
                     Uri localProfilePhotoFileURI = Uri.fromFile(localProfilePhotoFile);
 
@@ -125,6 +132,11 @@ public class ProfilePicture extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            // re-enable the button
+                            setProfilePhotoButton.setText("Try Again");
+                            setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
+                            setProfilePhotoButton.setEnabled(true);
+
                             Log.e("ProfileSetupActivity", "The new profile photo failed to upload successfully.");
                         }
                     });
@@ -136,6 +148,11 @@ public class ProfilePicture extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 return specificProfilesStorageReference.getDownloadUrl();
                             } else {
+                                // re-enable the button
+                                setProfilePhotoButton.setText("Try Again");
+                                setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
+                                setProfilePhotoButton.setEnabled(true);
+                                
                                 Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
                                 return null;
                             }
@@ -150,6 +167,11 @@ public class ProfilePicture extends AppCompatActivity {
                                 // update the user's profile photo with the new profile photo URL link
                                 currentUser.setUserProfilePhotoURL(profilePhotoURI.toString());
 
+                                // disable the button and change its text
+                                setProfilePhotoButton.setText("Set");
+                                setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+                                setProfilePhotoButton.setEnabled(false);
+
                                 // save updates
                                 Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
                                 reference.child("userProfilePhotoURL").setValue(profilePhotoURI.toString());
@@ -160,11 +182,23 @@ public class ProfilePicture extends AppCompatActivity {
                                 intent.putExtra("fragment", nextFragment);
                                 startActivity(intent);
                             } else {
+                                // re-enable the button
+                                setProfilePhotoButton.setText("Try Again");
+                                setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
+                                setProfilePhotoButton.setEnabled(true);
+
                                 Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
                             }
                         }
                     });
                 } else {
+                    // disable the button and change its text
+                    setProfilePhotoButton.setText("Set");
+                    setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+                    setProfilePhotoButton.setEnabled(false);
+
+                    Toast.makeText(ProfilePicture.this, "There was no new photo.", Toast.LENGTH_LONG);
+
                     // return to info setup activity
                     final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
                     intent.putExtra("user", Parcels.wrap(currentUser));

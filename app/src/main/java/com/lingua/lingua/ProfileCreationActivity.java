@@ -1,6 +1,8 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.content.Intent;
@@ -145,6 +147,11 @@ public class ProfileCreationActivity extends AppCompatActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // disable the button and change its text
+                continueButton.setText("Saving");
+                continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+                continueButton.setEnabled(false);
+
                 // save the updated data
                 saveData();
 
@@ -225,6 +232,12 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         // save to database
         if (currentUser.isComplete()) {
+            // change the button's text
+            continueButton.setText("Saved");
+            continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+            continueButton.setEnabled(false);
+
+            // save the data
             Firebase.setAndroidContext(this);
             Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
             databaseReference.child("userName").setValue(currentUser.getUserName());
@@ -235,6 +248,11 @@ public class ProfileCreationActivity extends AppCompatActivity {
             databaseReference.child("exploreLanguages").setValue(currentUser.getExploreLanguages());
             databaseReference.child("exploreCountries").setValue(currentUser.getExploreCountries());
             databaseReference.child("complete").setValue(currentUser.isComplete());
+        } else {
+            // re-enable the button because data was not saved
+            continueButton.setText("Save");
+            continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110, 47, 222)));
+            continueButton.setEnabled(true);
         }
     }
 
