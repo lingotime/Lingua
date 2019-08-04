@@ -30,8 +30,13 @@ import org.parceler.Parcels;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
 
@@ -241,14 +246,29 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         // deal with knownLanguages
         ArrayList<String> knownLanguagesInput = (ArrayList) knownLanguagesField.getChipValues();
+        HashSet<String> knownLanguagesInputAsSet = new HashSet<>();
+        knownLanguagesInputAsSet.addAll(knownLanguagesInput);
+        knownLanguagesInput.clear();
+        knownLanguagesInput.addAll(knownLanguagesInputAsSet);
+        Collections.sort(knownLanguagesInput);
         currentUser.setKnownLanguages(knownLanguagesInput);
 
         // deal with exploreLanguages
         ArrayList<String> exploreLanguagesInput = (ArrayList) exploreLanguagesField.getChipValues();
+        HashSet<String> exploreLanguagesInputAsSet = new HashSet<>();
+        exploreLanguagesInputAsSet.addAll(exploreLanguagesInput);
+        exploreLanguagesInput.clear();
+        exploreLanguagesInput.addAll(exploreLanguagesInputAsSet);
+        Collections.sort(exploreLanguagesInput);
         currentUser.setExploreLanguages(exploreLanguagesInput);
 
         // deal with exploreCountries
         ArrayList<String> exploreCountriesInput = (ArrayList) exploreCountriesField.getChipValues();
+        HashSet<String> exploreCountriesInputAsSet = new HashSet<>();
+        exploreCountriesInputAsSet.addAll(exploreCountriesInput);
+        exploreCountriesInput.clear();
+        exploreCountriesInput.addAll(exploreCountriesInputAsSet);
+        Collections.sort(exploreCountriesInput);
         currentUser.setExploreCountries(exploreCountriesInput);
 
         // deal with isComplete
