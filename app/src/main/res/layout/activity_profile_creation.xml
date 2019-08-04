@@ -80,8 +80,10 @@
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="What's your name? *"
+                            android:imeOptions="actionNext"
                             android:inputType="textPersonName"
                             android:maxLines="1"
+                            android:nextFocusDown="@+id/activity_profile_info_setup_birthdate_field"
                             android:textSize="18sp" />
 
                         <EditText
@@ -90,6 +92,7 @@
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="When's your birthday? *"
+                            android:imeOptions="actionNext"
                             android:inputType="date"
                             android:maxLines="1" />
                     </LinearLayout>
@@ -124,8 +127,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Add a short bio... *"
+                            android:imeOptions="actionNext"
                             android:maxLines="5"
                             android:minHeight="60dp"
+                            android:nextFocusDown="@+id/activity_profile_info_setup_origin_country_field"
                             android:padding="10dp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -146,8 +151,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="What country are you from? *"
+                            android:imeOptions="actionNext"
                             android:maxLines="1"
                             android:minHeight="20dp"
+                            android:nextFocusDown="@+id/activity_profile_info_setup_known_languages_field"
                             android:padding="10dp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -168,6 +175,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="What languages do you know?"
+                            android:imeOptions="actionNext"
                             android:maxLines="3"
                             android:minHeight="20dp"
                             android:padding="10dp" />
@@ -190,8 +198,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="What languages do you want to learn?"
+                            android:imeOptions="actionNext"
                             android:maxLines="3"
                             android:minHeight="20dp"
+                            android:nextFocusDown="@+id/activity_profile_info_setup_explore_countries_field"
                             android:padding="10dp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -212,6 +222,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="What countries do you want to explore?"
+                            android:imeOptions="actionDone"
                             android:maxLines="3"
                             android:minHeight="20dp"
                             android:padding="10dp" />
