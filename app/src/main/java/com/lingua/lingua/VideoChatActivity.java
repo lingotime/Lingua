@@ -199,6 +199,10 @@ public class VideoChatActivity extends AppCompatActivity {
         };
     }
 
+    private View.OnClickListener connectionButtonListener() {
+        return view -> requestPermissions();
+    }
+
     // gets the information for the chat containing the video chat from the database and generates a local Chat object
     private void queryAndUpdateHoursSpokenInfo() {
         String databaseURL = "https://lingua-project.firebaseio.com/users" + userId;
@@ -263,13 +267,10 @@ public class VideoChatActivity extends AppCompatActivity {
                 }
             }
         });
-        languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
-                // disconnect from the room if action not taken
-                disconnectActions();
-            }
+        languageSelection.setNegativeButton("Cancel", (dialogInterface, i) -> {
+            Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
+            // disconnect from the room if action not taken
+            disconnectActions();
         });
 
         AlertDialog dialog = languageSelection.create();
