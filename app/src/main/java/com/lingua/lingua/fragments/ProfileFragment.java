@@ -149,8 +149,6 @@ public class ProfileFragment extends Fragment {
         for (String knownLanguage : currentUser.getKnownLanguages()) {
             Chip knownLanguageChip = new Chip(context);
             knownLanguageChip.setText(knownLanguage);
-            knownLanguageChip.setTextColor(Color.WHITE);
-            knownLanguageChip.setChipBackgroundColor(ColorStateList.valueOf(Color.rgb(110, 47, 222)));
             knownLanguagesChips.addView(knownLanguageChip);
         }
 
@@ -169,8 +167,6 @@ public class ProfileFragment extends Fragment {
         for (String exploreLanguage : currentUser.getExploreLanguages()) {
             Chip exploreLanguageChip = new Chip(context);
             exploreLanguageChip.setText(exploreLanguage);
-            exploreLanguageChip.setTextColor(Color.WHITE);
-            exploreLanguageChip.setChipBackgroundColor(ColorStateList.valueOf(Color.rgb(110, 47, 222)));
             exploreLanguagesChips.addView(exploreLanguageChip);
         }
 
@@ -189,8 +185,6 @@ public class ProfileFragment extends Fragment {
         for (String exploreCountry : currentUser.getExploreCountries()) {
             Chip exploreCountryChip = new Chip(context);
             exploreCountryChip.setText(exploreCountry);
-            exploreCountryChip.setTextColor(Color.WHITE);
-            exploreCountryChip.setChipBackgroundColor(ColorStateList.valueOf(Color.rgb(110, 47, 222)));
             exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
             exploreCountriesChips.addView(exploreCountryChip);
         }

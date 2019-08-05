@@ -137,10 +137,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="[Language]"
-                            android:textColor="@color/linguaWhite"
-                            app:chipIcon="@drawable/add_circle"
-                            app:chipIconTint="@color/linguaWhite"
-                            app:chipSurfaceColor="@color/colorPrimary" />
+                            app:chipIcon="@drawable/add_circle" />
                     </com.google.android.material.chip.ChipGroup>
 
                     <TextView
@@ -172,10 +169,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="[Language]"
-                            android:textColor="@color/linguaWhite"
-                            app:chipIcon="@drawable/add_circle"
-                            app:chipIconTint="@color/linguaWhite"
-                            app:chipSurfaceColor="@color/colorPrimary" />
+                            app:chipIcon="@drawable/add_circle" />
                     </com.google.android.material.chip.ChipGroup>
 
                     <TextView
@@ -209,10 +203,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="[Country]"
-                            android:textColor="@color/linguaWhite"
-                            app:chipIcon="@drawable/add_circle"
-                            app:chipIconTint="@color/linguaWhite"
-                            app:chipSurfaceColor="@color/colorPrimary" />
+                            app:chipIcon="@drawable/add_circle" />
                     </com.google.android.material.chip.ChipGroup>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
