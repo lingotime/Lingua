@@ -49,6 +49,7 @@ import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -113,7 +114,7 @@ public class VideoChatActivity extends AppCompatActivity {
     private long startTime = 0;
     private long endTime = 0;
 
-    private int currentDuration; // represents the number of minutes the user has already spoken in the language selected
+    private Integer currentDuration; // represents the number of minutes the user has already spoken in the language selected
 
     // to handle the action attached to the intent - to distinguish between that coming from one of the chat activities and one coming from clicking a push notification
     private final static String PUSH_NOTIFICATION_INTENT = "Launch Push Notification"; // launched from sending the notification
@@ -135,8 +136,8 @@ public class VideoChatActivity extends AppCompatActivity {
 
         if (getIntent().getAction() == PUSH_NOTIFICATION_INTENT) {
             roomName = getIntent().getStringExtra("roomName");
+            Log.d(TAG, "Push notification arrived at the video chat activity");
             generateTheLocalUserObject();
-            generateTheLocalChatObject();
         } else {
             // intent passed in from either the chat fragment or the chat details activity with these parcelable extras
             currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
@@ -146,16 +147,19 @@ public class VideoChatActivity extends AppCompatActivity {
         }
 
         // the intent from the push notification will not have the user object
-        chatMembers = currentChat.getUsers();
-        chatMembers.remove(userId);
+        if (currentChat != null) {
+            chatMembers = currentChat.getUsers();
+            chatMembers.remove(userId);
 
-        // to get all the possible explore languages from the users in the chat
-        if (currentChat.getExploreLanguages() != null) {
-            possibleChatLanguages.addAll(currentChat.getExploreLanguages());
+            // to get all the possible explore languages from the users in the chat
+            if (currentChat.getExploreLanguages() != null) {
+                possibleChatLanguages.addAll(currentChat.getExploreLanguages());
+            }
+            possibleChatLanguages.add("Cultural Exchange");
+
+            languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
         }
-        possibleChatLanguages.add("Cultural Exchange");
 
-        languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
 
         // setting up Firebase to receive the messages to be sent
         Firebase.setAndroidContext(VideoChatActivity.this);
@@ -236,8 +240,8 @@ public class VideoChatActivity extends AppCompatActivity {
     }
 
     // gets the information for the chat containing the video chat from the database and generates a local Chat object
-    private void generateTheLocalChatObject() {
-        String databaseURL = "https://lingua-project.firebaseio.com/users" + roomName;
+    private void queryAndUpdateHoursSpokenInfo() {
+        String databaseURL = "https://lingua-project.firebaseio.com/users" + userId;
 
         // fetch users from database
         StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new com.android.volley.Response.Listener<String>() {
@@ -245,11 +249,18 @@ public class VideoChatActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
                     JSONObject userJSONObject = new JSONObject(response);
-
-                    // convert JSONObject information to user
-                    Gson gson = new Gson();
-                    currentChat = gson.fromJson(userJSONObject.toString(), Chat.class);
-
+                    JSONArray exploreLanguages = userJSONObject.getJSONArray("exploreLanguages");
+                    if (exploreLanguages.toString().contains("\"exploreLanguages\":\""+videoChatLanguage+"\"")) {
+                        JSONObject hoursSpokenObject = userJSONObject.getJSONObject("hoursSpokenByLanguage");
+                        if (hoursSpokenObject != null) {
+                            if (hoursSpokenObject.has(videoChatLanguage)) {
+                                currentDuration = hoursSpokenObject.getInt(videoChatLanguage);
+                            } else {
+                                currentDuration = 0;
+                            }
+                            updateUserLanguageProgress(lengthOfCall(startTime, endTime));
+                        }
+                    }
                 } catch (JSONException e) {
                     Log.e("VideoChatCurrentChat", e.toString());
                 }
@@ -324,13 +335,12 @@ public class VideoChatActivity extends AppCompatActivity {
         connectionButton.setEnabled(true);
         endTime = System.nanoTime();
 
-        // mark progress for the user if one of their explore languages is the one being spoken in the chat
-        if (currentUser.getExploreLanguages().contains(videoChatLanguage)) {
-            if (!videoChatLanguage.equals("Cultural Exchange")) {
-                // adjust the user's language progress in this case
-                queryHoursSpokenInfo();
-                updateUserLanguageProgress(lengthOfCall(startTime, endTime));
-            }
+        if (videoChatLanguage == null) {
+            // query the language from the database and update it for the current user
+            queryCallLanguage();
+        } else if (!videoChatLanguage.equals("Cultural Exchange")) {
+            // mark progress for the user if one of their explore languages is the one being spoken in the chat
+            queryAndUpdateHoursSpokenInfo();
         }
     }
 
@@ -356,30 +366,6 @@ public class VideoChatActivity extends AppCompatActivity {
         databaseReference.child("hoursSpokenByLanguage").child(videoChatLanguage).setValue(duration + currentDuration);
     }
 
-    private void queryHoursSpokenInfo() {
-        // get the number of hours the user has already spoken in this language
-        String url = "https://lingua-project.firebaseio.com/users/" + userId;
-        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
-            try {
-                JSONObject object = new JSONObject(s);
-                JSONObject hoursSpokenObject = object.getJSONObject("hoursSpokenByLanguage");
-                if (hoursSpokenObject != null) {
-                    if (hoursSpokenObject.has(videoChatLanguage)) {
-                        currentDuration = hoursSpokenObject.getInt(videoChatLanguage);
-                    } else {
-                        currentDuration = 0;
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, volleyError -> {
-            Log.e("VideoChatActivity", "" + volleyError);
-        });
-
-        RequestQueue rQueue = Volley.newRequestQueue(this);
-        rQueue.add(request);
-    }
 
     private void queryCallLanguage() {
         String url = "https://lingua-project.firebaseio.com/video-chats";
@@ -387,6 +373,10 @@ public class VideoChatActivity extends AppCompatActivity {
             try {
                 JSONObject object = new JSONObject(s);
                 videoChatLanguage = object.getString(roomName);
+                if (!videoChatLanguage.equals("Cultural Exchange")) {
+                    // mark progress for the user if one of their explore languages is the one being spoken in the chat
+                    queryAndUpdateHoursSpokenInfo();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -596,9 +586,6 @@ public class VideoChatActivity extends AppCompatActivity {
                 // check if the local participant is the first one in the room and there are no remote participants, allow them to set the language for the chat
                 if (room.getRemoteParticipants().size() == 0) {
                     callLanguageDialog();
-                } else {
-                    // get the video chat language from the database
-                    queryCallLanguage();
                 }
 
                 Log.i(TAG, "Connected to " + room.getName());
