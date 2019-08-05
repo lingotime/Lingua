@@ -3,6 +3,7 @@ package com.lingua.lingua;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -114,11 +115,14 @@ public class VideoChatActivity extends AppCompatActivity {
     private long startTime = 0;
     private long endTime = 0;
 
+
     private Integer currentDuration; // represents the number of minutes the user has already spoken in the language selected
 
     // to handle the action attached to the intent - to distinguish between that coming from one of the chat activities and one coming from clicking a push notification
+    private String intentAction;
     private final static String PUSH_NOTIFICATION_INTENT = "Launch Push Notification"; // launched from sending the notification
-    private final static String TEXT_CHAT_INTENT = "Launch From Chats"; // intent sent from the Chat Fragment or ChatDetailsActivity
+    private final static String CHAT_DETAILS_INTENT = "Launch From Chat Details"; // intent sent from the ChatDetailsActivity
+    private final static String CHAT_FRAGMENT_INTENT = "Launch From Chat Fragment"; // intent sent from the Chat Fragment
 
 
 
@@ -133,8 +137,8 @@ public class VideoChatActivity extends AppCompatActivity {
         username = prefs.getString("userName", "");
 
         // check for the intent action to see if the intent was launched from the chats or from a push notification
-
-        if (getIntent().getAction() == PUSH_NOTIFICATION_INTENT) {
+        intentAction = getIntent().getAction();
+        if (intentAction.equals(PUSH_NOTIFICATION_INTENT)) {
             roomName = getIntent().getStringExtra("roomName");
             Log.d(TAG, "Push notification arrived at the video chat activity");
         } else {
@@ -194,7 +198,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
         requestPermissions();
     }
-    
+
     // gets the information for the chat containing the video chat from the database and generates a local Chat object
     private void queryAndUpdateHoursSpokenInfo() {
         String databaseURL = "https://lingua-project.firebaseio.com/users" + userId;
@@ -297,6 +301,18 @@ public class VideoChatActivity extends AppCompatActivity {
         } else if (!videoChatLanguage.equals("Cultural Exchange")) {
             // mark progress for the user if one of their explore languages is the one being spoken in the chat
             queryAndUpdateHoursSpokenInfo();
+        }
+
+        // return the user to the activity from which they came
+        String intentAction = getIntent().getAction();
+        if (intentAction.equals(CHAT_FRAGMENT_INTENT)) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("fragment", "chats");
+        } else if (intentAction.equals(CHAT_DETAILS_INTENT)) {
+            Intent intent = new Intent(this, ChatDetailsActivity.class);
+            intent.putExtra("chat", Parcels.wrap(currentChat));
+            intent.putExtra("user", Parcels.wrap(currentUser));
         }
     }
 

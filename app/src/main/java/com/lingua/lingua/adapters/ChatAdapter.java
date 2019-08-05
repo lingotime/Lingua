@@ -174,7 +174,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         // creating the dialog for selecting the language of the call
                         Intent intent = new Intent(context, VideoChatActivity.class);
                         // intent to the video chat activity
-                        intent.setAction("Launch from Chats");
+                        intent.setAction("Launch from Chat Fragment");
                         intent.putExtra("nameToDisplay", nameToDisplay);
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));

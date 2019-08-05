@@ -87,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (fragmentToLoad != null && fragmentToLoad.equals("notifications")) {
             fragmentManager.beginTransaction().replace(R.id.flContainer, notificationsFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.notifications);
+        } else if (fragmentToLoad != null && fragmentToLoad.equals("chats")){
+            fragmentManager.beginTransaction().replace(R.id.flContainer, chatFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.chat);
         } else {
             fragmentManager.beginTransaction().replace(R.id.flContainer, exploreFragment).commit();
         }
