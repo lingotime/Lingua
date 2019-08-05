@@ -9,16 +9,16 @@ public class FriendRequest {
     String friendRequestID;
     String friendRequestStatus;
     String friendRequestMessage;
-    String senderUser;
+    String senderId;
     String senderUserName;
     String senderPhotoUrl;
-    String receiverUser;
+    String receiverId;
     String receiverUserName;
     String receiverPhotoUrl;
     String createdTime;
     String respondedTime;
     ArrayList<String> exploreLanguages;
-
+    
     public FriendRequest() {}
 
     public String getFriendRequestID() {
@@ -46,19 +46,19 @@ public class FriendRequest {
     }
 
     public String getSenderUser() {
-        return senderUser;
+        return senderId;
     }
 
     public void setSenderUser(String senderUser) {
-        this.senderUser = senderUser;
+        this.senderId = senderUser;
     }
 
     public String getReceiverUser() {
-        return receiverUser;
+        return receiverId;
     }
 
     public void setReceiverUser(String receiverUser) {
-        this.receiverUser = receiverUser;
+        this.receiverId = receiverUser;
     }
 
     public String getCreatedTime() {

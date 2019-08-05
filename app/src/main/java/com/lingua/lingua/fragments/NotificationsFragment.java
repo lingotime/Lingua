@@ -101,9 +101,9 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void queryFriendRequests() {
-        String urlReceived = "https://lingua-project.firebaseio.com/users/" + userId + "/received-friend-requests.json";
+        String urlReceived = "https://lingua-project.firebaseio.com/users/" + userId + "/receivedFriendRequests.json";
         queryFriendRequests(urlReceived);
-        String urlSent = "https://lingua-project.firebaseio.com/users/" + userId + "/sent-friend-requests.json";
+        String urlSent = "https://lingua-project.firebaseio.com/users/" + userId + "/sentFriendRequests.json";
         queryFriendRequests(urlSent);
     }
 
@@ -118,7 +118,7 @@ public class NotificationsFragment extends Fragment {
                 }
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-                if (url.equals("https://lingua-project.firebaseio.com/users/" + userId + "/received-friend-requests.json")) {
+                if (url.equals("https://lingua-project.firebaseio.com/users/" + userId + "/receivedFriendRequests.json")) {
                     Toast.makeText(context, "No pending friend requests", Toast.LENGTH_LONG).show();
                 }
                 swipeContainer.setRefreshing(false);
@@ -135,7 +135,7 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void queryFriendRequestInfo(String friendRequestId) {
-        String url = "https://lingua-project.firebaseio.com/friend-requests/" + friendRequestId + ".json";
+        String url = "https://lingua-project.firebaseio.com/friendRequests/" + friendRequestId + ".json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);

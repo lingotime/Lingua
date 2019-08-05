@@ -204,7 +204,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
 
             // create friend request
-            String friendRequestId = databaseReference.child("friend-requests").push().getKey();
+            String friendRequestId = databaseReference.child("friendRequests").push().getKey();
 
             Map<String, String> map = new HashMap<>();
             map.put("message", friendRequestMessage);
@@ -218,13 +218,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             map.put("id", friendRequestId);
 
             // save new friend request data to database
-            databaseReference.child("users").child(currentUser.getUserID()).child("pendingSentFriendRequests").setValue(currentUser.getPendingSentFriendRequests());
-            databaseReference.child("users").child(clickedUser.getUserID()).child("pendingReceivedFriendRequests").setValue(clickedUser.getPendingReceivedFriendRequests());
-            databaseReference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
-            databaseReference.child("users").child(clickedUser.getUserID()).child("received-friend-requests").child(friendRequestId).setValue(true);
+            databaseReference.child("users").child(currentUser.getUserID()).child("sentFriendRequests").child(friendRequestId).setValue(true);
+            databaseReference.child("users").child(clickedUser.getUserID()).child("receivedFriendRequests").child(friendRequestId).setValue(true);
 
-            databaseReference.child("friend-requests").child(friendRequestId).setValue(map);
-            databaseReference.child("friend-requests").child(friendRequestId).child("exploreLanguages").setValue(currentUser.getExploreLanguages());
+            databaseReference.child("friendRequests").child(friendRequestId).setValue(map);
+            databaseReference.child("friendRequests").child(friendRequestId).child("exploreLanguages").setValue(currentUser.getExploreLanguages());
 
             // send notification to other user
             sendFriendRequestNotification(clickedUser.getUserID());
