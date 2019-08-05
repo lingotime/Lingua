@@ -2,15 +2,11 @@ package com.lingua.lingua.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,7 +21,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.daimajia.swipe.SwipeLayout;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -33,7 +28,6 @@ import com.firebase.client.FirebaseError;
 import com.lingua.lingua.TextChatActivity;
 import com.lingua.lingua.DateUtil;
 import com.lingua.lingua.R;
-import com.lingua.lingua.VideoChatActivity;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 

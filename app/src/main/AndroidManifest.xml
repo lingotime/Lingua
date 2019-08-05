@@ -39,8 +39,6 @@
 
         <activity android:name=".TextChatActivity" />
 
-        <activity android:name=".VideoChatActivity" />
-
         <service android:name=".fcm.NotifyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
