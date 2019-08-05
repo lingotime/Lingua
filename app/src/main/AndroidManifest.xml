@@ -23,6 +23,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
+<<<<<<< HEAD
+        <activity android:name=".VideoChatActivity"></activity>
+        <!-- [START fcm_listener] -->
+=======
 
         <activity android:name=".LoginActivity">
             <intent-filter>
@@ -39,6 +43,7 @@
 
         <activity android:name=".TextChatActivity" />
 
+>>>>>>> master
         <service android:name=".fcm.NotifyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -72,6 +77,33 @@
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
 
+<<<<<<< HEAD
+        <activity android:name=".ProfilePicture" />
+        <activity
+            android:name=".ProfileCreationActivity"
+            android:windowSoftInputMode="adjustResize" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+        <activity android:name=".MainActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
+        <activity android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ChatDetailsActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.lingua.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/fileprovider" />
+        </provider>
+
+=======
+>>>>>>> master
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
