@@ -137,7 +137,6 @@ public class VideoChatActivity extends AppCompatActivity {
         if (getIntent().getAction() == PUSH_NOTIFICATION_INTENT) {
             roomName = getIntent().getStringExtra("roomName");
             Log.d(TAG, "Push notification arrived at the video chat activity");
-            generateTheLocalUserObject();
         } else {
             // intent passed in from either the chat fragment or the chat details activity with these parcelable extras
             currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
@@ -195,50 +194,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
         requestPermissions();
     }
-
-    // gets the information for the local user from the database and generates a local User object
-    private void generateTheLocalUserObject() {
-        String databaseURL = "https://lingua-project.firebaseio.com/users" + userId;
-
-        // fetch users from database
-        StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new com.android.volley.Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject userJSONObject = new JSONObject(response);
-
-                    // convert JSONObject information to user
-                    Gson gson = new Gson();
-                    currentUser = gson.fromJson(userJSONObject.toString(), User.class);
-
-                    // load blank values into null fields
-                    if (currentUser.getKnownLanguages() == null) {
-                        currentUser.setKnownLanguages(new ArrayList<String>());
-                    }
-
-                    if (currentUser.getExploreLanguages() == null) {
-                        currentUser.setExploreLanguages(new ArrayList<String>());
-                    }
-
-                    if (currentUser.getExploreCountries() == null) {
-                        currentUser.setExploreCountries(new ArrayList<String>());
-                    }
-
-                } catch (JSONException e) {
-                    Log.e("VideoChatCurrentUser", e.toString());
-                }
-            }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("VideoChatCurrentUser", error.toString());
-            }
-        });
-
-        RequestQueue databaseRequestQueue = Volley.newRequestQueue(this);
-        databaseRequestQueue.add(databaseRequest);
-    }
-
+    
     // gets the information for the chat containing the video chat from the database and generates a local Chat object
     private void queryAndUpdateHoursSpokenInfo() {
         String databaseURL = "https://lingua-project.firebaseio.com/users" + userId;
