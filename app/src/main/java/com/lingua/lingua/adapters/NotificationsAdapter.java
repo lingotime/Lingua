@@ -25,6 +25,11 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.lingua.lingua.DateUtil;
 import com.lingua.lingua.R;
@@ -203,7 +208,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     }
 
                     // remove the sender user from the current user's pending received friend requests list
-                    user.getPendingReceivedFriendRequests().remove(senderUser.getUserID());
+                    if (user.getPendingReceivedFriendRequests() != null) {
+                        user.getPendingReceivedFriendRequests().remove(senderUser.getUserID());
+                    }
 
                     // add the sender user as a declined user of the current user
                     if (user.getDeclinedUsers() == null) {
@@ -213,7 +220,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     }
 
                     // remove the current user from the sender user's pending sent friend requests list
-                    senderUser.getPendingSentFriendRequests().remove(user.getUserID());
+                    if (senderUser.getPendingSentFriendRequests() != null) {
+                        senderUser.getPendingSentFriendRequests().remove(user.getUserID());
+                    }
 
                     // add the current user as a declined user of the sender user
                     if (senderUser.getDeclinedUsers() == null) {
@@ -285,16 +294,20 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     }
 
                     // remove the receiver user from the current user's pending sent friend requests list
-                    user.getPendingSentFriendRequests().remove(receiverUser.getUserID());
+                    if (user.getPendingSentFriendRequests() != null) {
+                        user.getPendingSentFriendRequests().remove(receiverUser.getUserID());
+                    }
 
                     // remove the current user from the sender user's pending sent friend requests list
-                    receiverUser.getPendingReceivedFriendRequests().remove(user.getUserID());
+                    if (receiverUser.getPendingReceivedFriendRequests() != null) {
+                        receiverUser.getPendingReceivedFriendRequests().remove(user.getUserID());
+                    }
 
                     Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
 
                     // update the database
                     databaseReference.child("users").child(user.getUserID()).child("pendingSentFriendRequests").setValue(user.getPendingSentFriendRequests());
-                    databaseReference.child("users").child(receiverUser.getUserID()).child("pendingReceiverFriendRequests").setValue(receiverUser.getPendingReceivedFriendRequests());
+                    databaseReference.child("users").child(receiverUser.getUserID()).child("pendingReceivedFriendRequests").setValue(receiverUser.getPendingReceivedFriendRequests());
                 } catch (JSONException exception) {
                     Log.e("ConnectAdapter", "firebase:onException", exception);
                 }
@@ -384,7 +397,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     }
 
                     // remove the sender user from the current user's pending received friend requests list
-                    user.getPendingReceivedFriendRequests().remove(senderUser.getUserID());
+                    if (user.getPendingReceivedFriendRequests() != null) {
+                        user.getPendingReceivedFriendRequests().remove(senderUser.getUserID());
+                    }
 
                     // add the sender user as a friend of the current user
                     if (user.getFriends() == null) {
@@ -394,7 +409,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     }
 
                     // remove the current user from the sender user's pending sent friend requests list
-                    senderUser.getPendingSentFriendRequests().remove(user.getUserID());
+                    if (senderUser.getPendingSentFriendRequests() != null) {
+                        senderUser.getPendingSentFriendRequests().remove(user.getUserID());
+                    }
 
                     // add the current user as a friend of the sender user
                     if (senderUser.getFriends() == null) {
