@@ -22,7 +22,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
-import com.google.gson.Gson;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Invite;
@@ -49,7 +48,6 @@ import com.twilio.video.VideoTrack;
 import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +60,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -573,7 +570,7 @@ public class VideoChatActivity extends AppCompatActivity {
             public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
                 Log.i(TAG, "failure to connect: " + twilioException.toString());
                 Log.i(TAG, twilioException.toString());
-                Toast.makeText(VideoChatActivity.this, "Failure to connect", Toast.LENGTH_LONG).show();
+                Toast.makeText(VideoChatActivity.this, "Failure to connect", Toast.LENGTH_SHORT).show();
                 // send a message to the other user detailing an attempted call
                 sendTextChat("I tried to call you :(");
             }

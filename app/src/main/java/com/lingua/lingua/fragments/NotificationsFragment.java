@@ -119,13 +119,13 @@ public class NotificationsFragment extends Fragment {
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
                 if (url.equals("https://lingua-project.firebaseio.com/users/" + userId + "/receivedFriendRequests.json")) {
-                    Toast.makeText(context, "No pending friend requests", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No pending friend requests", Toast.LENGTH_SHORT).show();
                 }
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(context, "No connection", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "No connection", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
             Log.e("NotificationsFragment", "" + volleyError);
         });

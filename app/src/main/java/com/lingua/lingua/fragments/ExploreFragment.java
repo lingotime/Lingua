@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -185,12 +184,12 @@ public class ExploreFragment extends Fragment {
                     }
 
                     if (usersList.isEmpty()) {
-                        Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "No users to display", Toast.LENGTH_SHORT).show();
                     }
 
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
-                    Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No users to display", Toast.LENGTH_SHORT).show();
                     Log.e("ExploreFragment", "firebase:onException", exception);
                 }
             }

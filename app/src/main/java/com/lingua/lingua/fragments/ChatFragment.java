@@ -138,12 +138,12 @@ public class ChatFragment extends Fragment {
                     queryChatInfo(key);
                 }
             } catch (JSONException e) {
-                Toast.makeText(context, "No chats to display", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "No chats to display", Toast.LENGTH_SHORT).show();
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(context, "Connection error", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });
@@ -201,7 +201,7 @@ public class ChatFragment extends Fragment {
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(context, "Connection error", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });

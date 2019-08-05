@@ -175,7 +175,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                         sendRequestButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
                         sendRequestButton.setEnabled(false);
 
-                        Toast.makeText(context, "You already received a friend request from this user.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "You already received a friend request from this user.", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }

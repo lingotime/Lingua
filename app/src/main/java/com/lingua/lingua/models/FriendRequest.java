@@ -12,7 +12,7 @@ public class FriendRequest {
     String senderId;
     String senderUserName;
     String senderPhotoUrl;
-    String receiverId;
+    String receiverUser;
     String receiverUserName;
     String receiverPhotoUrl;
     String createdTime;
@@ -54,11 +54,11 @@ public class FriendRequest {
     }
 
     public String getReceiverUser() {
-        return receiverId;
+        return receiverUser;
     }
 
     public void setReceiverUser(String receiverUser) {
-        this.receiverId = receiverUser;
+        this.receiverUser = receiverUser;
     }
 
     public String getCreatedTime() {
