@@ -18,12 +18,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
-import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Notification;
 import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
@@ -230,7 +230,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         private void sendFriendRequestNotification(String userId) {
             // send notification
-            Notification notification = new Notification(currentUser.getUserName() + " sent you a friend request!", userId);
+            Notification notification = new Notification("Friend request from " + currentUser.getUserID(), currentUser.getUserName() + " sent you a friend request!", userId, null); // null sent as the final parameter since this is not a video chat notification
 
             TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
                 @Override

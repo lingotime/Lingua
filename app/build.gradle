@@ -65,7 +65,6 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-<<<<<<< HEAD
 
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.0.0'
     implementation 'com.google.android.material:material:1.1.0-alpha09'
@@ -87,12 +86,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
 
-=======
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
 
     // firebase support
     implementation 'com.firebase:firebase-client-android:2.5.2'
->>>>>>> master
+
     implementation 'com.google.firebase:firebase-auth:18.1.0'
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-database:18.0.1'
