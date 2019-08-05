@@ -1,59 +1,100 @@
 package com.lingua.lingua.models;
 
 import org.parceler.Parcel;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 @Parcel
 public class Chat {
+    String chatID;
+    String chatName;
+    ArrayList<String> chatParticipants;
+    ArrayList<String> chatMessages;
+    ArrayList<String> chatLanguages;
+    String firstTextChatTime;
+    String firstVideoChatTime;
+    String lastTextChatTime;
+    String lastVideoChatTime;
+    String lastTextMessage;
 
-    String id;
-    String lastMessage;
-    String name;
-    ArrayList<String> users;
-    String lastUpdatedAt;
-    ArrayList<String> exploreLanguages;
+    public Chat() { }
 
-    public Chat() {}
-
-    public Chat(String id, String name, String lastMessage, String lastUpdatedAt, ArrayList<String> users, ArrayList<String> exploreLanguages) {
-        this.id = id;
-        this.name = name;
-        this.lastMessage = lastMessage;
-        this.lastUpdatedAt = lastUpdatedAt;
-        this.users = users;
-        this.exploreLanguages = exploreLanguages;
-
+    public String getChatID() {
+        return chatID;
     }
 
-    public String getName() { return name; }
-
-    public String getId() { return id; }
-
-    public String getLastMessage() { return lastMessage; }
-
-    public ArrayList<String> getUsers() {
-        return users;
+    public void setChatID(String chatID) {
+        this.chatID = chatID;
     }
 
-    public String getLastUpdatedAt() {
-        return lastUpdatedAt;
+    public String getChatName() {
+        return chatName;
     }
 
-    public void setLastMessage(String lastMessage) {
-        this.lastMessage = lastMessage;
+    public void setChatName(String chatName) {
+        this.chatName = chatName;
     }
 
-    public void setLastUpdatedAt(String lastUpdatedAt) {
-        this.lastUpdatedAt = lastUpdatedAt;
+    public ArrayList<String> getChatParticipants() {
+        return chatParticipants;
     }
 
-    public ArrayList<String> getExploreLanguages() {
-        return exploreLanguages;
+    public void setChatParticipants(ArrayList<String> chatParticipants) {
+        this.chatParticipants = chatParticipants;
     }
 
-    public void setExploreLanguages(ArrayList<String> exploreLanguages) {
-        this.exploreLanguages = exploreLanguages;
+    public ArrayList<String> getChatMessages() {
+        return chatMessages;
+    }
+
+    public void setChatMessages(ArrayList<String> chatMessages) {
+        this.chatMessages = chatMessages;
+    }
+
+    public ArrayList<String> getChatLanguages() {
+        return chatLanguages;
+    }
+
+    public void setChatLanguages(ArrayList<String> chatLanguages) {
+        this.chatLanguages = chatLanguages;
+    }
+
+    public String getFirstTextChatTime() {
+        return firstTextChatTime;
+    }
+
+    public void setFirstTextChatTime(String firstTextChatTime) {
+        this.firstTextChatTime = firstTextChatTime;
+    }
+
+    public String getFirstVideoChatTime() {
+        return firstVideoChatTime;
+    }
+
+    public void setFirstVideoChatTime(String firstVideoChatTime) {
+        this.firstVideoChatTime = firstVideoChatTime;
+    }
+
+    public String getLastTextChatTime() {
+        return lastTextChatTime;
+    }
+
+    public void setLastTextChatTime(String lastTextChatTime) {
+        this.lastTextChatTime = lastTextChatTime;
+    }
+
+    public String getLastVideoChatTime() {
+        return lastVideoChatTime;
+    }
+
+    public void setLastVideoChatTime(String lastVideoChatTime) {
+        this.lastVideoChatTime = lastVideoChatTime;
+    }
+
+    public String getLastTextMessage() {
+        return lastTextMessage;
+    }
+
+    public void setLastTextMessage(String lastTextMessage) {
+        this.lastTextMessage = lastTextMessage;
     }
 }

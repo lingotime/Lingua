@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/explore"
         android:enabled="true"
-        android:icon="@drawable/baseline_public_black_18dp"
+        android:icon="@drawable/explore_icon"
         android:title="Explore"
         android:visible="true"
         app:showAsAction="always" />
     <item
         android:id="@+id/search"
         android:enabled="true"
-        android:icon="@drawable/magnifying_glass"
+        android:icon="@drawable/search_icon"
         android:title="Search"
         android:visible="true"
         app:showAsAction="always" />

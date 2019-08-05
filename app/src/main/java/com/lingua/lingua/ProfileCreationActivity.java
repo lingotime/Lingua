@@ -1,6 +1,8 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.content.Intent;
@@ -28,7 +30,9 @@ import org.parceler.Parcels;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
@@ -47,20 +51,12 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private NachoTextView exploreCountriesField;
     private Button continueButton;
 
-    private boolean isFirstCreation;
+    private String nextFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_creation);
-
-        // determine if we are editing profile or creating for the first time
-        String purpose = getIntent().getStringExtra("purpose");
-        if (purpose != null && purpose.equals("edit")) {
-            isFirstCreation = false;
-        } else {
-            isFirstCreation = true;
-        }
 
         // associate views with java variables
         descriptionText = findViewById(R.id.activity_profile_info_setup_description_text);
@@ -74,8 +70,9 @@ public class ProfileCreationActivity extends AppCompatActivity {
         exploreCountriesField = findViewById(R.id.activity_profile_info_setup_explore_countries_field);
         continueButton = findViewById(R.id.activity_profile_info_setup_continue_button);
 
-        // unwrap the current user
+        // unwrap the current user and next fragment
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+        nextFragment = getIntent().getStringExtra("fragment");
 
         // enable the profile image to be clickable
         profileImage.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +84,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 // proceed to photo setup activity
                 final Intent intent = new Intent(ProfileCreationActivity.this, ProfilePicture.class);
                 intent.putExtra("user", Parcels.wrap(currentUser));
+                intent.putExtra("fragment", nextFragment);
                 startActivity(intent);
             }
         });
@@ -99,6 +97,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         exploreLanguagesField.setAdapter(languagesAdapter);
         exploreCountriesField.setAdapter(countriesAdapter);
 
+        // set a flag icon with each country chip entered
         originCountryField.setChipTokenizer(new SpanChipTokenizer<>(this, new ChipSpanChipCreator() {
             @Override
             public ChipSpan createChip(@NonNull Context context, @NonNull CharSequence text, Object data) {
@@ -119,6 +118,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
                 super.configureChip(chip, chipConfiguration);
                 chip.setShowIconOnLeft(true);
+                chip.setIconBackgroundColor(Color.WHITE);
             }
         }, ChipSpan.class));
 
@@ -143,6 +143,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             public void configureChip(@NonNull ChipSpan chip, @NonNull ChipConfiguration chipConfiguration) {
                 super.configureChip(chip, chipConfiguration);
                 chip.setShowIconOnLeft(true);
+                chip.setIconBackgroundColor(Color.WHITE);
             }
         }, ChipSpan.class));
 
@@ -150,6 +151,11 @@ public class ProfileCreationActivity extends AppCompatActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // disable the button and change its text
+                continueButton.setText("Saving");
+                continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+                continueButton.setEnabled(false);
+
                 // save the updated data
                 saveData();
 
@@ -157,10 +163,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 if (currentUser.isComplete()) {
                     final Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
                     intent.putExtra("user", Parcels.wrap(currentUser));
-                    // if we are editing an already existing profile, go to the profile fragment, otherwise explore fragment
-                    if (!isFirstCreation) {
-                        intent.putExtra("fragment", "profile");
-                    }
+                    intent.putExtra("fragment", nextFragment);
                     startActivity(intent);
                 }
             }
@@ -168,6 +171,30 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         // refactored - now should load user data with the flags associated with the chips
         loadInfo();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as live
+        currentUser.setOnline(true);
+        reference.child("online").setValue(currentUser.isOnline());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as dead
+        currentUser.setOnline(false);
+        reference.child("online").setValue(currentUser.isOnline());
     }
 
     private void saveData() {
@@ -180,7 +207,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             currentUser.setUserName(userNameInput);
         } else {
             isCompleteCheck = false;
-            Toast.makeText(ProfileCreationActivity.this, "Please enter a valid full name.", Toast.LENGTH_LONG).show();
+            nameField.setError("Please enter a valid full name.");
         }
 
         // deal with userBirthDate
@@ -193,7 +220,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             currentUser.setUserBirthDate(userBirthDate);
         } catch (ParseException exception) {
             isCompleteCheck = false;
-            Toast.makeText(this, "Please enter a valid birth date. Format: mm/dd/yyyy", Toast.LENGTH_LONG).show();
+            birthdateField.setError("Please enter a valid birth date. Format: mm/dd/yyyy");
         }
 
         // deal with userBiographyText
@@ -203,7 +230,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             currentUser.setUserBiographyText(userBiographyTextInput);
         } else {
             isCompleteCheck = false;
-            Toast.makeText(this, "Please enter a biography that is at least four characters.", Toast.LENGTH_LONG).show();
+            biographyField.setError("Please enter a biography that is at least four characters.");
         }
 
         // deal with userOriginCountry
@@ -213,36 +240,62 @@ public class ProfileCreationActivity extends AppCompatActivity {
             currentUser.setUserOriginCountry(userOriginCountryInput.get(0));
         } else {
             isCompleteCheck = false;
-            Toast.makeText(this, "Please enter an origin country. Only one origin country is allowed.", Toast.LENGTH_LONG).show();
+            originCountryField.setError("Please enter an origin country. Only one origin country is allowed.");
         }
 
         // deal with knownLanguages
         ArrayList<String> knownLanguagesInput = (ArrayList) knownLanguagesField.getChipValues();
+        HashSet<String> knownLanguagesInputAsSet = new HashSet<>();
+        knownLanguagesInputAsSet.addAll(knownLanguagesInput);
+        knownLanguagesInput.clear();
+        knownLanguagesInput.addAll(knownLanguagesInputAsSet);
+        Collections.sort(knownLanguagesInput);
         currentUser.setKnownLanguages(knownLanguagesInput);
 
         // deal with exploreLanguages
         ArrayList<String> exploreLanguagesInput = (ArrayList) exploreLanguagesField.getChipValues();
+        HashSet<String> exploreLanguagesInputAsSet = new HashSet<>();
+        exploreLanguagesInputAsSet.addAll(exploreLanguagesInput);
+        exploreLanguagesInput.clear();
+        exploreLanguagesInput.addAll(exploreLanguagesInputAsSet);
+        Collections.sort(exploreLanguagesInput);
         currentUser.setExploreLanguages(exploreLanguagesInput);
 
         // deal with exploreCountries
         ArrayList<String> exploreCountriesInput = (ArrayList) exploreCountriesField.getChipValues();
+        HashSet<String> exploreCountriesInputAsSet = new HashSet<>();
+        exploreCountriesInputAsSet.addAll(exploreCountriesInput);
+        exploreCountriesInput.clear();
+        exploreCountriesInput.addAll(exploreCountriesInputAsSet);
+        Collections.sort(exploreCountriesInput);
         currentUser.setExploreCountries(exploreCountriesInput);
 
         // deal with isComplete
         currentUser.setComplete(isCompleteCheck);
 
-        // if isComplete save to database
-        if (isCompleteCheck) {
+        // save to database
+        if (currentUser.isComplete()) {
+            // change the button's text
+            continueButton.setText("Saved");
+            continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+            continueButton.setEnabled(false);
+
+            // save the data
             Firebase.setAndroidContext(this);
             Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
-            databaseReference.child("complete").setValue(true);
-            databaseReference.child("online").setValue(true);
-            databaseReference.child("knownLanguages").setValue(knownLanguagesInput);
-            databaseReference.child("userBiographyText").setValue(userBiographyTextInput);
-            databaseReference.child("userBirthDate").setValue(userBirthDate);
-            databaseReference.child("userOriginCountry").setValue(userOriginCountryInput.get(0));
-            databaseReference.child("exploreLanguages").setValue(exploreLanguagesInput);
-            databaseReference.child("exploreCountries").setValue(exploreCountriesInput);
+            databaseReference.child("userName").setValue(currentUser.getUserName());
+            databaseReference.child("userBirthDate").setValue(currentUser.getUserBirthDate());
+            databaseReference.child("userBiographyText").setValue(currentUser.getUserBiographyText());
+            databaseReference.child("userOriginCountry").setValue(currentUser.getUserOriginCountry());
+            databaseReference.child("knownLanguages").setValue(currentUser.getKnownLanguages());
+            databaseReference.child("exploreLanguages").setValue(currentUser.getExploreLanguages());
+            databaseReference.child("exploreCountries").setValue(currentUser.getExploreCountries());
+            databaseReference.child("complete").setValue(currentUser.isComplete());
+        } else {
+            // re-enable the button because data was not saved
+            continueButton.setText("Save");
+            continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110, 47, 222)));
+            continueButton.setEnabled(true);
         }
     }
 

@@ -62,8 +62,8 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
-        tvMessage.setText(message.getMessage());
-        String timestamp = DateUtil.getHourAndMinuteFormat(message.getTimestamp());
+        tvMessage.setText(message.getMessageText());
+        String timestamp = DateUtil.getHourAndMinuteFormat(message.getCreatedTime());
         if (timestamp != null) { tvTimestamp.setText(timestamp);}
     }
 
@@ -76,7 +76,7 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-        if (message.getSenderId().equals(userId)) {
+        if (message.getSenderUser().equals(userId)) {
             // If the current user is the sender of the message
             return TYPE_MESSAGE_SENT;
         } else {

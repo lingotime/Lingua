@@ -2,10 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/chat_details_videochat_icon"
+        android:id="@+id/menu_video_chat_activity_text_icon"
         android:enabled="true"
-        android:icon="@drawable/baseline_videocam_black_48dp"
+        android:icon="@drawable/text_message"
         android:iconTint="#FFFFFF"
-        android:title="Videochat"
+        android:title="Text Chat"
+        android:visible="true"
         app:showAsAction="always" />
 </menu>

@@ -10,34 +10,25 @@ import java.util.HashMap;
 
 @Parcel
 public class User {
-    private String userID;
-    private String userName;
-    private String userBirthDate;
-    private String userBiographyText;
-    private String userOriginCountry;
-    private String userProfilePhotoURL;
-    private ArrayList<String> knownLanguages;
-    private ArrayList<String> exploreLanguages;
-    private ArrayList<String> exploreCountries;
-    private HashMap<String, Integer> hoursSpokenPerLanguage;
-    private ArrayList<String> friends;
-    private ArrayList<String> pendingSentFriendRequests;
-    private ArrayList<String> pendingReceivedFriendRequests;
-    private ArrayList<String> declinedUsers;
-    private ArrayList<String> conversations;
-    private boolean complete;
-    private boolean online;
+    String userID;
+    String userName;
+    String userBirthDate;
+    String userBiographyText;
+    String userOriginCountry;
+    String userProfilePhotoURL;
+    ArrayList<String> knownLanguages;
+    ArrayList<String> exploreLanguages;
+    ArrayList<String> exploreCountries;
+    HashMap<String, Integer> hoursSpokenPerLanguage;
+    ArrayList<String> friends;
+    ArrayList<String> pendingSentFriendRequests;
+    ArrayList<String> pendingReceivedFriendRequests;
+    ArrayList<String> declinedUsers;
+    ArrayList<String> conversations;
+    boolean complete;
+    boolean online;
 
     public User() {}
-
-    public User(String userName) {
-        this.userName = userName;
-    }
-
-    public User(String userID, String userName) {
-        this.userID = userID;
-        this.userName = userName;
-    }
 
     public String getUserID() {
         return userID;

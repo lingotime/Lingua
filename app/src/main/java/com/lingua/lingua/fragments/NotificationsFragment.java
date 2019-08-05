@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,6 +22,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.NotificationsAdapter;
@@ -41,6 +47,7 @@ import java.util.List;
 */
 
 public class NotificationsFragment extends Fragment {
+    Context context;
 
     RecyclerView rvNotifications;
     private NotificationsAdapter adapter;
@@ -53,8 +60,10 @@ public class NotificationsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //set the context
+        context = getContext();
 
-        SharedPreferences prefs = getContext().getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         userId = prefs.getString("userId", "");
 
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
@@ -66,16 +75,19 @@ public class NotificationsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_notifications_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.fragment_notifications_toolbar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Notifications");
 
         rvNotifications = view.findViewById(R.id.fragment_notifications_rv);
         friendRequests = new ArrayList<>();
-        adapter = new NotificationsAdapter(getContext(), friendRequests, currentUser);
+        adapter = new NotificationsAdapter(context, friendRequests, currentUser);
         rvNotifications.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rvNotifications.setLayoutManager(linearLayoutManager);
+
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        rvNotifications.addItemDecoration(itemDecoration);
 
         swipeContainer = view.findViewById(R.id.fragment_notifications_swipe_container);
         // Setup refresh listener which triggers new data loading
@@ -112,18 +124,18 @@ public class NotificationsFragment extends Fragment {
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
                 if (url.equals("https://lingua-project.firebaseio.com/users/" + userId + "/received-friend-requests.json")) {
-                    Toast.makeText(getContext(), "No new friend requests", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "No pending friend requests", Toast.LENGTH_LONG).show();
                 }
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(getContext(), "No connection", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "No connection", Toast.LENGTH_LONG).show();
             swipeContainer.setRefreshing(false);
             Log.e("NotificationsFragment", "" + volleyError);
         });
 
-        RequestQueue rQueue = Volley.newRequestQueue(getContext());
+        RequestQueue rQueue = Volley.newRequestQueue(context);
         rQueue.add(request);
     }
 
@@ -148,7 +160,15 @@ public class NotificationsFragment extends Fragment {
                     }
                 }
 
-                FriendRequest friendRequest = new FriendRequest(message, senderId, senderName, receiverId, receiverName, timestamp, id, exploreLanguages);
+                FriendRequest friendRequest = new FriendRequest();
+                friendRequest.setFriendRequestMessage(message);
+                friendRequest.setSenderUser(senderId);
+                friendRequest.setSenderUserName(senderName);
+                friendRequest.setReceiverUser(receiverId);
+                friendRequest.setReceiverUserName(receiverName);
+                friendRequest.setCreatedTime(timestamp);
+                friendRequest.setFriendRequestID(id);
+                friendRequest.setExploreLanguages(exploreLanguages);
                 friendRequests.add(friendRequest);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
@@ -160,7 +180,7 @@ public class NotificationsFragment extends Fragment {
             swipeContainer.setRefreshing(false);
         });
 
-        RequestQueue rQueue = Volley.newRequestQueue(getContext());
+        RequestQueue rQueue = Volley.newRequestQueue(context);
         rQueue.add(request);
     }
 

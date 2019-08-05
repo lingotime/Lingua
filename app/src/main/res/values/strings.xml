@@ -1,19 +1,9 @@
 <resources>
     <string name="app_name">Lingua</string>
     <string name="facebook_app_id">625779014579350</string>
-    <string name="fb_login_protocol_scheme">fb625779014579350</string>
-    <string name="date_of_birth">Date of Birth:</string>
-    <string name="primary_languages">Primary Languages:</string>
-    <string name="country_of_origin">Country of Origin:</string>
-    <string name="mm_dd_yyyy">mm/dd/yyyy</string>
-    <string name="target_languages">Target Languages:</string>
-    <string name="target_countries">Target Countries:</string>
-    <string name="submit">SUBMIT</string>
-    <string name="enter_a_short_bio">Enter a short bio:</string>
-    <string name="google_client_id">889445319058-2b0m2ijlcnrsqbf6mvjc5s06897sjoem.apps.googleusercontent.com</string>
-    <string name="where_are_you_from">Where are you from?</string>
-    <string name="what_languages_do_you_speak">What languages do you speak?</string>
-    <string name="languages_to_learn">Languages to learn</string>
-    <string name="for_cultural_exchange">For cultural exchange</string>
-    <string name="base_url_string">YOUR_TWILIO_FUNCTIONS_URL</string>
+    <string name="facebook_login_protocol_scheme">fb625779014579350</string>
+    <string name="twilio_sid">n/a</string>
+    <string name="twilio_api">n/a</string>
+    <string name="twilio_secret_key">n/a</string>
+    <string name="base_url_string">n/a</string>
 </resources>

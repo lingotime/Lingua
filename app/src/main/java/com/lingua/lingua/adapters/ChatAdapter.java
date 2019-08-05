@@ -4,13 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -21,15 +21,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.daimajia.swipe.SwipeLayout;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.lingua.lingua.ChatDetailsActivity;
+import com.lingua.lingua.TextChatActivity;
 import com.lingua.lingua.DateUtil;
 import com.lingua.lingua.R;
-import com.lingua.lingua.VideoChatActivity;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
@@ -48,9 +46,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private Context context;
     public List<Chat> chats;
 
-    private SwipeLayout chatSwipeLayout;
-    private ImageView textChatButton;
-    private ImageView videoChatButton;
+    private CardView chatCard;
     private ImageView ivProfile;
     private TextView tvName;
     private TextView tvText;
@@ -80,22 +76,19 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
         Chat chat = chats.get(position);
-        tvText.setText(chat.getLastMessage());
-        tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastUpdatedAt()));
+        tvText.setText(chat.getLastTextMessage());
+        tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastTextChatTime()));
 
         // fill in the user profile pic and name of the friend
-        for (String id : chat.getUsers()) {
+        for (String id : chat.getChatParticipants()) {
             if (!id.equals(userId)) {
                 getUserDetails(id);
             }
         }
 
-        // to handle the SwipeLayout
-        chatSwipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
-
         // set an event listener to update the last message and timestamp of the chat if there is a change
         Firebase.setAndroidContext(context);
-        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getId());
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getChatID());
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {}
@@ -135,25 +128,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return chats.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener{
+    class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View itemView) {
             super(itemView);
+            chatCard = itemView.findViewById(R.id.item_chat_card);
             ivProfile = itemView.findViewById(R.id.item_chat_iv);
-            chatSwipeLayout = itemView.findViewById(R.id.item_chat_swipe_layout);
-            textChatButton = itemView.findViewById(R.id.item_chat_text_chat);
-            videoChatButton = itemView.findViewById(R.id.item_chat_video_chat);
             tvName = itemView.findViewById(R.id.item_chat_tv_name);
             tvText = itemView.findViewById(R.id.item_chat_tv_text);
             tvTimestamp = itemView.findViewById(R.id.item_chat_tv_timestamp);
-            itemView.setOnTouchListener(this);
 
-            textChatButton.setOnClickListener(new View.OnClickListener() {
-                // launch the chat details activity
+            chatCard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        Intent intent = new Intent(context, ChatDetailsActivity.class);
+                        Intent intent = new Intent(context, TextChatActivity.class);
                         Chat chat = chats.get(position);
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));
@@ -162,40 +151,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                     }
                 }
             });
-
-            videoChatButton.setOnClickListener(new View.OnClickListener() {
-                // start a video chat and generate a room
-                @Override
-                public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        Chat chat = chats.get(position);
-
-                        // creating the dialog for selecting the language of the call
-                        Intent intent = new Intent(context, VideoChatActivity.class);
-                        // intent to the video chat activity
-                        intent.putExtra("nameToDisplay", nameToDisplay);
-                        intent.putExtra("chat", Parcels.wrap(chat));
-                        intent.putExtra("user", Parcels.wrap(currentUser));
-                        context.startActivity(intent);
-                    }
-                }
-            });
-        }
-
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (motionEvent.equals(MotionEvent.ACTION_BUTTON_PRESS)) {
-                // this will be interpreted as a click for the recycler view items
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    Intent intent = new Intent(context, ChatDetailsActivity.class);
-                    Chat chat = chats.get(position);
-                    intent.putExtra("chat", Parcels.wrap(chat));
-                    context.startActivity(intent);
-                }
-            }
-            return false;
         }
 
     }
@@ -220,7 +175,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 Glide.with(context)
                         .load(profilePhotoURL)
                         .apply(requestOptionsMedia)
-                        .fallback(R.drawable.com_facebook_profile_picture_blank_square)
+                        .fallback(R.drawable.man)
                         .into(ivProfile);
 
                 // set name

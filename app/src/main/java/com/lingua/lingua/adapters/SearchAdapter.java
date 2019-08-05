@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,23 +18,30 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
+import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
+import com.lingua.lingua.notifyAPI.Notification;
+import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
     private User currentUser;
@@ -113,9 +119,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 String friendRequestMessage = confirmDialogMessageField.getText().toString();
 
-                                if (!friendRequestMessage.equals("")) {
-                                    sendFriendRequest(currentUser, clickedUser, friendRequestMessage);
-                                }
+                                sendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
 
                                 dialogInterface.cancel();
                             }
@@ -161,17 +165,46 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             return 0;
         }
 
-        private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage) {
+        private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage, int position) {
+            // ensure clicked user did not send friend request to current user while current user was typing
+            if (currentUser.getPendingReceivedFriendRequests() != null) {
+                for (String pendingReceivedFriendRequest : currentUser.getPendingReceivedFriendRequests()) {
+                    if (pendingReceivedFriendRequest.equals(clickedUser.getUserID())) {
+                        // change the button to reflect new info
+                        sendRequestButton.setText("Friend Request Received");
+                        sendRequestButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+                        sendRequestButton.setEnabled(false);
+
+                        Toast.makeText(context, "You already received a friend request from this user.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+            }
+
             // disable the button and change its text
             sendRequestButton.setText("Friend Request Sent");
             sendRequestButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
             sendRequestButton.setEnabled(false);
 
-            Firebase.setAndroidContext(context);
-            Firebase reference = new Firebase("https://lingua-project.firebaseio.com");
+            // add clicked user to current user's sent friend request user list
+            if (currentUser.getPendingSentFriendRequests() == null) {
+                currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(clickedUser.getUserID())));
+            } else {
+                currentUser.getPendingSentFriendRequests().add(clickedUser.getUserID());
+            }
 
-            // save friend request
-            String friendRequestId = reference.child("friend-requests").push().getKey();
+            // add current user to clicked user's received friend request user list
+            if (clickedUser.getPendingReceivedFriendRequests() == null) {
+                clickedUser.setPendingReceivedFriendRequests(new ArrayList<String>(Arrays.asList(currentUser.getUserID())));
+            } else {
+                clickedUser.getPendingReceivedFriendRequests().add(currentUser.getUserID());
+            }
+
+            // create a new database reference
+            Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
+
+            // create friend request
+            String friendRequestId = databaseReference.child("friend-requests").push().getKey();
 
             Map<String, String> map = new HashMap<>();
             map.put("message", friendRequestMessage);
@@ -182,19 +215,40 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             map.put("timestamp", new Date().toString());
             map.put("id", friendRequestId);
 
-            reference.child("friend-requests").child(friendRequestId).setValue(map);
-            if (currentUser.getExploreLanguages() != null) {
-                ArrayList<String> languages = currentUser.getExploreLanguages();
-                reference.child("friend-requests").child(friendRequestId).child("exploreLanguages").setValue(languages);
-            }
+            // save new friend request data to database
+            databaseReference.child("users").child(currentUser.getUserID()).child("pendingSentFriendRequests").setValue(currentUser.getPendingSentFriendRequests());
+            databaseReference.child("users").child(clickedUser.getUserID()).child("pendingReceivedFriendRequests").setValue(clickedUser.getPendingReceivedFriendRequests());
+            databaseReference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
+            databaseReference.child("users").child(clickedUser.getUserID()).child("received-friend-requests").child(friendRequestId).setValue(true);
 
-            // save friend request reference in user objects
-            reference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
-            reference.child("users").child(clickedUser.getUserID()).child("received-friend-requests").child(friendRequestId).setValue(true);
+            databaseReference.child("friend-requests").child(friendRequestId).setValue(map);
+            databaseReference.child("friend-requests").child(friendRequestId).child("exploreLanguages").setValue(currentUser.getExploreLanguages());
 
-            Toast.makeText(context, "Friend request sent!", Toast.LENGTH_SHORT).show();
+            // send notification to other user
+            sendFriendRequestNotification(clickedUser.getUserID());
+        }
 
-            //TODO: change button to "friend request sent"
+        private void sendFriendRequestNotification(String userId) {
+            // send notification
+            Notification notification = new Notification(currentUser.getUserName() + " sent you a friend request!", userId);
+
+            TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (!response.isSuccess()) {
+                        String message = "Sending notification failed: " + response.code() + " " + response.message();
+                        Log.e("ExploreAdapter", message);
+                    } else {
+                        Log.i("ExploreAdapter", "Sending notification success: " + response.code() + " " + response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    String message = "Sending notification failed: " + t.getMessage();
+                    Log.e("ExploreAdapter", message);
+                }
+            });
         }
     }
 }

@@ -38,7 +38,7 @@ Activity for chatting with a specific friend, the recycler view contains all the
 and that friend have exchanged and user can send messages from here
 */
 
-public class ChatDetailsActivity extends AppCompatActivity {
+public class TextChatActivity extends AppCompatActivity {
 
     RecyclerView rvMessages;
     private ChatDetailsAdapter adapter;
@@ -57,21 +57,21 @@ public class ChatDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_details);
+        setContentView(R.layout.activity_text_chat);
 
         chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         String nameToDisplay = getIntent().getStringExtra("nameToDisplay");
 
-        rvMessages = findViewById(R.id.activity_chat_details_rv);
+        rvMessages = findViewById(R.id.activity_text_chat_rv);
         messages = new ArrayList<>();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_chat_details_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_text_chat_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(nameToDisplay);
 
         Firebase.setAndroidContext(this);
-        reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chat.getId());
+        reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chat.getChatID());
 
         adapter = new ChatDetailsAdapter(this, messages);
         rvMessages.setAdapter(adapter);
@@ -79,10 +79,9 @@ public class ChatDetailsActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true);
         rvMessages.setLayoutManager(linearLayoutManager);
 
-        sendButton = findViewById(R.id.activity_chat_details_button_send);
-        sendButtonIcon = findViewById(R.id.activity_chat_details_iv_send);
-        etMessage = findViewById(R.id.activity_chat_details_et);
-        sendButtonIcon.setColorFilter(Color.argb(255, 255, 255, 255));
+        sendButton = findViewById(R.id.activity_text_chat_button_send);
+        sendButtonIcon = findViewById(R.id.activity_text_chat_iv_send);
+        etMessage = findViewById(R.id.activity_text_chat_et);
 
         // send message on button click
         sendButton.setOnClickListener(view -> {
@@ -111,7 +110,12 @@ public class ChatDetailsActivity extends AppCompatActivity {
                 String senderId = map.get("senderId").toString();
                 String message = map.get("message").toString();
                 String timestamp = map.get("timestamp").toString();
-                messages.add(new Message(senderId, message, timestamp));
+
+                Message messageOb = new Message();
+                messageOb.setCreatedTime(timestamp);
+                messageOb.setMessageText(message);
+                messageOb.setSenderUser(senderId);
+                messages.add(messageOb);
                 adapter.notifyDataSetChanged();
             }
 
@@ -130,9 +134,33 @@ public class ChatDetailsActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as live
+        currentUser.setOnline(true);
+        reference.child("online").setValue(currentUser.isOnline());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as dead
+        currentUser.setOnline(false);
+        reference.child("online").setValue(currentUser.isOnline());
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_chat_details, menu);
+        getMenuInflater().inflate(R.menu.menu_text_chat_activity, menu);
         return true;
     }
 
@@ -141,8 +169,8 @@ public class ChatDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.chat_details_videochat_icon) {
-            Intent intent = new Intent(ChatDetailsActivity.this, VideoChatActivity.class);
+        if (id == R.id.menu_text_chat_activity_video_icon) {
+            Intent intent = new Intent(TextChatActivity.this, VideoChatActivity.class);
             // intent to the video chat activity
             intent.putExtra("chat", Parcels.wrap(chat));
             intent.putExtra("user", Parcels.wrap(currentUser));
@@ -165,7 +193,7 @@ public class ChatDetailsActivity extends AppCompatActivity {
             etMessage.setText("");
 
             // set this message to be the lastMessage of the chat
-            Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getId());
+            Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getChatID());
             chatReference.child("lastMessage").setValue(currentUser.getUserName() + ": " + messageText);
             chatReference.child("lastMessageAt").setValue(timestamp);
         }

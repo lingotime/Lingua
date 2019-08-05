@@ -7,10 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
@@ -65,7 +68,7 @@ public class SearchFragment extends Fragment {
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
         // set the toolbar
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_search_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.fragment_search_toolbar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Search");
 
@@ -130,6 +133,9 @@ public class SearchFragment extends Fragment {
             }
         };
         resultsTimeline.addOnScrollListener(scrollListener);
+
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        resultsTimeline.addItemDecoration(itemDecoration);
 
         // display timeline
         resultsTimeline.setLayoutManager(layoutManager);
@@ -206,8 +212,13 @@ public class SearchFragment extends Fragment {
                         }
                     }
 
+                    if (usersList.isEmpty()) {
+                        Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
+                    }
+
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
+                    Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
                     Log.e("SearchFragment", "firebase:onException", exception);
                 }
             }

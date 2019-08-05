@@ -2,19 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/profile_fragment_edit"
+        android:id="@+id/menu_profile_fragment_edit_icon"
         android:enabled="true"
-        android:icon="@drawable/outline_edit_black_48dp"
+        android:icon="@drawable/pencil"
         android:iconTint="#FFFFFF"
         android:title="Edit"
         android:visible="true"
         app:showAsAction="always" />
     <item
-        android:id="@+id/profile_fragment_logout"
+        android:id="@+id/menu_profile_fragment_log_out_icon"
         android:enabled="true"
         android:icon="@drawable/exit"
         android:iconTint="#FFFFFF"
-        android:title="Exit"
+        android:title="Log Out"
         android:visible="true"
         app:showAsAction="always" />
 </menu>

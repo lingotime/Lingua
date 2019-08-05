@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -19,7 +21,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/friend_request_iv"
@@ -36,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:text="[Username]"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textSize="18sp"
@@ -44,56 +46,14 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/friend_request_message_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:text="[Message]"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/friend_request_iv"
-                app:layout_constraintTop_toBottomOf="@+id/friend_request_description_tv" />
-
-            <Button
-                android:id="@+id/friend_request_accept_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="50dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/colorPrimary"
-                android:text="Accept"
-                app:icon="@drawable/thumb_up"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/friend_request_message_tv" />
-
-            <Button
-                android:id="@+id/friend_request_reject_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/colorPrimary"
-                android:text="Decline"
-                app:icon="@drawable/thumb_down"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/friend_request_iv"
-                app:layout_constraintTop_toBottomOf="@+id/friend_request_message_tv" />
-
-            <TextView
                 android:id="@+id/friend_request_timestamp_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="20dp"
                 android:text="[Timestamp]"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/friend_request_iv" />
 
             <TextView
                 android:id="@+id/friend_request_description_tv"
@@ -103,6 +63,49 @@
                 android:text="sent you a friend request!"
                 app:layout_constraintStart_toEndOf="@+id/friend_request_iv"
                 app:layout_constraintTop_toBottomOf="@+id/friend_request_name" />
+
+            <TextView
+                android:id="@+id/friend_request_message_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:text="[Message]"
+                android:textColor="@color/linguaBlack"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/friend_request_iv"
+                app:layout_constraintTop_toBottomOf="@+id/friend_request_description_tv" />
+
+            <Button
+                android:id="@+id/friend_request_accept_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="Accept"
+                android:textColor="@color/linguaWhite"
+                app:icon="@drawable/thumb_up"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/friend_request_message_tv"
+                app:layout_constraintTop_toBottomOf="@+id/friend_request_message_tv" />
+
+            <Button
+                android:id="@+id/friend_request_decline_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="Decline"
+                android:textColor="@color/linguaWhite"
+                app:icon="@drawable/thumb_down"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/friend_request_message_tv"
+                app:layout_constraintTop_toBottomOf="@+id/friend_request_message_tv" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
