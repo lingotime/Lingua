@@ -29,8 +29,6 @@ import com.lingua.lingua.notifyAPI.BindingIntentService;
 
 import org.parceler.Parcels;
 
-import retrofit2.http.HEAD;
-
 import static com.lingua.lingua.notifyAPI.BindingSharedPreferences.IDENTITY;
 
 /**
@@ -88,72 +86,75 @@ public class MainActivity extends AppCompatActivity {
         // load the right fragment depending on intent extras
         String nextFragment = getIntent().getStringExtra("fragment");
 
-        if (nextFragment.equals("explore")) {
+        if (nextFragment != null && nextFragment.equals("explore")) {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.explore);
-        } else if (nextFragment.equals("search")) {
+        } else if (nextFragment != null && nextFragment.equals("search")) {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.search);
-        } else if (nextFragment.equals("chat")) {
+        } else if (nextFragment != null && nextFragment.equals("chat")) {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, chatFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.chat);
-        } else if (nextFragment.equals("notifications")) {
+        } else if ( nextFragment != null && nextFragment.equals("notifications")) {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, notificationsFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.notifications);
-
-            bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.search:
-                            fragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment).commit();
-                            return true;
-                        case R.id.chat:
-                            fragmentManager.beginTransaction().replace(R.id.activity_main_container, chatFragment).commit();
-                            return true;
-                        case R.id.notifications:
-                            fragmentManager.beginTransaction().replace(R.id.activity_main_container, notificationsFragment).commit();
-                            return true;
-                        case R.id.profile:
-                            fragmentManager.beginTransaction().replace(R.id.activity_main_container, profileFragment).commit();
-                            return true;
-                        default:
-                            fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
-                            return true;
-                    }
-                }
-            });
-
-            registerBinding();
-
-            bindingBroadcastReceiver = new WakefulBroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    boolean succeeded = intent.getBooleanExtra(BINDING_SUCCEEDED, false);
-                    String message = intent.getStringExtra(BINDING_RESPONSE);
-                    if (message == null) {
-                        message = "";
-                    }
-
-                    if (succeeded) {
-                        Log.d(TAG, "Binding registered. " + message);
-                    } else {
-                        Log.e(TAG, "Binding failed. " + message);
-                    }
-                }
-            };
-
-            LocalBroadcastManager.getInstance(this).registerReceiver(bindingBroadcastReceiver,
-                    new IntentFilter(BINDING_REGISTRATION));
-
-            // mark user as live
-            currentUser.setOnline(true);
-
-            // save update
-            Firebase.setAndroidContext(this);
-            Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
-            reference.child("online").setValue(currentUser.isOnline());
+        } else {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.explore);
         }
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.search:
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment).commit();
+                        return true;
+                    case R.id.chat:
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, chatFragment).commit();
+                        return true;
+                    case R.id.notifications:
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, notificationsFragment).commit();
+                        return true;
+                    case R.id.profile:
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, profileFragment).commit();
+                        return true;
+                    default:
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
+                        return true;
+                }
+            }
+        });
+
+        registerBinding();
+
+        bindingBroadcastReceiver = new WakefulBroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean succeeded = intent.getBooleanExtra(BINDING_SUCCEEDED, false);
+                String message = intent.getStringExtra(BINDING_RESPONSE);
+                if (message == null) {
+                    message = "";
+                }
+
+                if (succeeded) {
+                    Log.d(TAG, "Binding registered. " + message);
+                } else {
+                    Log.e(TAG, "Binding failed. " + message);
+                }
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(bindingBroadcastReceiver,
+                new IntentFilter(BINDING_REGISTRATION));
+
+        // mark user as live
+        currentUser.setOnline(true);
+
+        // save update
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+        reference.child("online").setValue(currentUser.isOnline());
     }
 
     /**
