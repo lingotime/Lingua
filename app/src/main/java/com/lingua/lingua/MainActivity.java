@@ -89,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
         if (nextFragment != null && nextFragment.equals("explore")) {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.explore);
+        } else if (nextFragment != null && nextFragment.equals("profile")) {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, profileFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.profile);
         } else if (nextFragment != null && nextFragment.equals("search")) {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.search);
