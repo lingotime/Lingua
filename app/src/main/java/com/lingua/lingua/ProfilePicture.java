@@ -10,9 +10,11 @@ import android.Manifest;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -59,6 +61,7 @@ public class ProfilePicture extends AppCompatActivity {
     private static final int PHOTO_GALLERY_REQUEST_CODE = 1046;
     private static final int RC_VIDEO_APP_PERM = 124;
 
+    private String nextFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,36 +78,39 @@ public class ProfilePicture extends AppCompatActivity {
 
         // unwrap the current user
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+        nextFragment = getIntent().getStringExtra("fragment");
 
         // launch camera view if the "take photo" button is clicked
         takePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // request permission before accessing the camera, and then launch it
-                requestPermissions();
+                requestPermissionsAndLaunchCamera();
+            }
+        });
+
+        // launch photos view if the "select photo" button is clicked
+        selectPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // request permission before accessing the gallery, and then launch it
+                requestPermissionsAndLaunchGallery();
             }
         });
 
         // load the current profile photo if one is available
         Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
 
-        // launch photos view if the "select photo" button is clicked
-        selectPhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(intent, PHOTO_GALLERY_REQUEST_CODE);
-                }
-            }
-        });
-
         // save new profile photo and return to previous page if the "set profile photo" button is clicked
         setProfilePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (localProfilePhotoFile != null) {
+                    // disable the button and change its text
+                    setProfilePhotoButton.setText("Setting");
+                    setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+                    setProfilePhotoButton.setEnabled(false);
+
                     // get URI of the new profile photo
                     Uri localProfilePhotoFileURI = Uri.fromFile(localProfilePhotoFile);
 
@@ -123,6 +129,11 @@ public class ProfilePicture extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            // re-enable the button
+                            setProfilePhotoButton.setText("Try Again");
+                            setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
+                            setProfilePhotoButton.setEnabled(true);
+
                             Log.e("ProfileSetupActivity", "The new profile photo failed to upload successfully.");
                         }
                     });
@@ -134,6 +145,11 @@ public class ProfilePicture extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 return specificProfilesStorageReference.getDownloadUrl();
                             } else {
+                                // re-enable the button
+                                setProfilePhotoButton.setText("Try Again");
+                                setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
+                                setProfilePhotoButton.setEnabled(true);
+
                                 Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
                                 return null;
                             }
@@ -148,27 +164,70 @@ public class ProfilePicture extends AppCompatActivity {
                                 // update the user's profile photo with the new profile photo URL link
                                 currentUser.setUserProfilePhotoURL(profilePhotoURI.toString());
 
+                                // disable the button and change its text
+                                setProfilePhotoButton.setText("Set");
+                                setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+                                setProfilePhotoButton.setEnabled(false);
+
                                 // save updates
                                 Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
-                                reference.child("userProfilePhotoURL").setValue(profilePhotoURI.toString());
+                                reference.child("userProfilePhotoURL").setValue(currentUser.getUserProfilePhotoURL());
 
                                 // return to info setup activity
                                 final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
                                 intent.putExtra("user", Parcels.wrap(currentUser));
+                                intent.putExtra("fragment", nextFragment);
                                 startActivity(intent);
                             } else {
+                                // re-enable the button
+                                setProfilePhotoButton.setText("Try Again");
+                                setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
+                                setProfilePhotoButton.setEnabled(true);
+
                                 Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
                             }
                         }
                     });
                 } else {
+                    // disable the button and change its text
+                    setProfilePhotoButton.setText("Set");
+                    setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+                    setProfilePhotoButton.setEnabled(false);
+
+                    Toast.makeText(ProfilePicture.this, "There was no new photo.", Toast.LENGTH_LONG);
+
                     // return to info setup activity
                     final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
                     intent.putExtra("user", Parcels.wrap(currentUser));
+                    intent.putExtra("fragment", nextFragment);
                     startActivity(intent);
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as live
+        currentUser.setOnline(true);
+        reference.child("online").setValue(currentUser.isOnline());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as dead
+        currentUser.setOnline(false);
+        reference.child("online").setValue(currentUser.isOnline());
     }
 
     @Override
@@ -202,13 +261,12 @@ public class ProfilePicture extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
-    private void requestPermissions() {
+    private void requestPermissionsAndLaunch() {
         String[] perms = { Manifest.permission.CAMERA };
         if (EasyPermissions.hasPermissions(this, perms)) {
             // launch the activity for the camera
@@ -223,7 +281,41 @@ public class ProfilePicture extends AppCompatActivity {
             }
         } else {
             // prompt to ask for mic and camera permission
-            EasyPermissions.requestPermissions(this, "Lingua needs access to your camera", RC_VIDEO_APP_PERM, perms);
+            EasyPermissions.requestPermissions(this, "Lingua needs access to your camera.", RC_VIDEO_APP_PERM, perms);
+        }
+    }
+
+    private void requestPermissionsAndLaunchCamera() {
+        String[] perms = { Manifest.permission.CAMERA };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // launch the activity for the camera
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+            localProfilePhotoFile = getProfilePhotoFileFromCamera("profile_photo.jpg");
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(ProfilePicture.this, "com.lingua.fileprovider", localProfilePhotoFile));
+
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(intent, CAMERA_REQUEST_CODE);
+            }
+        } else {
+            // prompt to ask for mic and camera permission
+            EasyPermissions.requestPermissions(this, "Lingua needs access to your camera.", CAMERA_REQUEST_CODE, perms);
+        }
+    }
+
+    private void requestPermissionsAndLaunchGallery() {
+        String[] perms = { Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE };
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            // launch the activity for the gallery
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(intent, PHOTO_GALLERY_REQUEST_CODE);
+            }
+        } else {
+            // prompt to ask for read and write photo permission
+            EasyPermissions.requestPermissions(this, "Lingua needs access to your photo gallery.", PHOTO_GALLERY_REQUEST_CODE, perms);
         }
     }
 

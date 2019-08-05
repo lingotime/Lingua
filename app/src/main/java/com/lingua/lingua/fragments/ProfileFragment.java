@@ -1,6 +1,9 @@
 package com.lingua.lingua.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,13 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.login.LoginManager;
@@ -27,20 +29,17 @@ import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.ProfileCreationActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
-
 import org.parceler.Parcels;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 
-/**
-* Fragment that displays the user's profile and allows them to edit it
-*/
+/* FINALIZED, DOCUMENTED, and TESTED ProfileFragment displays the current user's information. */
 
 public class ProfileFragment extends Fragment {
+    Context context;
     private User currentUser;
 
     private ImageView profileImage;
@@ -68,43 +67,8 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // unwrap the current user
-        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
-
-        // set the toolbar
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_profile_toolbar);
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("");
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int id = item.getItemId();
-
-                // (Fausto's methods)
-
-                if (id == R.id.profile_fragment_edit) {
-
-                    // load the profile creation page if edit button is clicked
-                    final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
-                    intent.putExtra("user", Parcels.wrap(currentUser));
-                    intent.putExtra("purpose", "edit");
-                    startActivity(intent);
-
-                } else if (id == R.id.profile_fragment_logout) {
-
-                    // log out if exit button is clicked
-                    FirebaseAuth.getInstance().signOut();
-
-                    LoginManager.getInstance().logOut();
-
-                    final Intent intent = new Intent(getContext(), LoginActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
-                }
-                return ProfileFragment.super.onOptionsItemSelected(item);
-            }
-        });
-
+        // set the context
+        context = getContext();
 
         // associate views with java variables
         profileImage = view.findViewById(R.id.fragment_profile_profile_image);
@@ -124,6 +88,40 @@ public class ProfileFragment extends Fragment {
 
         // unwrap the current user
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
+
+        // set the toolbar
+        Toolbar toolbar = view.findViewById(R.id.fragment_profile_toolbar);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Profile");
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+
+                // (Fausto's methods)
+
+                if (id == R.id.menu_profile_fragment_edit_icon) {
+
+                    // load the profile creation page if edit button is clicked
+                    final Intent intent = new Intent(context, ProfileCreationActivity.class);
+                    intent.putExtra("user", Parcels.wrap(currentUser));
+                    intent.putExtra("fragment", "profile");
+                    startActivity(intent);
+
+                } else if (id == R.id.menu_profile_fragment_log_out_icon) {
+
+                    // log out if exit button is clicked
+                    FirebaseAuth.getInstance().signOut();
+
+                    LoginManager.getInstance().logOut();
+
+                    final Intent intent = new Intent(context, LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+                return ProfileFragment.super.onOptionsItemSelected(item);
+            }
+        });
 
         // populate data from the current user
         Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
@@ -146,11 +144,12 @@ public class ProfileFragment extends Fragment {
             });
         } else {
             knownLanguagesChips.removeView(knownLanguagesChip);
-            for (String knownLanguage : currentUser.getKnownLanguages()) {
-                Chip knownLanguageChip = new Chip(getContext());
-                knownLanguageChip.setText(knownLanguage);
-                knownLanguagesChips.addView(knownLanguageChip);
-            }
+        }
+
+        for (String knownLanguage : currentUser.getKnownLanguages()) {
+            Chip knownLanguageChip = new Chip(context);
+            knownLanguageChip.setText(knownLanguage);
+            knownLanguagesChips.addView(knownLanguageChip);
         }
 
         if (currentUser.getExploreLanguages().isEmpty()) {
@@ -163,11 +162,12 @@ public class ProfileFragment extends Fragment {
             });
         } else {
             exploreLanguagesChips.removeView(exploreLanguagesChip);
-            for (String exploreLanguage : currentUser.getExploreLanguages()) {
-                Chip exploreLanguageChip = new Chip(getContext());
-                exploreLanguageChip.setText(exploreLanguage);
-                exploreLanguagesChips.addView(exploreLanguageChip);
-            }
+        }
+
+        for (String exploreLanguage : currentUser.getExploreLanguages()) {
+            Chip exploreLanguageChip = new Chip(context);
+            exploreLanguageChip.setText(exploreLanguage);
+            exploreLanguagesChips.addView(exploreLanguageChip);
         }
 
         if (currentUser.getExploreCountries().isEmpty()) {
@@ -180,19 +180,21 @@ public class ProfileFragment extends Fragment {
             });
         } else {
             exploreCountriesChips.removeView(exploreCountriesChip);
-            for (String exploreCountry : currentUser.getExploreCountries()) {
-                Chip exploreCountryChip = new Chip(getContext());
-                exploreCountryChip.setText(exploreCountry);
-                exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
-                exploreCountriesChips.addView(exploreCountryChip);
-            }
+        }
+
+        for (String exploreCountry : currentUser.getExploreCountries()) {
+            Chip exploreCountryChip = new Chip(context);
+            exploreCountryChip.setText(exploreCountry);
+            exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
+            exploreCountriesChips.addView(exploreCountryChip);
         }
     }
-    
+
     private void goToEdit() {
         // load the profile creation page
-        final Intent intent = new Intent(getContext(), ProfileCreationActivity.class);
+        final Intent intent = new Intent(context, ProfileCreationActivity.class);
         intent.putExtra("user", Parcels.wrap(currentUser));
+        intent.putExtra("fragment", "profile");
         startActivity(intent);
     }
 

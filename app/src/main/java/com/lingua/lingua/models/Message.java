@@ -1,22 +1,54 @@
 package com.lingua.lingua.models;
 
+import org.parceler.Parcel;
+
+@Parcel
 public class Message {
+    String messageID;
+    String messageText;
+    String senderUser;
+    String receiverUser;
+    String createdTime;
 
-    String message;
-    String senderId;
-    String timestamp;
+    public Message() { }
 
-    public Message(String senderId, String message, String timestamp) {
-        this.senderId = senderId;
-        this.message = message;
-        this.timestamp = timestamp;
+    public String getMessageID() {
+        return messageID;
     }
 
-    public String getMessage() {
-        return message;
+    public void setMessageID(String messageID) {
+        this.messageID = messageID;
     }
 
-    public String getSenderId() { return senderId; }
+    public String getMessageText() {
+        return messageText;
+    }
 
-    public String getTimestamp() { return timestamp; }
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
+    }
+
+    public String getSenderUser() {
+        return senderUser;
+    }
+
+    public void setSenderUser(String senderUser) {
+        this.senderUser = senderUser;
+    }
+
+    public String getReceiverUser() {
+        return receiverUser;
+    }
+
+    public void setReceiverUser(String receiverUser) {
+        this.receiverUser = receiverUser;
+    }
+
+    public String getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(String createdTime) {
+        this.createdTime = createdTime;
+    }
 }

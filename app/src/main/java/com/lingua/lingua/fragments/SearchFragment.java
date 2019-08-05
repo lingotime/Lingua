@@ -7,9 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
@@ -20,6 +24,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.lingua.lingua.EndlessRecyclerViewScrollListener;
+import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.SearchAdapter;
 import com.lingua.lingua.models.User;
@@ -61,6 +66,11 @@ public class SearchFragment extends Fragment {
 
         // unwrap the current user
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
+
+        // set the toolbar
+        Toolbar toolbar = view.findViewById(R.id.fragment_search_toolbar);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Search");
 
         // set the context
         context = getContext();
@@ -123,6 +133,9 @@ public class SearchFragment extends Fragment {
             }
         };
         resultsTimeline.addOnScrollListener(scrollListener);
+
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        resultsTimeline.addItemDecoration(itemDecoration);
 
         // display timeline
         resultsTimeline.setLayoutManager(layoutManager);
@@ -199,8 +212,13 @@ public class SearchFragment extends Fragment {
                         }
                     }
 
+                    if (usersList.isEmpty()) {
+                        Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
+                    }
+
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
+                    Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
                     Log.e("SearchFragment", "firebase:onException", exception);
                 }
             }

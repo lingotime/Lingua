@@ -1,59 +1,99 @@
 package com.lingua.lingua.models;
 
-import java.lang.reflect.Array;
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 
+@Parcel
 public class FriendRequest {
-
-    String id;
-    String message;
-    String senderId;
-    String senderName;
-    String receiverName;
-    String receiverId;
-    String timestamp;
+    String friendRequestID;
+    String friendRequestStatus;
+    String friendRequestMessage;
+    String senderUser;
+    String senderUserName;
+    String receiverUser;
+    String receiverUserName;
+    String createdTime;
+    String respondedTime;
     ArrayList<String> exploreLanguages;
 
-    public FriendRequest(String message, String senderId, String senderName, String receiverId, String receiverName, String timestamp, String id, ArrayList<String> exploreLanguages) {
-        this.message = message;
-        this.senderId = senderId;
-        this.senderName = senderName;
-        this.timestamp = timestamp;
-        this.receiverId = receiverId;
-        this.receiverName = receiverName;
-        this.id = id;
-        this.exploreLanguages = exploreLanguages;
+    public FriendRequest() { }
+
+    public String getFriendRequestID() {
+        return friendRequestID;
     }
 
-    public String getId() {
-        return id;
+    public void setFriendRequestID(String friendRequestID) {
+        this.friendRequestID = friendRequestID;
     }
 
-    public String getMessage() {
-        return message;
+    public String getFriendRequestStatus() {
+        return friendRequestStatus;
     }
 
-    public String getSenderId() {
-        return senderId;
+    public void setFriendRequestStatus(String friendRequestStatus) {
+        this.friendRequestStatus = friendRequestStatus;
     }
 
-    public String getSenderName() {
-        return senderName;
+    public String getFriendRequestMessage() {
+        return friendRequestMessage;
     }
 
-    public String getReceiverId() {
-        return receiverId;
+    public void setFriendRequestMessage(String friendRequestMessage) {
+        this.friendRequestMessage = friendRequestMessage;
     }
 
-    public String getReceiverName() {
-        return receiverName;
+    public String getSenderUser() {
+        return senderUser;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public void setSenderUser(String senderUser) {
+        this.senderUser = senderUser;
+    }
+
+    public String getReceiverUser() {
+        return receiverUser;
+    }
+
+    public void setReceiverUser(String receiverUser) {
+        this.receiverUser = receiverUser;
+    }
+
+    public String getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(String createdTime) { this.createdTime = createdTime; }
+
+    public String getRespondedTime() {
+        return respondedTime;
+    }
+
+    public void setRespondedTime(String respondedTime) {
+        this.respondedTime = respondedTime;
+    }
+
+    public String getSenderUserName() {
+        return senderUserName;
+    }
+
+    public void setSenderUserName(String senderUserName) {
+        this.senderUserName = senderUserName;
+    }
+
+    public String getReceiverUserName() {
+        return receiverUserName;
+    }
+
+    public void setReceiverUserName(String receiverUserName) {
+        this.receiverUserName = receiverUserName;
     }
 
     public ArrayList<String> getExploreLanguages() {
         return exploreLanguages;
+    }
+
+    public void setExploreLanguages(ArrayList<String> exploreLanguages) {
+        this.exploreLanguages = exploreLanguages;
     }
 }

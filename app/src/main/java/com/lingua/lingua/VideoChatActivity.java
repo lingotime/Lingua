@@ -145,18 +145,18 @@ public class VideoChatActivity extends AppCompatActivity {
             // intent passed in from either the chat fragment or the chat details activity with these parcelable extras
             currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
             currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
-            chatId = currentChat.getId();
+            chatId = currentChat.getChatID();
             roomName = chatId;
         }
 
         // the intent from the push notification will not have the user object
         if (currentChat != null) {
-            chatMembers = currentChat.getUsers();
+            chatMembers = currentChat.getChatParticipants();
             chatMembers.remove(userId);
 
             // to get all the possible explore languages from the users in the chat
-            if (currentChat.getExploreLanguages() != null) {
-                possibleChatLanguages.addAll(currentChat.getExploreLanguages());
+            if (currentChat.getChatLanguages() != null) {
+                possibleChatLanguages.addAll(currentChat.getChatLanguages());
             }
             possibleChatLanguages.add("Cultural Exchange");
 
@@ -310,7 +310,7 @@ public class VideoChatActivity extends AppCompatActivity {
             intent.putExtra("user", Parcels.wrap(currentUser));
             intent.putExtra("fragment", "chats");
         } else if (intentAction.equals(CHAT_DETAILS_INTENT)) {
-            Intent intent = new Intent(this, ChatDetailsActivity.class);
+            Intent intent = new Intent(this, TextChatActivity.class);
             intent.putExtra("chat", Parcels.wrap(currentChat));
             intent.putExtra("user", Parcels.wrap(currentUser));
         }
