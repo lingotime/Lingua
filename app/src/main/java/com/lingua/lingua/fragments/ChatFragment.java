@@ -122,9 +122,8 @@ public class ChatFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        enableSwipe();
-
         queryChats();
+        enableSwipe();
     }
 
     private void queryChats() {
@@ -163,6 +162,7 @@ public class ChatFragment extends Fragment {
                     lastMessage = "You" + lastMessage.split(currentUser.getUserName())[1];
                 }
                 String lastMessageAt = chat.getString("lastMessageAt");
+
                 // get list of user ids in the chat
                 ArrayList<String> userIds = new ArrayList<>();
                 JSONObject users = chat.getJSONObject("users");
@@ -231,7 +231,9 @@ public class ChatFragment extends Fragment {
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Log.e("ChatAdapter", "" + volleyError);
+            Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show();
+            swipeContainer.setRefreshing(false);
+            Log.e("ChatFragment", "" + volleyError);
         });
 
         RequestQueue rQueue = Volley.newRequestQueue(context);
@@ -263,7 +265,6 @@ public class ChatFragment extends Fragment {
                         intent.putExtra("user", Parcels.wrap(currentUser));
                         context.startActivity(intent);
                     }
-
 
                 } else {
 

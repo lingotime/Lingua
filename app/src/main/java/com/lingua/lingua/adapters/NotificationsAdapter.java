@@ -178,7 +178,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         String chatId = reference.child("chats").push().getKey();
 
         Map<String, Object> chat = new HashMap<>();
-        chat.put("lastMessage", friendRequest.getFriendRequestMessage());
+        chat.put("lastMessage", friendRequest.getSenderUserName() + ": " + friendRequest.getFriendRequestMessage());
         chat.put("lastMessageAt", friendRequest.getCreatedTime());
         chat.put("id", chatId);
 
