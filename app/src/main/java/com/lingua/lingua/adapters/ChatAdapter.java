@@ -13,10 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -25,14 +21,12 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.lingua.lingua.TextChatActivity;
 import com.lingua.lingua.DateUtil;
 import com.lingua.lingua.R;
+import com.lingua.lingua.TextChatActivity;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -52,18 +46,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private TextView tvText;
     private TextView tvTimestamp;
 
-    String userId, userName;
     User currentUser;
-    String nameToDisplay;
-
 
     public ChatAdapter(Context context, List<Chat> chats, User user) {
         this.context = context;
         this.chats = chats;
 
         currentUser = user;
-        userId = currentUser.getUserID();
-        userName = currentUser.getUserName();
     }
 
     @NonNull
@@ -78,13 +67,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         Chat chat = chats.get(position);
         tvText.setText(chat.getLastTextMessage());
         tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastTextChatTime()));
+        tvName.setText(chat.getChatName());
 
-        // fill in the user profile pic and name of the friend
-        for (String id : chat.getChatParticipants()) {
-            if (!id.equals(userId)) {
-                getUserDetails(id);
-            }
-        }
+        // load profile pic
+        RequestOptions requestOptionsMedia = new RequestOptions();
+        requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
+        Glide.with(context)
+                .load(chat.getChatPhotoUrl())
+                .apply(requestOptionsMedia)
+                .fallback(R.drawable.man)
+                .into(ivProfile);
 
         // set an event listener to update the last message and timestamp of the chat if there is a change
         Firebase.setAndroidContext(context);
@@ -146,7 +138,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         Chat chat = chats.get(position);
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));
-                        intent.putExtra("nameToDisplay", nameToDisplay);
                         context.startActivity(intent);
                     }
                 }
@@ -159,37 +150,5 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     public void clear() {
         chats.clear();
         notifyDataSetChanged();
-    }
-
-    public void getUserDetails(String userId) {
-        String url = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
-        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
-            try {
-                JSONObject object = new JSONObject(s);
-                String name = object.getString("userName");
-                String profilePhotoURL = object.getString("userProfilePhotoURL");
-
-                // load profile pic
-                RequestOptions requestOptionsMedia = new RequestOptions();
-                requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
-                Glide.with(context)
-                        .load(profilePhotoURL)
-                        .apply(requestOptionsMedia)
-                        .fallback(R.drawable.man)
-                        .into(ivProfile);
-
-                // set name
-                nameToDisplay = name;
-                tvName.setText(name);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, volleyError -> {
-            Log.e("ChatAdapter", "" + volleyError);
-        });
-
-        RequestQueue rQueue = Volley.newRequestQueue(context);
-        rQueue.add(request);
     }
 }

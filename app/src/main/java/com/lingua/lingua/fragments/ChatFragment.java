@@ -32,11 +32,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.lingua.lingua.MainActivity;
+import com.lingua.lingua.R;
 import com.lingua.lingua.TextChatActivity;
 import com.lingua.lingua.VideoChatActivity;
 import com.lingua.lingua.adapters.ChatAdapter;
-import com.lingua.lingua.MainActivity;
-import com.lingua.lingua.R;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
@@ -137,7 +137,6 @@ public class ChatFragment extends Fragment {
                     String key = keys.next().toString();
                     queryChatInfo(key);
                 }
-                swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
                 Toast.makeText(context, "No chats to display", Toast.LENGTH_LONG).show();
                 swipeContainer.setRefreshing(false);
@@ -189,8 +188,15 @@ public class ChatFragment extends Fragment {
                 chatOb.setChatParticipants(userIds);
                 chatOb.setLastTextMessage(lastMessage);
                 chatOb.setChatLanguages(exploreLanguages);
-                chats.add(chatOb);
-                adapter.notifyDataSetChanged();
+
+                if (userIds.size() == 2) {
+                    for (String userID : userIds) {
+                        if (!userID.equals(currentUser.getUserID())) {
+                            getUserDetails(userID, chatOb);
+                        }
+                    }
+                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -202,6 +208,34 @@ public class ChatFragment extends Fragment {
 
         RequestQueue rQueue = Volley.newRequestQueue(context);
         rQueue.add(chatInfoRequest);
+    }
+
+    public void getUserDetails(String userId, Chat chat) {
+        String url = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
+        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+            try {
+                JSONObject object = new JSONObject(s);
+                String name = object.getString("userName");
+                String profilePhotoURL = object.getString("userProfilePhotoURL");
+
+                // set chat info
+                chat.setChatName(name);
+                chat.setChatPhotoUrl(profilePhotoURL);
+
+                swipeContainer.setRefreshing(false);
+
+                chats.add(chat);
+                adapter.notifyDataSetChanged();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, volleyError -> {
+            Log.e("ChatAdapter", "" + volleyError);
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(context);
+        rQueue.add(request);
     }
 
 
@@ -225,7 +259,6 @@ public class ChatFragment extends Fragment {
                         // creating the dialog for selecting the language of the call
                         Intent intent = new Intent(context, TextChatActivity.class);
                         // intent to the video chat activity
-                        intent.putExtra("nameToDisplay", "Chatting");
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));
                         context.startActivity(intent);
@@ -241,7 +274,6 @@ public class ChatFragment extends Fragment {
                         Intent intent = new Intent(context, VideoChatActivity.class);
                         // intent to the video chat activity
                         intent.setAction("Launch from Chat Fragment");
-                        intent.putExtra("nameToDisplay", "Videochat");
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));
                         context.startActivity(intent);
