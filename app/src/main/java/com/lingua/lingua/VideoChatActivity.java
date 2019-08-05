@@ -203,7 +203,7 @@ public class VideoChatActivity extends AppCompatActivity {
     private void queryAndUpdateHoursSpokenInfo() {
         String databaseURL = "https://lingua-project.firebaseio.com/users" + userId;
 
-        // fetch users from database
+        // fetch user from database
         StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

@@ -14,6 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
@@ -24,11 +30,16 @@ import com.hootsuite.nachos.chip.ChipSpan;
 import com.hootsuite.nachos.chip.ChipSpanChipCreator;
 import com.hootsuite.nachos.tokenizer.SpanChipTokenizer;
 import com.lingua.lingua.models.User;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
@@ -243,8 +254,10 @@ public class ProfileCreationActivity extends AppCompatActivity {
             databaseReference.child("userOriginCountry").setValue(userOriginCountryInput.get(0));
             databaseReference.child("exploreLanguages").setValue(exploreLanguagesInput);
             databaseReference.child("exploreCountries").setValue(exploreCountriesInput);
+
         }
     }
+
 
     protected void loadInfo() {
         // loads the user info from the current logged in user

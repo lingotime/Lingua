@@ -60,7 +60,9 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
         String notificationType = checkTypeOfNotification(title);
         String body = data.get(NOTIFY_BODY_DATA_KEY);
 
-        if (notificationType == FRIEND_REQUEST_NOTIFICATION) {
+        Log.d("FriendNotification", data.toString());
+
+        if (notificationType.equals(FRIEND_REQUEST_NOTIFICATION)) {
             showNotification(body);
         } else {
             String senderId = data.get("fromIdentity");
@@ -156,11 +158,12 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
     // to distinguish between the friend request and video chat notifications
     private String checkTypeOfNotification(String title) {
         String[] words = title.split(" ");
-        if (words[0] == "Friend") {
+        if (words[0].equals("Friend")) {
             // friend request
             return FRIEND_REQUEST_NOTIFICATION;
+        } else {
+            return VIDEO_CHAT_NOTIFICATION;
         }
-        return VIDEO_CHAT_NOTIFICATION;
     }
 
 }

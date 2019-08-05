@@ -159,13 +159,16 @@ public class ChatFragment extends Fragment {
                     Log.d(TAG, key);
                     userIds.add(key);
                 }
+
+                // to get the explore languages of both users in the chat
                 ArrayList<String> exploreLanguages = new ArrayList<>();
-                if (chat.has("exploreLanguages")) {
-                    JSONArray objectExploreLanguages = chat.getJSONArray("exploreLanguages");
-                    for (int index = 0; index < objectExploreLanguages.length(); index++) {
-                        exploreLanguages.add((String) objectExploreLanguages.get(index));
+                JSONArray chatExploreLanguages = chat.getJSONArray("exploreLanguages");
+                if (chatExploreLanguages != null) {
+                    for (int index = 0; index < chatExploreLanguages.length(); index ++) {
+                        exploreLanguages.add((String) chatExploreLanguages.get(index));
                     }
                 }
+
                 chats.add(new Chat(id, null, lastMessage, lastMessageAt, userIds, exploreLanguages));
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
@@ -180,4 +183,5 @@ public class ChatFragment extends Fragment {
         RequestQueue rQueue = Volley.newRequestQueue(context);
         rQueue.add(chatInfoRequest);
     }
+
 }
