@@ -25,11 +25,6 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.lingua.lingua.DateUtil;
 import com.lingua.lingua.R;
@@ -59,7 +54,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     // for the explore languages
 
     private ImageView ivProfile;
-    private TextView tvMessage, tvName, tvTimestamp, tvDescription;
+    private TextView tvMessage, tvName, tvTimestamp;
     private Button acceptButton, rejectButton, cancelButton;
 
     String userId;
@@ -108,7 +103,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
             tvName.setText(friendRequest.getSenderUserName());
 
-            loadProfilePic(friendRequest.getSenderUser());
+            RequestOptions requestOptionsMedia = new RequestOptions();
+            requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
+            Glide.with(context)
+                    .load(friendRequest.getSenderPhotoUrl())
+                    .apply(requestOptionsMedia)
+                    .fallback(R.drawable.man)
+                    .into(ivProfile);
 
             acceptButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -128,7 +129,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
             tvName.setText(friendRequest.getReceiverUserName());
 
-            loadProfilePic(friendRequest.getReceiverUser());
+            RequestOptions requestOptionsMedia = new RequestOptions();
+            requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
+            Glide.with(context)
+                    .load(friendRequest.getReceiverPhotoUrl())
+                    .apply(requestOptionsMedia)
+                    .fallback(R.drawable.man)
+                    .into(ivProfile);
 
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -163,7 +170,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             tvMessage = itemView.findViewById(R.id.friend_request_message_tv);
             tvTimestamp = itemView.findViewById(R.id.friend_request_timestamp_tv);
             tvName = itemView.findViewById(R.id.friend_request_name);
-            tvDescription = itemView.findViewById(R.id.friend_request_description_tv);
             acceptButton = itemView.findViewById(R.id.friend_request_accept_button);
             rejectButton = itemView.findViewById(R.id.friend_request_decline_button);
             cancelButton = itemView.findViewById(R.id.friend_request_cancel_button);
@@ -452,32 +458,5 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("messages").child(chatId).push().setValue(message);
 
         Toast.makeText(context, "Friend request accepted", Toast.LENGTH_LONG).show();
-    }
-
-    public void loadProfilePic(String userId) {
-        String url = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
-        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
-            try {
-                JSONObject object = new JSONObject(s);
-                String profilePhotoURL = object.getString("userProfilePhotoURL");
-
-                // load profile pic
-                RequestOptions requestOptionsMedia = new RequestOptions();
-                requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
-                Glide.with(context)
-                        .load(profilePhotoURL)
-                        .apply(requestOptionsMedia)
-                        .fallback(R.drawable.man)
-                        .into(ivProfile);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, volleyError -> {
-            Log.e("ChatAdapter", "" + volleyError);
-        });
-
-        RequestQueue rQueue = Volley.newRequestQueue(context);
-        rQueue.add(request);
     }
 }

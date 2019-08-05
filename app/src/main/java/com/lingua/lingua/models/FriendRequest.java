@@ -11,13 +11,15 @@ public class FriendRequest {
     String friendRequestMessage;
     String senderUser;
     String senderUserName;
+    String senderPhotoUrl;
     String receiverUser;
     String receiverUserName;
+    String receiverPhotoUrl;
     String createdTime;
     String respondedTime;
     ArrayList<String> exploreLanguages;
 
-    public FriendRequest() { }
+    public FriendRequest() {}
 
     public String getFriendRequestID() {
         return friendRequestID;
@@ -95,5 +97,21 @@ public class FriendRequest {
 
     public void setExploreLanguages(ArrayList<String> exploreLanguages) {
         this.exploreLanguages = exploreLanguages;
+    }
+
+    public String getSenderPhotoUrl() {
+        return senderPhotoUrl;
+    }
+
+    public void setSenderPhotoUrl(String senderPhotoUrl) {
+        this.senderPhotoUrl = senderPhotoUrl;
+    }
+
+    public String getReceiverPhotoUrl() {
+        return receiverPhotoUrl;
+    }
+
+    public void setReceiverPhotoUrl(String receiverPhotoUrl) {
+        this.receiverPhotoUrl = receiverPhotoUrl;
     }
 }

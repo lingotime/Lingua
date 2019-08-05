@@ -22,11 +22,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.NotificationsAdapter;
@@ -148,8 +143,10 @@ public class NotificationsFragment extends Fragment {
                 String message = object.getString("message");
                 String senderId = object.getString("senderId");
                 String senderName = object.getString("senderName");
+                String senderPhotoUrl = object.getString("senderPhotoUrl");
                 String receiverId = object.getString("receiverId");
                 String receiverName = object.getString("receiverName");
+                String receiverPhotoUrl = object.getString("receiverPhotoUrl");
                 String timestamp = object.getString("timestamp");
 
                 ArrayList<String> exploreLanguages = new ArrayList<>();
@@ -165,8 +162,10 @@ public class NotificationsFragment extends Fragment {
                 friendRequest.setFriendRequestMessage(message);
                 friendRequest.setSenderUser(senderId);
                 friendRequest.setSenderUserName(senderName);
+                friendRequest.setSenderPhotoUrl(senderPhotoUrl);
                 friendRequest.setReceiverUser(receiverId);
                 friendRequest.setReceiverUserName(receiverName);
+                friendRequest.setReceiverPhotoUrl(receiverPhotoUrl);
                 friendRequest.setCreatedTime(timestamp);
                 friendRequest.setFriendRequestID(id);
                 friendRequest.setExploreLanguages(exploreLanguages);

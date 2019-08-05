@@ -238,10 +238,12 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
             Map<String, String> map = new HashMap<>();
             map.put("message", friendRequestMessage);
-            map.put("senderId", currentUser.getUserID());
             map.put("receiverId", clickedUser.getUserID());
             map.put("receiverName", clickedUser.getUserName());
+            map.put("receiverPhotoUrl", clickedUser.getUserProfilePhotoURL());
+            map.put("senderId", currentUser.getUserID());
             map.put("senderName", currentUser.getUserName());
+            map.put("senderPhotoUrl", currentUser.getUserProfilePhotoURL());
             map.put("timestamp", new Date().toString());
             map.put("id", friendRequestId);
 
