@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize">
-
+        <activity android:name=".VideoChatActivity"></activity>
         <!-- [START fcm_listener] -->
         <service android:name=".fcm.NotifyFirebaseMessagingService">
             <intent-filter>
@@ -45,13 +45,11 @@
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
 
-        <activity android:name=".VideoChatActivity" />
         <activity android:name=".ProfilePicture" />
         <activity
             android:name=".ProfileCreationActivity"
             android:windowSoftInputMode="adjustResize" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
         <activity android:name=".MainActivity" /> <!-- make sure within the application tag, otherwise app will crash with XmlResourceParser errors -->
-
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
