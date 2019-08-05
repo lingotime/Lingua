@@ -151,9 +151,9 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnectionButton2 = (ImageView) findViewById(R.id.activity_video_chat_disconnect_image);
         switchCameraButton2 = (ImageView) findViewById(R.id.activity_video_chat_switch_camera_image);
 
-        disconnectionButton.setVisibility(View.INVISIBLE); // hides if a call has not yet begun
+        disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
         disconnectionButton.setEnabled(false);
-        disconnectionButton2.setVisibility(View.INVISIBLE); // hides if a call has not yet begun
+        disconnectionButton2.setVisibility(View.GONE); // hides if a call has not yet begun
         disconnectionButton2.setEnabled(false);
 
         connectionButton.setOnClickListener(new View.OnClickListener() {
@@ -266,9 +266,9 @@ public class VideoChatActivity extends AppCompatActivity {
 
     // UI options to take when the user has been connected to the room
     private void connectActions() {
-        connectionButton.setVisibility(View.INVISIBLE); // once connected, remove the button from view to prevent more connection attempts
+        connectionButton.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
         connectionButton.setEnabled(false);
-        connectionButton2.setVisibility(View.INVISIBLE); // once connected, remove the button from view to prevent more connection attempts
+        connectionButton2.setVisibility(View.GONE); // once connected, remove the button from view to prevent more connection attempts
         connectionButton2.setEnabled(false);
 
         // enable button for disconnection to end the call
@@ -287,9 +287,9 @@ public class VideoChatActivity extends AppCompatActivity {
         connectionButton2.setVisibility(View.VISIBLE);
         connectionButton2.setEnabled(true);
 
-        disconnectionButton.setVisibility(View.INVISIBLE);
+        disconnectionButton.setVisibility(View.GONE);
         disconnectionButton.setEnabled(false);
-        disconnectionButton2.setVisibility(View.INVISIBLE);
+        disconnectionButton2.setVisibility(View.GONE);
         disconnectionButton2.setEnabled(false);
 
         endTime = System.nanoTime();
@@ -411,7 +411,7 @@ public class VideoChatActivity extends AppCompatActivity {
         localVideoTrack = LocalVideoTrack.create(this, true, cameraCapturer);
 
         // getting the publisher container (for the local participant) and setting visibility to gone before the other participant enters the chat)
-        localVideoView.setVisibility(View.INVISIBLE);
+        localVideoView.setVisibility(View.GONE);
 
         // show the camera output from the user in the main screen
         remoteVideoView.setMirror(true);
@@ -422,7 +422,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     private void moveLocalVideoToSmallView() {
         // moves the local participant's local video track from the main view to make space for the remote participant
-        if (localVideoView.getVisibility() == View.INVISIBLE) {
+        if (localVideoView.getVisibility() == View.GONE) {
             localVideoView.setVisibility(View.VISIBLE);
             if (localVideoTrack != null) {
                 localVideoTrack.removeRenderer(remoteVideoView); // remove from the main view where the remote participant will be added
@@ -437,7 +437,7 @@ public class VideoChatActivity extends AppCompatActivity {
     private void moveLocalVideoToMainView() {
         // moves the local participant's video track from the smaller view when there is no longer a remote participant
         if (localVideoView.getVisibility() == View.VISIBLE) {
-            localVideoView.setVisibility(View.INVISIBLE);
+            localVideoView.setVisibility(View.GONE);
             if (localVideoTrack != null) {
                 localVideoTrack.removeRenderer(localVideoView);
                 localVideoTrack.addRenderer(remoteVideoView);

@@ -161,7 +161,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             if (user.isOnline()) {
                 liveStatusSignal.setVisibility(View.VISIBLE);
             } else {
-                liveStatusSignal.setVisibility(View.INVISIBLE);
+                liveStatusSignal.setVisibility(View.GONE);
             }
 
             // load other user information into place

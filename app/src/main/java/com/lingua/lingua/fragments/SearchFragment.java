@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
@@ -132,6 +133,9 @@ public class SearchFragment extends Fragment {
             }
         };
         resultsTimeline.addOnScrollListener(scrollListener);
+
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        resultsTimeline.addItemDecoration(itemDecoration);
 
         // display timeline
         resultsTimeline.setLayoutManager(layoutManager);

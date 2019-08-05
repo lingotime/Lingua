@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -84,6 +85,9 @@ public class NotificationsFragment extends Fragment {
         rvNotifications.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rvNotifications.setLayoutManager(linearLayoutManager);
+
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        rvNotifications.addItemDecoration(itemDecoration);
 
         swipeContainer = view.findViewById(R.id.fragment_notifications_swipe_container);
         // Setup refresh listener which triggers new data loading
