@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -89,11 +90,14 @@ public class VideoChatActivity extends AppCompatActivity {
     private static final int RC_VIDEO_APP_PERM = 124;
 
     // fields from the layout
-    private ImageButton connectionButton;
-    private ImageButton disconnectionButton;
+    private ImageView connectionButton;
+    private ImageView disconnectionButton;
+    private ImageView connectionButton2;
+    private ImageView disconnectionButton2;
     private VideoView remoteVideoView;
     private VideoView localVideoView;
-    private ImageButton switchCameraButton;
+    private ImageView switchCameraButton;
+    private ImageView switchCameraButton2;
 
     private final static String TAG = "VideoChatActivity";
     // just for the initial test
@@ -170,12 +174,17 @@ public class VideoChatActivity extends AppCompatActivity {
 
         localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
-        connectionButton = (ImageButton) findViewById(R.id.activity_video_chat_connect);
-        disconnectionButton = (ImageButton) findViewById(R.id.activity_video_chat_disconnect);
-        switchCameraButton = (ImageButton) findViewById(R.id.activity_video_switch_camera);
+        connectionButton = (ImageView) findViewById(R.id.activity_video_chat_connect_button);
+        disconnectionButton = (ImageView) findViewById(R.id.activity_video_chat_disconnect_button);
+        switchCameraButton = (ImageView) findViewById(R.id.activity_video_chat_switch_camera_button);
+        connectionButton2 = (ImageView) findViewById(R.id.activity_video_chat_connect_image);
+        disconnectionButton2 = (ImageView) findViewById(R.id.activity_video_chat_disconnect_image);
+        switchCameraButton2 = (ImageView) findViewById(R.id.activity_video_chat_switch_camera_image);
 
         disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
         disconnectionButton.setEnabled(false);
+        disconnectionButton2.setVisibility(View.GONE); // hides if a call has not yet begun
+        disconnectionButton2.setEnabled(false);
 
         disconnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,7 +197,25 @@ public class VideoChatActivity extends AppCompatActivity {
             }
         });
 
+        disconnectionButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (room != null) {
+                    room.disconnect();
+                    disconnectActions();
+                }
+            }
+        });
+
         switchCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switchCamera();
+            }
+        });
+
+        switchCameraButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switchCamera();
@@ -748,6 +775,14 @@ public class VideoChatActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as live
+        currentUser.setOnline(true);
+        reference.child("online").setValue(currentUser.isOnline());
+
         //Check if H.264 is supported in this device
         boolean isH264Supported = MediaCodecVideoDecoder.isH264HwSupported() &&
                 MediaCodecVideoEncoder.isH264HwSupported();
@@ -786,6 +821,18 @@ public class VideoChatActivity extends AppCompatActivity {
             localVideoTrack = null;
         }
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Firebase.setAndroidContext(this);
+        Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
+
+        // mark user as dead
+        currentUser.setOnline(false);
+        reference.child("online").setValue(currentUser.isOnline());
     }
 
     @Override

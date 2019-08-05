@@ -2,8 +2,9 @@
     <string name="app_name">Lingua</string>
     <string name="facebook_app_id">625779014579350</string>
     <string name="facebook_login_protocol_scheme">fb625779014579350</string>
-    <string name="twilio_sid">n/a</string>
-    <string name="twilio_api">n/a</string>
-    <string name="twilio_secret_key">n/a</string>
+    <string name="twilio_api">SKd272c105815e9535b236e3d05c7b5b87</string>
+    <string name="twilio_secret_key">RFpLcKhrEPQzSlU3vn3uodE58M72FOtV</string>
+    <string name="twilio_sid">AC7fe7368cc5a508f2c044c3eb1df3a52b</string>
+    <string name="twilio_auth_token">39cfb34881986e2733da89f84c0e542b</string>
     <string name="base_url_string">n/a</string>
 </resources>
