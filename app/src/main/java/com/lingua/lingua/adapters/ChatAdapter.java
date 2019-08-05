@@ -65,15 +65,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
         Chat chat = chats.get(position);
-
-        // display last message with the other user's name or with "You: " if current user is the sender
-        String lastMessageRaw = chat.getLastTextMessage();
-        if (lastMessageRaw != null && lastMessageRaw.startsWith(currentUser.getUserName())) {
-            String lastMessage = "You" + lastMessageRaw.split(currentUser.getUserName())[1];
-            tvText.setText(lastMessage);
-        } else {
-            tvText.setText(lastMessageRaw);
-        }
+        tvText.setText(chat.getLastTextMessage());
         tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastTextChatTime()));
         tvName.setText(chat.getChatName());
 
@@ -98,6 +90,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 Log.d("ChatAdapter", s);
                 String key = dataSnapshot.getKey();
                 if (key.equals("lastMessage")) {
+                    // display last message with the other user's name or with "You: " if current user is the sender
                     String lastMessageRaw = (String) dataSnapshot.getValue();
                     if (lastMessageRaw != null && lastMessageRaw.startsWith(currentUser.getUserName())) {
                         String lastMessage = "You" + lastMessageRaw.split(currentUser.getUserName())[1];
