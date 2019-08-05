@@ -33,6 +33,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.TextChatActivity;
+import com.lingua.lingua.VideoChatActivity;
 import com.lingua.lingua.adapters.ChatAdapter;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
@@ -172,11 +173,13 @@ public class ChatFragment extends Fragment {
                     Log.d(TAG, key);
                     userIds.add(key);
                 }
+
+                // to get the explore languages of both users in the chat
                 ArrayList<String> exploreLanguages = new ArrayList<>();
-                if (chat.has("exploreLanguages")) {
-                    JSONArray objectExploreLanguages = chat.getJSONArray("exploreLanguages");
-                    for (int index = 0; index < objectExploreLanguages.length(); index++) {
-                        exploreLanguages.add((String) objectExploreLanguages.get(index));
+                JSONArray chatExploreLanguages = chat.getJSONArray("exploreLanguages");
+                if (chatExploreLanguages != null) {
+                    for (int index = 0; index < chatExploreLanguages.length(); index ++) {
+                        exploreLanguages.add((String) chatExploreLanguages.get(index));
                     }
                 }
 
@@ -201,7 +204,8 @@ public class ChatFragment extends Fragment {
         rQueue.add(chatInfoRequest);
     }
 
-    private void enableSwipe(){
+
+    private void enableSwipe() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
             @Override
@@ -213,22 +217,35 @@ public class ChatFragment extends Fragment {
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
 
-                if (direction == ItemTouchHelper.LEFT){
-                    Intent intent = new Intent(context, TextChatActivity.class);
-                    Chat chat = chats.get(position);
-                    intent.putExtra("chat", Parcels.wrap(chat));
-                    intent.putExtra("user", Parcels.wrap(currentUser));
-                    intent.putExtra("nameToDisplay", "Chatting");
+                if (direction == ItemTouchHelper.LEFT) {
 
-                    context.startActivity(intent);
+                    if (position != RecyclerView.NO_POSITION) {
+                        Chat chat = chats.get(position);
+
+                        // creating the dialog for selecting the language of the call
+                        Intent intent = new Intent(context, TextChatActivity.class);
+                        // intent to the video chat activity
+                        intent.putExtra("nameToDisplay", "Chatting");
+                        intent.putExtra("chat", Parcels.wrap(chat));
+                        intent.putExtra("user", Parcels.wrap(currentUser));
+                        context.startActivity(intent);
+                    }
+
+
                 } else {
-                    Intent intent = new Intent(context, VideoChatActivity.class);
-                    Chat chat = chats.get(position);
-                    intent.putExtra("chat", Parcels.wrap(chat));
-                    intent.putExtra("user", Parcels.wrap(currentUser));
-                    intent.putExtra("nameToDisplay", "Chatting");
 
-                    context.startActivity(intent);
+                    if (position != RecyclerView.NO_POSITION) {
+                        Chat chat = chats.get(position);
+
+                        // creating the dialog for selecting the language of the call
+                        Intent intent = new Intent(context, VideoChatActivity.class);
+                        // intent to the video chat activity
+                        intent.setAction("Launch from Chat Fragment");
+                        intent.putExtra("nameToDisplay", "Videochat");
+                        intent.putExtra("chat", Parcels.wrap(chat));
+                        intent.putExtra("user", Parcels.wrap(currentUser));
+                        context.startActivity(intent);
+                    }
                 }
             }
 

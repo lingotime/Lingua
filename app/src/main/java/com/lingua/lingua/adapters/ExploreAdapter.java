@@ -256,28 +256,29 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             // send notification to other user
             sendFriendRequestNotification(clickedUser.getUserID());
         }
+    }
 
-        private void sendFriendRequestNotification(String userId) {
-            // send notification
-            Notification notification = new Notification(currentUser.getUserName() + " sent you a friend request!", userId);
+    private void sendFriendRequestNotification(String userId) {
+        // send notification
+        Notification notification = new Notification("Friend request from " + currentUser.getUserID(), currentUser.getUserName() + " sent you a friend request!", userId, null); // null sent as the final parameter since this is not a video chat notification
 
-            TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (!response.isSuccess()) {
-                        String message = "Sending notification failed: " + response.code() + " " + response.message();
-                        Log.e("ExploreAdapter", message);
-                    } else {
-                        Log.i("ExploreAdapter", "Sending notification success: " + response.code() + " " + response.message());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    String message = "Sending notification failed: " + t.getMessage();
+        TwilioFunctionsAPI.notify(notification).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!response.isSuccess()) {
+                    String message = "Sending notification failed: " + response.code() + " " + response.message();
                     Log.e("ExploreAdapter", message);
+                } else {
+                    Log.i("ExploreAdapter", "Sending notification success: " + response.code() + " " + response.message());
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                String message = "Sending notification failed: " + t.getMessage();
+                Log.e("ExploreAdapter", message);
+            }
+        });
+
     }
 }

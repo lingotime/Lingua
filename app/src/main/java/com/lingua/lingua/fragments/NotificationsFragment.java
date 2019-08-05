@@ -153,6 +153,7 @@ public class NotificationsFragment extends Fragment {
                 String timestamp = object.getString("timestamp");
 
                 ArrayList<String> exploreLanguages = new ArrayList<>();
+
                 if (object.has("exploreLanguages")) {
                     JSONArray objectExploreLanguages = object.getJSONArray("exploreLanguages");
                     for (int index = 0; index < objectExploreLanguages.length(); index++) {
