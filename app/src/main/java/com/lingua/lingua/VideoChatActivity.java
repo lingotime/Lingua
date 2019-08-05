@@ -176,27 +176,27 @@ public class VideoChatActivity extends AppCompatActivity {
 
         disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
         disconnectionButton.setEnabled(false);
-
-        disconnectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (room != null) {
-                    room.disconnect();
-                    disconnectActions();
-                }
-            }
-        });
-
-        switchCameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switchCamera();
-            }
-        });
-
-
+        disconnectionButton.setOnClickListener(disconnectionButtonListener());
+        switchCameraButton.setOnClickListener(switchCameraButtonListener());
         requestPermissions();
+    }
+
+    // Onclick listeners for the views
+
+    private View.OnClickListener switchCameraButtonListener() {
+        return view -> {
+            if (cameraCapturer != null) {
+                cameraCapturer.switchCamera();
+            }
+        };
+    }
+
+
+    private View.OnClickListener disconnectionButtonListener() {
+        return view -> {
+            room.disconnect();
+            disconnectActions();
+        };
     }
 
     // gets the information for the chat containing the video chat from the database and generates a local Chat object
@@ -313,13 +313,6 @@ public class VideoChatActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TextChatActivity.class);
             intent.putExtra("chat", Parcels.wrap(currentChat));
             intent.putExtra("user", Parcels.wrap(currentUser));
-        }
-    }
-
-    // finds out which camera is being used and switches to the other one
-    private void switchCamera() {
-        if (cameraCapturer != null) {
-            cameraCapturer.switchCamera();
         }
     }
 
