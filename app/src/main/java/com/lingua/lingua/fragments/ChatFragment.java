@@ -162,7 +162,7 @@ public class ChatFragment extends Fragment {
                 if (lastMessage != null && lastMessage.startsWith(currentUser.getUserName())) {
                     lastMessage = "You" + lastMessage.split(currentUser.getUserName())[1];
                 } else {
-                    lastMessage = lastMessage.split(currentUser.getUserName() + ": ")[1];
+                    lastMessage = lastMessage.split(": ")[1];
                 }
 
                 String lastMessageAt = chat.getString("lastMessageAt");

@@ -96,7 +96,6 @@ public class TextChatActivity extends AppCompatActivity {
             }
         });
 
-        // if a message is added, show it in the recycler view
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

@@ -96,7 +96,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                         String lastMessage = "You" + lastMessageRaw.split(currentUser.getUserName())[1];
                         tvText.setText(lastMessage);
                     } else {
-                        String lastMessage = "You" + lastMessageRaw.split(currentUser.getUserName() + ": ")[1];
+                        String lastMessage = lastMessageRaw.split(": ")[1];
                         tvText.setText(lastMessage);
                     }
                 } else if (key.equals("lastMessageAt")) {
