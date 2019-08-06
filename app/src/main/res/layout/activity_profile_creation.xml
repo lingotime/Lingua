@@ -75,7 +75,9 @@
                         android:ems="10"
                         android:hint="When's your birthday? *"
                         android:imeOptions="actionNext"
-                        android:inputType="date"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:clickable="true"
                         android:maxLines="1"
                         android:singleLine="true" />
                 </LinearLayout>

@@ -146,6 +146,7 @@ public class ProfileFragment extends Fragment {
 
         for (String knownLanguage : currentUser.getKnownLanguages()) {
             Chip knownLanguageChip = new Chip(context);
+            knownLanguageChip.setClickable(false);
             knownLanguageChip.setText(knownLanguage);
             knownLanguagesChips.addView(knownLanguageChip);
         }
@@ -164,6 +165,7 @@ public class ProfileFragment extends Fragment {
 
         for (String exploreLanguage : currentUser.getExploreLanguages()) {
             Chip exploreLanguageChip = new Chip(context);
+            exploreLanguageChip.setClickable(true);
             exploreLanguageChip.setText(exploreLanguage);
             exploreLanguagesChips.addView(exploreLanguageChip);
         }
@@ -183,6 +185,7 @@ public class ProfileFragment extends Fragment {
         for (String exploreCountry : currentUser.getExploreCountries()) {
             Chip exploreCountryChip = new Chip(context);
             exploreCountryChip.setText(exploreCountry);
+            exploreCountryChip.setClickable(false);
             exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
             exploreCountriesChips.addView(exploreCountryChip);
         }

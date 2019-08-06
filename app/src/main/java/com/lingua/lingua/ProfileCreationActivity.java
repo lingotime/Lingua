@@ -1,5 +1,6 @@
 package com.lingua.lingua;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -37,10 +39,12 @@ import org.parceler.Parcels;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
 
@@ -58,6 +62,10 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private Button continueButton;
 
     private String nextFragment;
+
+    final Calendar calendar = Calendar.getInstance();
+
+    SimpleDateFormat inputDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +87,32 @@ public class ProfileCreationActivity extends AppCompatActivity {
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         nextFragment = getIntent().getStringExtra("fragment");
         Log.d("ProfileCreationActivity", nextFragment);
+
+        // setting up the birthdate field for to accept the date from a calendar popup
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel();
+            }
+        };
+
+        birthdateField.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(ProfileCreationActivity.this, date, calendar
+                        .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
 
         // set up toolbar
         Toolbar toolbar = findViewById(R.id.activity_profile_creation_toolbar);
@@ -227,7 +261,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
         String userBirthDateInput = birthdateField.getText().toString();
         String userBirthDate = null;
         try {
-            SimpleDateFormat inputDateFormat = new SimpleDateFormat("MM/dd/yyyy");
             Date userBirthDateInputAsDate = inputDateFormat.parse(userBirthDateInput);
             userBirthDate = userBirthDateInputAsDate.toString();
             currentUser.setUserBirthDate(userBirthDate);
@@ -310,6 +343,12 @@ public class ProfileCreationActivity extends AppCompatActivity {
             continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110, 47, 222)));
             continueButton.setEnabled(true);
         }
+    }
+
+
+    // to get the date selected from the into the edit text field
+    private void updateLabel() {
+        birthdateField.setText(inputDateFormat.format(calendar.getTime()));
     }
 
     protected void loadInfo() {
