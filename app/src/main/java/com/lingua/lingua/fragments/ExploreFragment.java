@@ -123,8 +123,8 @@ public class ExploreFragment extends Fragment {
                 }
 
                 // get friends
-                if (userObject.has("friends")) {
-                    JSONObject object = userObject.getJSONObject("friends");
+                if (userObject.has("friendIDs")) {
+                    JSONObject object = userObject.getJSONObject("friendIDs");
                     Iterator keys = object.keys();
                     ArrayList<String> friends = new ArrayList<>();
                     while (keys.hasNext()) {

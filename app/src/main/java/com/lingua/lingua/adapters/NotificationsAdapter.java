@@ -204,8 +204,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("users").child(friendRequest.getReceiverUser()).child("chats").child(chatId).setValue(true);
 
         // update friends
-        reference.child("users").child(currentUser.getUserID()).child("friends").child(friendRequest.getReceiverUser()).setValue(true);
-        reference.child("users").child(friendRequest.getReceiverUser()).child("friends").child(currentUser.getUserID()).setValue(true);
+        reference.child("users").child(currentUser.getUserID()).child("friendIDs").child(friendRequest.getSenderUser()).setValue(true);
+        reference.child("users").child(friendRequest.getSenderUser()).child("friendIDs").child(currentUser.getUserID()).setValue(true);
 
         // create message in the new chat
         Map<String, String> message = new HashMap<>();

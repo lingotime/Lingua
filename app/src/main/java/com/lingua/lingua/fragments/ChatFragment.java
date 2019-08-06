@@ -175,10 +175,12 @@ public class ChatFragment extends Fragment {
 
                 // to get the explore languages of both users in the chat
                 ArrayList<String> exploreLanguages = new ArrayList<>();
-                JSONArray chatExploreLanguages = chat.getJSONArray("exploreLanguages");
-                if (chatExploreLanguages != null) {
-                    for (int index = 0; index < chatExploreLanguages.length(); index ++) {
-                        exploreLanguages.add((String) chatExploreLanguages.get(index));
+                if (chat.has("exploreLanguages")) {
+                    JSONArray chatExploreLanguages = chat.getJSONArray("exploreLanguages");
+                    if (chatExploreLanguages != null) {
+                        for (int index = 0; index < chatExploreLanguages.length(); index ++) {
+                            exploreLanguages.add((String) chatExploreLanguages.get(index));
+                        }
                     }
                 }
 
@@ -198,6 +200,7 @@ public class ChatFragment extends Fragment {
                 }
 
             } catch (JSONException e) {
+                swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
@@ -228,6 +231,7 @@ public class ChatFragment extends Fragment {
                 adapter.notifyDataSetChanged();
 
             } catch (JSONException e) {
+                swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
@@ -239,7 +243,6 @@ public class ChatFragment extends Fragment {
         RequestQueue rQueue = Volley.newRequestQueue(context);
         rQueue.add(request);
     }
-
 
     private void enableSwipe() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
