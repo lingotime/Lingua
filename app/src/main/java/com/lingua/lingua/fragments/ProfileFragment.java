@@ -2,8 +2,6 @@ package com.lingua.lingua.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,12 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.facebook.login.LoginManager;
@@ -29,7 +28,9 @@ import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.ProfileCreationActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
+
 import org.parceler.Parcels;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Period;
@@ -103,10 +104,7 @@ public class ProfileFragment extends Fragment {
                 if (id == R.id.menu_profile_fragment_edit_icon) {
 
                     // load the profile creation page if edit button is clicked
-                    final Intent intent = new Intent(context, ProfileCreationActivity.class);
-                    intent.putExtra("user", Parcels.wrap(currentUser));
-                    intent.putExtra("fragment", "profile");
-                    startActivity(intent);
+                    goToEdit();
 
                 } else if (id == R.id.menu_profile_fragment_log_out_icon) {
 
@@ -192,7 +190,7 @@ public class ProfileFragment extends Fragment {
 
     private void goToEdit() {
         // load the profile creation page
-        final Intent intent = new Intent(context, ProfileCreationActivity.class);
+        Intent intent = new Intent(context, ProfileCreationActivity.class);
         intent.putExtra("user", Parcels.wrap(currentUser));
         intent.putExtra("fragment", "profile");
         startActivity(intent);

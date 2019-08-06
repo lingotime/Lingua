@@ -213,12 +213,12 @@ public class SearchFragment extends Fragment {
                     }
 
                     if (usersList.isEmpty()) {
-                        Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "No users to display", Toast.LENGTH_SHORT).show();
                     }
 
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
-                    Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No users to display", Toast.LENGTH_SHORT).show();
                     Log.e("SearchFragment", "firebase:onException", exception);
                 }
             }
@@ -253,14 +253,6 @@ public class SearchFragment extends Fragment {
         if (currentUser.getFriends() != null) {
             for (String friendUserID : currentUser.getFriends()) {
                 if (friendUserID.equals(generatedUserID)) {
-                    return false;
-                }
-            }
-        }
-
-        if (currentUser.getDeclinedUsers() != null) {
-            for (String declinedUserID : currentUser.getDeclinedUsers()) {
-                if (declinedUserID.equals(generatedUserID)) {
                     return false;
                 }
             }

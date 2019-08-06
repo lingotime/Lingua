@@ -1,11 +1,11 @@
 package com.lingua.lingua;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -13,9 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
@@ -26,7 +27,9 @@ import com.hootsuite.nachos.chip.ChipSpan;
 import com.hootsuite.nachos.chip.ChipSpanChipCreator;
 import com.hootsuite.nachos.tokenizer.SpanChipTokenizer;
 import com.lingua.lingua.models.User;
+
 import org.parceler.Parcels;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,6 +76,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // unwrap the current user and next fragment
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         nextFragment = getIntent().getStringExtra("fragment");
+        Log.d("ProfileCreationActivity", nextFragment);
 
         // enable the profile image to be clickable
         profileImage.setOnClickListener(new View.OnClickListener() {
