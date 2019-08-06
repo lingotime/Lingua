@@ -24,35 +24,34 @@
                 android:id="@+id/activity_video_chat_subscriber_container">
             </com.twilio.video.VideoView>
 
-            <ImageButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/activity_video_chat_connect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|bottom"
                 android:layout_marginBottom="16dp"
-                android:background="@android:color/transparent"
+                android:tint="@android:color/white"
+                android:backgroundTint="@android:color/holo_green_dark"
                 app:srcCompat="@android:drawable/sym_action_call" />
 
-            <ImageButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/activity_video_chat_disconnect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="14dp"
-                android:layout_marginLeft="14dp"
-                android:background="@drawable/end_call_background"
+                android:layout_gravity="bottom|center"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@android:color/holo_red_dark"
                 app:srcCompat="@drawable/ic_call_end_white_24px"/>
 
-            <ImageButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/activity_video_switch_camera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|bottom"
                 android:layout_marginStart="14dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginBottom="60dp"
-                android:background="@android:color/transparent"
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_marginBottom="16dp"
                 app:srcCompat="@drawable/ic_switch_camera_24px" />
 
             <FrameLayout

@@ -22,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.client.Firebase;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Invite;
@@ -86,11 +87,11 @@ public class VideoChatActivity extends AppCompatActivity {
     private static final int RC_VIDEO_APP_PERM = 124;
 
     // fields from the layout
-    private ImageButton connectionButton;
-    private ImageButton disconnectionButton;
+    private FloatingActionButton connectionButton;
+    private FloatingActionButton disconnectionButton;
     private VideoView remoteVideoView;
     private VideoView localVideoView;
-    private ImageButton switchCameraButton;
+    private FloatingActionButton switchCameraButton;
 
     private final static String TAG = "VideoChatActivity";
     // just for the initial test
@@ -167,14 +168,15 @@ public class VideoChatActivity extends AppCompatActivity {
 
         localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
-        connectionButton = (ImageButton) findViewById(R.id.activity_video_chat_connect);
-        disconnectionButton = (ImageButton) findViewById(R.id.activity_video_chat_disconnect);
-        switchCameraButton = (ImageButton) findViewById(R.id.activity_video_switch_camera);
+        connectionButton = (FloatingActionButton) findViewById(R.id.activity_video_chat_connect);
+        disconnectionButton = (FloatingActionButton) findViewById(R.id.activity_video_chat_disconnect);
+        switchCameraButton = (FloatingActionButton) findViewById(R.id.activity_video_switch_camera);
 
         disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
         disconnectionButton.setEnabled(false);
         disconnectionButton.setOnClickListener(disconnectionButtonListener());
         switchCameraButton.setOnClickListener(switchCameraButtonListener());
+        connectionButton.setOnClickListener(connectionButtonListener());
         requestPermissions();
     }
 
@@ -289,6 +291,8 @@ public class VideoChatActivity extends AppCompatActivity {
     // steps to be taken to adjust the view when the local participant is disconnected
     private void disconnectActions() {
         moveLocalVideoToMainView();
+        disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
+        disconnectionButton.setEnabled(false);
         connectionButton.setVisibility(View.VISIBLE);
         connectionButton.setEnabled(true);
         endTime = System.nanoTime();
@@ -307,10 +311,12 @@ public class VideoChatActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("user", Parcels.wrap(currentUser));
             intent.putExtra("fragment", "chats");
+            startActivity(intent);
         } else if (intentAction.equals(CHAT_DETAILS_INTENT)) {
             Intent intent = new Intent(this, TextChatActivity.class);
             intent.putExtra("chat", Parcels.wrap(currentChat));
             intent.putExtra("user", Parcels.wrap(currentUser));
+            startActivity(intent);
         }
     }
 
