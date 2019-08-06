@@ -168,7 +168,6 @@ public class NotificationsFragment extends Fragment {
                 friendRequest.setExploreLanguages(exploreLanguages);
                 friendRequests.add(friendRequest);
                 adapter.notifyDataSetChanged();
-                swipeContainer.setRefreshing(false);
 
             } catch (JSONException e) {
                 swipeContainer.setRefreshing(false);

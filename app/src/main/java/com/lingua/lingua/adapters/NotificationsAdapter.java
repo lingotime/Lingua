@@ -93,14 +93,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 @Override
                 public void onClick(View view) {
                     acceptFriendRequest(friendRequest);
-                    deleteFriendRequest(friendRequest);
+                    deleteFriendRequest(friendRequest, position);
                 }
             });
 
             rejectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest);
+                    deleteFriendRequest(friendRequest, position);
                 }
             });
 
@@ -113,7 +113,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest);
+                    deleteFriendRequest(friendRequest, position);
                 }
             });
         }
@@ -160,7 +160,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
     }
 
-    public void deleteFriendRequest(FriendRequest friendRequest) {
+    public void deleteFriendRequest(FriendRequest friendRequest, int position) {
         //delete from friendRequests
         reference.child("friendRequests").child(friendRequest.getFriendRequestID()).removeValue();;
 
@@ -169,8 +169,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("users").child(friendRequest.getReceiverUser()).child("receivedFriendRequests").child(friendRequest.getFriendRequestID()).removeValue();
 
         friendRequests.remove(friendRequest);
-
-        notifyDataSetChanged();
+        notifyItemRemoved(position);
     }
 
     public void acceptFriendRequest(FriendRequest friendRequest) {
@@ -216,6 +215,5 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("messages").child(chatId).push().setValue(message);
 
         Toast.makeText(context, "Friend request accepted", Toast.LENGTH_SHORT).show();
-
     }
 }
