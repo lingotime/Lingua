@@ -307,10 +307,12 @@ public class VideoChatActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("user", Parcels.wrap(currentUser));
             intent.putExtra("fragment", "chats");
+            startActivity(intent);
         } else if (intentAction.equals(CHAT_DETAILS_INTENT)) {
             Intent intent = new Intent(this, TextChatActivity.class);
             intent.putExtra("chat", Parcels.wrap(currentChat));
             intent.putExtra("user", Parcels.wrap(currentUser));
+            startActivity(intent);
         }
     }
 
