@@ -136,6 +136,8 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
                                 if (!friendRequestMessage.equals("")) {
                                     checkIfPossibleAndSendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
+                                } else {
+                                    Toast.makeText(context, "You can't send a friend request with no message, say hi!", Toast.LENGTH_SHORT).show();
                                 }
 
                                 dialogInterface.cancel();
