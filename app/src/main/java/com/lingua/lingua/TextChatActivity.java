@@ -111,7 +111,8 @@ public class TextChatActivity extends AppCompatActivity {
                 messageOb.setMessageText(message);
                 messageOb.setSenderUser(senderId);
                 messages.add(messageOb);
-                adapter.notifyDataSetChanged();
+                adapter.notifyItemInserted(messages.size() - 1);
+                rvMessages.scrollToPosition(messages.size() - 1);
             }
 
             @Override
