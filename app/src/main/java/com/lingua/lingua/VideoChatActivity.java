@@ -308,9 +308,7 @@ public class VideoChatActivity extends AppCompatActivity {
         }
 
         // return the user to the activity from which they came
-        if (intentAction.equals(CHAT_FRAGMENT_INTENT) || intentAction.equals(CHAT_DETAILS_INTENT)) {
-            this.onBackPressed();
-        }
+        this.onBackPressed();
     }
 
     // calculates the length of the call and returns a value in minutes
