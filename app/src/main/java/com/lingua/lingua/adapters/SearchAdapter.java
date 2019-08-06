@@ -9,9 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.CountryInformation;
+import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Notification;
@@ -133,6 +136,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
                         // display the confirm dialog
                         AlertDialog confirmDialog = confirmDialogBuilder.create();
+
+                        // sets the margin between the positive and negative buttons when the alert shows
+                        confirmDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+                                Button negativeButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE);
+                                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                );
+                                params.setMargins(0,0,10,0);
+                                negativeButton.setLayoutParams(params);
+                            }
+                        });
+
                         confirmDialog.show();
                     }
                 }
