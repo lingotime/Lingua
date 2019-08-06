@@ -16,9 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
@@ -30,6 +33,9 @@ import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Notification;
 import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Period;
@@ -38,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -78,9 +85,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private CardView card;
         private ImageView flagImage;
-        private ImageView profilePhotoImageBorder;
         private ImageView profilePhotoImage;
         private ImageView liveStatusSignal;
         private TextView nameText;
@@ -93,9 +98,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         public ViewHolder(View userItemView) {
             super(userItemView);
 
-            card = userItemView.findViewById(R.id.item_user_card);
             flagImage = userItemView.findViewById(R.id.item_user_flag);
-            profilePhotoImageBorder = userItemView.findViewById(R.id.item_user_profile_image_border);
             profilePhotoImage = userItemView.findViewById(R.id.item_user_profile_image);
             liveStatusSignal = userItemView.findViewById(R.id.item_user_live_signal_image);
             nameText = userItemView.findViewById(R.id.item_user_name_text);
@@ -132,7 +135,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                                 String friendRequestMessage = confirmDialogMessageField.getText().toString();
 
                                 if (!friendRequestMessage.equals("")) {
-                                    sendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
+                                    checkIfPossibleAndSendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
                                 }
 
                                 dialogInterface.cancel();
@@ -195,6 +198,39 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             return 0;
         }
 
+        private void checkIfPossibleAndSendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage, int position) {
+            String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + ".json";
+            StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+                try {
+                    JSONObject userObject = new JSONObject(s);
+
+                    // get received friend requests
+                    if (userObject.has("receivedFriendRequests")) {
+                        JSONObject receivedFriendRequests = userObject.getJSONObject("receivedFriendRequests");
+                        Iterator receivedFriendRequestKeys = receivedFriendRequests.keys();
+                        ArrayList<String> receivedFriendRequestUserIDs = new ArrayList<>();
+                        while (receivedFriendRequestKeys.hasNext()) {
+                            String key = receivedFriendRequestKeys.next().toString();
+                            String userID = key.split("@")[0];
+                            receivedFriendRequestUserIDs.add(userID);
+                        }
+                        currentUser.setPendingReceivedFriendRequests(receivedFriendRequestUserIDs);
+                    }
+
+                    sendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
+
+                } catch (JSONException e) {
+                    Log.e("ExploreFragment", e.toString());
+                }
+            }, volleyError -> {
+                Toast.makeText(context, "No connection", Toast.LENGTH_SHORT).show();
+                Log.e("ExploreFragment", "" + volleyError);
+            });
+
+            RequestQueue rQueue = Volley.newRequestQueue(context);
+            rQueue.add(request);
+        }
+
         private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage, int position) {
             // ensure clicked user did not send friend request to current user while current user was typing
             if (currentUser.getPendingReceivedFriendRequests() != null) {
@@ -204,7 +240,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                         sendRequestButton.setText("Friend Request Received");
                         sendRequestButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
                         sendRequestButton.setEnabled(false);
-
                         Toast.makeText(context, "You already received a friend request from this user.", Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -235,7 +270,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             map.put("timestamp", new Date().toString());
             map.put("id", friendRequestId);
 
-            // add friend request id to current user
+            // add friend request id to local current user
             if (currentUser.getPendingSentFriendRequests() == null) {
                 currentUser.setPendingSentFriendRequests(new ArrayList<>(Arrays.asList(friendRequestId)));
             } else {

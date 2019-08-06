@@ -65,10 +65,6 @@ public class ExploreFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        queryReceivedFriendRequests();
-        querySentFriendRequests();
-        queryFriends();
-
         // associate view with java variable
         historyTimeline = view.findViewById(R.id.fragment_explore_history_timeline);
 
@@ -79,8 +75,8 @@ public class ExploreFragment extends Fragment {
         context = getContext();
 
         // initialize the list of users
-        usersList = new ArrayList<User>();
-        hiddenUsersList = new ArrayList<User>();
+        usersList = new ArrayList<>();
+        hiddenUsersList = new ArrayList<>();
 
         // set the adapter
         usersAdapter = new ExploreAdapter(context, usersList, hiddenUsersList, currentUser);
@@ -113,6 +109,8 @@ public class ExploreFragment extends Fragment {
 
         // display timeline
         historyTimeline.setLayoutManager(layoutManager);
+
+        queryInfoAndLoadUsers();
     }
 
     @Override
@@ -128,10 +126,10 @@ public class ExploreFragment extends Fragment {
         scrollListener.resetState();
 
         // fetch compatible users who match criteria and load them into timeline
-        fetchCompatibleUsersAndLoad(currentUser);
+        queryInfoAndLoadUsers();
     }
 
-    private void fetchCompatibleUsersAndLoad(User currentUser) {
+    private void fetchCompatibleUsers(User currentUser) {
         // get criteria for users to be loaded into timeline
         ArrayList<String> languagesSelectedByUser = currentUser.getExploreLanguages();
         ArrayList<String> countriesSelectedByUser = currentUser.getExploreCountries();
@@ -158,15 +156,15 @@ public class ExploreFragment extends Fragment {
 
                         // load blank values into null fields
                         if (generatedUser.getKnownLanguages() == null) {
-                            generatedUser.setKnownLanguages(new ArrayList<String>());
+                            generatedUser.setKnownLanguages(new ArrayList<>());
                         }
 
                         if (generatedUser.getExploreLanguages() == null) {
-                            generatedUser.setExploreLanguages(new ArrayList<String>());
+                            generatedUser.setExploreLanguages(new ArrayList<>());
                         }
 
                         if (generatedUser.getExploreCountries() == null) {
-                            generatedUser.setExploreCountries(new ArrayList<String>());
+                            generatedUser.setExploreCountries(new ArrayList<>());
                         }
 
                         // get relevant information from user for matching
@@ -261,68 +259,54 @@ public class ExploreFragment extends Fragment {
         return true;
     }
 
-    private void queryReceivedFriendRequests() {
-        String urlReceived = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/receivedFriendRequests.json";
-        StringRequest request = new StringRequest(Request.Method.GET, urlReceived, s -> {
-            try {
-                JSONObject object = new JSONObject(s);
-                Iterator keys = object.keys();
-                ArrayList<String> userIDs = new ArrayList<>();
-                while (keys.hasNext()) {
-                    String key = keys.next().toString();
-                    String userID = key.split("@")[0];
-                    userIDs.add(userID);
-                }
-                currentUser.setPendingReceivedFriendRequests(userIDs);
-            } catch (JSONException e) {
-                Log.e("ExploreFragment", e.toString());
-            }
-        }, volleyError -> {
-            Toast.makeText(context, "No connection", Toast.LENGTH_SHORT).show();
-            Log.e("ExploreFragment", "" + volleyError);
-        });
+    private void queryInfoAndLoadUsers() {
+        String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + ".json";
 
-        RequestQueue rQueue = Volley.newRequestQueue(context);
-        rQueue.add(request);
-    }
-
-    private void querySentFriendRequests() {
-        String urlSent = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/sentFriendRequests.json";
-        StringRequest request = new StringRequest(Request.Method.GET, urlSent, s -> {
-            try {
-                JSONObject object = new JSONObject(s);
-                Iterator keys = object.keys();
-                ArrayList<String> userIDs = new ArrayList<>();
-                while (keys.hasNext()) {
-                    String key = keys.next().toString();
-                    String userID = key.split("@")[0];
-                    userIDs.add(userID);
-                }
-                currentUser.setPendingSentFriendRequests(userIDs);
-            } catch (JSONException e) {
-                Log.e("ExploreFragment", e.toString());
-            }
-        }, volleyError -> {
-            Toast.makeText(context, "No connection", Toast.LENGTH_SHORT).show();
-            Log.e("ExploreFragment", "" + volleyError);
-        });
-
-        RequestQueue rQueue = Volley.newRequestQueue(context);
-        rQueue.add(request);
-    }
-
-    private void queryFriends() {
-        String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/friends.json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
-                JSONObject object = new JSONObject(s);
-                Iterator keys = object.keys();
-                ArrayList<String> friends = new ArrayList<>();
-                while (keys.hasNext()) {
-                    String key = keys.next().toString();
-                    friends.add(key);
+
+                JSONObject userObject = new JSONObject(s);
+
+                // get received friend requests
+                if (userObject.has("receivedFriendRequests")) {
+                    JSONObject receivedFriendRequests = userObject.getJSONObject("receivedFriendRequests");
+                    Iterator receivedFriendRequestKeys = receivedFriendRequests.keys();
+                    ArrayList<String> receivedFriendRequestUserIDs = new ArrayList<>();
+                    while (receivedFriendRequestKeys.hasNext()) {
+                        String key = receivedFriendRequestKeys.next().toString();
+                        String userID = key.split("@")[0];
+                        receivedFriendRequestUserIDs.add(userID);
+                    }
+                    currentUser.setPendingReceivedFriendRequests(receivedFriendRequestUserIDs);
                 }
-                currentUser.setFriends(friends);
+
+                // get sent friend requests
+                if (userObject.has("sentFriendRequests")) {
+                    JSONObject object = userObject.getJSONObject("sentFriendRequests");
+                    Iterator sentFriendRequestKeys = object.keys();
+                    ArrayList<String> sentFriendRequestUserIDs = new ArrayList<>();
+                    while (sentFriendRequestKeys.hasNext()) {
+                        String key = sentFriendRequestKeys.next().toString();
+                        String userID = key.split("@")[1];
+                        sentFriendRequestUserIDs.add(userID);
+                    }
+                    currentUser.setPendingSentFriendRequests(sentFriendRequestUserIDs);
+                }
+
+                // get friends
+                if (userObject.has("friends")) {
+                    JSONObject object = userObject.getJSONObject("friends");
+                    Iterator keys = object.keys();
+                    ArrayList<String> friends = new ArrayList<>();
+                    while (keys.hasNext()) {
+                        String key = keys.next().toString();
+                        friends.add(key);
+                    }
+                    currentUser.setFriends(friends);
+                }
+                
+                fetchCompatibleUsers(currentUser);
+
             } catch (JSONException e) {
                 Log.e("ExploreFragment", e.toString());
             }
