@@ -173,27 +173,31 @@ public class VideoChatActivity extends AppCompatActivity {
 
         disconnectionButton.setVisibility(View.GONE); // hides if a call has not yet begun
         disconnectionButton.setEnabled(false);
-
-        disconnectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (room != null) {
-                    room.disconnect();
-                    disconnectActions();
-                }
-            }
-        });
-
-        switchCameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switchCamera();
-            }
-        });
-
-
+        disconnectionButton.setOnClickListener(disconnectionButtonListener());
+        switchCameraButton.setOnClickListener(switchCameraButtonListener());
         requestPermissions();
+    }
+
+    // Onclick listeners for the views
+
+    private View.OnClickListener switchCameraButtonListener() {
+        return view -> {
+            if (cameraCapturer != null) {
+                cameraCapturer.switchCamera();
+            }
+        };
+    }
+
+
+    private View.OnClickListener disconnectionButtonListener() {
+        return view -> {
+            room.disconnect();
+            disconnectActions();
+        };
+    }
+
+    private View.OnClickListener connectionButtonListener() {
+        return view -> requestPermissions();
     }
 
     // gets the information for the chat containing the video chat from the database and generates a local Chat object
@@ -260,13 +264,10 @@ public class VideoChatActivity extends AppCompatActivity {
                 }
             }
         });
-        languageSelection.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
-                // disconnect from the room if action not taken
-                disconnectActions();
-            }
+        languageSelection.setNegativeButton("Cancel", (dialogInterface, i) -> {
+            Toast.makeText(VideoChatActivity.this, "Video chat canceled", Toast.LENGTH_SHORT).show();
+            // disconnect from the room if action not taken
+            disconnectActions();
         });
 
         AlertDialog dialog = languageSelection.create();
@@ -310,13 +311,6 @@ public class VideoChatActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TextChatActivity.class);
             intent.putExtra("chat", Parcels.wrap(currentChat));
             intent.putExtra("user", Parcels.wrap(currentUser));
-        }
-    }
-
-    // finds out which camera is being used and switches to the other one
-    private void switchCamera() {
-        if (cameraCapturer != null) {
-            cameraCapturer.switchCamera();
         }
     }
 
@@ -555,11 +549,11 @@ public class VideoChatActivity extends AppCompatActivity {
                 // check if the local participant is the first one in the room and there are no remote participants, allow them to set the language for the chat
                 if (room.getRemoteParticipants().size() == 0) {
                     callLanguageDialog();
+                    sendTextChat("Video chat with me!");
                 }
 
                 Log.i(TAG, "Connected to " + room.getName());
                 // send a message to the other user to notify them of the creation of the room
-                sendTextChat("Video chat with me!");
                 for (RemoteParticipant remoteParticipant : room.getRemoteParticipants()) {
                     addRemoteParticipant(remoteParticipant);
                     break;
@@ -741,6 +735,8 @@ public class VideoChatActivity extends AppCompatActivity {
             }
         };
     }
+
+
 
     @Override
     protected void onResume() {

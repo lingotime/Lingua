@@ -86,26 +86,6 @@ public class MainActivity extends AppCompatActivity {
         // load the right fragment depending on intent extras
         String nextFragment = getIntent().getStringExtra("fragment");
 
-        if (nextFragment != null && nextFragment.equals("explore")) {
-            fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
-            bottomNavigationView.setSelectedItemId(R.id.explore);
-        } else if (nextFragment != null && nextFragment.equals("profile")) {
-            fragmentManager.beginTransaction().replace(R.id.activity_main_container, profileFragment).commit();
-            bottomNavigationView.setSelectedItemId(R.id.profile);
-        } else if (nextFragment != null && nextFragment.equals("search")) {
-            fragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment).commit();
-            bottomNavigationView.setSelectedItemId(R.id.search);
-        } else if (nextFragment != null && nextFragment.equals("chat")) {
-            fragmentManager.beginTransaction().replace(R.id.activity_main_container, chatFragment).commit();
-            bottomNavigationView.setSelectedItemId(R.id.chat);
-        } else if ( nextFragment != null && nextFragment.equals("notifications")) {
-            fragmentManager.beginTransaction().replace(R.id.activity_main_container, notificationsFragment).commit();
-            bottomNavigationView.setSelectedItemId(R.id.notifications);
-        } else {
-            fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
-            bottomNavigationView.setSelectedItemId(R.id.explore);
-        }
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -128,6 +108,23 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (nextFragment != null && nextFragment.equals("explore")) {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.explore);
+        } else if (nextFragment != null && nextFragment.equals("search")) {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, searchFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.search);
+        } else if (nextFragment != null && nextFragment.equals("chat")) {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, chatFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.chat);
+        } else if ( nextFragment != null && nextFragment.equals("notifications")) {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, notificationsFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.notifications);
+        } else {
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.explore);
+        }
 
         registerBinding();
 
