@@ -62,8 +62,10 @@ public class TextChatActivity extends AppCompatActivity {
         rvMessages = findViewById(R.id.activity_text_chat_rv);
         messages = new ArrayList<>();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_text_chat_toolbar);
+        Toolbar toolbar = findViewById(R.id.activity_text_chat_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(chat.getChatName());
 
         Firebase.setAndroidContext(this);
@@ -170,6 +172,14 @@ public class TextChatActivity extends AppCompatActivity {
             intent.setAction("Launch from Chat Details");
             intent.putExtra("chat", Parcels.wrap(chat));
             intent.putExtra("user", Parcels.wrap(currentUser));
+            startActivity(intent);
+
+            return true;
+        } else if (id == android.R.id.home) {
+            // intent to chat fragment
+            Intent intent = new Intent(TextChatActivity.this, MainActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("fragment", "chat");
             startActivity(intent);
 
             return true;
