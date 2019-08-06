@@ -57,12 +57,10 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
     Context context;
     List<User> usersList;
-    List<User> hiddenUsersList;
 
-    public ExploreAdapter(Context context, List<User> usersList, List<User> hiddenUsersList, User currentUser) {
+    public ExploreAdapter(Context context, List<User> usersList, User currentUser) {
         this.context = context;
         this.usersList = usersList;
-        this.hiddenUsersList = hiddenUsersList;
         this.currentUser = currentUser;
     }
 
