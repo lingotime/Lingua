@@ -60,8 +60,6 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
         String notificationType = checkTypeOfNotification(title);
         String body = data.get(NOTIFY_BODY_DATA_KEY);
 
-        Log.d("FriendNotification", data.toString());
-
         if (notificationType.equals(FRIEND_REQUEST_NOTIFICATION)) {
             showNotification(body);
         } else {
