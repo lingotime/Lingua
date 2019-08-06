@@ -165,7 +165,7 @@ public class ProfileFragment extends Fragment {
 
         for (String exploreLanguage : currentUser.getExploreLanguages()) {
             Chip exploreLanguageChip = new Chip(context);
-            exploreLanguageChip.setClickable(true);
+            exploreLanguageChip.setClickable(false);
             exploreLanguageChip.setText(exploreLanguage);
             exploreLanguagesChips.addView(exploreLanguageChip);
         }
