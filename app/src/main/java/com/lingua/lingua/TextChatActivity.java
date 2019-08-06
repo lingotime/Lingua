@@ -18,7 +18,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.lingua.lingua.adapters.ChatDetailsAdapter;
+import com.lingua.lingua.adapters.TextChatAdapter;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.Message;
 import com.lingua.lingua.models.User;
@@ -39,7 +39,7 @@ and that friend have exchanged and user can send messages from here
 public class TextChatActivity extends AppCompatActivity {
 
     RecyclerView rvMessages;
-    private ChatDetailsAdapter adapter;
+    private TextChatAdapter adapter;
     private List<Message> messages;
 
     private Button sendButton;
@@ -69,7 +69,7 @@ public class TextChatActivity extends AppCompatActivity {
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chat.getChatID());
 
-        adapter = new ChatDetailsAdapter(this, messages);
+        adapter = new TextChatAdapter(this, messages);
         rvMessages.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
@@ -96,7 +96,6 @@ public class TextChatActivity extends AppCompatActivity {
             }
         });
 
-        // if a message is added, show it in the recycler view
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

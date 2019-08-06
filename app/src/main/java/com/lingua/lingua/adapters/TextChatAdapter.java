@@ -20,7 +20,7 @@ import java.util.List;
 RecyclerView Adapter that adapts Message objects to the viewholders in the recyclerview
 */
 
-public class ChatDetailsAdapter extends RecyclerView.Adapter {
+public class TextChatAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<Message> messages;
@@ -32,7 +32,7 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
 
     String userId;
 
-    public ChatDetailsAdapter(Context context, List<Message> messages) {
+    public TextChatAdapter(Context context, List<Message> messages) {
         this.context = context;
         this.messages = messages;
 
