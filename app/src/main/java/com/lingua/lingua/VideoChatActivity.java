@@ -552,11 +552,11 @@ public class VideoChatActivity extends AppCompatActivity {
                 // check if the local participant is the first one in the room and there are no remote participants, allow them to set the language for the chat
                 if (room.getRemoteParticipants().size() == 0) {
                     callLanguageDialog();
+                    sendTextChat("Video chat with me!");
                 }
 
                 Log.i(TAG, "Connected to " + room.getName());
                 // send a message to the other user to notify them of the creation of the room
-                sendTextChat("Video chat with me!");
                 for (RemoteParticipant remoteParticipant : room.getRemoteParticipants()) {
                     addRemoteParticipant(remoteParticipant);
                     break;
@@ -738,6 +738,8 @@ public class VideoChatActivity extends AppCompatActivity {
             }
         };
     }
+
+
 
     @Override
     protected void onResume() {

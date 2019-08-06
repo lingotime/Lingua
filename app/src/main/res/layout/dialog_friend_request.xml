@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -20,13 +20,15 @@
             android:id="@+id/dialog_friend_request_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/linguaLightGray"
-            android:hint="Introduce yourself..."
-            android:imeOptions="actionSend"
-            android:inputType="textShortMessage|textAutoCorrect|textMultiLine|textCapSentences"
             android:maxLines="2"
-            android:minHeight="20dp"
+            android:hint="Introduce yourself..."
+            android:minHeight="65dp"
+            android:background="@color/linguaLightGray"
+            android:inputType="textShortMessage|textAutoCorrect|textMultiLine|textCapSentences"
+            android:imeOptions="actionSend"
             android:padding="10dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+

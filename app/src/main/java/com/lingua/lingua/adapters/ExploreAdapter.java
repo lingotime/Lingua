@@ -24,6 +24,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.textfield.TextInputEditText;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
