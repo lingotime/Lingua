@@ -32,11 +32,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.lingua.lingua.MainActivity;
+import com.lingua.lingua.R;
 import com.lingua.lingua.TextChatActivity;
 import com.lingua.lingua.VideoChatActivity;
 import com.lingua.lingua.adapters.ChatAdapter;
-import com.lingua.lingua.MainActivity;
-import com.lingua.lingua.R;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
@@ -122,9 +122,8 @@ public class ChatFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        enableSwipe();
-
         queryChats();
+        enableSwipe();
     }
 
     private void queryChats() {
@@ -137,14 +136,13 @@ public class ChatFragment extends Fragment {
                     String key = keys.next().toString();
                     queryChatInfo(key);
                 }
-                swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-                Toast.makeText(context, "No chats to display", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "No chats to display", Toast.LENGTH_SHORT).show();
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(context, "Connection error", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });
@@ -164,6 +162,7 @@ public class ChatFragment extends Fragment {
                     lastMessage = "You" + lastMessage.split(currentUser.getUserName())[1];
                 }
                 String lastMessageAt = chat.getString("lastMessageAt");
+
                 // get list of user ids in the chat
                 ArrayList<String> userIds = new ArrayList<>();
                 JSONObject users = chat.getJSONObject("users");
@@ -176,10 +175,12 @@ public class ChatFragment extends Fragment {
 
                 // to get the explore languages of both users in the chat
                 ArrayList<String> exploreLanguages = new ArrayList<>();
-                JSONArray chatExploreLanguages = chat.getJSONArray("exploreLanguages");
-                if (chatExploreLanguages != null) {
-                    for (int index = 0; index < chatExploreLanguages.length(); index ++) {
-                        exploreLanguages.add((String) chatExploreLanguages.get(index));
+                if (chat.has("exploreLanguages")) {
+                    JSONArray chatExploreLanguages = chat.getJSONArray("exploreLanguages");
+                    if (chatExploreLanguages != null) {
+                        for (int index = 0; index < chatExploreLanguages.length(); index ++) {
+                            exploreLanguages.add((String) chatExploreLanguages.get(index));
+                        }
                     }
                 }
 
@@ -189,13 +190,21 @@ public class ChatFragment extends Fragment {
                 chatOb.setChatParticipants(userIds);
                 chatOb.setLastTextMessage(lastMessage);
                 chatOb.setChatLanguages(exploreLanguages);
-                chats.add(chatOb);
-                adapter.notifyDataSetChanged();
+
+                if (userIds.size() == 2) {
+                    for (String userID : userIds) {
+                        if (!userID.equals(currentUser.getUserID())) {
+                            getUserDetails(userID, chatOb);
+                        }
+                    }
+                }
+
             } catch (JSONException e) {
+                swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(context, "Connection error", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
             Log.e("ChatFragment", "" + volleyError);
         });
@@ -204,6 +213,36 @@ public class ChatFragment extends Fragment {
         rQueue.add(chatInfoRequest);
     }
 
+    public void getUserDetails(String userId, Chat chat) {
+        String url = "https://lingua-project.firebaseio.com/users/" + userId + ".json";
+        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+            try {
+                JSONObject object = new JSONObject(s);
+                String name = object.getString("userName");
+                String profilePhotoURL = object.getString("userProfilePhotoURL");
+
+                // set chat info
+                chat.setChatName(name);
+                chat.setChatPhotoUrl(profilePhotoURL);
+
+                swipeContainer.setRefreshing(false);
+
+                chats.add(chat);
+                adapter.notifyDataSetChanged();
+
+            } catch (JSONException e) {
+                swipeContainer.setRefreshing(false);
+                e.printStackTrace();
+            }
+        }, volleyError -> {
+            Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show();
+            swipeContainer.setRefreshing(false);
+            Log.e("ChatFragment", "" + volleyError);
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(context);
+        rQueue.add(request);
+    }
 
     private void enableSwipe() {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -225,12 +264,10 @@ public class ChatFragment extends Fragment {
                         // creating the dialog for selecting the language of the call
                         Intent intent = new Intent(context, TextChatActivity.class);
                         // intent to the video chat activity
-                        intent.putExtra("nameToDisplay", "Chatting");
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));
                         context.startActivity(intent);
                     }
-
 
                 } else {
 
@@ -241,7 +278,6 @@ public class ChatFragment extends Fragment {
                         Intent intent = new Intent(context, VideoChatActivity.class);
                         // intent to the video chat activity
                         intent.setAction("Launch from Chat Fragment");
-                        intent.putExtra("nameToDisplay", "Videochat");
                         intent.putExtra("chat", Parcels.wrap(chat));
                         intent.putExtra("user", Parcels.wrap(currentUser));
                         context.startActivity(intent);

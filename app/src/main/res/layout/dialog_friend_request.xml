@@ -20,13 +20,12 @@
             android:id="@+id/dialog_friend_request_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/linguaLightGray"
             android:hint="Introduce yourself..."
             android:imeOptions="actionSend"
             android:inputType="textShortMessage|textAutoCorrect|textMultiLine|textCapSentences"
             android:maxLines="2"
-            android:minHeight="20dp"
-            android:padding="10dp" />
+            android:minHeight="40dp"
+            android:padding="30dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

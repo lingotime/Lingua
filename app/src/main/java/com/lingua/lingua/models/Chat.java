@@ -15,6 +15,7 @@ public class Chat {
     String lastTextChatTime;
     String lastVideoChatTime;
     String lastTextMessage;
+    String chatPhotoUrl;
 
     public Chat() { }
 
@@ -96,5 +97,13 @@ public class Chat {
 
     public void setLastTextMessage(String lastTextMessage) {
         this.lastTextMessage = lastTextMessage;
+    }
+
+    public String getChatPhotoUrl() {
+        return chatPhotoUrl;
+    }
+
+    public void setChatPhotoUrl(String chatPhotoUrl) {
+        this.chatPhotoUrl = chatPhotoUrl;
     }
 }

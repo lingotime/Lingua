@@ -1,7 +1,6 @@
 package com.lingua.lingua.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,11 +21,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.NotificationsAdapter;
@@ -63,10 +57,8 @@ public class NotificationsFragment extends Fragment {
         //set the context
         context = getContext();
 
-        SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
-        userId = prefs.getString("userId", "");
-
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
+        userId = currentUser.getUserID();
 
         return inflater.inflate(R.layout.fragment_notifications, container, false);
     }
@@ -106,9 +98,9 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void queryFriendRequests() {
-        String urlReceived = "https://lingua-project.firebaseio.com/users/" + userId + "/received-friend-requests.json";
+        String urlReceived = "https://lingua-project.firebaseio.com/users/" + userId + "/receivedFriendRequests.json";
         queryFriendRequests(urlReceived);
-        String urlSent = "https://lingua-project.firebaseio.com/users/" + userId + "/sent-friend-requests.json";
+        String urlSent = "https://lingua-project.firebaseio.com/users/" + userId + "/sentFriendRequests.json";
         queryFriendRequests(urlSent);
     }
 
@@ -123,14 +115,14 @@ public class NotificationsFragment extends Fragment {
                 }
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-                if (url.equals("https://lingua-project.firebaseio.com/users/" + userId + "/received-friend-requests.json")) {
-                    Toast.makeText(context, "No pending friend requests", Toast.LENGTH_LONG).show();
+                if (url.equals("https://lingua-project.firebaseio.com/users/" + userId + "/receivedFriendRequests.json")) {
+                    Toast.makeText(context, "No pending friend requests", Toast.LENGTH_SHORT).show();
                 }
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
         }, volleyError -> {
-            Toast.makeText(context, "No connection", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "No connection", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
             Log.e("NotificationsFragment", "" + volleyError);
         });
@@ -140,7 +132,7 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void queryFriendRequestInfo(String friendRequestId) {
-        String url = "https://lingua-project.firebaseio.com/friend-requests/" + friendRequestId + ".json";
+        String url = "https://lingua-project.firebaseio.com/friendRequests/" + friendRequestId + ".json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
@@ -148,8 +140,10 @@ public class NotificationsFragment extends Fragment {
                 String message = object.getString("message");
                 String senderId = object.getString("senderId");
                 String senderName = object.getString("senderName");
+                String senderPhotoUrl = object.getString("senderPhotoUrl");
                 String receiverId = object.getString("receiverId");
                 String receiverName = object.getString("receiverName");
+                String receiverPhotoUrl = object.getString("receiverPhotoUrl");
                 String timestamp = object.getString("timestamp");
 
                 ArrayList<String> exploreLanguages = new ArrayList<>();
@@ -165,13 +159,17 @@ public class NotificationsFragment extends Fragment {
                 friendRequest.setFriendRequestMessage(message);
                 friendRequest.setSenderUser(senderId);
                 friendRequest.setSenderUserName(senderName);
+                friendRequest.setSenderPhotoUrl(senderPhotoUrl);
                 friendRequest.setReceiverUser(receiverId);
                 friendRequest.setReceiverUserName(receiverName);
+                friendRequest.setReceiverPhotoUrl(receiverPhotoUrl);
                 friendRequest.setCreatedTime(timestamp);
                 friendRequest.setFriendRequestID(id);
                 friendRequest.setExploreLanguages(exploreLanguages);
                 friendRequests.add(friendRequest);
                 adapter.notifyDataSetChanged();
+                swipeContainer.setRefreshing(false);
+
             } catch (JSONException e) {
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();

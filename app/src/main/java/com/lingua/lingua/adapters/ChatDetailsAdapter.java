@@ -2,7 +2,6 @@ package com.lingua.lingua.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,6 @@ public class ChatDetailsAdapter extends RecyclerView.Adapter {
 
         SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         userId = prefs.getString("userId", "");
-        Log.i("ChatDetailsAdapter", userId);
     }
 
     @NonNull

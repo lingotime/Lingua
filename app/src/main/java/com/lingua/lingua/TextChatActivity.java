@@ -1,7 +1,6 @@
 package com.lingua.lingua;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -9,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -44,7 +42,6 @@ public class TextChatActivity extends AppCompatActivity {
     private ChatDetailsAdapter adapter;
     private List<Message> messages;
 
-    private ImageView sendButtonIcon;
     private Button sendButton;
     private EditText etMessage;
 
@@ -61,14 +58,13 @@ public class TextChatActivity extends AppCompatActivity {
 
         chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
-        String nameToDisplay = getIntent().getStringExtra("nameToDisplay");
 
         rvMessages = findViewById(R.id.activity_text_chat_rv);
         messages = new ArrayList<>();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_text_chat_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(nameToDisplay);
+        getSupportActionBar().setTitle(chat.getChatName());
 
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chat.getChatID());
@@ -80,7 +76,6 @@ public class TextChatActivity extends AppCompatActivity {
         rvMessages.setLayoutManager(linearLayoutManager);
 
         sendButton = findViewById(R.id.activity_text_chat_button_send);
-        sendButtonIcon = findViewById(R.id.activity_text_chat_iv_send);
         etMessage = findViewById(R.id.activity_text_chat_et);
 
         // send message on button click
@@ -116,7 +111,8 @@ public class TextChatActivity extends AppCompatActivity {
                 messageOb.setMessageText(message);
                 messageOb.setSenderUser(senderId);
                 messages.add(messageOb);
-                adapter.notifyDataSetChanged();
+                adapter.notifyItemInserted(messages.size() - 1);
+                rvMessages.scrollToPosition(messages.size() - 1);
             }
 
             @Override
