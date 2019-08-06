@@ -173,6 +173,13 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             ageText.setText(getAge(user.getUserBirthDate()) + " years old");
             biographyText.setText(user.getUserBiographyText());
 
+            // clear chips from chip group before loading the language chips
+            int chipsCount = knownLanguagesChips.getChildCount();
+            for (int i = 0; i < chipsCount; i++) {
+                View chip = knownLanguagesChips.getChildAt(i);
+                chip.setVisibility(View.GONE);
+            }
+
             // load chips of known languages
             for (String knownLanguage : user.getKnownLanguages()) {
                 Chip knownLanguageChip = new Chip(context);
