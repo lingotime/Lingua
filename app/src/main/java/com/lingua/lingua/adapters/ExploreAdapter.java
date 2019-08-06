@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,7 +75,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = usersList.get(position);
-        holder.bind(user);
+        holder.bind(user, position);
     }
 
     @Override
@@ -105,58 +106,9 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             biographyText = userItemView.findViewById(R.id.item_user_biography_text);
             knownLanguagesChips = userItemView.findViewById(R.id.item_user_known_languages_chip_group);
             sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
-
-            // send user a friend request, remove them from view, and add a new user to timeline
-            sendRequestButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // get current card number
-                    int position = getAdapterPosition();
-
-                    // ensure current card number is associated with a card
-                    if (position != RecyclerView.NO_POSITION) {
-                        // get user associated with current card number
-                        User clickedUser = usersList.get(position);
-
-                        // create a confirm dialog with an optional message field
-                        View confirmDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
-                        EditText confirmDialogMessageField = confirmDialogView.findViewById(R.id.dialog_friend_request_et);
-
-                        // build the confirm dialog
-                        AlertDialog.Builder confirmDialogBuilder = new AlertDialog.Builder(context);
-                        confirmDialogBuilder.setView(confirmDialogView);
-                        confirmDialogBuilder.setTitle("Confirm Friend Request to " + clickedUser.getUserName());
-                        confirmDialogBuilder.setMessage("Send a message with your friend request.");
-                        confirmDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String friendRequestMessage = confirmDialogMessageField.getText().toString();
-
-                                if (!friendRequestMessage.equals("")) {
-                                    checkIfPossibleAndSendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
-                                } else {
-                                    Toast.makeText(context, "You can't send a friend request with no message, say hi!", Toast.LENGTH_SHORT).show();
-                                }
-
-                                dialogInterface.cancel();
-                            }
-                        });
-                        confirmDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
-
-                        // display the confirm dialog
-                        AlertDialog confirmDialog = confirmDialogBuilder.create();
-                        confirmDialog.show();
-                    }
-                }
-            });
         }
 
-        public void bind(User user) {
+        public void bind(User user, int position) {
             // load user flag and profile photo into place
             Glide.with(context).load(context.getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(user.getUserOriginCountry()), "drawable", context.getPackageName())).into(flagImage);
             Glide.with(context).load(user.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePhotoImage);
@@ -181,6 +133,49 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 knownLanguageChip.setText(knownLanguage);
                 knownLanguagesChips.addView(knownLanguageChip);
             }
+
+            sendRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                    final View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
+                    dialogBuilder.setView(dialogView);
+
+                    dialogBuilder.setTitle("Confirm Friend Request to " + user.getUserName());
+                    dialogBuilder.setMessage("Say hi and tell " + user.getUserName() + " a little about yourself!");
+                    dialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            EditText editText = dialogView.findViewById(R.id.dialog_friend_request_et);
+                            String message = editText.getText().toString();
+                            if (!message.equals("")) {
+                                checkIfPossibleAndSendFriendRequest(currentUser, user, message, position);
+                            } else {
+                                Toast.makeText(context, "Can't send a friend request without any text, say hi!", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                    dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.d("ExploreAdapter", "Cancelled friend request");
+                        }
+                    });
+                    AlertDialog dialog = dialogBuilder.create();
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+
+                    // layout buttons
+                    Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                    btnNegative.setBackgroundColor(context.getResources().getColor(R.color.linguaDarkGray));
+
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) btnPositive.getLayoutParams();
+                    layoutParams.setMargins(5, 5, 20, 5);
+                    btnPositive.setLayoutParams(layoutParams);
+                    btnNegative.setLayoutParams(layoutParams);
+                }
+            });
         }
 
         private int getAge(String birthDateString) {
@@ -252,6 +247,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             sendRequestButton.setEnabled(false);
 
             // create a new database reference
+            Firebase.setAndroidContext(context);
             Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
 
             // create friend request
