@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -232,6 +233,10 @@ public class ChatFragment extends Fragment {
                 swipeContainer.setRefreshing(false);
 
                 chats.add(chat);
+
+                Collections.sort(chats, (o1, o2) -> o1.getLastTextChatTime().compareTo(o2.getLastTextChatTime()));
+                Collections.reverse(chats);
+
                 adapter.notifyDataSetChanged();
 
             } catch (JSONException e) {
