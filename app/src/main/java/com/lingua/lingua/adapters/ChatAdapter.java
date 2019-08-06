@@ -143,7 +143,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                 }
             });
         }
-
     }
 
     // Clean all elements of the recycler

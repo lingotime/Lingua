@@ -178,14 +178,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         String chatId = reference.child("chats").push().getKey();
 
         Map<String, Object> chat = new HashMap<>();
-        chat.put("lastMessage", friendRequest.getFriendRequestMessage());
+        chat.put("lastMessage", friendRequest.getSenderUserName() + ": " + friendRequest.getFriendRequestMessage());
         chat.put("lastMessageAt", friendRequest.getCreatedTime());
         chat.put("id", chatId);
 
         ArrayList<String> exploreLanguages = friendRequest.getExploreLanguages();
         // iterating and adding to avoid duplicates
         ArrayList<String> currentUserExploreLanguages = currentUser.getExploreLanguages();
-        for (int index = 0; index < currentUserExploreLanguages.size(); index ++) {
+        for (int index = 0; index < currentUserExploreLanguages.size(); index++) {
             if (!exploreLanguages.contains(currentUserExploreLanguages.get(index))) {
                 exploreLanguages.add(currentUserExploreLanguages.get(index));
             }
@@ -216,5 +216,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("messages").child(chatId).push().setValue(message);
 
         Toast.makeText(context, "Friend request accepted", Toast.LENGTH_SHORT).show();
+
     }
 }

@@ -216,36 +216,31 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             sendRequestButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
             sendRequestButton.setEnabled(false);
 
-            // add clicked user to current user's sent friend request user list
-            if (currentUser.getPendingSentFriendRequests() == null) {
-                currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(clickedUser.getUserID())));
-            } else {
-                currentUser.getPendingSentFriendRequests().add(clickedUser.getUserID());
-            }
-
-            // add current user to clicked user's received friend request user list
-            if (clickedUser.getPendingReceivedFriendRequests() == null) {
-                clickedUser.setPendingReceivedFriendRequests(new ArrayList<String>(Arrays.asList(currentUser.getUserID())));
-            } else {
-                clickedUser.getPendingReceivedFriendRequests().add(currentUser.getUserID());
-            }
-
             // create a new database reference
             Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
 
             // create friend request
-            String friendRequestId = databaseReference.child("friendRequests").push().getKey();
+            String senderId = currentUser.getUserID();
+            String receiverId = clickedUser.getUserID();
+            String friendRequestId = senderId + "@" + receiverId;
 
             Map<String, String> map = new HashMap<>();
             map.put("message", friendRequestMessage);
-            map.put("receiverId", clickedUser.getUserID());
+            map.put("receiverId", receiverId);
             map.put("receiverName", clickedUser.getUserName());
             map.put("receiverPhotoUrl", clickedUser.getUserProfilePhotoURL());
-            map.put("senderId", currentUser.getUserID());
+            map.put("senderId", senderId);
             map.put("senderName", currentUser.getUserName());
             map.put("senderPhotoUrl", currentUser.getUserProfilePhotoURL());
             map.put("timestamp", new Date().toString());
             map.put("id", friendRequestId);
+
+            // add friend request id to current user
+            if (currentUser.getPendingSentFriendRequests() == null) {
+                currentUser.setPendingSentFriendRequests(new ArrayList<>(Arrays.asList(friendRequestId)));
+            } else {
+                currentUser.getPendingSentFriendRequests().add(friendRequestId);
+            }
 
             // save new friend request data to database
             databaseReference.child("users").child(currentUser.getUserID()).child("sentFriendRequests").child(friendRequestId).setValue(true);
