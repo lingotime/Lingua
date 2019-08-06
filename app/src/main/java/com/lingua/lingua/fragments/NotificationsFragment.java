@@ -1,7 +1,6 @@
 package com.lingua.lingua.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,10 +57,8 @@ public class NotificationsFragment extends Fragment {
         //set the context
         context = getContext();
 
-        SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
-        userId = prefs.getString("userId", "");
-
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
+        userId = currentUser.getUserID();
 
         return inflater.inflate(R.layout.fragment_notifications, container, false);
     }

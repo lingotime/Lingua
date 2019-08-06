@@ -56,6 +56,8 @@ public class ExploreFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context = getContext();
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
         return inflater.inflate(R.layout.fragment_explore, container, false);
     }
 
