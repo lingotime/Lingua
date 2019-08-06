@@ -48,21 +48,20 @@ public class TextChatAdapter extends RecyclerView.Adapter {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent, parent, false);
             return new ViewHolder(view);
-        } else if (viewType == TYPE_MESSAGE_RECEIVED) {
+        } else {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_received, parent, false);
             return new ViewHolder(view);
-        } else {
-            return null;
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        holder.setIsRecyclable(false);
         Message message = messages.get(position);
         tvMessage.setText(message.getMessageText());
         String timestamp = DateUtil.getHourAndMinuteFormat(message.getCreatedTime());
-        if (timestamp != null) { tvTimestamp.setText(timestamp);}
+        tvTimestamp.setText(timestamp);
     }
 
     @Override
