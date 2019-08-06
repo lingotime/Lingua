@@ -94,14 +94,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 @Override
                 public void onClick(View view) {
                     acceptFriendRequest(friendRequest);
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                 }
             });
 
             rejectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                 }
             });
 
@@ -114,7 +114,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                 }
             });
         }
@@ -161,7 +161,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
     }
 
-    public void deleteFriendRequest(FriendRequest friendRequest, int position) {
+    public void deleteFriendRequest(FriendRequest friendRequest) {
         //delete from friendRequests
         reference.child("friendRequests").child(friendRequest.getFriendRequestID()).removeValue();;
 
@@ -170,7 +170,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("users").child(friendRequest.getReceiverUser()).child("receivedFriendRequests").child(friendRequest.getFriendRequestID()).removeValue();
 
         friendRequests.remove(friendRequest);
-        notifyItemRemoved(position);
+        notifyDataSetChanged();
     }
 
     public void acceptFriendRequest(FriendRequest friendRequest) {
