@@ -64,7 +64,6 @@
                         android:imeOptions="actionNext"
                         android:inputType="textPersonName"
                         android:maxLines="1"
-                        android:focusable="false"
                         android:nextFocusDown="@+id/activity_profile_info_setup_birthdate_field"
                         android:singleLine="true"
                         android:textSize="18sp" />
@@ -77,6 +76,7 @@
                         android:hint="When's your birthday? *"
                         android:imeOptions="actionNext"
                         android:inputType="none"
+                        android:focusable="false"
                         android:clickable="true"
                         android:maxLines="1"
                         android:singleLine="true" />
