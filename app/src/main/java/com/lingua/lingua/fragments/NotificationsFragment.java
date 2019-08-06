@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -74,6 +75,7 @@ public class NotificationsFragment extends Fragment {
         rvNotifications = view.findViewById(R.id.fragment_notifications_rv);
         friendRequests = new ArrayList<>();
         adapter = new NotificationsAdapter(context, friendRequests, currentUser);
+
         rvNotifications.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         rvNotifications.setLayoutManager(linearLayoutManager);
@@ -167,6 +169,10 @@ public class NotificationsFragment extends Fragment {
                 friendRequest.setFriendRequestID(id);
                 friendRequest.setExploreLanguages(exploreLanguages);
                 friendRequests.add(friendRequest);
+
+                Collections.sort(friendRequests, (o1, o2) -> o1.getCreatedTime().compareTo(o2.getCreatedTime()));
+                Collections.reverse(friendRequests);
+
                 adapter.notifyDataSetChanged();
 
             } catch (JSONException e) {

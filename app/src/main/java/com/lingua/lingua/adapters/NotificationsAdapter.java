@@ -49,8 +49,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     public NotificationsAdapter(Context context, List<FriendRequest> friendRequests, User user) {
         this.context = context;
-        this.friendRequests = friendRequests;
         this.currentUser = user;
+        this.friendRequests = friendRequests;
 
         Firebase.setAndroidContext(context);
         reference = new Firebase("https://lingua-project.firebaseio.com");
