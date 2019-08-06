@@ -75,6 +75,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        holder.setIsRecyclable(false);
         final FriendRequest friendRequest = friendRequests.get(position);
         tvMessage.setText(friendRequest.getFriendRequestMessage());
         tvTimestamp.setText(DateUtil.getRelativeTimeAgo(friendRequest.getCreatedTime()));

@@ -64,6 +64,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, final int position) {
+        holder.setIsRecyclable(false);
         Chat chat = chats.get(position);
         tvText.setText(chat.getLastTextMessage());
         tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastTextChatTime()));
