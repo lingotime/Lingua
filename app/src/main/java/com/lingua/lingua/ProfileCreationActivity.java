@@ -7,20 +7,24 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.facebook.login.LoginManager;
 import com.firebase.client.Firebase;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 import com.hootsuite.nachos.ChipConfiguration;
 import com.hootsuite.nachos.NachoTextView;
 import com.hootsuite.nachos.chip.ChipSpan;
@@ -43,7 +47,6 @@ import java.util.List;
 public class ProfileCreationActivity extends AppCompatActivity {
     private User currentUser;
 
-    private TextView descriptionText;
     private ImageView profileImage;
     private EditText nameField;
     private EditText birthdateField;
@@ -62,7 +65,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile_creation);
 
         // associate views with java variables
-        descriptionText = findViewById(R.id.activity_profile_info_setup_description_text);
         profileImage = findViewById(R.id.activity_profile_info_setup_profile_image);
         nameField = findViewById(R.id.activity_profile_info_setup_name_field);
         birthdateField = findViewById(R.id.activity_profile_info_setup_birthdate_field);
@@ -77,6 +79,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         nextFragment = getIntent().getStringExtra("fragment");
         Log.d("ProfileCreationActivity", nextFragment);
+
+        // set up toolbar
+        Toolbar toolbar = findViewById(R.id.activity_profile_creation_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Edit your profile");
 
         // enable the profile image to be clickable
         profileImage.setOnClickListener(new View.OnClickListener() {
@@ -347,5 +356,36 @@ public class ProfileCreationActivity extends AppCompatActivity {
             List<String> userTargetCountries = currentUser.getExploreCountries();
             exploreCountriesField.setText(userTargetCountries);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_default_fragments, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            // intent to chat fragment
+            if (nextFragment.equals("profile")) {
+                Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
+                intent.putExtra("user", Parcels.wrap(currentUser));
+                intent.putExtra("fragment", "profile");
+                startActivity(intent);
+            } else {
+                // if we are creating profile and hit back button, log out
+                FirebaseAuth.getInstance().signOut();
+                LoginManager.getInstance().logOut();
+                Intent intent = new Intent(ProfileCreationActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
