@@ -28,6 +28,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.textfield.TextInputEditText;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
@@ -127,6 +128,13 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             ageText.setText(getAge(user.getUserBirthDate()) + " years old");
             biographyText.setText(user.getUserBiographyText());
 
+            // clear chips from chip group before loading the language chips
+            int chipsCount = knownLanguagesChips.getChildCount();
+            for (int i = 0; i < chipsCount; i++) {
+                View chip = knownLanguagesChips.getChildAt(i);
+                chip.setVisibility(View.GONE);
+            }
+
             // load chips of known languages
             for (String knownLanguage : user.getKnownLanguages()) {
                 Chip knownLanguageChip = new Chip(context);
@@ -163,17 +171,23 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                     });
                     AlertDialog dialog = dialogBuilder.create();
                     dialog.setCanceledOnTouchOutside(false);
+
+                    // sets the margin between the positive and negative buttons when the alert shows
+                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface dialog) {
+                            Button negativeButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            params.setMargins(0,0,10,0);
+                            negativeButton.setLayoutParams(params);
+                        }
+                    });
+
                     dialog.show();
 
-                    // layout buttons
-                    Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                    btnNegative.setBackgroundColor(context.getResources().getColor(R.color.linguaDarkGray));
-
-                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) btnPositive.getLayoutParams();
-                    layoutParams.setMargins(5, 5, 20, 5);
-                    btnPositive.setLayoutParams(layoutParams);
-                    btnNegative.setLayoutParams(layoutParams);
                 }
             });
         }

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.CountryInformation;
+import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Notification;
@@ -51,6 +53,7 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.HEAD;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
     private User currentUser;
@@ -142,17 +145,23 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                     });
                     AlertDialog dialog = dialogBuilder.create();
                     dialog.setCanceledOnTouchOutside(false);
+
+                    // sets the margin between the positive and negative buttons when the alert shows
+                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface dialog) {
+                            Button negativeButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            params.setMargins(0,0,10,0);
+                            negativeButton.setLayoutParams(params);
+                        }
+                    });
+
                     dialog.show();
 
-                    // layout buttons
-                    Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                    btnNegative.setBackgroundColor(context.getResources().getColor(R.color.linguaDarkGray));
-
-                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) btnPositive.getLayoutParams();
-                    layoutParams.setMargins(5, 5, 20, 5);
-                    btnPositive.setLayoutParams(layoutParams);
-                    btnNegative.setLayoutParams(layoutParams);
                 }
             });
         }

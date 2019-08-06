@@ -41,8 +41,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="14dp"
                 android:layout_marginLeft="14dp"
-                android:background="@android:color/transparent"
-                android:tint="@android:color/holo_red_dark"
+                android:background="@drawable/end_call_background"
                 app:srcCompat="@drawable/ic_call_end_white_24px"/>
 
             <ImageButton
