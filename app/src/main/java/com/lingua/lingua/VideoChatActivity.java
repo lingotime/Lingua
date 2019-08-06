@@ -117,10 +117,10 @@ public class VideoChatActivity extends AppCompatActivity {
     private Integer currentDuration; // represents the number of minutes the user has already spoken in the language selected
 
     // to handle the action attached to the intent - to distinguish between that coming from one of the chat activities and one coming from clicking a push notification
-    private String intentAction;
+    private static String intentAction;
     private final static String PUSH_NOTIFICATION_INTENT = "Launch Push Notification"; // launched from sending the notification
-    private final static String CHAT_DETAILS_INTENT = "Launch From Chat Details"; // intent sent from the ChatDetailsActivity
-    private final static String CHAT_FRAGMENT_INTENT = "Launch From Chat Fragment"; // intent sent from the Chat Fragment
+    private final static String CHAT_DETAILS_INTENT = "Launch from Chat Details"; // intent sent from the ChatDetailsActivity
+    private final static String CHAT_FRAGMENT_INTENT = "Launch from Chat Fragment"; // intent sent from the Chat Fragment
 
 
 
@@ -193,7 +193,9 @@ public class VideoChatActivity extends AppCompatActivity {
 
     private View.OnClickListener disconnectionButtonListener() {
         return view -> {
-            room.disconnect();
+            if (room != null) {
+                room.disconnect();
+            }
             disconnectActions();
         };
     }
@@ -306,7 +308,6 @@ public class VideoChatActivity extends AppCompatActivity {
         }
 
         // return the user to the activity from which they came
-        String intentAction = getIntent().getAction();
         if (intentAction.equals(CHAT_FRAGMENT_INTENT)) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("user", Parcels.wrap(currentUser));
