@@ -258,14 +258,6 @@ public class SearchFragment extends Fragment {
             }
         }
 
-        if (currentUser.getDeclinedUsers() != null) {
-            for (String declinedUserID : currentUser.getDeclinedUsers()) {
-                if (declinedUserID.equals(generatedUserID)) {
-                    return false;
-                }
-            }
-        }
-
         if (currentUser.getPendingSentFriendRequests() != null) {
             for (String pendingUserID : currentUser.getPendingSentFriendRequests()) {
                 if (pendingUserID.equals(generatedUserID)) {
