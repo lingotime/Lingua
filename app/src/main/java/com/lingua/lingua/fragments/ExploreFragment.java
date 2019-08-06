@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,7 +23,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
-import com.lingua.lingua.EndlessRecyclerViewScrollListener;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.ExploreAdapter;
 import com.lingua.lingua.models.User;
@@ -46,17 +44,15 @@ public class ExploreFragment extends Fragment {
 
     Context context;
     ArrayList<User> usersList;
-    ArrayList<User> hiddenUsersList;
     ExploreAdapter usersAdapter;
 
-    private EndlessRecyclerViewScrollListener scrollListener;
     private RecyclerView historyTimeline;
-
-    private static final int NUMBER_OF_USERS_PER_LOAD = 20;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context = getContext();
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
         return inflater.inflate(R.layout.fragment_explore, container, false);
     }
 
@@ -74,34 +70,14 @@ public class ExploreFragment extends Fragment {
         context = getContext();
 
         // initialize the list of users
-        usersList = new ArrayList<User>();
-        hiddenUsersList = new ArrayList<User>();
+        usersList = new ArrayList<>();
 
         // set the adapter
-        usersAdapter = new ExploreAdapter(context, usersList, hiddenUsersList, currentUser);
+        usersAdapter = new ExploreAdapter(context, usersList, currentUser);
         historyTimeline.setAdapter(usersAdapter);
 
         // set the layout
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-
-        // prepare the endless scroll listener
-        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if (!hiddenUsersList.isEmpty()) {
-                    if (hiddenUsersList.size() > NUMBER_OF_USERS_PER_LOAD) {
-                        usersList.addAll(hiddenUsersList.subList(0, NUMBER_OF_USERS_PER_LOAD));
-                        hiddenUsersList.removeAll(hiddenUsersList.subList(0, NUMBER_OF_USERS_PER_LOAD));
-                    } else {
-                        usersList.addAll(hiddenUsersList);
-                        hiddenUsersList.clear();
-                    }
-
-                    usersAdapter.notifyDataSetChanged();
-                }
-            }
-        };
-        historyTimeline.addOnScrollListener(scrollListener);
 
         // enable the snap helper for card snapping
         SnapHelper helper = new LinearSnapHelper();
@@ -109,25 +85,72 @@ public class ExploreFragment extends Fragment {
 
         // display timeline
         historyTimeline.setLayoutManager(layoutManager);
+
+        queryInfoAndLoadUsers();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void queryInfoAndLoadUsers() {
+        String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + ".json";
 
-        // clear the user lists
-        usersList.clear();
-        hiddenUsersList.clear();
-        usersAdapter.notifyDataSetChanged();
+        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+            try {
+                JSONObject userObject = new JSONObject(s);
 
-        // reset the scroll listener
-        scrollListener.resetState();
+                // get received friend requests
+                if (userObject.has("receivedFriendRequests")) {
+                    JSONObject receivedFriendRequests = userObject.getJSONObject("receivedFriendRequests");
+                    Iterator receivedFriendRequestKeys = receivedFriendRequests.keys();
+                    ArrayList<String> receivedFriendRequestUserIDs = new ArrayList<>();
+                    while (receivedFriendRequestKeys.hasNext()) {
+                        String key = receivedFriendRequestKeys.next().toString();
+                        String userID = key.split("@")[0];
+                        receivedFriendRequestUserIDs.add(userID);
+                    }
+                    currentUser.setPendingReceivedFriendRequests(receivedFriendRequestUserIDs);
+                }
 
-        // fetch compatible users who match criteria and load them into timeline
-        fetchCompatibleUsersAndLoad(currentUser);
+                // get sent friend requests
+                if (userObject.has("sentFriendRequests")) {
+                    JSONObject object = userObject.getJSONObject("sentFriendRequests");
+                    Iterator sentFriendRequestKeys = object.keys();
+                    ArrayList<String> sentFriendRequestUserIDs = new ArrayList<>();
+                    while (sentFriendRequestKeys.hasNext()) {
+                        String key = sentFriendRequestKeys.next().toString();
+                        String userID = key.split("@")[1];
+                        sentFriendRequestUserIDs.add(userID);
+                    }
+                    currentUser.setPendingSentFriendRequests(sentFriendRequestUserIDs);
+                }
+
+                // get friends
+                if (userObject.has("friendIDs")) {
+                    JSONObject object = userObject.getJSONObject("friendIDs");
+                    Iterator keys = object.keys();
+                    ArrayList<String> friends = new ArrayList<>();
+                    while (keys.hasNext()) {
+                        String key = keys.next().toString();
+                        friends.add(key);
+                    }
+                    currentUser.setFriends(friends);
+                }
+
+                usersList.clear();
+                usersAdapter.notifyDataSetChanged();
+                fetchCompatibleUsers(currentUser);
+
+            } catch (JSONException e) {
+                Log.e("ExploreFragment", e.toString());
+            }
+        }, volleyError -> {
+            Toast.makeText(context, "No connection", Toast.LENGTH_SHORT).show();
+            Log.e("ExploreFragment", "" + volleyError);
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(context);
+        rQueue.add(request);
     }
 
-    private void fetchCompatibleUsersAndLoad(User currentUser) {
+    private void fetchCompatibleUsers(User currentUser) {
         // get criteria for users to be loaded into timeline
         ArrayList<String> languagesSelectedByUser = currentUser.getExploreLanguages();
         ArrayList<String> countriesSelectedByUser = currentUser.getExploreCountries();
@@ -141,7 +164,6 @@ public class ExploreFragment extends Fragment {
                 try {
                     JSONObject usersJSONObject = new JSONObject(response);
                     Iterator<String> usersJSONObjectKeys = usersJSONObject.keys();
-                    int usersJSONObjectCounter = 0;
 
                     // iterate through users in the database
                     while (usersJSONObjectKeys.hasNext()) {
@@ -154,15 +176,15 @@ public class ExploreFragment extends Fragment {
 
                         // load blank values into null fields
                         if (generatedUser.getKnownLanguages() == null) {
-                            generatedUser.setKnownLanguages(new ArrayList<String>());
+                            generatedUser.setKnownLanguages(new ArrayList<>());
                         }
 
                         if (generatedUser.getExploreLanguages() == null) {
-                            generatedUser.setExploreLanguages(new ArrayList<String>());
+                            generatedUser.setExploreLanguages(new ArrayList<>());
                         }
 
                         if (generatedUser.getExploreCountries() == null) {
-                            generatedUser.setExploreCountries(new ArrayList<String>());
+                            generatedUser.setExploreCountries(new ArrayList<>());
                         }
 
                         // get relevant information from user for matching
@@ -171,26 +193,18 @@ public class ExploreFragment extends Fragment {
 
                         // filter user depending on criteria
                         if (generatedUser.isComplete() && !(generatedUser.getUserID().equals(currentUser.getUserID())) && matchExists(languagesSelectedByUser, countriesSelectedByUser, languagesSelectedByGeneratedUser, originCountrySelectedByGeneratedUser) && actionNotTaken(generatedUser.getUserID())) {
-                            if (usersJSONObjectCounter < NUMBER_OF_USERS_PER_LOAD) {
-                                // add to the list of users
-                                usersList.add(generatedUser);
-
-                                // increment the user limiter
-                                usersJSONObjectCounter++;
-                            } else {
-                                // add to the hidden list of users
-                                hiddenUsersList.add(generatedUser);
-                            }
+                            // add to the list of users
+                            usersList.add(generatedUser);
                         }
                     }
 
                     if (usersList.isEmpty()) {
-                        Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "No users to display", Toast.LENGTH_SHORT).show();
                     }
 
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
-                    Toast.makeText(context, "No users to display", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No users to display", Toast.LENGTH_SHORT).show();
                     Log.e("ExploreFragment", "firebase:onException", exception);
                 }
             }
@@ -233,14 +247,6 @@ public class ExploreFragment extends Fragment {
         if (currentUser.getFriends() != null) {
             for (String friendUserID : currentUser.getFriends()) {
                 if (friendUserID.equals(generatedUserID)) {
-                    return false;
-                }
-            }
-        }
-
-        if (currentUser.getDeclinedUsers() != null) {
-            for (String declinedUserID : currentUser.getDeclinedUsers()) {
-                if (declinedUserID.equals(generatedUserID)) {
                     return false;
                 }
             }

@@ -1,13 +1,7 @@
 package com.lingua.lingua;
 
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-
 import android.Manifest;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -25,6 +19,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -194,7 +192,7 @@ public class ProfilePicture extends AppCompatActivity {
                     setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
                     setProfilePhotoButton.setEnabled(false);
 
-                    Toast.makeText(ProfilePicture.this, "There was no new photo.", Toast.LENGTH_LONG);
+                    Toast.makeText(ProfilePicture.this, "There was no new photo.", Toast.LENGTH_SHORT);
 
                     // return to info setup activity
                     final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
@@ -240,7 +238,7 @@ public class ProfilePicture extends AppCompatActivity {
 
                 Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
             } else {
-                Toast.makeText(this, "You did not take a photo.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "You did not take a photo.", Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == PHOTO_GALLERY_REQUEST_CODE) {
             if (data != null) {

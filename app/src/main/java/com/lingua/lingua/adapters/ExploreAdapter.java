@@ -12,13 +12,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
@@ -30,6 +34,9 @@ import com.lingua.lingua.models.User;
 import com.lingua.lingua.notifyAPI.Notification;
 import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Period;
@@ -38,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,12 +58,10 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
     Context context;
     List<User> usersList;
-    List<User> hiddenUsersList;
 
-    public ExploreAdapter(Context context, List<User> usersList, List<User> hiddenUsersList, User currentUser) {
+    public ExploreAdapter(Context context, List<User> usersList, User currentUser) {
         this.context = context;
         this.usersList = usersList;
-        this.hiddenUsersList = hiddenUsersList;
         this.currentUser = currentUser;
     }
 
@@ -69,7 +75,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = usersList.get(position);
-        holder.bind(user);
+        holder.bind(user, position);
     }
 
     @Override
@@ -78,9 +84,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private CardView card;
         private ImageView flagImage;
-        private ImageView profilePhotoImageBorder;
         private ImageView profilePhotoImage;
         private ImageView liveStatusSignal;
         private TextView nameText;
@@ -93,9 +97,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         public ViewHolder(View userItemView) {
             super(userItemView);
 
-            card = userItemView.findViewById(R.id.item_user_card);
             flagImage = userItemView.findViewById(R.id.item_user_flag);
-            profilePhotoImageBorder = userItemView.findViewById(R.id.item_user_profile_image_border);
             profilePhotoImage = userItemView.findViewById(R.id.item_user_profile_image);
             liveStatusSignal = userItemView.findViewById(R.id.item_user_live_signal_image);
             nameText = userItemView.findViewById(R.id.item_user_name_text);
@@ -104,56 +106,9 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             biographyText = userItemView.findViewById(R.id.item_user_biography_text);
             knownLanguagesChips = userItemView.findViewById(R.id.item_user_known_languages_chip_group);
             sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
-
-            // send user a friend request, remove them from view, and add a new user to timeline
-            sendRequestButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // get current card number
-                    int position = getAdapterPosition();
-
-                    // ensure current card number is associated with a card
-                    if (position != RecyclerView.NO_POSITION) {
-                        // get user associated with current card number
-                        User clickedUser = usersList.get(position);
-
-                        // create a confirm dialog with an optional message field
-                        View confirmDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
-                        EditText confirmDialogMessageField = confirmDialogView.findViewById(R.id.dialog_friend_request_et);
-
-                        // build the confirm dialog
-                        AlertDialog.Builder confirmDialogBuilder = new AlertDialog.Builder(context);
-                        confirmDialogBuilder.setView(confirmDialogView);
-                        confirmDialogBuilder.setTitle("Confirm Friend Request to " + clickedUser.getUserName());
-                        confirmDialogBuilder.setMessage("Send a message with your friend request.");
-                        confirmDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String friendRequestMessage = confirmDialogMessageField.getText().toString();
-
-                                if (!friendRequestMessage.equals("")) {
-                                    sendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
-                                }
-
-                                dialogInterface.cancel();
-                            }
-                        });
-                        confirmDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
-
-                        // display the confirm dialog
-                        AlertDialog confirmDialog = confirmDialogBuilder.create();
-                        confirmDialog.show();
-                    }
-                }
-            });
         }
 
-        public void bind(User user) {
+        public void bind(User user, int position) {
             // load user flag and profile photo into place
             Glide.with(context).load(context.getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(user.getUserOriginCountry()), "drawable", context.getPackageName())).into(flagImage);
             Glide.with(context).load(user.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePhotoImage);
@@ -178,6 +133,49 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 knownLanguageChip.setText(knownLanguage);
                 knownLanguagesChips.addView(knownLanguageChip);
             }
+
+            sendRequestButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                    final View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_friend_request, null);
+                    dialogBuilder.setView(dialogView);
+
+                    dialogBuilder.setTitle("Confirm Friend Request to " + user.getUserName());
+                    dialogBuilder.setMessage("Say hi and tell " + user.getUserName() + " a little about yourself!");
+                    dialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            EditText editText = dialogView.findViewById(R.id.dialog_friend_request_et);
+                            String message = editText.getText().toString();
+                            if (!message.equals("")) {
+                                checkIfPossibleAndSendFriendRequest(currentUser, user, message, position);
+                            } else {
+                                Toast.makeText(context, "Can't send a friend request without any text, say hi!", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                    dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.d("ExploreAdapter", "Cancelled friend request");
+                        }
+                    });
+                    AlertDialog dialog = dialogBuilder.create();
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+
+                    // layout buttons
+                    Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                    btnNegative.setBackgroundColor(context.getResources().getColor(R.color.linguaDarkGray));
+
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) btnPositive.getLayoutParams();
+                    layoutParams.setMargins(5, 5, 20, 5);
+                    btnPositive.setLayoutParams(layoutParams);
+                    btnNegative.setLayoutParams(layoutParams);
+                }
+            });
         }
 
         private int getAge(String birthDateString) {
@@ -195,6 +193,39 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             return 0;
         }
 
+        private void checkIfPossibleAndSendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage, int position) {
+            String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + ".json";
+            StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+                try {
+                    JSONObject userObject = new JSONObject(s);
+
+                    // get received friend requests
+                    if (userObject.has("receivedFriendRequests")) {
+                        JSONObject receivedFriendRequests = userObject.getJSONObject("receivedFriendRequests");
+                        Iterator receivedFriendRequestKeys = receivedFriendRequests.keys();
+                        ArrayList<String> receivedFriendRequestUserIDs = new ArrayList<>();
+                        while (receivedFriendRequestKeys.hasNext()) {
+                            String key = receivedFriendRequestKeys.next().toString();
+                            String userID = key.split("@")[0];
+                            receivedFriendRequestUserIDs.add(userID);
+                        }
+                        currentUser.setPendingReceivedFriendRequests(receivedFriendRequestUserIDs);
+                    }
+
+                    sendFriendRequest(currentUser, clickedUser, friendRequestMessage, position);
+
+                } catch (JSONException e) {
+                    Log.e("ExploreFragment", e.toString());
+                }
+            }, volleyError -> {
+                Toast.makeText(context, "No connection", Toast.LENGTH_SHORT).show();
+                Log.e("ExploreFragment", "" + volleyError);
+            });
+
+            RequestQueue rQueue = Volley.newRequestQueue(context);
+            rQueue.add(request);
+        }
+
         private void sendFriendRequest(User currentUser, User clickedUser, String friendRequestMessage, int position) {
             // ensure clicked user did not send friend request to current user while current user was typing
             if (currentUser.getPendingReceivedFriendRequests() != null) {
@@ -204,8 +235,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                         sendRequestButton.setText("Friend Request Received");
                         sendRequestButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
                         sendRequestButton.setEnabled(false);
-
-                        Toast.makeText(context, "You already received a friend request from this user.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "You already received a friend request from this user.", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
@@ -216,43 +246,39 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             sendRequestButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
             sendRequestButton.setEnabled(false);
 
-            // add clicked user to current user's sent friend request user list
-            if (currentUser.getPendingSentFriendRequests() == null) {
-                currentUser.setPendingSentFriendRequests(new ArrayList<String>(Arrays.asList(clickedUser.getUserID())));
-            } else {
-                currentUser.getPendingSentFriendRequests().add(clickedUser.getUserID());
-            }
-
-            // add current user to clicked user's received friend request user list
-            if (clickedUser.getPendingReceivedFriendRequests() == null) {
-                clickedUser.setPendingReceivedFriendRequests(new ArrayList<String>(Arrays.asList(currentUser.getUserID())));
-            } else {
-                clickedUser.getPendingReceivedFriendRequests().add(currentUser.getUserID());
-            }
-
             // create a new database reference
+            Firebase.setAndroidContext(context);
             Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com");
 
             // create friend request
-            String friendRequestId = databaseReference.child("friend-requests").push().getKey();
+            String senderId = currentUser.getUserID();
+            String receiverId = clickedUser.getUserID();
+            String friendRequestId = senderId + "@" + receiverId;
 
             Map<String, String> map = new HashMap<>();
             map.put("message", friendRequestMessage);
-            map.put("senderId", currentUser.getUserID());
-            map.put("receiverId", clickedUser.getUserID());
+            map.put("receiverId", receiverId);
             map.put("receiverName", clickedUser.getUserName());
+            map.put("receiverPhotoUrl", clickedUser.getUserProfilePhotoURL());
+            map.put("senderId", senderId);
             map.put("senderName", currentUser.getUserName());
+            map.put("senderPhotoUrl", currentUser.getUserProfilePhotoURL());
             map.put("timestamp", new Date().toString());
             map.put("id", friendRequestId);
 
-            // save new friend request data to database
-            databaseReference.child("users").child(currentUser.getUserID()).child("pendingSentFriendRequests").setValue(currentUser.getPendingSentFriendRequests());
-            databaseReference.child("users").child(clickedUser.getUserID()).child("pendingReceivedFriendRequests").setValue(clickedUser.getPendingReceivedFriendRequests());
-            databaseReference.child("users").child(currentUser.getUserID()).child("sent-friend-requests").child(friendRequestId).setValue(true);
-            databaseReference.child("users").child(clickedUser.getUserID()).child("received-friend-requests").child(friendRequestId).setValue(true);
+            // add friend request id to local current user
+            if (currentUser.getPendingSentFriendRequests() == null) {
+                currentUser.setPendingSentFriendRequests(new ArrayList<>(Arrays.asList(friendRequestId)));
+            } else {
+                currentUser.getPendingSentFriendRequests().add(friendRequestId);
+            }
 
-            databaseReference.child("friend-requests").child(friendRequestId).setValue(map);
-            databaseReference.child("friend-requests").child(friendRequestId).child("exploreLanguages").setValue(currentUser.getExploreLanguages());
+            // save new friend request data to database
+            databaseReference.child("users").child(currentUser.getUserID()).child("sentFriendRequests").child(friendRequestId).setValue(true);
+            databaseReference.child("users").child(clickedUser.getUserID()).child("receivedFriendRequests").child(friendRequestId).setValue(true);
+
+            databaseReference.child("friendRequests").child(friendRequestId).setValue(map);
+            databaseReference.child("friendRequests").child(friendRequestId).child("exploreLanguages").setValue(currentUser.getExploreLanguages());
 
             // send notification to other user
             sendFriendRequestNotification(clickedUser.getUserID());
