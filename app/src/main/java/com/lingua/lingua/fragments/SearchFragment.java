@@ -76,8 +76,8 @@ public class SearchFragment extends Fragment {
         context = getContext();
 
         // initialize the list of users
-        usersList = new ArrayList<User>();
-        hiddenUsersList = new ArrayList<User>();
+        usersList = new ArrayList<>();
+        hiddenUsersList = new ArrayList<>();
 
         // set a text change listener for the search bar
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -101,7 +101,7 @@ public class SearchFragment extends Fragment {
                 scrollListener.resetState();
 
                 // fetch compatible users who match criteria and load them into timeline
-                fetchCompatibleUsersAndLoad(currentUser, queriedName);
+                queryInfoAndLoadUsers(queriedName);
 
                 // return success status
                 return true;
@@ -157,6 +157,67 @@ public class SearchFragment extends Fragment {
         // clear the search bar and change the focus
         searchBar.setQuery("", true);
         searchBar.clearFocus();
+    }
+
+    private void queryInfoAndLoadUsers(String queriedText) {
+        String url = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + ".json";
+
+        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+            try {
+                JSONObject userObject = new JSONObject(s);
+
+                // get received friend requests
+                if (userObject.has("receivedFriendRequests")) {
+                    JSONObject receivedFriendRequests = userObject.getJSONObject("receivedFriendRequests");
+                    Iterator receivedFriendRequestKeys = receivedFriendRequests.keys();
+                    ArrayList<String> receivedFriendRequestUserIDs = new ArrayList<>();
+                    while (receivedFriendRequestKeys.hasNext()) {
+                        String key = receivedFriendRequestKeys.next().toString();
+                        String userID = key.split("@")[0];
+                        receivedFriendRequestUserIDs.add(userID);
+                    }
+                    currentUser.setPendingReceivedFriendRequests(receivedFriendRequestUserIDs);
+                }
+
+                // get sent friend requests
+                if (userObject.has("sentFriendRequests")) {
+                    JSONObject object = userObject.getJSONObject("sentFriendRequests");
+                    Iterator sentFriendRequestKeys = object.keys();
+                    ArrayList<String> sentFriendRequestUserIDs = new ArrayList<>();
+                    while (sentFriendRequestKeys.hasNext()) {
+                        String key = sentFriendRequestKeys.next().toString();
+                        String userID = key.split("@")[1];
+                        sentFriendRequestUserIDs.add(userID);
+                    }
+                    currentUser.setPendingSentFriendRequests(sentFriendRequestUserIDs);
+                }
+
+                // get friends
+                if (userObject.has("friendIDs")) {
+                    JSONObject object = userObject.getJSONObject("friendIDs");
+                    Iterator keys = object.keys();
+                    ArrayList<String> friends = new ArrayList<>();
+                    while (keys.hasNext()) {
+                        String key = keys.next().toString();
+                        friends.add(key);
+                    }
+                    currentUser.setFriends(friends);
+                }
+
+                usersList.clear();
+                usersAdapter.notifyDataSetChanged();
+                fetchCompatibleUsersAndLoad(currentUser, queriedText);
+
+            } catch (JSONException e) {
+                Log.e("ExploreFragment", e.toString());
+            }
+        }, volleyError -> {
+            Toast.makeText(context, "No connection", Toast.LENGTH_SHORT).show();
+            Log.e("ExploreFragment", "" + volleyError);
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(context);
+        rQueue.add(request);
     }
 
     private void fetchCompatibleUsersAndLoad(User currentUser, String queriedText) {
