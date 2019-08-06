@@ -163,7 +163,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                                 negativeButton.setLayoutParams(params);
                             }
                         });
-                        
+
                         confirmDialog.show();
                     }
                 }
