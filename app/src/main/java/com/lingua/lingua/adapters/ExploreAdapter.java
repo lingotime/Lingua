@@ -95,7 +95,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         private ChipGroup knownLanguagesChips;
         private Button sendRequestButton;
         private ImageView willingToHostImage;
-        private TextView willingToHostText;
 
         public ViewHolder(View userItemView) {
             super(userItemView);
@@ -110,7 +109,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             knownLanguagesChips = userItemView.findViewById(R.id.item_user_known_languages_chip_group);
             sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
             willingToHostImage = userItemView.findViewById(R.id.item_user_home_icon);
-            willingToHostText = userItemView.findViewById(R.id.item_user_host_text);
         }
 
         public void bind(User user, int position) {
@@ -151,7 +149,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
             if (!user.isWillingToHost()) {
                 willingToHostImage.setVisibility(View.GONE);
-                willingToHostText.setVisibility(View.GONE);
             }
 
             sendRequestButton.setOnClickListener(new View.OnClickListener() {
