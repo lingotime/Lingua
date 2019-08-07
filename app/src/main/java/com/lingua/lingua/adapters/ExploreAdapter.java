@@ -36,6 +36,7 @@ import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -94,6 +95,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         private ChipGroup knownLanguagesChips;
         private Button sendRequestButton;
         private ImageView willingToHostImage;
+        private TextView willingToHostText;
 
         public ViewHolder(View userItemView) {
             super(userItemView);
@@ -108,6 +110,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             knownLanguagesChips = userItemView.findViewById(R.id.item_user_known_languages_chip_group);
             sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
             willingToHostImage = userItemView.findViewById(R.id.item_user_home_icon);
+            willingToHostText = userItemView.findViewById(R.id.item_user_host_text);
         }
 
         public void bind(User user, int position) {
@@ -148,13 +151,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
 
             if (!user.isWillingToHost()) {
                 willingToHostImage.setVisibility(View.GONE);
-            } else {
-                willingToHostImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context, user.getUserName().split(" ")[0] + " is available to host", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                willingToHostText.setVisibility(View.GONE);
             }
 
             sendRequestButton.setOnClickListener(new View.OnClickListener() {

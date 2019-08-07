@@ -258,8 +258,8 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private void hostingChoiceDialog() {
 
         String[] hostingChoices = new String[]{
-                "Available to a host guests",
-                "Trying to find hosts"
+                "Available to host guests",
+                "Looking for a host family"
         };
 
         // prepopulate the choices from the current user's choices
