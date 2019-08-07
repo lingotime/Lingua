@@ -134,12 +134,12 @@ public class ProfileFragment extends Fragment {
 
         if (currentUser.isLookingForAHost()) {
             if (currentUser.isWillingToHost()) {
-                hostingText.setText("Hosting: Looking for and willing to be a host");
+                hostingText.setText("Hosting: Looking for and available to be a host");
             } else {
                 hostingText.setText("Hosting: Looking for a host");
             }
         } else if (currentUser.isWillingToHost()) {
-            hostingText.setText("Hosting: Willing to be a host");
+            hostingText.setText("Hosting: Available to be a host");
         } else {
             hostingText.setVisibility(View.GONE);
         }

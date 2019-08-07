@@ -128,12 +128,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             countryText.setText("from " + user.getUserOriginCountry());
             ageText.setText(getAge(user.getUserBirthDate()) + " years old");
 
-            // the biography text will contain the user's biography but also if they are willing to host
-            if (user.isWillingToHost()) {
-                biographyText.setText(user.getUserBiographyText() + "\nWilling to host visitors.");
-            } else {
-                biographyText.setText(user.getUserBiographyText());
-            }
+            biographyText.setText(user.getUserBiographyText());
 
             // clear chips from chip group before loading the language chips
             int chipsCount = knownLanguagesChips.getChildCount();
@@ -150,12 +145,17 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 knownLanguagesChips.addView(knownLanguageChip);
             }
 
-            willingToHostImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(context, user.getUserName().split(" ")[0] + " is willing to host", Toast.LENGTH_SHORT).show();
-                }
-            });
+
+            if (!user.isWillingToHost()) {
+                willingToHostImage.setVisibility(View.GONE);
+            } else {
+                willingToHostImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(context, user.getUserName().split(" ")[0] + " is available to host", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
 
             sendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
