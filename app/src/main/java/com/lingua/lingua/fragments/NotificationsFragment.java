@@ -149,10 +149,8 @@ public class NotificationsFragment extends Fragment {
                 }
             } catch (JSONException e) {
                 if (type.equals("received")) {
-                    receivedHeader.setVisibility(View.GONE);
                     queryFriendRequests(urlSent, "sent");
                 } else {
-                    sentHeader.setVisibility(View.GONE);
                     swipeContainer.setRefreshing(false);
                     if (receivedHeader.getVisibility() == View.GONE) {
                         noNotificationsTv.setVisibility(View.VISIBLE);
@@ -244,7 +242,6 @@ public class NotificationsFragment extends Fragment {
     public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "friend request deleted", Toast.LENGTH_SHORT).show();
             if (friendRequestsReceived.size() == 0) {
                 receivedHeader.setVisibility(View.GONE);
             }
