@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
-        android:text="There are no users that match your search :("
+        android:text="There are no users that match your search."
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.MyTheme.Body1"
         android:textColor="@color/linguaDarkGray"

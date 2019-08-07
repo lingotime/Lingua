@@ -33,14 +33,12 @@ import java.util.Map;
 * RecyclerView Adapter that adapts Friend Request objects to the viewholders in the recyclerview
 */
 
-public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder> {
+public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAdapter.ViewHolder> {
 
     private Context context;
     private List<FriendRequest> friendRequests;
     Firebase reference;
     private User currentUser;
-
-    // for the explore languages
 
     private ImageView ivProfile;
     private TextView tvMessage, tvName, tvTimestamp;
@@ -49,10 +47,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     private static final int TYPE_RECEIVED_FRIEND_REQUESTS = 1;
     private static final int TYPE_SENT_FRIEND_REQUESTS = 2;
 
-    public NotificationsAdapter(Context context, List<FriendRequest> friendRequests, User user) {
+    public FriendRequestsAdapter(Context context, List<FriendRequest> friendRequests, User currentUser) {
         this.context = context;
-        this.currentUser = user;
         this.friendRequests = friendRequests;
+        this.currentUser = currentUser;
 
         Firebase.setAndroidContext(context);
         reference = new Firebase("https://lingua-project.firebaseio.com");
@@ -65,11 +63,11 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         if (viewType == TYPE_RECEIVED_FRIEND_REQUESTS) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_friend_request_received, parent, false);
-            return new NotificationsAdapter.ViewHolder(view);
+            return new FriendRequestsAdapter.ViewHolder(view);
         } else if (viewType == TYPE_SENT_FRIEND_REQUESTS) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_friend_request_sent, parent, false);
-            return new NotificationsAdapter.ViewHolder(view);
+            return new FriendRequestsAdapter.ViewHolder(view);
         } else {
             return null;
         }
