@@ -33,6 +33,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_search_toolbar" />
 
+    <TextView
+        android:id="@+id/fragment_search_no_users_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="64dp"
+        android:text="There are no users that match your search :("
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+        android:textColor="@color/linguaDarkGray"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_search_search_bar" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_search_results_timeline"
         android:layout_width="0dp"

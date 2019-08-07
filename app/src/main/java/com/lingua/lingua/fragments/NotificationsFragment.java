@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,11 +45,13 @@ import java.util.List;
 public class NotificationsFragment extends Fragment {
     Context context;
 
-    RecyclerView rvNotifications;
-    private NotificationsAdapter adapter;
-    private List<FriendRequest> friendRequests;
+    RecyclerView rvReceivedNotifications, rvSentNotifications;
+    private NotificationsAdapter receivedAdapter, sentAdapter;
+    private List<FriendRequest> friendRequestsReceived, friendRequestsSent;
     private SwipeRefreshLayout swipeContainer;
     private User currentUser;
+
+    private TextView noReceivedNotificationsTv, noSentNotificationsTv;
 
     String userId;
 
@@ -72,16 +75,28 @@ public class NotificationsFragment extends Fragment {
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Notifications");
 
-        rvNotifications = view.findViewById(R.id.fragment_notifications_rv);
-        friendRequests = new ArrayList<>();
-        adapter = new NotificationsAdapter(context, friendRequests, currentUser);
+        // set up recycler view for received notifications
+        rvReceivedNotifications = view.findViewById(R.id.fragment_notifications_received_rv);
+        friendRequestsReceived = new ArrayList<>();
+        receivedAdapter = new NotificationsAdapter(context, friendRequestsReceived, currentUser);
 
-        rvNotifications.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        rvNotifications.setLayoutManager(linearLayoutManager);
+        rvReceivedNotifications.setAdapter(receivedAdapter);
+        LinearLayoutManager receivedLinearLayoutManager = new LinearLayoutManager(context);
+        rvReceivedNotifications.setLayoutManager(receivedLinearLayoutManager);
 
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
-        rvNotifications.addItemDecoration(itemDecoration);
+        rvReceivedNotifications.addItemDecoration(itemDecoration);
+
+        // set up recycler view for sent notifications
+        rvSentNotifications = view.findViewById(R.id.fragment_notifications_sent_rv);
+        friendRequestsSent = new ArrayList<>();
+        sentAdapter = new NotificationsAdapter(context, friendRequestsSent, currentUser);
+
+        rvSentNotifications.setAdapter(sentAdapter);
+        LinearLayoutManager sentLinearLayoutManager = new LinearLayoutManager(context);
+        rvSentNotifications.setLayoutManager(sentLinearLayoutManager);
+
+        rvSentNotifications.addItemDecoration(itemDecoration);
 
         swipeContainer = view.findViewById(R.id.fragment_notifications_swipe_container);
         // Setup refresh listener which triggers new data loading
@@ -91,6 +106,7 @@ public class NotificationsFragment extends Fragment {
                 refresh();
             }
         });
+
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -101,25 +117,23 @@ public class NotificationsFragment extends Fragment {
 
     private void queryFriendRequests() {
         String urlReceived = "https://lingua-project.firebaseio.com/users/" + userId + "/receivedFriendRequests.json";
-        queryFriendRequests(urlReceived);
+        queryFriendRequests(urlReceived, "received");
         String urlSent = "https://lingua-project.firebaseio.com/users/" + userId + "/sentFriendRequests.json";
-        queryFriendRequests(urlSent);
+        queryFriendRequests(urlSent, "sent");
     }
 
-    private void queryFriendRequests(String url) {
+    private void queryFriendRequests(String url, String type) {
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
                 Iterator keys = object.keys();
                 while (keys.hasNext()) {
                     String key = keys.next().toString();
-                    queryFriendRequestInfo(key);
+                    queryFriendRequestInfo(key, type);
                 }
                 swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-                if (url.equals("https://lingua-project.firebaseio.com/users/" + userId + "/receivedFriendRequests.json")) {
-                    Toast.makeText(context, "No pending friend requests", Toast.LENGTH_SHORT).show();
-                }
+                //TODO: show text view if there are no friend requests of either type
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
@@ -133,7 +147,7 @@ public class NotificationsFragment extends Fragment {
         rQueue.add(request);
     }
 
-    private void queryFriendRequestInfo(String friendRequestId) {
+    private void queryFriendRequestInfo(String friendRequestId, String type) {
         String url = "https://lingua-project.firebaseio.com/friendRequests/" + friendRequestId + ".json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
@@ -168,12 +182,18 @@ public class NotificationsFragment extends Fragment {
                 friendRequest.setCreatedTime(timestamp);
                 friendRequest.setFriendRequestID(id);
                 friendRequest.setExploreLanguages(exploreLanguages);
-                friendRequests.add(friendRequest);
 
-                Collections.sort(friendRequests, (o1, o2) -> o1.getCreatedTime().compareTo(o2.getCreatedTime()));
-                Collections.reverse(friendRequests);
-
-                adapter.notifyDataSetChanged();
+                if (type.equals("received")) {
+                    friendRequestsReceived.add(friendRequest);
+                    Collections.sort(friendRequestsReceived, (o1, o2) -> o1.getCreatedTime().compareTo(o2.getCreatedTime()));
+                    Collections.reverse(friendRequestsReceived);
+                    receivedAdapter.notifyDataSetChanged();
+                } else {
+                    friendRequestsSent.add(friendRequest);
+                    Collections.sort(friendRequestsSent, (o1, o2) -> o1.getCreatedTime().compareTo(o2.getCreatedTime()));
+                    Collections.reverse(friendRequestsSent);
+                    sentAdapter.notifyDataSetChanged();
+                }
 
             } catch (JSONException e) {
                 swipeContainer.setRefreshing(false);
@@ -189,8 +209,10 @@ public class NotificationsFragment extends Fragment {
     }
 
     public void refresh() {
-        friendRequests.clear();
-        adapter.notifyDataSetChanged();
+        friendRequestsReceived.clear();
+        friendRequestsSent.clear();
+        receivedAdapter.notifyDataSetChanged();
+        sentAdapter.notifyDataSetChanged();
         queryFriendRequests();
     }
 }
