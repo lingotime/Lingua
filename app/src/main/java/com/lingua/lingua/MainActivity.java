@@ -21,7 +21,7 @@ import com.firebase.client.Firebase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.lingua.lingua.fragments.ChatFragment;
 import com.lingua.lingua.fragments.ExploreFragment;
-import com.lingua.lingua.fragments.NotificationsFragment;
+import com.lingua.lingua.fragments.FriendRequestFragment;
 import com.lingua.lingua.fragments.ProfileFragment;
 import com.lingua.lingua.fragments.SearchFragment;
 import com.lingua.lingua.models.User;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     final Fragment exploreFragment = new ExploreFragment();
     final Fragment searchFragment = new SearchFragment();
     final Fragment chatFragment = new ChatFragment();
-    final Fragment notificationsFragment = new NotificationsFragment();
+    final Fragment friendRequestFragment = new FriendRequestFragment();
     final Fragment profileFragment = new ProfileFragment();
 
     private WakefulBroadcastReceiver bindingBroadcastReceiver;
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         exploreFragment.setArguments(bundle);
         searchFragment.setArguments(bundle);
         chatFragment.setArguments(bundle);
-        notificationsFragment.setArguments(bundle);
+        friendRequestFragment.setArguments(bundle);
         profileFragment.setArguments(bundle);
 
         // store some info globally
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         fragmentManager.beginTransaction().replace(R.id.activity_main_container, chatFragment).commit();
                         return true;
                     case R.id.notifications:
-                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, notificationsFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.activity_main_container, friendRequestFragment).commit();
                         return true;
                     case R.id.profile:
                         fragmentManager.beginTransaction().replace(R.id.activity_main_container, profileFragment).commit();
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, chatFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.chat);
         } else if ( nextFragment != null && nextFragment.equals("notifications")) {
-            fragmentManager.beginTransaction().replace(R.id.activity_main_container, notificationsFragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.activity_main_container, friendRequestFragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.notifications);
         } else {
             fragmentManager.beginTransaction().replace(R.id.activity_main_container, exploreFragment).commit();

@@ -85,7 +85,7 @@ public class NotificationsFragment extends Fragment {
         // set up recycler view for received notifications
         rvReceivedNotifications = view.findViewById(R.id.fragment_notifications_received_rv);
         friendRequestsReceived = new ArrayList<>();
-        receivedAdapter = new NotificationsAdapter(context, friendRequestsReceived, currentUser);
+        receivedAdapter = new NotificationsAdapter(context, friendRequestsReceived);
 
         rvReceivedNotifications.setAdapter(receivedAdapter);
         LinearLayoutManager receivedLinearLayoutManager = new LinearLayoutManager(context);
@@ -97,7 +97,7 @@ public class NotificationsFragment extends Fragment {
         // set up recycler view for sent notifications
         rvSentNotifications = view.findViewById(R.id.fragment_notifications_sent_rv);
         friendRequestsSent = new ArrayList<>();
-        sentAdapter = new NotificationsAdapter(context, friendRequestsSent, currentUser);
+        sentAdapter = new NotificationsAdapter(context, friendRequestsSent);
 
         rvSentNotifications.setAdapter(sentAdapter);
         LinearLayoutManager sentLinearLayoutManager = new LinearLayoutManager(context);

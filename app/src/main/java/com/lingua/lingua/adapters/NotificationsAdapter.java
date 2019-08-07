@@ -2,6 +2,7 @@ package com.lingua.lingua.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,6 @@ import com.firebase.client.Firebase;
 import com.lingua.lingua.DateUtil;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.FriendRequest;
-import com.lingua.lingua.models.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     private Context context;
     private List<FriendRequest> friendRequests;
     Firebase reference;
-    private User currentUser;
+    private String userId, userName;
 
     private ImageView ivProfile;
     private TextView tvMessage, tvName, tvTimestamp;
@@ -47,10 +47,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     private static final int TYPE_RECEIVED_FRIEND_REQUESTS = 1;
     private static final int TYPE_SENT_FRIEND_REQUESTS = 2;
 
-    public NotificationsAdapter(Context context, List<FriendRequest> friendRequests, User user) {
+    public NotificationsAdapter(Context context, List<FriendRequest> friendRequests) {
         this.context = context;
-        this.currentUser = user;
         this.friendRequests = friendRequests;
+
+        SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
+        userId = prefs.getString("userId", "");
+        userName = prefs.getString("userName", "");
 
         Firebase.setAndroidContext(context);
         reference = new Firebase("https://lingua-project.firebaseio.com");
@@ -139,7 +142,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @Override
     public int getItemViewType(int position) {
         FriendRequest friendRequest = friendRequests.get(position);
-        if (friendRequest.getSenderUser().equals(currentUser.getUserID())) {
+        if (friendRequest.getSenderUser().equals(userId)) {
             // If the current user is the sender
             return TYPE_SENT_FRIEND_REQUESTS;
         } else {
@@ -188,12 +191,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         ArrayList<String> exploreLanguages = friendRequest.getExploreLanguages();
         // iterating and adding to avoid duplicates
-        ArrayList<String> currentUserExploreLanguages = currentUser.getExploreLanguages();
-        for (int index = 0; index < currentUserExploreLanguages.size(); index++) {
-            if (!exploreLanguages.contains(currentUserExploreLanguages.get(index))) {
-                exploreLanguages.add(currentUserExploreLanguages.get(index));
-            }
-        }
+        // TODO: can we do this somewhere else?
+//        ArrayList<String> currentUserExploreLanguages = currentUser.getExploreLanguages();
+//        for (int index = 0; index < currentUserExploreLanguages.size(); index++) {
+//            if (!exploreLanguages.contains(currentUserExploreLanguages.get(index))) {
+//                exploreLanguages.add(currentUserExploreLanguages.get(index));
+//            }
+//        }
         chat.put("exploreLanguages", exploreLanguages);
 
         Map<String, String> users = new HashMap<>();
@@ -208,8 +212,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("users").child(friendRequest.getReceiverUser()).child("chats").child(chatId).setValue(true);
 
         // update friends
-        reference.child("users").child(currentUser.getUserID()).child("friendIDs").child(friendRequest.getSenderUser()).setValue(true);
-        reference.child("users").child(friendRequest.getSenderUser()).child("friendIDs").child(currentUser.getUserID()).setValue(true);
+        reference.child("users").child(userId).child("friendIDs").child(friendRequest.getSenderUser()).setValue(true);
+        reference.child("users").child(friendRequest.getSenderUser()).child("friendIDs").child(userId).setValue(true);
 
         // create message in the new chat
         Map<String, String> message = new HashMap<>();
