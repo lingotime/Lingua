@@ -126,7 +126,13 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             nameText.setText(user.getUserName());
             countryText.setText("from " + user.getUserOriginCountry());
             ageText.setText(getAge(user.getUserBirthDate()) + " years old");
-            biographyText.setText(user.getUserBiographyText());
+
+            // the biography text will contain the user's biography but also if they are willing to host
+            if (user.isUserWillingToHost()) {
+                biographyText.setText(user.getUserBiographyText() + "\nWilling to host visitors.");
+            } else {
+                biographyText.setText(user.getUserBiographyText());
+            }
 
             // clear chips from chip group before loading the language chips
             int chipsCount = knownLanguagesChips.getChildCount();

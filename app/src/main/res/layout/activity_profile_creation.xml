@@ -81,14 +81,14 @@
                         android:singleLine="true" />
 
                     <androidx.appcompat.widget.SwitchCompat
-                        android:text="Looking for a host?"
+                        android:text="Looking for a host? "
                         android:textSize="18sp"
                         android:id="@+id/activity_profile_info_setup_looking_for_host"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
                     <androidx.appcompat.widget.SwitchCompat
-                        android:text="Willing to host a guest?"
+                        android:text="Willing to host a guest? "
                         android:textSize="18sp"
                         android:id="@+id/activity_profile_info_setup_willing_to_host"
                         android:layout_width="wrap_content"
