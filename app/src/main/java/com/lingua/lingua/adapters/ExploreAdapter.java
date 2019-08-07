@@ -28,7 +28,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.textfield.TextInputEditText;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
@@ -128,7 +127,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             ageText.setText(getAge(user.getUserBirthDate()) + " years old");
 
             // the biography text will contain the user's biography but also if they are willing to host
-            if (user.isUserWillingToHost()) {
+            if (user.isWillingToHost()) {
                 biographyText.setText(user.getUserBiographyText() + "\nWilling to host visitors.");
             } else {
                 biographyText.setText(user.getUserBiographyText());

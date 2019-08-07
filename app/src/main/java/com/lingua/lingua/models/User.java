@@ -60,7 +60,7 @@ public class User {
         return userBiographyText;
     }
 
-    public boolean isUserWillingToHost() {
+    public boolean isWillingToHost() {
         return willingToHost;
     }
 
@@ -68,7 +68,7 @@ public class User {
         this.willingToHost = willingToHost;
     }
 
-    public boolean isUserLookingForAHost() {
+    public boolean isLookingForAHost() {
         return this.lookingForAHost;
     }
 

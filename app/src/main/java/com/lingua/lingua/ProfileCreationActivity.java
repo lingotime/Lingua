@@ -2,6 +2,7 @@ package com.lingua.lingua;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -16,8 +17,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
@@ -40,6 +44,7 @@ import org.parceler.Parcels;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -54,8 +59,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private ImageView profileImage;
     private EditText nameField;
     private EditText birthdateField;
-    private SwitchCompat willingToHostSwitch;
-    private SwitchCompat lookingForHostSwitch;
     private TextInputEditText biographyField;
     private NachoTextView originCountryField;
     private NachoTextView knownLanguagesField;
@@ -78,8 +81,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.activity_profile_info_setup_profile_image);
         nameField = findViewById(R.id.activity_profile_info_setup_name_field);
         birthdateField = findViewById(R.id.activity_profile_info_setup_birthdate_field);
-        willingToHostSwitch = findViewById(R.id.activity_profile_info_setup_willing_to_host);
-        lookingForHostSwitch = findViewById(R.id.activity_profile_info_setup_looking_for_host);
         biographyField = findViewById(R.id.activity_profile_info_setup_biography_field);
         originCountryField = findViewById(R.id.activity_profile_info_setup_origin_country_field);
         knownLanguagesField = findViewById(R.id.activity_profile_info_setup_known_languages_field);
@@ -202,26 +203,30 @@ public class ProfileCreationActivity extends AppCompatActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // disable the button and change its text
-                continueButton.setText("Saving");
-                continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
-                continueButton.setEnabled(false);
-
-                // save the updated data
-                saveData();
-
-                // proceed to main activity, if data was successfully saved to an acceptable level
-                if (currentUser.isComplete()) {
-                    final Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
-                    intent.putExtra("user", Parcels.wrap(currentUser));
-                    intent.putExtra("fragment", nextFragment);
-                    startActivity(intent);
-                }
+                hostingChoiceDialog();
             }
         });
 
         // refactored - now should load user data with the flags associated with the chips
         loadInfo();
+    }
+
+    private void completeAndSaveData() {
+        // disable the button and change its text
+        continueButton.setText("Saving");
+        continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+        continueButton.setEnabled(false);
+
+        // save the updated data
+        saveData();
+
+        // proceed to main activity, if data was successfully saved to an acceptable level
+        if (currentUser.isComplete()) {
+            final Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("fragment", nextFragment);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -246,6 +251,62 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // mark user as dead
         currentUser.setOnline(false);
         reference.child("online").setValue(currentUser.isOnline());
+    }
+
+    // an alert dialog from which the user can select their hosting options
+    private void hostingChoiceDialog() {
+        String[] hostingChoices = new String[]{
+                "Available to a host guests",
+                "Trying to find hosts"
+        };
+
+        // prepopulate the choices from the current user's choices
+        boolean[] checkedChoices = new boolean[]{
+                currentUser.isWillingToHost(),
+                currentUser.isLookingForAHost()
+        };
+
+        AlertDialog.Builder hostingSelection = new AlertDialog.Builder(this);
+        hostingSelection.setTitle("Foreign Exchange Hosting Program");
+        hostingSelection.setMessage("Would you like to join our hosting community? In what capacity? (Choose all that apply)");
+
+        hostingSelection.setMultiChoiceItems(hostingChoices, checkedChoices, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                checkedChoices[i] = b;
+            }
+        });
+
+        hostingSelection.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                for (int index = 0; index < checkedChoices.length; index++) {
+                    if (checkedChoices[i]) {
+                        if (i == 0) {
+                            currentUser.setUserWillingToHost(true);
+                        } else {
+                            currentUser.setUserLookingForAHost(true);
+                        }
+                    } else {
+                        if (i == 0) {
+                            currentUser.setUserWillingToHost(false);
+                        } else {
+                            currentUser.setUserLookingForAHost(false);
+                        }
+                    }
+                }
+                completeAndSaveData();
+            }
+        });
+        hostingSelection.setNegativeButton("NO", (dialogInterface, i) -> {
+            currentUser.setUserLookingForAHost(false);
+            currentUser.setUserWillingToHost(false);
+            completeAndSaveData();
+        });
+
+        AlertDialog dialog = hostingSelection.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
     private void saveData() {
@@ -283,19 +344,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
             biographyField.setError("Please enter a biography that is at least four characters.");
         }
 
-        // deal with the user looking for a host or not
-        if (lookingForHostSwitch.isChecked()) {
-            currentUser.setUserLookingForAHost(true);
-        } else {
-            currentUser.setUserLookingForAHost(false);
-        }
-
-        // deal with the user's willingness to host
-        if (willingToHostSwitch.isChecked()) {
-            currentUser.setUserWillingToHost(true);
-        } else {
-            currentUser.setUserWillingToHost(false);
-        }
 
         // deal with userOriginCountry
         ArrayList<String> userOriginCountryInput = (ArrayList) originCountryField.getChipValues();
@@ -355,7 +403,8 @@ public class ProfileCreationActivity extends AppCompatActivity {
             databaseReference.child("exploreLanguages").setValue(currentUser.getExploreLanguages());
             databaseReference.child("exploreCountries").setValue(currentUser.getExploreCountries());
             databaseReference.child("complete").setValue(currentUser.isComplete());
-            databaseReference.child("willingToHost").setValue(currentUser.isUserWillingToHost());
+            databaseReference.child("willingToHost").setValue(currentUser.isWillingToHost());
+            databaseReference.child("lookingForAHost").setValue(currentUser.isLookingForAHost());
         } else {
             // re-enable the button because data was not saved
             continueButton.setText("Save");
@@ -387,19 +436,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 Log.e("ProfileSetupActivity", "There was an issue parsing the user's registered birth date.");
             }
         }
-
-        if (currentUser.isUserLookingForAHost()) {
-            lookingForHostSwitch.setChecked(true);
-        } else {
-            lookingForHostSwitch.setChecked(false);
-        }
-
-        if (currentUser.isUserWillingToHost()) {
-            willingToHostSwitch.setChecked(true);
-        } else {
-            willingToHostSwitch.setChecked(false);
-        }
-
 
         if (currentUser.getUserBiographyText() != null) {
             biographyField.setText(currentUser.getUserBiographyText());
