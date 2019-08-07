@@ -1,6 +1,7 @@
 package com.lingua.lingua.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -171,6 +173,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         friendRequests.remove(friendRequest);
         notifyDataSetChanged();
+
+        // notify the fragment that a friend request was deleted so it refreshes
+        Intent intent = new Intent("notificationDeleted");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     public void acceptFriendRequest(FriendRequest friendRequest) {

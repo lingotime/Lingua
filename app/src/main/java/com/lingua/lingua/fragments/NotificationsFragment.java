@@ -1,6 +1,9 @@
 package com.lingua.lingua.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,15 +55,18 @@ public class NotificationsFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
     private User currentUser;
 
-    private TextView noReceivedNotificationsTv, noSentNotificationsTv;
+    private TextView receivedHeader, sentHeader, noNotificationsTv;
 
     String userId;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //set the context
+        // set the context
         context = getContext();
+
+        // register to receive broadcasts, in this case from the adapter
+        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("notificationDeleted"));
 
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
         userId = currentUser.getUserID();
@@ -98,6 +105,9 @@ public class NotificationsFragment extends Fragment {
 
         rvSentNotifications.addItemDecoration(itemDecoration);
 
+        receivedHeader = view.findViewById(R.id.fragment_notifications_header_received);
+        sentHeader = view.findViewById(R.id.fragment_notifications_header_sent);
+        noNotificationsTv = view.findViewById(R.id.fragment_notifications_no_notifications_tv);
         swipeContainer = view.findViewById(R.id.fragment_notifications_swipe_container);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -118,11 +128,10 @@ public class NotificationsFragment extends Fragment {
     private void queryFriendRequests() {
         String urlReceived = "https://lingua-project.firebaseio.com/users/" + userId + "/receivedFriendRequests.json";
         queryFriendRequests(urlReceived, "received");
-        String urlSent = "https://lingua-project.firebaseio.com/users/" + userId + "/sentFriendRequests.json";
-        queryFriendRequests(urlSent, "sent");
     }
 
     private void queryFriendRequests(String url, String type) {
+        String urlSent = "https://lingua-project.firebaseio.com/users/" + userId + "/sentFriendRequests.json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
@@ -131,15 +140,30 @@ public class NotificationsFragment extends Fragment {
                     String key = keys.next().toString();
                     queryFriendRequestInfo(key, type);
                 }
-                swipeContainer.setRefreshing(false);
+                if (type.equals("received")) {
+                    receivedHeader.setVisibility(View.VISIBLE);
+                    queryFriendRequests(urlSent, "sent");
+                } else {
+                    sentHeader.setVisibility(View.VISIBLE);
+                    swipeContainer.setRefreshing(false);
+                }
             } catch (JSONException e) {
-                //TODO: show text view if there are no friend requests of either type
-                swipeContainer.setRefreshing(false);
+                if (type.equals("received")) {
+                    receivedHeader.setVisibility(View.GONE);
+                    queryFriendRequests(urlSent, "sent");
+                } else {
+                    sentHeader.setVisibility(View.GONE);
+                    swipeContainer.setRefreshing(false);
+                    if (receivedHeader.getVisibility() == View.GONE) {
+                        noNotificationsTv.setVisibility(View.VISIBLE);
+                    }
+                }
                 e.printStackTrace();
             }
         }, volleyError -> {
             Toast.makeText(context, "No connection", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
+            noNotificationsTv.setVisibility(View.VISIBLE);
             Log.e("NotificationsFragment", "" + volleyError);
         });
 
@@ -215,4 +239,21 @@ public class NotificationsFragment extends Fragment {
         sentAdapter.notifyDataSetChanged();
         queryFriendRequests();
     }
+
+    // broadcast receiver that listens to messages from the adapter, so it refreshes if friend requests are deleted
+    public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context, "friend request deleted", Toast.LENGTH_SHORT).show();
+            if (friendRequestsReceived.size() == 0) {
+                receivedHeader.setVisibility(View.GONE);
+            }
+            if (friendRequestsSent.size() == 0) {
+                sentHeader.setVisibility(View.GONE);
+            }
+            if (friendRequestsReceived.size() == 0 && friendRequestsSent.size() == 0) {
+                noNotificationsTv.setVisibility(View.VISIBLE);
+            }
+        }
+    };
 }
