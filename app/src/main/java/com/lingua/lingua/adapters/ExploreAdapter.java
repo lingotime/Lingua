@@ -93,6 +93,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         private TextView biographyText;
         private ChipGroup knownLanguagesChips;
         private Button sendRequestButton;
+        private ImageView willingToHostImage;
 
         public ViewHolder(View userItemView) {
             super(userItemView);
@@ -106,6 +107,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             biographyText = userItemView.findViewById(R.id.item_user_biography_text);
             knownLanguagesChips = userItemView.findViewById(R.id.item_user_known_languages_chip_group);
             sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
+            willingToHostImage = userItemView.findViewById(R.id.item_user_home_icon);
         }
 
         public void bind(User user, int position) {
@@ -147,6 +149,13 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 knownLanguageChip.setText(knownLanguage);
                 knownLanguagesChips.addView(knownLanguageChip);
             }
+
+            willingToHostImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context, user.getUserName().split(" ")[0] + " is willing to host", Toast.LENGTH_SHORT).show();
+                }
+            });
 
             sendRequestButton.setOnClickListener(new View.OnClickListener() {
                 @Override
