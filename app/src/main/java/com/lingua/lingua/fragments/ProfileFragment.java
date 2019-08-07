@@ -30,7 +30,6 @@ import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -133,7 +132,7 @@ public class ProfileFragment extends Fragment {
 
         biographyText.setText("Bio: " + currentUser.getUserBiographyText());
 
-        if (currentUser.getUserWillingToHost()) {
+        if (currentUser.isUserWillingToHost()) {
             willingToHostText.setText("Willing to host guests");
         } else {
             willingToHostText.setVisibility(View.GONE);

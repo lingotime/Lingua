@@ -26,6 +26,7 @@ public class User {
     ArrayList<String> declinedUsers;
     ArrayList<String> conversations;
     boolean willingToHost;
+    boolean lookingForAHost;
     boolean complete;
     boolean online;
 
@@ -59,12 +60,20 @@ public class User {
         return userBiographyText;
     }
 
-    public boolean getUserWillingToHost() {
+    public boolean isUserWillingToHost() {
         return willingToHost;
     }
 
-    public void setUserWillingToHost(boolean userSwitchResponse) {
-        this.willingToHost = userSwitchResponse;
+    public void setUserWillingToHost(boolean willingToHost) {
+        this.willingToHost = willingToHost;
+    }
+
+    public boolean isUserLookingForAHost() {
+        return this.lookingForAHost;
+    }
+
+    public void setUserLookingForAHost(boolean lookingForHost) {
+        this.lookingForAHost = lookingForHost;
     }
 
     public void setUserBiographyText(String userBiographyText) {

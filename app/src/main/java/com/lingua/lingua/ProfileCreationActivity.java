@@ -347,7 +347,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             databaseReference.child("exploreLanguages").setValue(currentUser.getExploreLanguages());
             databaseReference.child("exploreCountries").setValue(currentUser.getExploreCountries());
             databaseReference.child("complete").setValue(currentUser.isComplete());
-            databaseReference.child("willingToHost").setValue(currentUser.getUserWillingToHost());
+            databaseReference.child("willingToHost").setValue(currentUser.isUserWillingToHost());
         } else {
             // re-enable the button because data was not saved
             continueButton.setText("Save");
@@ -380,7 +380,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             }
         }
 
-        if (currentUser.getUserWillingToHost()) {
+        if (currentUser.isUserWillingToHost()) {
             hostingSwitch.setChecked(true);
         } else {
             hostingSwitch.setChecked(false);
