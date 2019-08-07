@@ -47,7 +47,7 @@ public class ProfileFragment extends Fragment {
     private TextView nameText;
     private TextView ageText;
     private TextView biographyText;
-    private TextView willingToHostText;
+    private TextView hostingText;
     private TextView originCountryText;
     private TextView knownLanguagesText;
     private ChipGroup knownLanguagesChips;
@@ -77,7 +77,7 @@ public class ProfileFragment extends Fragment {
         nameText = view.findViewById(R.id.fragment_profile_name_text);
         ageText = view.findViewById(R.id.fragment_profile_age_text);
         biographyText = view.findViewById(R.id.fragment_profile_biography_text);
-        willingToHostText = view.findViewById(R.id.fragment_profile_willing_to_host_text);
+        hostingText = view.findViewById(R.id.fragment_profile_hosting_text);
         originCountryText = view.findViewById(R.id.fragment_profile_origin_country_text);
         knownLanguagesText = view.findViewById(R.id.fragment_profile_known_languages_text);
         knownLanguagesChips = view.findViewById(R.id.fragment_profile_known_languages_chips);
@@ -132,10 +132,16 @@ public class ProfileFragment extends Fragment {
 
         biographyText.setText("Bio: " + currentUser.getUserBiographyText());
 
-        if (currentUser.isUserWillingToHost()) {
-            willingToHostText.setText("Willing to host guests");
+        if (currentUser.isUserLookingForAHost()) {
+            if (currentUser.isUserWillingToHost()) {
+                hostingText.setText("Hosting: Looking for and willing to be a host");
+            } else {
+                hostingText.setText("Hosting: Looking for a host");
+            }
+        } else if (currentUser.isUserWillingToHost()) {
+            hostingText.setText("Hosting: Willing to be a host");
         } else {
-            willingToHostText.setVisibility(View.GONE);
+            hostingText.setVisibility(View.GONE);
         }
 
         originCountryText.setText("Origin Country: " + currentUser.getUserOriginCountry());
