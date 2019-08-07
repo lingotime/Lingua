@@ -183,6 +183,7 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
         Map<String, Object> chat = new HashMap<>();
         chat.put("lastMessage", friendRequest.getSenderUserName() + ": " + friendRequest.getFriendRequestMessage());
         chat.put("lastMessageAt", friendRequest.getCreatedTime());
+        chat.put("lastMessageSeen", false);
         chat.put("id", chatId);
 
         ArrayList<String> exploreLanguages = friendRequest.getExploreLanguages();

@@ -179,6 +179,7 @@ public class ChatFragment extends Fragment {
                 }
 
                 String lastMessageAt = chat.getString("lastMessageAt");
+                boolean lastMessageSeen = chat.getBoolean("lastMessageSeen");
 
                 // get list of user ids in the chat
                 ArrayList<String> userIds = new ArrayList<>();
@@ -206,7 +207,7 @@ public class ChatFragment extends Fragment {
                 chatOb.setChatParticipants(userIds);
                 chatOb.setLastTextMessage(lastMessage);
                 chatOb.setChatLanguages(exploreLanguages);
-                chatOb.setLastMessageSeen(false); // TODO: query whether it is seen or not
+                chatOb.setLastMessageSeen(lastMessageSeen); // TODO: query whether it is seen or not
 
                 if (userIds.size() == 2) {
                     for (String userID : userIds) {
