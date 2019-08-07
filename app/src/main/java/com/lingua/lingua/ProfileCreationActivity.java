@@ -22,7 +22,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -267,7 +269,12 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         AlertDialog.Builder hostingSelection = new AlertDialog.Builder(this);
         hostingSelection.setTitle("Choose your involvement in our Hosting Program");
-        hostingSelection.setIcon(R.drawable.home);
+        // changing the tint of the drawable
+        Drawable unwrappedDrawable = AppCompatResources.getDrawable(this, R.drawable.home);
+        Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+        DrawableCompat.setTint(wrappedDrawable, getResources().getColor(R.color.colorPrimary));
+
+        hostingSelection.setIcon(wrappedDrawable);
         // hostingSelection.setMessage("Would you like to join our hosting community? In what capacity? (Choose all that apply)");
 
         hostingSelection.setMultiChoiceItems(hostingChoices, checkedChoices, new DialogInterface.OnMultiChoiceClickListener() {
