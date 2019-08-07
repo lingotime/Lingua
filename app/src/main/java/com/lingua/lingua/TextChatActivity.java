@@ -204,4 +204,14 @@ public class TextChatActivity extends AppCompatActivity {
             chatReference.child("lastMessageAt").setValue(timestamp);
         }
     }
+
+    // override onBackPressed so the chats fragment refreshes when we go back
+    @Override
+    public void onBackPressed() {
+        // intent to chat fragment
+        Intent intent = new Intent(TextChatActivity.this, MainActivity.class);
+        intent.putExtra("user", Parcels.wrap(currentUser));
+        intent.putExtra("fragment", "chat");
+        startActivity(intent);
+    }
 }

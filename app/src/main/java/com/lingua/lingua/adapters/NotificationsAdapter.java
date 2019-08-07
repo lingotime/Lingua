@@ -1,6 +1,7 @@
 package com.lingua.lingua.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -49,8 +51,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     public NotificationsAdapter(Context context, List<FriendRequest> friendRequests, User user) {
         this.context = context;
-        this.friendRequests = friendRequests;
         this.currentUser = user;
+        this.friendRequests = friendRequests;
 
         Firebase.setAndroidContext(context);
         reference = new Firebase("https://lingua-project.firebaseio.com");
@@ -75,6 +77,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        holder.setIsRecyclable(false);
         final FriendRequest friendRequest = friendRequests.get(position);
         tvMessage.setText(friendRequest.getFriendRequestMessage());
         tvTimestamp.setText(DateUtil.getRelativeTimeAgo(friendRequest.getCreatedTime()));
@@ -93,14 +96,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 @Override
                 public void onClick(View view) {
                     acceptFriendRequest(friendRequest);
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                 }
             });
 
             rejectButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                 }
             });
 
@@ -113,7 +116,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    deleteFriendRequest(friendRequest, position);
+                    deleteFriendRequest(friendRequest);
                 }
             });
         }
@@ -160,7 +163,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         }
     }
 
-    public void deleteFriendRequest(FriendRequest friendRequest, int position) {
+    public void deleteFriendRequest(FriendRequest friendRequest) {
         //delete from friendRequests
         reference.child("friendRequests").child(friendRequest.getFriendRequestID()).removeValue();;
 
@@ -169,7 +172,11 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         reference.child("users").child(friendRequest.getReceiverUser()).child("receivedFriendRequests").child(friendRequest.getFriendRequestID()).removeValue();
 
         friendRequests.remove(friendRequest);
-        notifyItemRemoved(position);
+        notifyDataSetChanged();
+
+        // notify the fragment that a friend request was deleted so it refreshes
+        Intent intent = new Intent("notificationDeleted");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     public void acceptFriendRequest(FriendRequest friendRequest) {

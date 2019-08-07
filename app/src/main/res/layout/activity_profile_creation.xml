@@ -20,230 +20,239 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/activity_profile_creation_toolbar"
-        android:orientation="vertical">
+    <ScrollView
+        android:id="@+id/activity_profile_info_setup_scroll_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_profile_creation_toolbar">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/activity_profile_info_setup_card_1"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/activity_profile_creation_toolbar">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.cardview.widget.CardView
+                android:id="@+id/activity_profile_info_setup_card_1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="150dp">
 
-                <ImageView
-                    android:id="@+id/activity_profile_info_setup_profile_image"
-                    android:layout_width="125dp"
-                    android:layout_height="125dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginLeft="20dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/man" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="@+id/activity_profile_info_setup_profile_image"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/activity_profile_info_setup_profile_image">
+                    <ImageView
+                        android:id="@+id/activity_profile_info_setup_profile_image"
+                        android:layout_width="125dp"
+                        android:layout_height="125dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/man" />
 
-                    <EditText
-                        android:id="@+id/activity_profile_info_setup_name_field"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="What's your name? *"
-                        android:imeOptions="actionNext"
-                        android:inputType="textPersonName"
-                        android:maxLines="1"
-                        android:nextFocusDown="@+id/activity_profile_info_setup_birthdate_field"
-                        android:singleLine="true"
-                        android:textSize="18sp" />
+                        android:layout_marginEnd="20dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="@+id/activity_profile_info_setup_profile_image"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/activity_profile_info_setup_profile_image">
 
-                    <EditText
-                        android:id="@+id/activity_profile_info_setup_birthdate_field"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="When's your birthday? *"
-                        android:imeOptions="actionNext"
-                        android:inputType="none"
-                        android:focusable="false"
-                        android:clickable="true"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </LinearLayout>
+                        <EditText
+                            android:id="@+id/activity_profile_info_setup_name_field"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="What's your name? *"
+                            android:imeOptions="actionNext"
+                            android:inputType="textPersonName"
+                            android:maxLines="1"
+                            android:nextFocusDown="@+id/activity_profile_info_setup_birthdate_field"
+                            android:singleLine="true"
+                            android:textSize="18sp" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+                        <EditText
+                            android:id="@+id/activity_profile_info_setup_birthdate_field"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="When's your birthday? *"
+                            android:imeOptions="actionNext"
+                            android:inputType="date"
+                            android:maxLines="1"
+                            android:singleLine="true" />
+                    </LinearLayout>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/activity_profile_info_setup_card_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.cardview.widget.CardView
+                android:id="@+id/activity_profile_info_setup_card_2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/activity_profile_info_setup_biography_field_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginRight="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/activity_profile_info_setup_biography_field"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/activity_profile_info_setup_biography_field_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="Add a short bio... *"
-                        android:imeOptions="actionNext"
-                        android:inputType="textImeMultiLine"
-                        android:maxLines="2"
-                        android:minHeight="60dp"
-                        android:nextFocusDown="@+id/activity_profile_info_setup_origin_country_field"
-                        android:padding="10dp" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginRight="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/activity_profile_info_setup_origin_country_field_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_biography_field_layout">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/activity_profile_info_setup_biography_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Add a short bio... *"
+                            android:imeOptions="actionNext"
+                            android:inputType="textImeMultiLine"
+                            android:maxLines="2"
+                            android:minHeight="60dp"
+                            android:nextFocusDown="@+id/activity_profile_info_setup_origin_country_field"
+                            android:padding="10dp" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.hootsuite.nachos.NachoTextView
-                        android:id="@+id/activity_profile_info_setup_origin_country_field"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/activity_profile_info_setup_origin_country_field_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="What country are you from? *"
-                        android:imeOptions="actionNext"
-                        android:maxLines="1"
-                        android:minHeight="20dp"
-                        android:nextFocusDown="@+id/activity_profile_info_setup_known_languages_field"
-                        android:padding="10dp"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_biography_field_layout">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/activity_profile_info_setup_known_languages_field_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_origin_country_field_layout">
+                        <com.hootsuite.nachos.NachoTextView
+                            android:id="@+id/activity_profile_info_setup_origin_country_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="What country are you from? *"
+                            android:imeOptions="actionNext"
+                            android:maxLines="1"
+                            android:minHeight="20dp"
+                            android:nextFocusDown="@+id/activity_profile_info_setup_known_languages_field"
+                            android:padding="10dp"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.hootsuite.nachos.NachoTextView
-                        android:id="@+id/activity_profile_info_setup_known_languages_field"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/activity_profile_info_setup_known_languages_field_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="What languages do you know?"
-                        android:imeOptions="actionNext"
-                        android:maxLines="1"
-                        android:minHeight="20dp"
-                        android:padding="10dp"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_origin_country_field_layout">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/activity_profile_info_setup_explore_languages_field_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_known_languages_field_layout">
+                        <com.hootsuite.nachos.NachoTextView
+                            android:id="@+id/activity_profile_info_setup_known_languages_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="What languages do you know?"
+                            android:imeOptions="actionNext"
+                            android:maxLines="1"
+                            android:minHeight="20dp"
+                            android:padding="10dp"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.hootsuite.nachos.NachoTextView
-                        android:id="@+id/activity_profile_info_setup_explore_languages_field"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/activity_profile_info_setup_explore_languages_field_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="What languages do you want to learn?"
-                        android:imeOptions="actionNext"
-                        android:maxLines="1"
-                        android:minHeight="20dp"
-                        android:nextFocusDown="@+id/activity_profile_info_setup_explore_countries_field"
-                        android:padding="10dp"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_known_languages_field_layout">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/activity_profile_info_setup_explore_countries_field_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_explore_languages_field_layout">
+                        <com.hootsuite.nachos.NachoTextView
+                            android:id="@+id/activity_profile_info_setup_explore_languages_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="What languages do you want to learn?"
+                            android:imeOptions="actionNext"
+                            android:maxLines="1"
+                            android:minHeight="20dp"
+                            android:nextFocusDown="@+id/activity_profile_info_setup_explore_countries_field"
+                            android:padding="10dp"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.hootsuite.nachos.NachoTextView
-                        android:id="@+id/activity_profile_info_setup_explore_countries_field"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/activity_profile_info_setup_explore_countries_field_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="What countries do you want to explore?"
-                        android:imeOptions="actionDone"
-                        android:maxLines="1"
-                        android:minHeight="20dp"
-                        android:padding="10dp"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/activity_profile_info_setup_explore_languages_field_layout">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/activity_profile_info_setup_card_3"
-            android:layout_width="match_parent"
-            android:layout_height="75dp">
+                        <com.hootsuite.nachos.NachoTextView
+                            android:id="@+id/activity_profile_info_setup_explore_countries_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="What countries do you want to explore?"
+                            android:imeOptions="actionDone"
+                            android:maxLines="1"
+                            android:minHeight="20dp"
+                            android:padding="10dp"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.cardview.widget.CardView
+                android:id="@+id/activity_profile_info_setup_card_3"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="75dp">
 
-                <Button
-                    android:id="@+id/activity_profile_info_setup_continue_button"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:text="Save"
-                    android:textColor="@color/linguaWhite"
-                    app:backgroundTint="@color/colorPrimary"
-                    app:icon="@drawable/save"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-    </LinearLayout>
+                    <Button
+                        android:id="@+id/activity_profile_info_setup_continue_button"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:text="Save"
+                        android:textColor="@color/linguaWhite"
+                        app:backgroundTint="@color/colorPrimary"
+                        app:icon="@drawable/save"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
