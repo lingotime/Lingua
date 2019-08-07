@@ -2,7 +2,6 @@ package com.lingua.lingua.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,10 +41,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     public List<Chat> chats;
 
     private CardView chatCard;
-    private ImageView ivProfile;
-    private TextView tvName;
-    private TextView tvText;
-    private TextView tvTimestamp;
+    private ImageView ivProfile, ivNewMessage;
+    private TextView tvName, tvText, tvTimestamp;
 
     User currentUser;
 
@@ -69,6 +66,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         tvText.setText(chat.getLastTextMessage());
         tvTimestamp.setText(DateUtil.getRelativeTimeAgo(chat.getLastTextChatTime()));
         tvName.setText(chat.getChatName());
+
+        if (!chat.isLastMessageSeen()) {
+            tvTimestamp.setTextColor(context.getResources().getColor(R.color.colorSecondary));
+            ivNewMessage.setVisibility(View.VISIBLE);
+        }
 
         // load profile pic
         RequestOptions requestOptionsMedia = new RequestOptions();
@@ -122,6 +124,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             tvName = itemView.findViewById(R.id.item_chat_tv_name);
             tvText = itemView.findViewById(R.id.item_chat_tv_text);
             tvTimestamp = itemView.findViewById(R.id.item_chat_tv_timestamp);
+            ivNewMessage = itemView.findViewById(R.id.item_chat_new_message_icon);
 
             chatCard.setOnClickListener(new View.OnClickListener() {
                 @Override
