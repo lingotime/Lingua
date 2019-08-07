@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -120,7 +121,12 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             if (user.isOnline()) {
                 liveStatusSignal.setVisibility(View.VISIBLE);
             } else {
-                liveStatusSignal.setVisibility(View.GONE);
+                if (!user.isWillingToHost()) {
+                    liveStatusSignal.setVisibility(View.GONE);
+                    willingToHostImage.setVisibility(View.GONE);
+                } else {
+                    liveStatusSignal.setColorFilter(ContextCompat.getColor(context, android.R.color.white));
+                }
             }
 
             // load other user information into place
@@ -144,11 +150,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 knownLanguageChip.setClickable(false);
                 knownLanguageChip.setText(knownLanguage);
                 knownLanguagesChips.addView(knownLanguageChip);
-            }
-
-
-            if (!user.isWillingToHost()) {
-                willingToHostImage.setVisibility(View.GONE);
             }
 
             sendRequestButton.setOnClickListener(new View.OnClickListener() {
