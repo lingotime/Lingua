@@ -283,6 +283,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
             biographyField.setError("Please enter a biography that is at least four characters.");
         }
 
+        // deal with the user looking for a host or not
+        if (lookingForHostSwitch.isChecked()) {
+            currentUser.setUserLookingForAHost(true);
+        } else {
+            currentUser.setUserLookingForAHost(false);
+        }
+
         // deal with the user's willingness to host
         if (willingToHostSwitch.isChecked()) {
             currentUser.setUserWillingToHost(true);
@@ -379,6 +386,12 @@ public class ProfileCreationActivity extends AppCompatActivity {
             } catch (ParseException exception) {
                 Log.e("ProfileSetupActivity", "There was an issue parsing the user's registered birth date.");
             }
+        }
+
+        if (currentUser.isUserLookingForAHost()) {
+            lookingForHostSwitch.setChecked(true);
+        } else {
+            lookingForHostSwitch.setChecked(false);
         }
 
         if (currentUser.isUserWillingToHost()) {
