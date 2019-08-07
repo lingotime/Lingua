@@ -33,7 +33,7 @@ import java.util.Map;
 * RecyclerView Adapter that adapts Friend Request objects to the viewholders in the recyclerview
 */
 
-public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.ViewHolder> {
+public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAdapter.ViewHolder> {
 
     private Context context;
     private List<FriendRequest> friendRequests;
@@ -47,7 +47,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     private static final int TYPE_RECEIVED_FRIEND_REQUESTS = 1;
     private static final int TYPE_SENT_FRIEND_REQUESTS = 2;
 
-    public NotificationsAdapter(Context context, List<FriendRequest> friendRequests, User currentUser) {
+    public FriendRequestsAdapter(Context context, List<FriendRequest> friendRequests, User currentUser) {
         this.context = context;
         this.friendRequests = friendRequests;
         this.currentUser = currentUser;
@@ -63,11 +63,11 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         if (viewType == TYPE_RECEIVED_FRIEND_REQUESTS) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_friend_request_received, parent, false);
-            return new NotificationsAdapter.ViewHolder(view);
+            return new FriendRequestsAdapter.ViewHolder(view);
         } else if (viewType == TYPE_SENT_FRIEND_REQUESTS) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_friend_request_sent, parent, false);
-            return new NotificationsAdapter.ViewHolder(view);
+            return new FriendRequestsAdapter.ViewHolder(view);
         } else {
             return null;
         }

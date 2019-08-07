@@ -26,7 +26,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.R;
-import com.lingua.lingua.adapters.NotificationsAdapter;
+import com.lingua.lingua.adapters.FriendRequestsAdapter;
 import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 
@@ -44,8 +44,8 @@ public class SentFriendRequestsFragment extends Fragment {
 
     Context context;
 
-    RecyclerView rvSentNotifications;
-    private NotificationsAdapter sentAdapter;
+    RecyclerView rvSentFriendRequests;
+    private FriendRequestsAdapter sentAdapter;
     private List<FriendRequest> friendRequestsSent;
     private SwipeRefreshLayout swipeContainer;
 
@@ -80,16 +80,16 @@ public class SentFriendRequestsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // set up recycler view for received notifications
-        rvSentNotifications = view.findViewById(R.id.tab_fragment_friend_requests_rv);
+        rvSentFriendRequests = view.findViewById(R.id.tab_fragment_friend_requests_rv);
         friendRequestsSent = new ArrayList<>();
-        sentAdapter = new NotificationsAdapter(context, friendRequestsSent, currentUser);
+        sentAdapter = new FriendRequestsAdapter(context, friendRequestsSent, currentUser);
 
-        rvSentNotifications.setAdapter(sentAdapter);
+        rvSentFriendRequests.setAdapter(sentAdapter);
         LinearLayoutManager receivedLinearLayoutManager = new LinearLayoutManager(context);
-        rvSentNotifications.setLayoutManager(receivedLinearLayoutManager);
+        rvSentFriendRequests.setLayoutManager(receivedLinearLayoutManager);
 
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
-        rvSentNotifications.addItemDecoration(itemDecoration);
+        rvSentFriendRequests.addItemDecoration(itemDecoration);
 
         noFriendRequestsTv = view.findViewById(R.id.tab_fragment_no_friend_requests_tv);
         noFriendRequestsTv.setText("No pending friend requests sent.");

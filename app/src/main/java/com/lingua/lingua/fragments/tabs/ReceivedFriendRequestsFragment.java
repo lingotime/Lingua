@@ -26,7 +26,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.R;
-import com.lingua.lingua.adapters.NotificationsAdapter;
+import com.lingua.lingua.adapters.FriendRequestsAdapter;
 import com.lingua.lingua.models.FriendRequest;
 import com.lingua.lingua.models.User;
 
@@ -43,8 +43,8 @@ import java.util.List;
 public class ReceivedFriendRequestsFragment extends Fragment {
     Context context;
 
-    RecyclerView rvReceivedNotifications;
-    private NotificationsAdapter receivedAdapter;
+    RecyclerView rvReceivedFriendRequests;
+    private FriendRequestsAdapter receivedAdapter;
     private List<FriendRequest> friendRequestsReceived;
     private SwipeRefreshLayout swipeContainer;
 
@@ -79,16 +79,16 @@ public class ReceivedFriendRequestsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // set up recycler view for received notifications
-        rvReceivedNotifications = view.findViewById(R.id.tab_fragment_friend_requests_rv);
+        rvReceivedFriendRequests = view.findViewById(R.id.tab_fragment_friend_requests_rv);
         friendRequestsReceived = new ArrayList<>();
-        receivedAdapter = new NotificationsAdapter(context, friendRequestsReceived, currentUser);
+        receivedAdapter = new FriendRequestsAdapter(context, friendRequestsReceived, currentUser);
 
-        rvReceivedNotifications.setAdapter(receivedAdapter);
+        rvReceivedFriendRequests.setAdapter(receivedAdapter);
         LinearLayoutManager receivedLinearLayoutManager = new LinearLayoutManager(context);
-        rvReceivedNotifications.setLayoutManager(receivedLinearLayoutManager);
+        rvReceivedFriendRequests.setLayoutManager(receivedLinearLayoutManager);
 
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
-        rvReceivedNotifications.addItemDecoration(itemDecoration);
+        rvReceivedFriendRequests.addItemDecoration(itemDecoration);
 
         noFriendRequestsTv = view.findViewById(R.id.tab_fragment_no_friend_requests_tv);
         noFriendRequestsTv.setText("No pending friend requests received.");

@@ -15,7 +15,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
-import com.lingua.lingua.adapters.FriendRequestTabsAdapter;
+import com.lingua.lingua.adapters.FriendRequestsPagerAdapter;
 import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
@@ -45,7 +45,7 @@ public class FriendRequestFragment extends Fragment {
 
         Toolbar toolbar = view.findViewById(R.id.fragment_friend_request_toolbar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Pending Friend Requests");
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Friend Requests");
 
         TabLayout tabLayout = view.findViewById(R.id.fragment_friend_request_tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Received"));
@@ -53,7 +53,7 @@ public class FriendRequestFragment extends Fragment {
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         ViewPager viewPager = view.findViewById(R.id.fragment_friend_request_view_pager);
-        FriendRequestTabsAdapter adapter = new FriendRequestTabsAdapter(getChildFragmentManager(), tabLayout.getTabCount(), currentUser);
+        FriendRequestsPagerAdapter adapter = new FriendRequestsPagerAdapter(getChildFragmentManager(), tabLayout.getTabCount(), currentUser);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 

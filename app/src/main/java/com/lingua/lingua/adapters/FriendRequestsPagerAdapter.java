@@ -10,11 +10,11 @@ import com.lingua.lingua.fragments.tabs.ReceivedFriendRequestsFragment;
 import com.lingua.lingua.fragments.tabs.SentFriendRequestsFragment;
 import com.lingua.lingua.models.User;
 
-public class FriendRequestTabsAdapter extends FragmentStatePagerAdapter {
+public class FriendRequestsPagerAdapter extends FragmentStatePagerAdapter {
     int numOfTabs;
     User user;
 
-    public FriendRequestTabsAdapter(FragmentManager fm, int NumOfTabs, User user) {
+    public FriendRequestsPagerAdapter(FragmentManager fm, int NumOfTabs, User user) {
         super(fm);
         this.user = user;
         this.numOfTabs = NumOfTabs;
