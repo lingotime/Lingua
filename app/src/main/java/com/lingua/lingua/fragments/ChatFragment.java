@@ -171,15 +171,16 @@ public class ChatFragment extends Fragment {
             try {
                 JSONObject chat = new JSONObject(s);
 
+                String lastMessageAt = chat.getString("lastMessageAt");
+                boolean lastMessageSeen = chat.getBoolean("lastMessageSeen");
+
                 String lastMessage = chat.getString("lastMessage");
-                if (lastMessage != null && lastMessage.startsWith(currentUser.getUserName())) {
+                if (lastMessage.startsWith(currentUser.getUserName())) {
                     lastMessage = "You" + lastMessage.split(currentUser.getUserName())[1];
+                    lastMessageSeen = true;
                 } else {
                     lastMessage = lastMessage.split(": ")[1];
                 }
-
-                String lastMessageAt = chat.getString("lastMessageAt");
-                boolean lastMessageSeen = chat.getBoolean("lastMessageSeen");
 
                 // get list of user ids in the chat
                 ArrayList<String> userIds = new ArrayList<>();
@@ -207,7 +208,7 @@ public class ChatFragment extends Fragment {
                 chatOb.setChatParticipants(userIds);
                 chatOb.setLastTextMessage(lastMessage);
                 chatOb.setChatLanguages(exploreLanguages);
-                chatOb.setLastMessageSeen(lastMessageSeen); // TODO: query whether it is seen or not
+                chatOb.setLastMessageSeen(lastMessageSeen);
 
                 if (userIds.size() == 2) {
                     for (String userID : userIds) {

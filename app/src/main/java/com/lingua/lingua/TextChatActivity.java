@@ -202,6 +202,7 @@ public class TextChatActivity extends AppCompatActivity {
             Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getChatID());
             chatReference.child("lastMessage").setValue(currentUser.getUserName() + ": " + messageText);
             chatReference.child("lastMessageAt").setValue(timestamp);
+            chatReference.child("lastMessageSeen").setValue(false);
         }
     }
 
