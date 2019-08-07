@@ -271,6 +271,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         AlertDialog.Builder hostingSelection = new AlertDialog.Builder(this);
         hostingSelection.setTitle("Choose your involvement in our Hosting Program");
+        hostingSelection.setIcon(R.drawable.home);
         // hostingSelection.setMessage("Would you like to join our hosting community? In what capacity? (Choose all that apply)");
 
         hostingSelection.setMultiChoiceItems(hostingChoices, checkedChoices, new DialogInterface.OnMultiChoiceClickListener() {
