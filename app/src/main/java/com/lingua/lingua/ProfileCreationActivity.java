@@ -340,6 +340,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             databaseReference.child("exploreLanguages").setValue(currentUser.getExploreLanguages());
             databaseReference.child("exploreCountries").setValue(currentUser.getExploreCountries());
             databaseReference.child("complete").setValue(currentUser.isComplete());
+            databaseReference.child("willingToHost").setValue(currentUser.getUserWillingToHost());
         } else {
             // re-enable the button because data was not saved
             continueButton.setText("Save");
@@ -371,6 +372,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 Log.e("ProfileSetupActivity", "There was an issue parsing the user's registered birth date.");
             }
         }
+        
 
         if (currentUser.getUserBiographyText() != null) {
             biographyField.setText(currentUser.getUserBiographyText());

@@ -25,6 +25,7 @@ public class User {
     ArrayList<String> pendingReceivedFriendRequests;
     ArrayList<String> declinedUsers;
     ArrayList<String> conversations;
+    boolean willingToHost;
     boolean complete;
     boolean online;
 
@@ -56,6 +57,14 @@ public class User {
 
     public String getUserBiographyText() {
         return userBiographyText;
+    }
+
+    public boolean getUserWillingToHost() {
+        return willingToHost;
+    }
+
+    public void setUserWillingToHost(boolean userSwitchResponse) {
+        this.willingToHost = userSwitchResponse;
     }
 
     public void setUserBiographyText(String userBiographyText) {
