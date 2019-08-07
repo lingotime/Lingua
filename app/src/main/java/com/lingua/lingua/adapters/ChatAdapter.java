@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -51,7 +52,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     public ChatAdapter(Context context, List<Chat> chats, User user) {
         this.context = context;
         this.chats = chats;
-
         currentUser = user;
     }
 
@@ -88,21 +88,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.d("ChatAdapter", s);
                 String key = dataSnapshot.getKey();
-                if (key.equals("lastMessage")) {
-                    // display last message with the other user's name or with "You: " if current user is the sender
-                    String lastMessageRaw = (String) dataSnapshot.getValue();
-                    if (lastMessageRaw != null && lastMessageRaw.startsWith(currentUser.getUserName())) {
-                        String lastMessage = "You" + lastMessageRaw.split(currentUser.getUserName())[1];
-                        tvText.setText(lastMessage);
-                    } else {
-                        String lastMessage = lastMessageRaw.split(": ")[1];
-                        tvText.setText(lastMessage);
-                    }
-                } else if (key.equals("lastMessageAt")) {
-                    String lastMessageTimestamp = (String) dataSnapshot.getValue();
-                    tvTimestamp.setText(DateUtil.getRelativeTimeAgo(lastMessageTimestamp));
+                if (key.equals("lastMessageAt")) {
+                    // notify the fragment that there was a change and we should refresh
+                    String lastMessageAt = (String) dataSnapshot.getValue();
+                    Intent intent = new Intent("lastMessageChanged");
+                    intent.putExtra("lastMessageAt", lastMessageAt);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
             }
 

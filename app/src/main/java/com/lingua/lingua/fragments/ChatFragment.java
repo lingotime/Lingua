@@ -1,7 +1,9 @@
 package com.lingua.lingua.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -23,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -69,12 +72,17 @@ public class ChatFragment extends Fragment {
     // used to implement the actions for swiping left or right on each chat object
 
     User currentUser;
+    String lastMessageAt;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
         context = getContext();
+        lastMessageAt = "";
+        // register to receive broadcasts, in this case from the chat adapter
+        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("lastMessageChanged"));
+
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
@@ -90,7 +98,6 @@ public class ChatFragment extends Fragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
-                Log.i(TAG, String.valueOf(id));
 
                 if (id == R.id.menu_chat_fragment_group_icon) {
                     Log.i(TAG,"new group clicked");
@@ -129,6 +136,8 @@ public class ChatFragment extends Fragment {
 
         queryChats();
         enableSwipe();
+
+
     }
 
     private void queryChats() {
@@ -161,7 +170,6 @@ public class ChatFragment extends Fragment {
         StringRequest chatInfoRequest = new StringRequest(Request.Method.GET, chatUrl, s -> {
             try {
                 JSONObject chat = new JSONObject(s);
-                Log.i("ChatFragment", chat.toString());
 
                 String lastMessage = chat.getString("lastMessage");
                 if (lastMessage != null && lastMessage.startsWith(currentUser.getUserName())) {
@@ -178,7 +186,6 @@ public class ChatFragment extends Fragment {
                 Iterator keys = users.keys();
                 while (keys.hasNext()) {
                     String key = keys.next().toString();
-                    Log.d(TAG, key);
                     userIds.add(key);
                 }
 
@@ -351,4 +358,18 @@ public class ChatFragment extends Fragment {
         canvas.drawBitmap(bitmap, 0, 0, paint);
         return bitmapResult;
     }
+
+    // broadcast receiver that listens to messages from the adapter, so it updates the fragment
+    public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String timestamp = intent.getStringExtra("lastMessageAt");
+            if (!timestamp.equals(lastMessageAt)) {
+                lastMessageAt = timestamp;
+                adapter.clear();
+                queryChats();
+            }
+            lastMessageAt = timestamp;
+        }
+    };
 }

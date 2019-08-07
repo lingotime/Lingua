@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -218,7 +217,5 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
         message.put("timestamp", friendRequest.getCreatedTime());
 
         reference.child("messages").child(chatId).push().setValue(message);
-
-        Toast.makeText(context, "Friend request accepted", Toast.LENGTH_SHORT).show();
     }
 }
