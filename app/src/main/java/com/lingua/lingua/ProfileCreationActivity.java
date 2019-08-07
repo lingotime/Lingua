@@ -282,6 +282,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
             biographyField.setError("Please enter a biography that is at least four characters.");
         }
 
+        // deal with the user's willingness to host
+        if (hostingSwitch.isChecked()) {
+            currentUser.setUserWillingToHost(true);
+        } else {
+            currentUser.setUserWillingToHost(false);
+        }
+
         // deal with userOriginCountry
         ArrayList<String> userOriginCountryInput = (ArrayList) originCountryField.getChipValues();
 
@@ -372,7 +379,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 Log.e("ProfileSetupActivity", "There was an issue parsing the user's registered birth date.");
             }
         }
-        
+
+        if (currentUser.getUserWillingToHost()) {
+            hostingSwitch.setChecked(true);
+        } else {
+            hostingSwitch.setChecked(false);
+        }
+
 
         if (currentUser.getUserBiographyText() != null) {
             biographyField.setText(currentUser.getUserBiographyText());
