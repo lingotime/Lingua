@@ -52,8 +52,8 @@ public class FriendRequestFragment extends Fragment {
         tabLayout.addTab(tabLayout.newTab().setText("Sent"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        final ViewPager viewPager = view.findViewById(R.id.fragment_friend_request_view_pager);
-        final FriendRequestTabsAdapter adapter = new FriendRequestTabsAdapter(getFragmentManager(), tabLayout.getTabCount());
+        ViewPager viewPager = view.findViewById(R.id.fragment_friend_request_view_pager);
+        FriendRequestTabsAdapter adapter = new FriendRequestTabsAdapter(getChildFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 

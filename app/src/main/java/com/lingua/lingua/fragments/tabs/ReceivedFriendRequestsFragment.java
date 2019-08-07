@@ -170,6 +170,7 @@ public class ReceivedFriendRequestsFragment extends Fragment {
                 receivedAdapter.notifyDataSetChanged();
 
             } catch (JSONException e) {
+                noFriendRequestsTv.setVisibility(View.VISIBLE);
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }

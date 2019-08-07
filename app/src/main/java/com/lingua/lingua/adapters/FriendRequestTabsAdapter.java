@@ -1,17 +1,22 @@
 package com.lingua.lingua.adapters;
 
+import android.os.Parcelable;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.lingua.lingua.fragments.tabs.ReceivedFriendRequestsFragment;
 import com.lingua.lingua.fragments.tabs.SentFriendRequestsFragment;
+import com.lingua.lingua.models.User;
 
 public class FriendRequestTabsAdapter extends FragmentStatePagerAdapter {
     int numOfTabs;
+    User user;
 
-    public FriendRequestTabsAdapter(FragmentManager fm, int NumOfTabs) {
+    public FriendRequestTabsAdapter(FragmentManager fm, int NumOfTabs, User user) {
         super(fm);
+        this.user = user;
         this.numOfTabs = NumOfTabs;
     }
 
@@ -33,5 +38,10 @@ public class FriendRequestTabsAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return numOfTabs;
+    }
+
+    @Override
+    public Parcelable saveState() {
+        return null;
     }
 }
