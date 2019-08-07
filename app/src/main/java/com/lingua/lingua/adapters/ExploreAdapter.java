@@ -138,6 +138,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             // load chips of known languages
             for (String knownLanguage : user.getKnownLanguages()) {
                 Chip knownLanguageChip = new Chip(context);
+                knownLanguageChip.setClickable(false);
                 knownLanguageChip.setText(knownLanguage);
                 knownLanguagesChips.addView(knownLanguageChip);
             }
