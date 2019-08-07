@@ -30,6 +30,7 @@ import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,6 +48,7 @@ public class ProfileFragment extends Fragment {
     private TextView nameText;
     private TextView ageText;
     private TextView biographyText;
+    private TextView willingToHostText;
     private TextView originCountryText;
     private TextView knownLanguagesText;
     private ChipGroup knownLanguagesChips;
@@ -76,6 +78,7 @@ public class ProfileFragment extends Fragment {
         nameText = view.findViewById(R.id.fragment_profile_name_text);
         ageText = view.findViewById(R.id.fragment_profile_age_text);
         biographyText = view.findViewById(R.id.fragment_profile_biography_text);
+        willingToHostText = view.findViewById(R.id.fragment_profile_willing_to_host_text);
         originCountryText = view.findViewById(R.id.fragment_profile_origin_country_text);
         knownLanguagesText = view.findViewById(R.id.fragment_profile_known_languages_text);
         knownLanguagesChips = view.findViewById(R.id.fragment_profile_known_languages_chips);
@@ -129,6 +132,12 @@ public class ProfileFragment extends Fragment {
         ageText.setText("Age: " + getAge(currentUser.getUserBirthDate()) + " years old");
 
         biographyText.setText("Bio: " + currentUser.getUserBiographyText());
+
+        if (currentUser.getUserWillingToHost()) {
+            willingToHostText.setText("Willing to host guests");
+        } else {
+            willingToHostText.setVisibility(View.GONE);
+        }
 
         originCountryText.setText("Origin Country: " + currentUser.getUserOriginCountry());
 
