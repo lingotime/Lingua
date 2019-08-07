@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,10 +28,12 @@ import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.NotificationsAdapter;
 import com.lingua.lingua.models.FriendRequest;
+import com.lingua.lingua.models.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,20 +51,26 @@ public class SentFriendRequestsFragment extends Fragment {
 
     private TextView noFriendRequestsTv;
 
-    String userId, userName;
+    User currentUser;
+
+    // newInstance constructor for creating fragment with arguments
+    public static SentFriendRequestsFragment newInstance(User user) {
+        SentFriendRequestsFragment fragment = new SentFriendRequestsFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("user", Parcels.wrap(user));
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // set the context
         context = getContext();
+        currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
 
         // register to receive broadcasts, in this case from the adapter
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("notificationDeleted"));
-
-        SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
-        userId = prefs.getString("userId", "");
-        userName = prefs.getString("userName", "");
 
         return inflater.inflate(R.layout.tab_fragment_friend_requests, container, false);
     }
@@ -75,7 +82,7 @@ public class SentFriendRequestsFragment extends Fragment {
         // set up recycler view for received notifications
         rvSentNotifications = view.findViewById(R.id.tab_fragment_friend_requests_rv);
         friendRequestsSent = new ArrayList<>();
-        sentAdapter = new NotificationsAdapter(context, friendRequestsSent);
+        sentAdapter = new NotificationsAdapter(context, friendRequestsSent, currentUser);
 
         rvSentNotifications.setAdapter(sentAdapter);
         LinearLayoutManager receivedLinearLayoutManager = new LinearLayoutManager(context);
@@ -103,7 +110,7 @@ public class SentFriendRequestsFragment extends Fragment {
     }
 
     private void queryFriendRequests() {
-        String urlSent = "https://lingua-project.firebaseio.com/users/" + userId + "/sentFriendRequests.json";
+        String urlSent = "https://lingua-project.firebaseio.com/users/" + currentUser.getUserID() + "/sentFriendRequests.json";
         StringRequest request = new StringRequest(Request.Method.GET, urlSent, s -> {
             try {
                 JSONObject object = new JSONObject(s);

@@ -25,10 +25,10 @@ public class FriendRequestTabsAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                ReceivedFriendRequestsFragment receivedTab = new ReceivedFriendRequestsFragment();
+                ReceivedFriendRequestsFragment receivedTab = ReceivedFriendRequestsFragment.newInstance(user);
                 return receivedTab;
             case 1:
-                SentFriendRequestsFragment sentTab = new SentFriendRequestsFragment();
+                SentFriendRequestsFragment sentTab = SentFriendRequestsFragment.newInstance(user);
                 return sentTab;
             default:
                 return null;

@@ -53,7 +53,7 @@ public class FriendRequestFragment extends Fragment {
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         ViewPager viewPager = view.findViewById(R.id.fragment_friend_request_view_pager);
-        FriendRequestTabsAdapter adapter = new FriendRequestTabsAdapter(getChildFragmentManager(), tabLayout.getTabCount());
+        FriendRequestTabsAdapter adapter = new FriendRequestTabsAdapter(getChildFragmentManager(), tabLayout.getTabCount(), currentUser);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
