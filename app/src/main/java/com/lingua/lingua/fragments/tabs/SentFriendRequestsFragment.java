@@ -92,6 +92,7 @@ public class SentFriendRequestsFragment extends Fragment {
         rvSentNotifications.addItemDecoration(itemDecoration);
 
         noFriendRequestsTv = view.findViewById(R.id.tab_fragment_no_friend_requests_tv);
+        noFriendRequestsTv.setText("No pending friend requests sent.");
         swipeContainer = view.findViewById(R.id.tab_fragment_friend_request_swipe_container);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
