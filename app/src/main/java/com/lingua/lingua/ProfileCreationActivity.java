@@ -45,7 +45,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileInfoSetupActivity allows a user to setup information relevant to their account. */
 
@@ -55,7 +54,8 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private ImageView profileImage;
     private EditText nameField;
     private EditText birthdateField;
-    private SwitchCompat hostingSwitch;
+    private SwitchCompat willingToHostSwitch;
+    private SwitchCompat lookingForHostSwitch;
     private TextInputEditText biographyField;
     private NachoTextView originCountryField;
     private NachoTextView knownLanguagesField;
@@ -78,7 +78,8 @@ public class ProfileCreationActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.activity_profile_info_setup_profile_image);
         nameField = findViewById(R.id.activity_profile_info_setup_name_field);
         birthdateField = findViewById(R.id.activity_profile_info_setup_birthdate_field);
-        hostingSwitch = findViewById(R.id.activity_profile_info_setup_host_toggle);
+        willingToHostSwitch = findViewById(R.id.activity_profile_info_setup_willing_to_host);
+        lookingForHostSwitch = findViewById(R.id.activity_profile_info_setup_looking_for_host);
         biographyField = findViewById(R.id.activity_profile_info_setup_biography_field);
         originCountryField = findViewById(R.id.activity_profile_info_setup_origin_country_field);
         knownLanguagesField = findViewById(R.id.activity_profile_info_setup_known_languages_field);
@@ -283,7 +284,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         }
 
         // deal with the user's willingness to host
-        if (hostingSwitch.isChecked()) {
+        if (willingToHostSwitch.isChecked()) {
             currentUser.setUserWillingToHost(true);
         } else {
             currentUser.setUserWillingToHost(false);
@@ -381,9 +382,9 @@ public class ProfileCreationActivity extends AppCompatActivity {
         }
 
         if (currentUser.isUserWillingToHost()) {
-            hostingSwitch.setChecked(true);
+            willingToHostSwitch.setChecked(true);
         } else {
-            hostingSwitch.setChecked(false);
+            willingToHostSwitch.setChecked(false);
         }
 
 

@@ -28,7 +28,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/activity_profile_info_setup_card_1"
             android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_height="175dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -81,9 +81,16 @@
                         android:singleLine="true" />
 
                     <androidx.appcompat.widget.SwitchCompat
-                        android:text="Willing to host?"
+                        android:text="Looking for a host?"
                         android:textSize="18sp"
-                        android:id="@+id/activity_profile_info_setup_host_toggle"
+                        android:id="@+id/activity_profile_info_setup_looking_for_host"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:text="Willing to host a guest?"
+                        android:textSize="18sp"
+                        android:id="@+id/activity_profile_info_setup_willing_to_host"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
