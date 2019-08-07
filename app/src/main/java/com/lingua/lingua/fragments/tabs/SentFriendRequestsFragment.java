@@ -1,4 +1,4 @@
-package com.lingua.lingua.fragments;
+package com.lingua.lingua.fragments.tabs;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -26,7 +25,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
 import com.lingua.lingua.adapters.NotificationsAdapter;
 import com.lingua.lingua.models.FriendRequest;
@@ -42,20 +40,17 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-/**
-* Fragment that displays pending friend requests, and possibly in the future also missed calls.
-*/
+public class SentFriendRequestsFragment extends Fragment {
 
-public class NotificationsFragment extends Fragment {
     Context context;
 
-    RecyclerView rvReceivedNotifications, rvSentNotifications;
-    private NotificationsAdapter receivedAdapter, sentAdapter;
-    private List<FriendRequest> friendRequestsReceived, friendRequestsSent;
+    RecyclerView rvSentNotifications;
+    private NotificationsAdapter sentAdapter;
+    private List<FriendRequest> friendRequestsSent;
     private SwipeRefreshLayout swipeContainer;
     private User currentUser;
 
-    private TextView receivedHeader, sentHeader, noNotificationsTv;
+    private TextView noFriendRequestsTv;
 
     String userId;
 
@@ -71,44 +66,27 @@ public class NotificationsFragment extends Fragment {
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
         userId = currentUser.getUserID();
 
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+        return inflater.inflate(R.layout.tab_fragment_friend_requests, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = view.findViewById(R.id.fragment_notifications_toolbar);
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Notifications");
-
         // set up recycler view for received notifications
-        rvReceivedNotifications = view.findViewById(R.id.fragment_notifications_received_rv);
-        friendRequestsReceived = new ArrayList<>();
-        receivedAdapter = new NotificationsAdapter(context, friendRequestsReceived, currentUser);
-
-        rvReceivedNotifications.setAdapter(receivedAdapter);
-        LinearLayoutManager receivedLinearLayoutManager = new LinearLayoutManager(context);
-        rvReceivedNotifications.setLayoutManager(receivedLinearLayoutManager);
-
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
-        rvReceivedNotifications.addItemDecoration(itemDecoration);
-
-        // set up recycler view for sent notifications
-        rvSentNotifications = view.findViewById(R.id.fragment_notifications_sent_rv);
+        rvSentNotifications = view.findViewById(R.id.tab_fragment_friend_requests_rv);
         friendRequestsSent = new ArrayList<>();
         sentAdapter = new NotificationsAdapter(context, friendRequestsSent, currentUser);
 
         rvSentNotifications.setAdapter(sentAdapter);
-        LinearLayoutManager sentLinearLayoutManager = new LinearLayoutManager(context);
-        rvSentNotifications.setLayoutManager(sentLinearLayoutManager);
+        LinearLayoutManager receivedLinearLayoutManager = new LinearLayoutManager(context);
+        rvSentNotifications.setLayoutManager(receivedLinearLayoutManager);
 
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
         rvSentNotifications.addItemDecoration(itemDecoration);
 
-        receivedHeader = view.findViewById(R.id.fragment_notifications_header_received);
-        sentHeader = view.findViewById(R.id.fragment_notifications_header_sent);
-        noNotificationsTv = view.findViewById(R.id.fragment_notifications_no_notifications_tv);
-        swipeContainer = view.findViewById(R.id.fragment_notifications_swipe_container);
+        noFriendRequestsTv = view.findViewById(R.id.tab_fragment_no_friend_requests_tv);
+        swipeContainer = view.findViewById(R.id.tab_fragment_friend_request_swipe_container);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -127,41 +105,24 @@ public class NotificationsFragment extends Fragment {
 
     private void queryFriendRequests() {
         String urlReceived = "https://lingua-project.firebaseio.com/users/" + userId + "/receivedFriendRequests.json";
-        queryFriendRequests(urlReceived, "received");
-    }
-
-    private void queryFriendRequests(String url, String type) {
-        String urlSent = "https://lingua-project.firebaseio.com/users/" + userId + "/sentFriendRequests.json";
-        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
+        StringRequest request = new StringRequest(Request.Method.GET, urlReceived, s -> {
             try {
                 JSONObject object = new JSONObject(s);
                 Iterator keys = object.keys();
                 while (keys.hasNext()) {
                     String key = keys.next().toString();
-                    queryFriendRequestInfo(key, type);
+                    queryFriendRequestInfo(key);
                 }
-                if (type.equals("received")) {
-                    receivedHeader.setVisibility(View.VISIBLE);
-                    queryFriendRequests(urlSent, "sent");
-                } else {
-                    sentHeader.setVisibility(View.VISIBLE);
-                    swipeContainer.setRefreshing(false);
-                }
+                swipeContainer.setRefreshing(false);
             } catch (JSONException e) {
-                if (type.equals("received")) {
-                    queryFriendRequests(urlSent, "sent");
-                } else {
-                    swipeContainer.setRefreshing(false);
-                    if (receivedHeader.getVisibility() == View.GONE) {
-                        noNotificationsTv.setVisibility(View.VISIBLE);
-                    }
-                }
+                swipeContainer.setRefreshing(false);
+                noFriendRequestsTv.setVisibility(View.VISIBLE);
                 e.printStackTrace();
             }
         }, volleyError -> {
             Toast.makeText(context, "No connection", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
-            noNotificationsTv.setVisibility(View.VISIBLE);
+            noFriendRequestsTv.setVisibility(View.VISIBLE);
             Log.e("NotificationsFragment", "" + volleyError);
         });
 
@@ -169,7 +130,7 @@ public class NotificationsFragment extends Fragment {
         rQueue.add(request);
     }
 
-    private void queryFriendRequestInfo(String friendRequestId, String type) {
+    private void queryFriendRequestInfo(String friendRequestId) {
         String url = "https://lingua-project.firebaseio.com/friendRequests/" + friendRequestId + ".json";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
@@ -205,17 +166,10 @@ public class NotificationsFragment extends Fragment {
                 friendRequest.setFriendRequestID(id);
                 friendRequest.setExploreLanguages(exploreLanguages);
 
-                if (type.equals("received")) {
-                    friendRequestsReceived.add(friendRequest);
-                    Collections.sort(friendRequestsReceived, (o1, o2) -> o1.getCreatedTime().compareTo(o2.getCreatedTime()));
-                    Collections.reverse(friendRequestsReceived);
-                    receivedAdapter.notifyDataSetChanged();
-                } else {
-                    friendRequestsSent.add(friendRequest);
-                    Collections.sort(friendRequestsSent, (o1, o2) -> o1.getCreatedTime().compareTo(o2.getCreatedTime()));
-                    Collections.reverse(friendRequestsSent);
-                    sentAdapter.notifyDataSetChanged();
-                }
+                friendRequestsSent.add(friendRequest);
+                Collections.sort(friendRequestsSent, (o1, o2) -> o1.getCreatedTime().compareTo(o2.getCreatedTime()));
+                Collections.reverse(friendRequestsSent);
+                sentAdapter.notifyDataSetChanged();
 
             } catch (JSONException e) {
                 swipeContainer.setRefreshing(false);
@@ -231,9 +185,7 @@ public class NotificationsFragment extends Fragment {
     }
 
     public void refresh() {
-        friendRequestsReceived.clear();
         friendRequestsSent.clear();
-        receivedAdapter.notifyDataSetChanged();
         sentAdapter.notifyDataSetChanged();
         queryFriendRequests();
     }
@@ -242,14 +194,8 @@ public class NotificationsFragment extends Fragment {
     public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (friendRequestsReceived.size() == 0) {
-                receivedHeader.setVisibility(View.GONE);
-            }
             if (friendRequestsSent.size() == 0) {
-                sentHeader.setVisibility(View.GONE);
-            }
-            if (friendRequestsReceived.size() == 0 && friendRequestsSent.size() == 0) {
-                noNotificationsTv.setVisibility(View.VISIBLE);
+                noFriendRequestsTv.setVisibility(View.VISIBLE);
             }
         }
     };

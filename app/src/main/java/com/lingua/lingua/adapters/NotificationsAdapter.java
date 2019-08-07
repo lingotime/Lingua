@@ -40,8 +40,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     Firebase reference;
     private User currentUser;
 
-    // for the explore languages
-
     private ImageView ivProfile;
     private TextView tvMessage, tvName, tvTimestamp;
     private Button acceptButton, rejectButton, cancelButton;
