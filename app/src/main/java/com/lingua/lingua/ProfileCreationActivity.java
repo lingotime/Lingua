@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -255,20 +256,22 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
     // an alert dialog from which the user can select their hosting options
     private void hostingChoiceDialog() {
+
         String[] hostingChoices = new String[]{
                 "Available to a host guests",
                 "Trying to find hosts"
         };
 
         // prepopulate the choices from the current user's choices
-        boolean[] checkedChoices = new boolean[]{
-                currentUser.isWillingToHost(),
-                currentUser.isLookingForAHost()
-        };
+        boolean[] checkedChoices = new boolean[2];
+        if (currentUser != null) {
+            checkedChoices[0] = currentUser.isWillingToHost();
+            checkedChoices[1] = currentUser.isLookingForAHost();
+        }
 
         AlertDialog.Builder hostingSelection = new AlertDialog.Builder(this);
-        hostingSelection.setTitle("Foreign Exchange Hosting Program");
-        hostingSelection.setMessage("Would you like to join our hosting community? In what capacity? (Choose all that apply)");
+        hostingSelection.setTitle("Choose your involvement in our Hosting Program");
+        // hostingSelection.setMessage("Would you like to join our hosting community? In what capacity? (Choose all that apply)");
 
         hostingSelection.setMultiChoiceItems(hostingChoices, checkedChoices, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
@@ -277,31 +280,40 @@ public class ProfileCreationActivity extends AppCompatActivity {
             }
         });
 
-        hostingSelection.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        hostingSelection.setPositiveButton("SELECT", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 for (int index = 0; index < checkedChoices.length; index++) {
-                    if (checkedChoices[i]) {
-                        if (i == 0) {
-                            currentUser.setUserWillingToHost(true);
+                    if (currentUser != null) {
+                        boolean checked = checkedChoices[index];
+                        if (checked) {
+                            if (index == 0) {
+                                currentUser.setUserWillingToHost(true);
+                            } else {
+                                currentUser.setUserLookingForAHost(true);
+                            }
                         } else {
-                            currentUser.setUserLookingForAHost(true);
+                            if (index == 0) {
+                                currentUser.setUserWillingToHost(false);
+                            } else {
+                                currentUser.setUserLookingForAHost(false);
+                            }
                         }
                     } else {
-                        if (i == 0) {
-                            currentUser.setUserWillingToHost(false);
-                        } else {
-                            currentUser.setUserLookingForAHost(false);
-                        }
+                        Toast.makeText(ProfileCreationActivity.this, "Complete the rest of the profile", Toast.LENGTH_SHORT).show();
                     }
                 }
                 completeAndSaveData();
             }
         });
-        hostingSelection.setNegativeButton("NO", (dialogInterface, i) -> {
-            currentUser.setUserLookingForAHost(false);
-            currentUser.setUserWillingToHost(false);
-            completeAndSaveData();
+        hostingSelection.setNegativeButton("NONE", (dialogInterface, i) -> {
+            if (currentUser != null) {
+                currentUser.setUserLookingForAHost(false);
+                currentUser.setUserWillingToHost(false);
+                completeAndSaveData();
+            } else {
+                Toast.makeText(ProfileCreationActivity.this, "Complete the rest of the profile", Toast.LENGTH_SHORT).show();
+            }
         });
 
         AlertDialog dialog = hostingSelection.create();
