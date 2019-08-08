@@ -134,16 +134,15 @@ public class SelectFriendsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_group, menu);
+        getMenuInflater().inflate(R.menu.menu_select_friends, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.menu_create_group_icon) {
+        if (id == R.id.menu_select_friends_next_icon) {
             selectedUsers.clear();
             for (User friend : friends) {
                 if (friend.isSelected()) {
