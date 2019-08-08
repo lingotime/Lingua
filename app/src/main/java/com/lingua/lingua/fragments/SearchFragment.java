@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,7 @@ public class SearchFragment extends Fragment {
     ArrayList<User> usersList;
     ArrayList<User> hiddenUsersList;
     SearchAdapter usersAdapter;
+    TextView noUsersTv;
 
     private EndlessRecyclerViewScrollListener scrollListener;
     private SearchView searchBar;
@@ -63,6 +65,7 @@ public class SearchFragment extends Fragment {
         // associate views with java variables
         searchBar = view.findViewById(R.id.fragment_search_search_bar);
         resultsTimeline = view.findViewById(R.id.fragment_search_results_timeline);
+        noUsersTv = view.findViewById(R.id.fragment_search_no_users_tv);
 
         // unwrap the current user
         currentUser = Parcels.unwrap(getArguments().getParcelable("user"));
@@ -274,12 +277,12 @@ public class SearchFragment extends Fragment {
                     }
 
                     if (usersList.isEmpty()) {
-                        Toast.makeText(context, "No users to display", Toast.LENGTH_SHORT).show();
+                        noUsersTv.setVisibility(View.VISIBLE);
                     }
 
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
-                    Toast.makeText(context, "No users to display", Toast.LENGTH_SHORT).show();
+                    noUsersTv.setVisibility(View.VISIBLE);
                     Log.e("SearchFragment", "firebase:onException", exception);
                 }
             }

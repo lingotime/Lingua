@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,7 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -61,6 +63,7 @@ public class ChatFragment extends Fragment {
     private ChatAdapter adapter;
     private List<Chat> chats;
     private SwipeRefreshLayout swipeContainer;
+    private TextView noChatsTv;
     private static final String TAG = "ChatFragment";
     private Paint p = new Paint();
     // used to implement the actions for swiping left or right on each chat object
@@ -79,7 +82,7 @@ public class ChatFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.fragment_chat_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.fragment_chat_toolbar);
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle("Chats");
 
@@ -96,6 +99,8 @@ public class ChatFragment extends Fragment {
                 return ChatFragment.super.onOptionsItemSelected(item);
             }
         });
+
+        noChatsTv = view.findViewById(R.id.fragment_chat_no_chats_tv);
 
         rvChats = view.findViewById(R.id.fragment_chat_rv);
         chats = new ArrayList<>();
@@ -137,7 +142,7 @@ public class ChatFragment extends Fragment {
                     queryChatInfo(key);
                 }
             } catch (JSONException e) {
-                Toast.makeText(context, "No chats to display", Toast.LENGTH_SHORT).show();
+                noChatsTv.setVisibility(View.VISIBLE);
                 swipeContainer.setRefreshing(false);
                 e.printStackTrace();
             }
@@ -232,6 +237,10 @@ public class ChatFragment extends Fragment {
                 swipeContainer.setRefreshing(false);
 
                 chats.add(chat);
+
+                Collections.sort(chats, (o1, o2) -> o1.getLastTextChatTime().compareTo(o2.getLastTextChatTime()));
+                Collections.reverse(chats);
+
                 adapter.notifyDataSetChanged();
 
             } catch (JSONException e) {

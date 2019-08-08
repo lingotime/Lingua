@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,8 @@ public class ExploreFragment extends Fragment {
     ArrayList<User> usersList;
     ExploreAdapter usersAdapter;
 
+    private TextView noChatsTv;
+
     private RecyclerView historyTimeline;
 
     @Nullable
@@ -71,6 +74,8 @@ public class ExploreFragment extends Fragment {
 
         // initialize the list of users
         usersList = new ArrayList<>();
+
+        noChatsTv = view.findViewById(R.id.fragment_explore_no_users_tv);
 
         // set the adapter
         usersAdapter = new ExploreAdapter(context, usersList, currentUser);
@@ -199,12 +204,12 @@ public class ExploreFragment extends Fragment {
                     }
 
                     if (usersList.isEmpty()) {
-                        Toast.makeText(context, "No users to display", Toast.LENGTH_SHORT).show();
+                        noChatsTv.setVisibility(View.VISIBLE);
                     }
 
                     usersAdapter.notifyDataSetChanged();
                 } catch (JSONException exception) {
-                    Toast.makeText(context, "No users to display", Toast.LENGTH_SHORT).show();
+                    noChatsTv.setVisibility(View.VISIBLE);
                     Log.e("ExploreFragment", "firebase:onException", exception);
                 }
             }

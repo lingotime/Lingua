@@ -4,6 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/fragment_chat_no_chats_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="64dp"
+        android:text="No chats to display. Find friends in Explore or Search!"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+        android:textColor="@color/linguaDarkGray"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_chat_swipe_container"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_chat_swipe_container"
+        app:layout_constraintStart_toStartOf="@+id/fragment_chat_swipe_container"
+        app:layout_constraintTop_toTopOf="@+id/fragment_chat_swipe_container" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/fragment_chat_toolbar"
         android:layout_width="match_parent"

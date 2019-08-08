@@ -37,18 +37,20 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 
+import retrofit2.http.HEAD;
+
 /* FINALIZED, DOCUMENTED, and TESTED ProfileFragment displays the current user's information. */
 
 public class ProfileFragment extends Fragment {
     Context context;
     private User currentUser;
 
+    private ImageView profileFlagFrame;
     private ImageView profileImage;
     private TextView nameText;
-    private TextView ageText;
+    private TextView ageAndCountryText;
     private TextView biographyText;
     private TextView hostingText;
-    private TextView originCountryText;
     private TextView knownLanguagesText;
     private ChipGroup knownLanguagesChips;
     private Chip knownLanguagesChip;
@@ -73,12 +75,12 @@ public class ProfileFragment extends Fragment {
         context = getContext();
 
         // associate views with java variables
+        profileFlagFrame = view.findViewById(R.id.fragment_profile_flag_frame);
         profileImage = view.findViewById(R.id.fragment_profile_profile_image);
         nameText = view.findViewById(R.id.fragment_profile_name_text);
-        ageText = view.findViewById(R.id.fragment_profile_age_text);
+        ageAndCountryText = view.findViewById(R.id.fragment_profile_age_and_country_text);
         biographyText = view.findViewById(R.id.fragment_profile_biography_text);
         hostingText = view.findViewById(R.id.fragment_profile_hosting_text);
-        originCountryText = view.findViewById(R.id.fragment_profile_origin_country_text);
         knownLanguagesText = view.findViewById(R.id.fragment_profile_known_languages_text);
         knownLanguagesChips = view.findViewById(R.id.fragment_profile_known_languages_chips);
         knownLanguagesChip = view.findViewById(R.id.fragment_profile_known_languages_chip);
@@ -126,25 +128,24 @@ public class ProfileFragment extends Fragment {
         // populate data from the current user
         Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profileImage);
 
+        Glide.with(context).load(context.getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(currentUser.getUserOriginCountry()), "drawable", context.getPackageName())).apply(RequestOptions.circleCropTransform()).into(profileFlagFrame);
+
         nameText.setText(currentUser.getUserName());
 
-        ageText.setText("Age: " + getAge(currentUser.getUserBirthDate()) + " years old");
+        ageAndCountryText.setText(getAge(currentUser.getUserBirthDate()) + " | " + currentUser.getUserOriginCountry());
 
-        biographyText.setText("Bio: " + currentUser.getUserBiographyText());
 
         if (currentUser.isLookingForAHost()) {
             if (currentUser.isWillingToHost()) {
-                hostingText.setText("Hosting: Looking for and available to be a host");
+                hostingText.setText("Hosting: \nLooking for and available to be a host");
             } else {
-                hostingText.setText("Hosting: Looking for a host");
+                hostingText.setText("Hosting: \nLooking for a host");
             }
         } else if (currentUser.isWillingToHost()) {
-            hostingText.setText("Hosting: Available to be a host");
+            hostingText.setText("Hosting: \nAvailable to be a host");
         } else {
             hostingText.setVisibility(View.GONE);
         }
-
-        originCountryText.setText("Origin Country: " + currentUser.getUserOriginCountry());
 
         if (currentUser.getKnownLanguages().isEmpty()) {
             knownLanguagesChip.setText("Add a language...");
