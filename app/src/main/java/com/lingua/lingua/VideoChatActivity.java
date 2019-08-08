@@ -117,9 +117,6 @@ public class VideoChatActivity extends AppCompatActivity {
     private long startTime = 0;
     private long endTime = 0;
 
-
-    private Integer currentDuration; // represents the number of minutes the user has already spoken in the language selected
-
     // to handle the action attached to the intent - to distinguish between that coming from one of the chat activities and one coming from clicking a push notification
     private static String intentAction;
     private final static String PUSH_NOTIFICATION_INTENT = "Launch Push Notification"; // launched from sending the notification
@@ -316,36 +313,6 @@ public class VideoChatActivity extends AppCompatActivity {
         long duration = TimeUnit.HOURS.convert(end-start, TimeUnit.NANOSECONDS);
         return duration;
     }
-
-    // storing the time spent speaking in the language chosen at the start of the activity
-    private void updateUserLanguageProgress(double duration) {
-        // update the local current user object
-        // update in the database
-        Firebase.setAndroidContext(this);
-        Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId);
-        databaseReference.child("hoursSpokenByLanguage").child(videoChatLanguage).setValue(duration + currentDuration);
-    }
-
-
-    // gets the language of the call when the second participant joins the call from a push notification
-    private void queryCallLanguage() {
-        String url = "https://lingua-project.firebaseio.com/video-chats";
-        StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
-            try {
-                JSONObject object = new JSONObject(s);
-                videoChatLanguage = object.getString(roomName);
-                requestPermissions(); // only when the video chat language is found that the user can join the chat
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, volleyError -> {
-            Log.e("VideoChatActivity", "" + volleyError);
-        });
-
-        RequestQueue rQueue = Volley.newRequestQueue(this);
-        rQueue.add(request);
-    }
-
 
     private void connectToRoom(String roomName) {
 
