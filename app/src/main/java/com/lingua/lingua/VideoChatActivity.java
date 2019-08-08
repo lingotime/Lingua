@@ -313,7 +313,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     // calculates the length of the call and returns a value in minutes
     private double lengthOfCall(long start, long end) {
-        long duration = TimeUnit.MINUTES.convert(end-start, TimeUnit.NANOSECONDS);
+        long duration = TimeUnit.HOURS.convert(end-start, TimeUnit.NANOSECONDS);
         return duration;
     }
 
