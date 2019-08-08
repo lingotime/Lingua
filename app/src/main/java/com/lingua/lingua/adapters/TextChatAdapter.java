@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lingua.lingua.DateUtil;
 import com.lingua.lingua.R;
+import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.Message;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class TextChatAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<Message> messages;
+    private Chat chat;
 
     private static final int TYPE_MESSAGE_SENT = 1;
     private static final int TYPE_MESSAGE_RECEIVED = 2;
@@ -35,6 +37,7 @@ public class TextChatAdapter extends RecyclerView.Adapter {
     public TextChatAdapter(Context context, List<Message> messages) {
         this.context = context;
         this.messages = messages;
+        this.chat = chat;
 
         SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         userId = prefs.getString("userId", "");
@@ -44,6 +47,7 @@ public class TextChatAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
+
         if (viewType == TYPE_MESSAGE_SENT) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent, parent, false);

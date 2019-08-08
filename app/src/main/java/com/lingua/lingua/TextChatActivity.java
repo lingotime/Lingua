@@ -45,7 +45,7 @@ public class TextChatActivity extends AppCompatActivity {
     private Button sendButton;
     private EditText etMessage;
 
-    Firebase reference;
+    Firebase reference, lastMessageSeenReference;
     Chat chat;
     User currentUser;
 
@@ -97,6 +97,13 @@ public class TextChatActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        lastMessageSeenReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chat.getChatID() + "/lastMessageSeen");
+
+        // set last message of chat as seen if I'm not the sender
+        if (!chat.getLastTextMessage().startsWith("You: ")) {
+            lastMessageSeenReference.setValue(true);
+        }
 
         reference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -176,6 +183,11 @@ public class TextChatActivity extends AppCompatActivity {
 
             return true;
         } else if (id == android.R.id.home) {
+            // set last message of chat as seen if I'm not the sender
+            if (!chat.getLastTextMessage().startsWith("You: ")) {
+                lastMessageSeenReference.setValue(true);
+            }
+
             // intent to chat fragment
             Intent intent = new Intent(TextChatActivity.this, MainActivity.class);
             intent.putExtra("user", Parcels.wrap(currentUser));
@@ -206,9 +218,13 @@ public class TextChatActivity extends AppCompatActivity {
         }
     }
 
-    // override onBackPressed so the chats fragment refreshes when we go back
+    // override onBackPressed so the chat fragment refreshes when we go back
     @Override
     public void onBackPressed() {
+        // set last message of chat as seen if I'm not the sender
+        if (!chat.getLastTextMessage().startsWith("You: ")) {
+            lastMessageSeenReference.setValue(true);
+        }
         // intent to chat fragment
         Intent intent = new Intent(TextChatActivity.this, MainActivity.class);
         intent.putExtra("user", Parcels.wrap(currentUser));
