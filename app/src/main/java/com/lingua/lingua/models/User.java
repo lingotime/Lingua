@@ -27,6 +27,7 @@ public class User {
     ArrayList<String> conversations;
     boolean complete;
     boolean online;
+    boolean selected;
 
     public User() {}
 
@@ -165,4 +166,8 @@ public class User {
     public void setComplete(boolean complete) {
         this.complete = complete;
     }
+
+    public boolean isSelected() { return selected; }
+
+    public void setSelected(boolean selected) { this.selected = selected; }
 }

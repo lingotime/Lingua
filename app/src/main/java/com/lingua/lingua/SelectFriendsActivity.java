@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -100,7 +101,9 @@ public class SelectFriendsActivity extends AppCompatActivity {
                 friend.setUserName(name);
                 friend.setUserProfilePhotoURL(profilePhotoURL);
                 friend.setUserBiographyText(bio);
+                friend.setSelected(false);
                 friends.add(friend);
+                Collections.sort(friends, (o1, o2) -> o1.getUserName().compareTo(o2.getUserName()));
                 friendsAdapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();

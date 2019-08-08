@@ -51,6 +51,7 @@ public class SelectFriendsAdapter extends RecyclerView.Adapter<SelectFriendsAdap
 
     @Override
     public void onBindViewHolder(@NonNull final SelectFriendsAdapter.ViewHolder holder, final int position) {
+        holder.setIsRecyclable(false);
         User user = friends.get(position);
         tvName.setText(user.getUserName());
         tvBio.setText(user.getUserBiographyText());
@@ -61,6 +62,11 @@ public class SelectFriendsAdapter extends RecyclerView.Adapter<SelectFriendsAdap
                 .load(user.getUserProfilePhotoURL())
                 .apply(requestOptionsMedia)
                 .into(ivProfile);
+        if (user.isSelected()) {
+            ivCheck.setVisibility(View.VISIBLE);
+        } else {
+            ivCheck.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -82,14 +88,13 @@ public class SelectFriendsAdapter extends RecyclerView.Adapter<SelectFriendsAdap
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        User selectedUser = friends.get(position);
-                        if (selectedFriends.contains(selectedUser)) {
-                            ivCheck.setVisibility(View.GONE);
-                            selectedFriends.remove(selectedUser);
+                        User user = friends.get(position);
+                        if (user.isSelected()) {
+                            user.setSelected(false);
                         } else {
-                            ivCheck.setVisibility(View.VISIBLE);
-                            selectedFriends.add(selectedUser);
+                            user.setSelected(true);
                         }
+                        notifyDataSetChanged();
                     }
                 }
             });
