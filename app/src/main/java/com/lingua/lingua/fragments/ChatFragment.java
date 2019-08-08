@@ -175,6 +175,7 @@ public class ChatFragment extends Fragment {
                 JSONObject chat = new JSONObject(s);
 
                 String name = "";
+
                 if (chat.has("name")) {
                     name = chat.getString("name");
                 }
@@ -186,7 +187,7 @@ public class ChatFragment extends Fragment {
                 if (lastMessage.startsWith(currentUser.getUserName())) {
                     lastMessage = "You" + lastMessage.split(currentUser.getUserName())[1];
                     lastMessageSeen = true;
-                } else {
+                } else if (!chat.has("name")) {
                     lastMessage = lastMessage.split(": ")[1];
                 }
 
@@ -272,7 +273,7 @@ public class ChatFragment extends Fragment {
         }, volleyError -> {
             Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
-            Log.e("ChatFragment", "" + volleyError);
+            Log.e(TAG, "" + volleyError);
         });
 
         RequestQueue rQueue = Volley.newRequestQueue(context);

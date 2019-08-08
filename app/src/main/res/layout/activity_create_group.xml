@@ -19,20 +19,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/activity_create_group_iv"
+        android:id="@+id/activity_create_group_iv_background"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/blue_circle"
+        android:backgroundTint="@color/linguaLightGray"
         android:backgroundTintMode="src_in"
-        android:foregroundTint="@color/colorSecondary"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/activity_create_group_description_tv"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_create_group_toolbar"
-        tools:srcCompat="@android:drawable/ic_menu_camera" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_create_group_toolbar" />
 
     <EditText
         android:id="@+id/activity_create_group_name_et"
@@ -47,7 +46,7 @@
         android:inputType="textPersonName"
         android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/activity_create_group_iv"
+        app:layout_constraintStart_toEndOf="@+id/activity_create_group_iv_background"
         app:layout_constraintTop_toBottomOf="@+id/activity_create_group_toolbar" />
 
     <TextView
@@ -60,7 +59,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@color/linguaDarkGray"
         android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@+id/activity_create_group_iv"
+        app:layout_constraintStart_toEndOf="@+id/activity_create_group_iv_background"
         app:layout_constraintTop_toBottomOf="@+id/activity_create_group_name_et" />
 
     <TextView
@@ -75,7 +74,7 @@
         android:textColor="@color/linguaDarkGray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_create_group_iv" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_create_group_iv_background" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_create_group_rv"
@@ -84,5 +83,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_create_group_participants_tv" />
+
+    <ImageView
+        android:id="@+id/activity_create_group_iv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_create_group_iv_background"
+        app:layout_constraintEnd_toEndOf="@+id/activity_create_group_iv_background"
+        app:layout_constraintStart_toStartOf="@+id/activity_create_group_iv_background"
+        app:layout_constraintTop_toTopOf="@+id/activity_create_group_iv_background"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

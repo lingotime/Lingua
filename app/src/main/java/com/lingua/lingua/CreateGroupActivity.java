@@ -105,7 +105,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         String chatId = reference.child("chats").push().getKey();
 
         Map<String, Object> chat = new HashMap<>();
-        String lastMessage = currentUser.getUserName() + ": " + "created group " + groupName;
+        String lastMessage = currentUser.getUserName() + " created group " + groupName;
         String lastMessageAt = new Date().toString();
         chat.put("lastMessage", lastMessage);
         chat.put("lastMessageAt", lastMessageAt);
@@ -140,7 +140,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 
         // create message in the new chat
         Map<String, String> message = new HashMap<>();
-        message.put("message", "Created group " + groupName + ". Hi everyone!");
+        message.put("message", "Created group " + groupName);
         message.put("senderId", currentUser.getUserID());
         message.put("timestamp", lastMessageAt);
 
