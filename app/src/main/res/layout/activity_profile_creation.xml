@@ -50,10 +50,23 @@
                         android:layout_height="125dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginLeft="20dp"
+                        android:background="@drawable/blue_circle"
+                        android:backgroundTint="@color/linguaLightGray"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/activity_profile_info_setup_profile_image_foreground"
+                        android:layout_width="125dp"
+                        android:layout_height="125dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:padding="32dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/man" />
+                        app:srcCompat="@android:drawable/ic_menu_camera" />
 
                     <LinearLayout
                         android:layout_width="0dp"
