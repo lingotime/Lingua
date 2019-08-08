@@ -30,7 +30,6 @@ import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,7 +37,6 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 
-import retrofit2.http.HEAD;
 
 /* FINALIZED, DOCUMENTED, and TESTED ProfileFragment displays the current user's information. */
 

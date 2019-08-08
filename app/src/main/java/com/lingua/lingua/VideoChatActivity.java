@@ -226,6 +226,8 @@ public class VideoChatActivity extends AppCompatActivity {
                             updateUserLanguageProgress(lengthOfCall(startTime, endTime));
                         }
                     }
+                    // return the user to the activity from which they came
+                    VideoChatActivity.this.onBackPressed();
                 } catch (JSONException e) {
                     Log.e("VideoChatCurrentChat", e.toString());
                 }
@@ -299,15 +301,7 @@ public class VideoChatActivity extends AppCompatActivity {
         connectionButton.setEnabled(true);
         endTime = System.nanoTime();
 
-        if (videoChatLanguage == null) {
-            // query the language from the database and update it for the current user
-            queryCallLanguage();
-        } else if (!videoChatLanguage.equals("Cultural Exchange")) {
-            // mark progress for the user if one of their explore languages is the one being spoken in the chat
-            queryAndUpdateHoursSpokenInfo();
-        }
-
-        // return the user to the activity from which they came
+        // returns to the previous activity and write the hoursSpoken information to the database
         this.onBackPressed();
     }
 
@@ -778,11 +772,28 @@ public class VideoChatActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    private void writeHoursSpokenToDatabase() {
+        if (videoChatLanguage == null) {
+            // query the language from the database and update it for the current user
+            queryCallLanguage();
+        } else if (!videoChatLanguage.equals("Cultural Exchange")) {
+            // mark progress for the user if one of their explore languages is the one being spoken in the chat
+            queryAndUpdateHoursSpokenInfo();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // write the relevant information to the database
+        writeHoursSpokenToDatabase();
+    }
+
     @Override
     protected void onDestroy() {
         // when activity is destroyed, release the audio and video tracks from the device, and disconnect the user from the room
         if (room != null && room.getState() != Room.State.DISCONNECTED) {
             room.disconnect();
+            writeHoursSpokenToDatabase();
         }
 
         if (localAudioTrack != null) {
