@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
@@ -28,7 +29,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.textfield.TextInputEditText;
 import com.lingua.lingua.CountryInformation;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
@@ -37,6 +37,7 @@ import com.lingua.lingua.notifyAPI.TwilioFunctionsAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -94,6 +95,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         private TextView biographyText;
         private ChipGroup knownLanguagesChips;
         private Button sendRequestButton;
+        private ImageView willingToHostImage;
 
         public ViewHolder(View userItemView) {
             super(userItemView);
@@ -107,6 +109,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             biographyText = userItemView.findViewById(R.id.item_user_biography_text);
             knownLanguagesChips = userItemView.findViewById(R.id.item_user_known_languages_chip_group);
             sendRequestButton = userItemView.findViewById(R.id.item_user_send_request_button);
+            willingToHostImage = userItemView.findViewById(R.id.item_user_home_icon);
         }
 
         public void bind(User user, int position) {
@@ -117,8 +120,16 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             // load user live status into place
             if (user.isOnline()) {
                 liveStatusSignal.setVisibility(View.VISIBLE);
+                if (!user.isWillingToHost()) {
+                    willingToHostImage.setVisibility(View.GONE);
+                }
             } else {
-                liveStatusSignal.setVisibility(View.GONE);
+                if (!user.isWillingToHost()) {
+                    liveStatusSignal.setVisibility(View.GONE);
+                    willingToHostImage.setVisibility(View.GONE);
+                } else {
+                    liveStatusSignal.setColorFilter(ContextCompat.getColor(context, android.R.color.white));
+                }
             }
 
             // load other user information into place
@@ -126,6 +137,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             nameText.setText(user.getUserName());
             countryText.setText("from " + user.getUserOriginCountry());
             ageText.setText(getAge(user.getUserBirthDate()) + " years old");
+
             biographyText.setText(user.getUserBiographyText());
 
             // clear chips from chip group before loading the language chips

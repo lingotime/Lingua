@@ -2,6 +2,7 @@ package com.lingua.lingua;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -16,10 +17,14 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -195,26 +200,30 @@ public class ProfileCreationActivity extends AppCompatActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // disable the button and change its text
-                continueButton.setText("Saving");
-                continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
-                continueButton.setEnabled(false);
-
-                // save the updated data
-                saveData();
-
-                // proceed to main activity, if data was successfully saved to an acceptable level
-                if (currentUser.isComplete()) {
-                    final Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
-                    intent.putExtra("user", Parcels.wrap(currentUser));
-                    intent.putExtra("fragment", nextFragment);
-                    startActivity(intent);
-                }
+                hostingChoiceDialog();
             }
         });
 
         // refactored - now should load user data with the flags associated with the chips
         loadInfo();
+    }
+
+    private void completeAndSaveData() {
+        // disable the button and change its text
+        continueButton.setText("Saving");
+        continueButton.setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+        continueButton.setEnabled(false);
+
+        // save the updated data
+        saveData();
+
+        // proceed to main activity, if data was successfully saved to an acceptable level
+        if (currentUser.isComplete()) {
+            final Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("fragment", nextFragment);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -239,6 +248,79 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // mark user as dead
         currentUser.setOnline(false);
         reference.child("online").setValue(currentUser.isOnline());
+    }
+
+    // an alert dialog from which the user can select their hosting options
+    private void hostingChoiceDialog() {
+
+        String[] hostingChoices = new String[]{
+                "Available to host guests",
+                "Looking for a host family"
+        };
+
+        // prepopulate the choices from the current user's choices
+        boolean[] checkedChoices = new boolean[2];
+        if (currentUser != null) {
+            checkedChoices[0] = currentUser.isWillingToHost();
+            checkedChoices[1] = currentUser.isLookingForAHost();
+        }
+
+        AlertDialog.Builder hostingSelection = new AlertDialog.Builder(this);
+        hostingSelection.setTitle("Choose your involvement in our Hosting Program");
+        // changing the tint of the drawable
+        Drawable unwrappedDrawable = AppCompatResources.getDrawable(this, R.drawable.home);
+        Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+        DrawableCompat.setTint(wrappedDrawable, getResources().getColor(R.color.colorPrimary));
+
+        hostingSelection.setIcon(wrappedDrawable);
+        // hostingSelection.setMessage("Would you like to join our hosting community? In what capacity? (Choose all that apply)");
+
+        hostingSelection.setMultiChoiceItems(hostingChoices, checkedChoices, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                checkedChoices[i] = b;
+            }
+        });
+
+        hostingSelection.setPositiveButton("SELECT", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                for (int index = 0; index < checkedChoices.length; index++) {
+                    if (currentUser != null) {
+                        boolean checked = checkedChoices[index];
+                        if (checked) {
+                            if (index == 0) {
+                                currentUser.setUserWillingToHost(true);
+                            } else {
+                                currentUser.setUserLookingForAHost(true);
+                            }
+                        } else {
+                            if (index == 0) {
+                                currentUser.setUserWillingToHost(false);
+                            } else {
+                                currentUser.setUserLookingForAHost(false);
+                            }
+                        }
+                    } else {
+                        Toast.makeText(ProfileCreationActivity.this, "Complete the rest of the profile", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                completeAndSaveData();
+            }
+        });
+        hostingSelection.setNegativeButton("NONE", (dialogInterface, i) -> {
+            if (currentUser != null) {
+                currentUser.setUserLookingForAHost(false);
+                currentUser.setUserWillingToHost(false);
+                completeAndSaveData();
+            } else {
+                Toast.makeText(ProfileCreationActivity.this, "Complete the rest of the profile", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AlertDialog dialog = hostingSelection.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
     private void saveData() {
@@ -275,6 +357,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             isCompleteCheck = false;
             biographyField.setError("Please enter a biography that is at least four characters.");
         }
+
 
         // deal with userOriginCountry
         ArrayList<String> userOriginCountryInput = (ArrayList) originCountryField.getChipValues();
@@ -334,6 +417,8 @@ public class ProfileCreationActivity extends AppCompatActivity {
             databaseReference.child("exploreLanguages").setValue(currentUser.getExploreLanguages());
             databaseReference.child("exploreCountries").setValue(currentUser.getExploreCountries());
             databaseReference.child("complete").setValue(currentUser.isComplete());
+            databaseReference.child("willingToHost").setValue(currentUser.isWillingToHost());
+            databaseReference.child("lookingForAHost").setValue(currentUser.isLookingForAHost());
         } else {
             // re-enable the button because data was not saved
             continueButton.setText("Save");
