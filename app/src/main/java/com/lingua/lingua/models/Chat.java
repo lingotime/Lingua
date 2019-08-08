@@ -8,7 +8,6 @@ public class Chat {
     String chatID;
     String chatName;
     ArrayList<String> chatParticipants;
-    ArrayList<String> chatMessages;
     ArrayList<String> chatLanguages;
     String firstTextChatTime;
     String firstVideoChatTime;
@@ -16,8 +15,9 @@ public class Chat {
     String lastVideoChatTime;
     String lastTextMessage;
     String chatPhotoUrl;
+    boolean lastMessageSeen;
 
-    public Chat() { }
+    public Chat() {}
 
     public String getChatID() {
         return chatID;
@@ -41,14 +41,6 @@ public class Chat {
 
     public void setChatParticipants(ArrayList<String> chatParticipants) {
         this.chatParticipants = chatParticipants;
-    }
-
-    public ArrayList<String> getChatMessages() {
-        return chatMessages;
-    }
-
-    public void setChatMessages(ArrayList<String> chatMessages) {
-        this.chatMessages = chatMessages;
     }
 
     public ArrayList<String> getChatLanguages() {
@@ -105,5 +97,13 @@ public class Chat {
 
     public void setChatPhotoUrl(String chatPhotoUrl) {
         this.chatPhotoUrl = chatPhotoUrl;
+    }
+
+    public boolean isLastMessageSeen() {
+        return lastMessageSeen;
+    }
+
+    public void setLastMessageSeen(boolean lastMessageSeen) {
+        this.lastMessageSeen = lastMessageSeen;
     }
 }
