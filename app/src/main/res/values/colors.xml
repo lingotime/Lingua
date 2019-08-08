@@ -5,6 +5,7 @@
     <color name="colorSecondary">#17A0F8</color>
 
     <color name="linguaWhite">#FFFFFF</color>
+    <color name="linguaVeryLightGray">#f7f7f7</color>
     <color name="linguaLightGray">#D3D3D3</color>
     <color name="linguaDarkGray">#A9A9A9</color>
     <color name="linguaBlack">#000000</color>

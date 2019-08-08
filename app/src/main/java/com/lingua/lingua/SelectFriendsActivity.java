@@ -1,7 +1,10 @@
 package com.lingua.lingua;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,9 +35,9 @@ public class SelectFriendsActivity extends AppCompatActivity {
 
     RecyclerView rvFriends;
     private SelectFriendsAdapter friendsAdapter;
-    private List<User> friends;
+    private List<User> friends, selectedUsers;
     private TextView noFriendsTv;
-    private static final String TAG = "FriendsActivity";
+    private static final String TAG = "SelectFriendsActivity";
     User currentUser;
 
     @Override
@@ -44,14 +47,21 @@ public class SelectFriendsActivity extends AppCompatActivity {
 
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
-        Toolbar toolbar = findViewById(R.id.activity_friends_toolbar);
+        Toolbar toolbar = findViewById(R.id.activity_select_friends_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Add participants:");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Add participants");
 
         rvFriends = findViewById(R.id.activity_friends_rv);
         friends = new ArrayList<>();
+        if (getIntent().hasExtra("selectedUsers")) {
+            selectedUsers = Parcels.unwrap(getIntent().getParcelableExtra("selectedUsers"));
+        } else {
+            selectedUsers = new ArrayList<>();
+        }
 
-        friendsAdapter = new SelectFriendsAdapter(this, friends);
+        friendsAdapter = new SelectFriendsAdapter(this, friends, "SelectFriendsActivity");
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         rvFriends.addItemDecoration(itemDecoration);
         rvFriends.setAdapter(friendsAdapter);
@@ -102,6 +112,11 @@ public class SelectFriendsActivity extends AppCompatActivity {
                 friend.setUserProfilePhotoURL(profilePhotoURL);
                 friend.setUserBiographyText(bio);
                 friend.setSelected(false);
+                for (User user : selectedUsers) {
+                    if (user.getUserID().equals(id)) {
+                        friend.setSelected(true);
+                    }
+                }
                 friends.add(friend);
                 Collections.sort(friends, (o1, o2) -> o1.getUserName().compareTo(o2.getUserName()));
                 friendsAdapter.notifyDataSetChanged();
@@ -114,5 +129,43 @@ public class SelectFriendsActivity extends AppCompatActivity {
 
         RequestQueue rQueue = Volley.newRequestQueue(this);
         rQueue.add(request);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_create_group, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.menu_create_group_icon) {
+            selectedUsers.clear();
+            for (User friend : friends) {
+                if (friend.isSelected()) {
+                    selectedUsers.add(friend);
+                }
+            }
+            if (selectedUsers.size() > 1) {
+                Intent intent = new Intent(this, CreateGroupActivity.class);
+                intent.putExtra("user", Parcels.wrap(currentUser));
+                intent.putExtra("selectedUsers", Parcels.wrap(selectedUsers));
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Add at least two participants to the group.", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        } else if (id == android.R.id.home) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("fragment", "chat");
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

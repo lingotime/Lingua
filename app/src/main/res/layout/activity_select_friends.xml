@@ -12,18 +12,19 @@
         android:layout_alignParentLeft="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_friends_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_select_friends_toolbar" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/activity_friends_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/activity_select_friends_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/linguaWhite"
+        android:elevation="8dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        android:elevation="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></androidx.appcompat.widget.Toolbar>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/activity_select_friends_no_users_tv"
@@ -40,6 +41,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_friends_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_select_friends_toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

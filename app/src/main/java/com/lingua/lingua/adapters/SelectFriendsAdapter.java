@@ -30,12 +30,13 @@ public class SelectFriendsAdapter extends RecyclerView.Adapter<SelectFriendsAdap
     private TextView tvName, tvBio;
     private ImageView ivProfile, ivCheck;
 
-    String userId, userName;
+    String activityName, userId, userName;
 
-    public SelectFriendsAdapter(Context context, List<User> friends) {
+    public SelectFriendsAdapter(Context context, List<User> friends, String activityName) {
         this.context = context;
         this.friends = friends;
         this.selectedFriends = new ArrayList<>();
+        this.activityName = activityName;
 
         SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         userId = prefs.getString("userId", "");
@@ -62,10 +63,10 @@ public class SelectFriendsAdapter extends RecyclerView.Adapter<SelectFriendsAdap
                 .load(user.getUserProfilePhotoURL())
                 .apply(requestOptionsMedia)
                 .into(ivProfile);
-        if (user.isSelected()) {
-            ivCheck.setVisibility(View.VISIBLE);
-        } else {
+        if (activityName.equals("CreateGroupActivity") || !user.isSelected()) {
             ivCheck.setVisibility(View.GONE);
+        } else {
+            ivCheck.setVisibility(View.VISIBLE);
         }
     }
 
@@ -83,21 +84,23 @@ public class SelectFriendsAdapter extends RecyclerView.Adapter<SelectFriendsAdap
             tvBio = itemView.findViewById(R.id.user_small_bio_tv);
             ivCheck = itemView.findViewById(R.id.user_small_check_iv);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        User user = friends.get(position);
-                        if (user.isSelected()) {
-                            user.setSelected(false);
-                        } else {
-                            user.setSelected(true);
+            if (!activityName.equals("CreateGroupActivity")) {
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            User user = friends.get(position);
+                            if (user.isSelected()) {
+                                user.setSelected(false);
+                            } else {
+                                user.setSelected(true);
+                            }
+                            notifyDataSetChanged();
                         }
-                        notifyDataSetChanged();
                     }
-                }
-            });
+                });
+            }
         }
 
     }
