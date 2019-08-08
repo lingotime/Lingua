@@ -21,7 +21,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.MutableData;
+import com.firebase.client.Transaction;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
@@ -156,30 +160,29 @@ public class VideoChatActivity extends AppCompatActivity {
         if (intentAction.equals(PUSH_NOTIFICATION_INTENT)) {
             roomName = getIntent().getStringExtra("roomName");
             userId = getIntent().getStringExtra("userId");
+            videoChatLanguage = getIntent().getStringExtra("videoChatLanguage");
             Log.d(TAG, "Push notification arrived at the video chat activity");
-            queryCallLanguage();
         } else {
             // intent passed in from either the chat fragment or the chat details activity with these parcelable extras
             currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
             currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
             chatId = currentChat.getChatID();
             roomName = chatId;
-            requestPermissions();
-        }
+            // the intent from the push notification will not have the user object
+            if (currentChat != null) {
+                chatMembers = currentChat.getChatParticipants();
+                chatMembers.remove(userId);
 
-        // the intent from the push notification will not have the user object
-        if (currentChat != null) {
-            chatMembers = currentChat.getChatParticipants();
-            chatMembers.remove(userId);
+                // to get all the possible explore languages from the users in the chat
+                if (currentChat.getChatLanguages() != null) {
+                    possibleChatLanguages.addAll(currentChat.getChatLanguages());
+                }
+                possibleChatLanguages.add("Cultural Exchange");
 
-            // to get all the possible explore languages from the users in the chat
-            if (currentChat.getChatLanguages() != null) {
-                possibleChatLanguages.addAll(currentChat.getChatLanguages());
+                languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
             }
-            possibleChatLanguages.add("Cultural Exchange");
-
-            languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
         }
+        requestPermissions();
     }
 
     // Onclick listeners for the views
@@ -206,9 +209,27 @@ public class VideoChatActivity extends AppCompatActivity {
         return view -> requestPermissions();
     }
 
-    // gets the information for the chat containing the video chat from the database and generates a local Chat object
+    // uses a Firebase transaction to find and add to the number of hours spoken in this language for the user
     private void queryAndUpdateHoursSpokenInfo() {
-        Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId);
+        Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId + "hoursSpokenPerLanguage");
+        userReference.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                int value = 0;
+                if (mutableData.hasChild("/videoChatLanguage")) {
+                    value = mutableData.child("/videoChatLanguage").getValue(Integer.class);
+                }
+                value = (int) (value + lengthOfCall(startTime, endTime));
+                mutableData.child("/videoChatLanguage").setValue(value);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
+                Log.d(TAG, "Final transaction complete: " + firebaseError.toString());
+                VideoChatActivity.this.onBackPressed();
+            }
+        });
     }
 
 
@@ -269,8 +290,7 @@ public class VideoChatActivity extends AppCompatActivity {
         connectionButton.setEnabled(true);
         endTime = System.nanoTime();
 
-        // returns to the previous activity and write the hoursSpoken information to the database
-        this.onBackPressed();
+        queryAndUpdateHoursSpokenInfo();
     }
 
     // calculates the length of the call and returns a value in minutes
@@ -333,7 +353,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     private void sendVideoChatNotification(String recipientId) {
         // creating the invite object
-        Invite invite = new Invite(recipientId, roomName);
+        Invite invite = new Invite(recipientId, roomName, videoChatLanguage);
         // send notification
         Notification notification = new Notification("Join " + userId +" in " + roomName, username + " would like to video chat!", recipientId, invite.getMap());
 
