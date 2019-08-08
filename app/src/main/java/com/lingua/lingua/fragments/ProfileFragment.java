@@ -134,15 +134,17 @@ public class ProfileFragment extends Fragment {
 
         ageAndCountryText.setText(getAge(currentUser.getUserBirthDate()) + " | " + currentUser.getUserOriginCountry());
 
+        biographyText.setText(currentUser.getUserBiographyText());
+
 
         if (currentUser.isLookingForAHost()) {
             if (currentUser.isWillingToHost()) {
-                hostingText.setText("Hosting: \nLooking for and available to be a host");
+                hostingText.setText("Looking for and available to be a host");
             } else {
-                hostingText.setText("Hosting: \nLooking for a host");
+                hostingText.setText("Looking for a host");
             }
         } else if (currentUser.isWillingToHost()) {
-            hostingText.setText("Hosting: \nAvailable to be a host");
+            hostingText.setText("Available to be a host");
         } else {
             hostingText.setVisibility(View.GONE);
         }
