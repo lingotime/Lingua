@@ -38,6 +38,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
+import com.lingua.lingua.SelectFriendsActivity;
 import com.lingua.lingua.TextChatActivity;
 import com.lingua.lingua.VideoChatActivity;
 import com.lingua.lingua.adapters.ChatAdapter;
@@ -100,7 +101,9 @@ public class ChatFragment extends Fragment {
                 int id = item.getItemId();
 
                 if (id == R.id.menu_chat_fragment_group_icon) {
-                    Log.i(TAG,"new group clicked");
+                    Intent intent = new Intent(context, SelectFriendsActivity.class);
+                    intent.putExtra("user", Parcels.wrap(currentUser));
+                    context.startActivity(intent);
                 }
 
                 return ChatFragment.super.onOptionsItemSelected(item);
