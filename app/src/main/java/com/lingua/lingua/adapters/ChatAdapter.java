@@ -71,14 +71,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             tvTimestamp.setTextColor(context.getResources().getColor(R.color.colorSecondary));
             ivNewMessage.setVisibility(View.VISIBLE);
         }
-
+        int fallbackImage = R.drawable.placeholder_person;
+        if (chat.getChatParticipants().size() > 2) {
+            fallbackImage = R.drawable.placeholder_group;
+        }
         // load profile pic
         RequestOptions requestOptionsMedia = new RequestOptions();
         requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
         Glide.with(context)
                 .load(chat.getChatPhotoUrl())
                 .apply(requestOptionsMedia)
-                .fallback(R.drawable.man)
+                .fallback(fallbackImage)
                 .into(ivProfile);
 
         // set an event listener to update the last message and timestamp of the chat if there is a change

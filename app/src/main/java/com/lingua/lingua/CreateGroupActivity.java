@@ -79,6 +79,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menu_create_group_icon) {
+            groupName = groupNameEt.getText().toString();
             createGroup();
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("user", Parcels.wrap(currentUser));
@@ -139,7 +140,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 
         // create message in the new chat
         Map<String, String> message = new HashMap<>();
-        message.put("message", lastMessage);
+        message.put("message", "Created group " + groupName + ". Hi everyone!");
         message.put("senderId", currentUser.getUserID());
         message.put("timestamp", lastMessageAt);
 

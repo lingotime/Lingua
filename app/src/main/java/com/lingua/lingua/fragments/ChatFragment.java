@@ -174,6 +174,11 @@ public class ChatFragment extends Fragment {
             try {
                 JSONObject chat = new JSONObject(s);
 
+                String name = "";
+                if (chat.has("name")) {
+                    name = chat.getString("name");
+                }
+
                 String lastMessageAt = chat.getString("lastMessageAt");
                 boolean lastMessageSeen = chat.getBoolean("lastMessageSeen");
 
@@ -194,7 +199,7 @@ public class ChatFragment extends Fragment {
                     userIds.add(key);
                 }
 
-                // to get the explore languages of both users in the chat
+                // get the explore languages of all users in the chat
                 ArrayList<String> exploreLanguages = new ArrayList<>();
                 if (chat.has("exploreLanguages")) {
                     JSONArray chatExploreLanguages = chat.getJSONArray("exploreLanguages");
@@ -207,6 +212,7 @@ public class ChatFragment extends Fragment {
 
                 Chat chatOb = new Chat();
                 chatOb.setChatID(id);
+                chatOb.setChatName(name);
                 chatOb.setLastTextChatTime(lastMessageAt);
                 chatOb.setChatParticipants(userIds);
                 chatOb.setLastTextMessage(lastMessage);
@@ -219,6 +225,12 @@ public class ChatFragment extends Fragment {
                             getUserDetails(userID, chatOb);
                         }
                     }
+                } else {
+                    swipeContainer.setRefreshing(false);
+                    chats.add(chatOb);
+                    Collections.sort(chats, (o1, o2) -> o1.getLastTextChatTime().compareTo(o2.getLastTextChatTime()));
+                    Collections.reverse(chats);
+                    adapter.notifyDataSetChanged();
                 }
 
             } catch (JSONException e) {
@@ -248,12 +260,9 @@ public class ChatFragment extends Fragment {
                 chat.setChatPhotoUrl(profilePhotoURL);
 
                 swipeContainer.setRefreshing(false);
-
                 chats.add(chat);
-
                 Collections.sort(chats, (o1, o2) -> o1.getLastTextChatTime().compareTo(o2.getLastTextChatTime()));
                 Collections.reverse(chats);
-
                 adapter.notifyDataSetChanged();
 
             } catch (JSONException e) {
