@@ -134,33 +134,6 @@ public class VideoChatActivity extends AppCompatActivity {
         userId = prefs.getString("userId", "");
         username = prefs.getString("userName", "");
 
-        // check for the intent action to see if the intent was launched from the chats or from a push notification
-        intentAction = getIntent().getAction();
-        if (intentAction.equals(PUSH_NOTIFICATION_INTENT)) {
-            roomName = getIntent().getStringExtra("roomName");
-            Log.d(TAG, "Push notification arrived at the video chat activity");
-        } else {
-            // intent passed in from either the chat fragment or the chat details activity with these parcelable extras
-            currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
-            currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
-            chatId = currentChat.getChatID();
-            roomName = chatId;
-        }
-
-        // the intent from the push notification will not have the user object
-        if (currentChat != null) {
-            chatMembers = currentChat.getChatParticipants();
-            chatMembers.remove(userId);
-
-            // to get all the possible explore languages from the users in the chat
-            if (currentChat.getChatLanguages() != null) {
-                possibleChatLanguages.addAll(currentChat.getChatLanguages());
-            }
-            possibleChatLanguages.add("Cultural Exchange");
-
-            languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
-        }
-
 
         // setting up Firebase to receive the messages to be sent
         Firebase.setAndroidContext(VideoChatActivity.this);
@@ -177,7 +150,36 @@ public class VideoChatActivity extends AppCompatActivity {
         disconnectionButton.setOnClickListener(disconnectionButtonListener());
         switchCameraButton.setOnClickListener(switchCameraButtonListener());
         connectionButton.setOnClickListener(connectionButtonListener());
-        requestPermissions();
+
+        // check for the intent action to see if the intent was launched from the chats or from a push notification
+        intentAction = getIntent().getAction();
+        if (intentAction.equals(PUSH_NOTIFICATION_INTENT)) {
+            roomName = getIntent().getStringExtra("roomName");
+            userId = getIntent().getStringExtra("userId");
+            Log.d(TAG, "Push notification arrived at the video chat activity");
+            queryCallLanguage();
+        } else {
+            // intent passed in from either the chat fragment or the chat details activity with these parcelable extras
+            currentChat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+            currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
+            chatId = currentChat.getChatID();
+            roomName = chatId;
+            requestPermissions();
+        }
+
+        // the intent from the push notification will not have the user object
+        if (currentChat != null) {
+            chatMembers = currentChat.getChatParticipants();
+            chatMembers.remove(userId);
+
+            // to get all the possible explore languages from the users in the chat
+            if (currentChat.getChatLanguages() != null) {
+                possibleChatLanguages.addAll(currentChat.getChatLanguages());
+            }
+            possibleChatLanguages.add("Cultural Exchange");
+
+            languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
+        }
     }
 
     // Onclick listeners for the views
@@ -206,41 +208,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     // gets the information for the chat containing the video chat from the database and generates a local Chat object
     private void queryAndUpdateHoursSpokenInfo() {
-        String databaseURL = "https://lingua-project.firebaseio.com/users" + userId;
-
-        // fetch user from database
-        StringRequest databaseRequest = new StringRequest(Request.Method.GET, databaseURL, new com.android.volley.Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject userJSONObject = new JSONObject(response);
-                    JSONArray exploreLanguages = userJSONObject.getJSONArray("exploreLanguages");
-                    if (exploreLanguages.toString().contains("\"exploreLanguages\":\""+videoChatLanguage+"\"")) {
-                        JSONObject hoursSpokenObject = userJSONObject.getJSONObject("hoursSpokenByLanguage");
-                        if (hoursSpokenObject != null) {
-                            if (hoursSpokenObject.has(videoChatLanguage)) {
-                                currentDuration = hoursSpokenObject.getInt(videoChatLanguage);
-                            } else {
-                                currentDuration = 0;
-                            }
-                            updateUserLanguageProgress(lengthOfCall(startTime, endTime));
-                        }
-                    }
-                    // return the user to the activity from which they came
-                    VideoChatActivity.this.onBackPressed();
-                } catch (JSONException e) {
-                    Log.e("VideoChatCurrentChat", e.toString());
-                }
-            }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("VideoChatCurrentChat", error.toString());
-            }
-        });
-
-        RequestQueue databaseRequestQueue = Volley.newRequestQueue(this);
-        databaseRequestQueue.add(databaseRequest);
+        Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId);
     }
 
 
@@ -321,16 +289,14 @@ public class VideoChatActivity extends AppCompatActivity {
     }
 
 
+    // gets the language of the call when the second participant joins the call from a push notification
     private void queryCallLanguage() {
         String url = "https://lingua-project.firebaseio.com/video-chats";
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject object = new JSONObject(s);
                 videoChatLanguage = object.getString(roomName);
-                if (!videoChatLanguage.equals("Cultural Exchange")) {
-                    // mark progress for the user if one of their explore languages is the one being spoken in the chat
-                    queryAndUpdateHoursSpokenInfo();
-                }
+                requestPermissions(); // only when the video chat language is found that the user can join the chat
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -367,7 +333,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     private void sendVideoChatNotification(String recipientId) {
         // creating the invite object
-        Invite invite = new Invite(userId, roomName);
+        Invite invite = new Invite(recipientId, roomName);
         // send notification
         Notification notification = new Notification("Join " + userId +" in " + roomName, username + " would like to video chat!", recipientId, invite.getMap());
 
@@ -773,10 +739,8 @@ public class VideoChatActivity extends AppCompatActivity {
     }
 
     private void writeHoursSpokenToDatabase() {
-        if (videoChatLanguage == null) {
-            // query the language from the database and update it for the current user
-            queryCallLanguage();
-        } else if (!videoChatLanguage.equals("Cultural Exchange")) {
+        Log.d("WritetoDatabase", "Writing hours to the database");
+        if (!videoChatLanguage.equals("Cultural Exchange")) {
             // mark progress for the user if one of their explore languages is the one being spoken in the chat
             queryAndUpdateHoursSpokenInfo();
         }
@@ -786,6 +750,7 @@ public class VideoChatActivity extends AppCompatActivity {
     public void onBackPressed() {
         // write the relevant information to the database
         writeHoursSpokenToDatabase();
+        super.onBackPressed();
     }
 
     @Override
