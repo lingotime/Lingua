@@ -30,6 +30,7 @@ import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,6 +52,7 @@ public class ProfileFragment extends Fragment {
     private TextView ageAndCountryText;
     private TextView biographyText;
     private TextView hostingText;
+    private TextView hostingHeader;
     private TextView knownLanguagesText;
     private ChipGroup knownLanguagesChips;
     private Chip knownLanguagesChip;
@@ -80,6 +82,7 @@ public class ProfileFragment extends Fragment {
         nameText = view.findViewById(R.id.fragment_profile_name_text);
         ageAndCountryText = view.findViewById(R.id.fragment_profile_age_and_country_text);
         biographyText = view.findViewById(R.id.fragment_profile_biography_text);
+        hostingHeader = view.findViewById(R.id.fragment_profile_hosting_header);
         hostingText = view.findViewById(R.id.fragment_profile_hosting_text);
         knownLanguagesText = view.findViewById(R.id.fragment_profile_known_languages_text);
         knownLanguagesChips = view.findViewById(R.id.fragment_profile_known_languages_chips);
@@ -147,6 +150,7 @@ public class ProfileFragment extends Fragment {
             hostingText.setText("Available to be a host");
         } else {
             hostingText.setVisibility(View.GONE);
+            hostingHeader.setVisibility(View.GONE);
         }
 
         if (currentUser.getKnownLanguages().isEmpty()) {
