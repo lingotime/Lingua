@@ -19,7 +19,7 @@ public class User {
     ArrayList<String> knownLanguages;
     ArrayList<String> exploreLanguages;
     ArrayList<String> exploreCountries;
-    HashMap<String, Integer> hoursSpokenPerLanguage;
+    HashMap<String, Long> MinutesSpokenPerLanguage;
     ArrayList<String> friends;
     ArrayList<String> pendingSentFriendRequests;
     ArrayList<String> pendingReceivedFriendRequests;
@@ -120,12 +120,12 @@ public class User {
         this.exploreCountries = exploreCountries;
     }
 
-    public HashMap<String, Integer> getHoursSpokenPerLanguage() {
-        return hoursSpokenPerLanguage;
+    public HashMap<String, Long> getMinutesSpokenPerLanguage() {
+        return MinutesSpokenPerLanguage;
     }
 
-    public void setHoursSpokenPerLanguage(HashMap<String, Integer> hoursSpoken) {
-        this.hoursSpokenPerLanguage = hoursSpoken;
+    public void setMinutesSpokenPerLanguage(HashMap<String, Long> hoursSpoken) {
+        this.MinutesSpokenPerLanguage = hoursSpoken;
     }
 
     public ArrayList<String> getFriends() {

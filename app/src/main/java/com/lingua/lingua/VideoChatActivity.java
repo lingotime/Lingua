@@ -218,7 +218,8 @@ public class VideoChatActivity extends AppCompatActivity {
                 if (mutableData.hasChild(videoChatLanguage)) {
                     value = mutableData.child(videoChatLanguage).getValue(Double.class);
                 }
-                value = value + lengthOfCall(startTime, endTime);
+                long callLength = lengthOfCall(startTime, endTime);
+                value = value + callLength;
                 mutableData.child(videoChatLanguage).setValue(value);
                 return Transaction.success(mutableData);
             }
@@ -264,10 +265,6 @@ public class VideoChatActivity extends AppCompatActivity {
         languageSelection.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Firebase.setAndroidContext(VideoChatActivity.this);
-                Firebase databaseReference = new Firebase("https://lingua-project.firebaseio.com/video-chats/" + roomName);
-                databaseReference.setValue(videoChatLanguage);
-
                 // send notifications to join to everyone in the chat
                 for (int index = 0; index < chatMembers.size(); index++) {
                     Log.d("VideoPushNotifications", "Sending notification to " + chatMembers.get(index));
@@ -282,7 +279,7 @@ public class VideoChatActivity extends AppCompatActivity {
         });
 
         AlertDialog dialog = languageSelection.create();
-        dialog.setCanceledOnTouchOutside(true);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
 
@@ -309,13 +306,12 @@ public class VideoChatActivity extends AppCompatActivity {
     }
 
     // calculates the length of the call and returns a value in minutes
-    private double lengthOfCall(long start, long end) {
-        long duration = TimeUnit.HOURS.convert(end-start, TimeUnit.NANOSECONDS);
+    private long lengthOfCall(long start, long end) {
+        long duration = TimeUnit.MINUTES.convert(end-start, TimeUnit.NANOSECONDS);
         return duration;
     }
 
     private void connectToRoom(String roomName) {
-
         // generate the Twilio room and token with the given chat name and the current user as the first identity
         tokenGenerator = new VideoTokenGenerator(userId, roomName, this.getString(R.string.twilio_sid), this.getString(R.string.twilio_api), this.getString(R.string.twilio_secret_key));
         Log.i(TAG, tokenGenerator.JwtToken);
