@@ -126,6 +126,8 @@ public class VideoChatActivity extends AppCompatActivity {
     private final static String CHAT_DETAILS_INTENT = "Launch from Chat Details"; // intent sent from the ChatDetailsActivity
     private final static String CHAT_FRAGMENT_INTENT = "Launch from Chat Fragment"; // intent sent from the Chat Fragment
 
+    private boolean disconnectedFromOnDestroy; // final check to see how the call was disconnected
+
 
 
     @Override
@@ -159,7 +161,7 @@ public class VideoChatActivity extends AppCompatActivity {
         intentAction = getIntent().getAction();
         if (intentAction.equals(PUSH_NOTIFICATION_INTENT)) {
             roomName = getIntent().getStringExtra("roomName");
-            userId = getIntent().getStringExtra("userId");
+            // userId = getIntent().getStringExtra("userId");
             videoChatLanguage = getIntent().getStringExtra("videoChatLanguage");
             Log.d(TAG, "Push notification arrived at the video chat activity");
         } else {
@@ -211,23 +213,40 @@ public class VideoChatActivity extends AppCompatActivity {
 
     // uses a Firebase transaction to find and add to the number of hours spoken in this language for the user
     private void queryAndUpdateHoursSpokenInfo() {
-        Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId + "hoursSpokenPerLanguage");
+        Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId + "/hoursSpokenPerLanguage");
         userReference.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                int value = 0;
-                if (mutableData.hasChild("/videoChatLanguage")) {
-                    value = mutableData.child("/videoChatLanguage").getValue(Integer.class);
+                double value = 0;
+                if (mutableData.hasChild(videoChatLanguage)) {
+                    value = mutableData.child(videoChatLanguage).getValue(Double.class);
                 }
-                value = (int) (value + lengthOfCall(startTime, endTime));
-                mutableData.child("/videoChatLanguage").setValue(value);
+                value = value + lengthOfCall(startTime, endTime);
+                mutableData.child(videoChatLanguage).setValue(value);
                 return Transaction.success(mutableData);
             }
 
             @Override
             public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
-                Log.d(TAG, "Final transaction complete: " + firebaseError.toString());
-                VideoChatActivity.this.onBackPressed();
+                // only simulate the back button when the activity has not been destroyed
+                if (!disconnectedFromOnDestroy) {
+                    try {
+                        VideoChatActivity.this.onBackPressed();
+                    } catch (Exception e) {
+                        // pass the intents to the respective chat activities
+                        if (intentAction.equals(CHAT_DETAILS_INTENT)) {
+                            Intent intent = new Intent(VideoChatActivity.this, TextChatActivity.class);
+                            intent.putExtra("chat", Parcels.wrap(currentChat));
+                            intent.putExtra("user", Parcels.wrap(currentUser));
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Intent intent = new Intent(VideoChatActivity.this, MainActivity.class);
+                            intent.putExtra("user", Parcels.wrap(currentUser));
+                            intent.putExtra("fragment", "chat");
+                        }
+                    }
+                }
             }
         });
     }
@@ -289,14 +308,13 @@ public class VideoChatActivity extends AppCompatActivity {
         connectionButton.setVisibility(View.VISIBLE);
         connectionButton.setEnabled(true);
         endTime = System.nanoTime();
-
         queryAndUpdateHoursSpokenInfo();
     }
 
     // calculates the length of the call and returns a value in minutes
     private double lengthOfCall(long start, long end) {
         long duration = TimeUnit.MINUTES.convert(end-start, TimeUnit.NANOSECONDS);
-        return Math.floor(duration);
+        return duration;
     }
 
     // storing the time spent speaking in the language chosen at the start of the activity
@@ -527,6 +545,9 @@ public class VideoChatActivity extends AppCompatActivity {
                 if (room.getRemoteParticipants().size() == 0) {
                     callLanguageDialog();
                     sendTextChat("Video chat with me!");
+                } else {
+                    // a user is already there so start keeping track of the time spent in the call
+                    startTime = System.nanoTime();
                 }
 
                 Log.i(TAG, "Connected to " + room.getName());
@@ -539,8 +560,8 @@ public class VideoChatActivity extends AppCompatActivity {
 
             @Override
             public void onConnectFailure(@NonNull Room room, @NonNull TwilioException twilioException) {
-                Log.i(TAG, "failure to connect: " + twilioException.toString());
-                Log.i(TAG, twilioException.toString());
+                Log.i("VideoConnectionFailure", "failure to connect: " + twilioException.toString());
+                Log.i("VideoConnectionFailure", twilioException.toString());
                 Toast.makeText(VideoChatActivity.this, "Failure to connect", Toast.LENGTH_SHORT).show();
                 // send a message to the other user detailing an attempted call
                 sendTextChat("I tried to call you :(");
@@ -578,14 +599,12 @@ public class VideoChatActivity extends AppCompatActivity {
 
             @Override
             public void onParticipantDisconnected(@NonNull Room room, @NonNull RemoteParticipant remoteParticipant) {
-                Log.i(TAG, "participant disconnected" + remoteParticipant.getIdentity());
+                Log.i("ParticipantDisconnection", "participant disconnected" + remoteParticipant.getIdentity() + videoChatLanguage);
                 // move the local participant to the main view
                 removeRemoteParticipant(remoteParticipant);
                 // disconnect the local participant if all the remote participants have been disconnected
-                if (room.getRemoteParticipants().size() == 0) {
-                    room.disconnect();
-                    disconnectActions();
-                }
+                room.disconnect();
+                disconnectActions();
             }
 
             @Override
@@ -766,19 +785,14 @@ public class VideoChatActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        // write the relevant information to the database
-        writeHoursSpokenToDatabase();
-        super.onBackPressed();
-    }
 
     @Override
     protected void onDestroy() {
         // when activity is destroyed, release the audio and video tracks from the device, and disconnect the user from the room
         if (room != null && room.getState() != Room.State.DISCONNECTED) {
+            disconnectedFromOnDestroy = true;
             room.disconnect();
-            writeHoursSpokenToDatabase();
+            disconnectActions();
         }
 
         if (localAudioTrack != null) {
