@@ -120,6 +120,9 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             // load user live status into place
             if (user.isOnline()) {
                 liveStatusSignal.setVisibility(View.VISIBLE);
+                if (!user.isWillingToHost()) {
+                    willingToHostImage.setVisibility(View.GONE);
+                }
             } else {
                 if (!user.isWillingToHost()) {
                     liveStatusSignal.setVisibility(View.GONE);
