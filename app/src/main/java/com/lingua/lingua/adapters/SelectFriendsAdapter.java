@@ -18,14 +18,12 @@ import com.bumptech.glide.request.RequestOptions;
 import com.lingua.lingua.R;
 import com.lingua.lingua.models.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SelectFriendsAdapter extends RecyclerView.Adapter<SelectFriendsAdapter.ViewHolder> {
 
     private Context context;
     public List<User> friends;
-    private List<User> selectedFriends;
 
     private TextView tvName, tvBio;
     private ImageView ivProfile, ivCheck;
@@ -35,7 +33,6 @@ public class SelectFriendsAdapter extends RecyclerView.Adapter<SelectFriendsAdap
     public SelectFriendsAdapter(Context context, List<User> friends, String activityName) {
         this.context = context;
         this.friends = friends;
-        this.selectedFriends = new ArrayList<>();
         this.activityName = activityName;
 
         SharedPreferences prefs = context.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);

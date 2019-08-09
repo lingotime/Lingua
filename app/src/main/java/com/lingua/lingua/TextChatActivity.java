@@ -47,7 +47,9 @@ public class TextChatActivity extends AppCompatActivity {
 
     Firebase reference, lastMessageSeenReference;
     Chat chat;
+    List<User> participants;
     User currentUser;
+    boolean isGroup;
 
     private ArrayList<String> languagesToBeLearned;
 
@@ -59,8 +61,11 @@ public class TextChatActivity extends AppCompatActivity {
         chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
+        isGroup = chat.getChatParticipants().size() > 2;
+
         rvMessages = findViewById(R.id.activity_text_chat_rv);
         messages = new ArrayList<>();
+        participants = new ArrayList<>();
 
         Toolbar toolbar = findViewById(R.id.activity_text_chat_toolbar);
         setSupportActionBar(toolbar);
@@ -169,7 +174,11 @@ public class TextChatActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_text_chat_activity, menu);
+        if (isGroup) {
+            getMenuInflater().inflate(R.menu.menu_text_chat_activity_group, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.menu_text_chat_activity, menu);
+        }
         return true;
     }
 
@@ -180,13 +189,19 @@ public class TextChatActivity extends AppCompatActivity {
 
         if (id == R.id.menu_text_chat_activity_video_icon) {
             Intent intent = new Intent(TextChatActivity.this, VideoChatActivity.class);
-            // intent to the video chat activity
             intent.setAction("Launch from Chat Details");
             intent.putExtra("chat", Parcels.wrap(chat));
             intent.putExtra("user", Parcels.wrap(currentUser));
             startActivity(intent);
-
             return true;
+
+        } else if (id == R.id.menu_text_chat_activity_edit_icon) {
+            Intent intent = new Intent(TextChatActivity.this, CreateGroupActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("chat", Parcels.wrap(chat));
+            startActivity(intent);
+            return true;
+
         } else if (id == android.R.id.home) {
             // set last message of chat as seen if I'm not the sender
             if (!chat.getLastTextMessage().startsWith("You: ")) {
