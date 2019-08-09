@@ -50,7 +50,7 @@ public class ProfileFragment extends Fragment {
     private TextView ageAndCountryText;
     private TextView biographyText;
     private TextView hostingText;
-    private TextView hostingHeader;
+    private TextView hostingCard;
     private TextView knownLanguagesText;
     private ChipGroup knownLanguagesChips;
     private Chip knownLanguagesChip;
@@ -80,7 +80,7 @@ public class ProfileFragment extends Fragment {
         nameText = view.findViewById(R.id.fragment_profile_name_text);
         ageAndCountryText = view.findViewById(R.id.fragment_profile_age_and_country_text);
         biographyText = view.findViewById(R.id.fragment_profile_biography_text);
-        hostingHeader = view.findViewById(R.id.fragment_profile_hosting_header);
+        hostingCard = view.findViewById(R.id.fragment_profile_hosting_card);
         hostingText = view.findViewById(R.id.fragment_profile_hosting_text);
         knownLanguagesText = view.findViewById(R.id.fragment_profile_known_languages_text);
         knownLanguagesChips = view.findViewById(R.id.fragment_profile_known_languages_chips);
@@ -147,9 +147,9 @@ public class ProfileFragment extends Fragment {
         } else if (currentUser.isWillingToHost()) {
             hostingText.setText("Available to be a host");
         } else {
-            hostingText.setVisibility(View.GONE);
-            hostingHeader.setVisibility(View.GONE);
+            hostingCard.setVisibility(View.GONE);
         }
+
 
         if (currentUser.getKnownLanguages().isEmpty()) {
             knownLanguagesChip.setText("Add a language...");
@@ -208,6 +208,8 @@ public class ProfileFragment extends Fragment {
             exploreCountryChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier(CountryInformation.COUNTRY_CODES.get(exploreCountry) + "_round", "drawable", getActivity().getPackageName())));
             exploreCountriesChips.addView(exploreCountryChip);
         }
+
+        // handling the user's achievements and badges and distinguishing between learning and teaching achievements
     }
 
     private void goToEdit() {
