@@ -214,12 +214,18 @@ public class VideoChatActivity extends AppCompatActivity {
         userReference.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                double value = 0;
+                long value = 0;
                 if (mutableData.hasChild(videoChatLanguage)) {
-                    value = mutableData.child(videoChatLanguage).getValue(Double.class);
+                    value = mutableData.child(videoChatLanguage).getValue(Long.class);
                 }
                 long callLength = lengthOfCall(startTime, endTime);
                 value = value + callLength;
+
+                // assign an award based on the time's value in hours
+                if (TimeUnit.SECONDS.toHours(value) >= 5) {
+                    awardAchievements(value);
+                }
+
                 mutableData.child(videoChatLanguage).setValue(value);
                 return Transaction.success(mutableData);
             }
@@ -740,14 +746,6 @@ public class VideoChatActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private void writeHoursSpokenToDatabase() {
-        Log.d("WritetoDatabase", "Writing hours to the database");
-        if (!videoChatLanguage.equals("Cultural Exchange")) {
-            // mark progress for the user if one of their explore languages is the one being spoken in the chat
-            queryAndUpdateHoursSpokenInfo();
-        }
-    }
-
 
     @Override
     protected void onDestroy() {
@@ -768,6 +766,19 @@ public class VideoChatActivity extends AppCompatActivity {
         }
 
         super.onDestroy();
+    }
+
+    private void awardAchievements(long numberOfHours) {
+        Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId);
+        String award = "none";
+        if (numberOfHours >= 15) {
+            award = "15 hours";
+        } else if (numberOfHours >= 10) {
+            award = "10 hours";
+        } else if (numberOfHours >= 5) {
+            award = "5 hours";
+        }
+        userReference.child("achievements").child(videoChatLanguage).setValue(award);
     }
 
 }

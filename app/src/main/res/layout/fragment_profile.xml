@@ -328,7 +328,7 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/fragment_profile_achievements_card"
+                        android:id="@+id/fragment_profile_learning_achievements_card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:cardCornerRadius="8dp"
@@ -345,7 +345,7 @@
                             android:orientation="vertical"
                             android:layout_height="wrap_content">
                             <TextView
-                                android:id="@+id/fragment_profile_achievements_header"
+                                android:id="@+id/fragment_profile_learning_achievements_header"
                                 android:layout_width="wrap_content"
                                 android:layout_marginStart="20dp"
                                 android:layout_marginTop="5dp"
@@ -353,15 +353,39 @@
                                 android:layout_marginEnd="20dp"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
-                                android:text="Achievements:"/>
+                                android:text="Learning Achievements:"/>
 
-                            <com.google.android.material.chip.ChipGroup
-                                android:id="@+id/fragment_profile_achievements_chips"
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/fragment_profile_teaching_achievements_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="8dp"
+                        android:elevation="8dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:layout_marginTop="@dimen/card_margin"
+                        android:layout_marginBottom="@dimen/card_margin"
+                        android:layout_marginLeft="@dimen/card_margin"
+                        android:layout_marginRight="@dimen/card_margin"
+                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_learning_achievements_card">
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:orientation="vertical"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/fragment_profile_teaching_achievements_header"
                                 android:layout_width="wrap_content"
                                 android:layout_marginStart="20dp"
+                                android:layout_marginTop="5dp"
                                 android:layout_marginBottom="10dp"
                                 android:layout_marginEnd="20dp"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
+                                android:text="Teaching Achievements:"/>
+
                         </androidx.appcompat.widget.LinearLayoutCompat>
                     </com.google.android.material.card.MaterialCardView>
 
