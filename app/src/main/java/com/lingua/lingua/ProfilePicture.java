@@ -35,6 +35,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
@@ -55,12 +56,13 @@ public class ProfilePicture extends AppCompatActivity {
     private Button selectPhotoButton;
     private ImageView profilePreviewImage;
     private Button setProfilePhotoButton;
+    private StorageReference specificStorageReference;
     private static final int CAMERA_REQUEST_CODE = 1034;
     private static final int PHOTO_GALLERY_REQUEST_CODE = 1046;
     private static final int RC_VIDEO_APP_PERM = 124;
 
     private String nextFragment;
-    private boolean isGroup;
+    private Chat groupchat;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,8 +73,9 @@ public class ProfilePicture extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.activity_profile_picture_toolbar);
         setSupportActionBar(toolbar);
-        isGroup = false;
-        if (isGroup) {
+
+        if (getIntent().hasExtra("groupchat")) {
+            groupchat = Parcels.unwrap(getIntent().getParcelableExtra("groupchat"));
             getSupportActionBar().setTitle("Set Group Picture");
         } else {
             getSupportActionBar().setTitle("Set Profile Picture");
@@ -107,7 +110,17 @@ public class ProfilePicture extends AppCompatActivity {
         });
 
         // load the current profile photo if one is available
-        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).centerCrop().placeholder(R.drawable.man).into(profilePreviewImage);
+        if (groupchat == null) {
+            Glide.with(this).load(currentUser.getUserProfilePhotoURL()).centerCrop().placeholder(R.drawable.man).into(profilePreviewImage);
+        }
+
+        // create references to cloud storage location
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference();
+        specificStorageReference = storageReference.child("profiles/" + currentUser.getUserID() + "_profile.jpg");
+        if (groupchat != null) {
+            specificStorageReference = storageReference.child("groupchats/" + groupchat.getChatID() + "_photo.jpg");
+        }
 
         // save new profile photo and return to previous page if the "set profile photo" button is clicked
         setProfilePhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -122,17 +135,12 @@ public class ProfilePicture extends AppCompatActivity {
                     // get URI of the new profile photo
                     Uri localProfilePhotoFileURI = Uri.fromFile(localProfilePhotoFile);
 
-                    // create references to cloud storage location
-                    FirebaseStorage storage = FirebaseStorage.getInstance();
-                    StorageReference storageReference = storage.getReference();
-                    StorageReference specificProfilesStorageReference = storageReference.child("profiles/" + currentUser.getUserID() + "_profile.jpg");
-
                     // upload the new profile photo
-                    UploadTask uploadTask = specificProfilesStorageReference.putFile(localProfilePhotoFileURI);
+                    UploadTask uploadTask = specificStorageReference.putFile(localProfilePhotoFileURI);
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.d("ProfileSetupActivity", "The new profile photo was successfully uploaded.");
+                            Log.d("ProfileSetupActivity", "The new photo was successfully uploaded.");
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -142,7 +150,7 @@ public class ProfilePicture extends AppCompatActivity {
                             setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
                             setProfilePhotoButton.setEnabled(true);
 
-                            Log.e("ProfileSetupActivity", "The new profile photo failed to upload successfully.");
+                            Log.e("ProfileSetupActivity", "The new photo failed to upload successfully.");
                         }
                     });
 
@@ -151,14 +159,14 @@ public class ProfilePicture extends AppCompatActivity {
                         @Override
                         public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                             if (task.isSuccessful()) {
-                                return specificProfilesStorageReference.getDownloadUrl();
+                                return specificStorageReference.getDownloadUrl();
                             } else {
                                 // re-enable the button
                                 setProfilePhotoButton.setText("Try Again");
                                 setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
                                 setProfilePhotoButton.setEnabled(true);
 
-                                Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
+                                Log.e("ProfileSetupActivity", "There was an error generating the URL for the new photo.");
                                 return null;
                             }
                         }
@@ -181,18 +189,25 @@ public class ProfilePicture extends AppCompatActivity {
                                 Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
                                 reference.child("userProfilePhotoURL").setValue(currentUser.getUserProfilePhotoURL());
 
-                                // return to info setup activity
-                                final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
-                                intent.putExtra("user", Parcels.wrap(currentUser));
-                                intent.putExtra("fragment", nextFragment);
-                                startActivity(intent);
+                                if (groupchat != null) {
+                                    //TODO: show photo
+                                    final Intent intent = new Intent(ProfilePicture.this, CreateGroupActivity.class);
+                                    intent.putExtra("user", Parcels.wrap(currentUser));
+                                    startActivity(intent);
+                                } else {
+                                    // return to info setup activity
+                                    final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
+                                    intent.putExtra("user", Parcels.wrap(currentUser));
+                                    intent.putExtra("fragment", nextFragment);
+                                    startActivity(intent);
+                                }
                             } else {
                                 // re-enable the button
                                 setProfilePhotoButton.setText("Try Again");
                                 setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
                                 setProfilePhotoButton.setEnabled(true);
 
-                                Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
+                                Log.e("ProfileSetupActivity", "There was an error generating the URL for the new photo.");
                             }
                         }
                     });
@@ -204,11 +219,17 @@ public class ProfilePicture extends AppCompatActivity {
 
                     Toast.makeText(ProfilePicture.this, "There was no new photo.", Toast.LENGTH_SHORT);
 
-                    // return to info setup activity
-                    final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
-                    intent.putExtra("user", Parcels.wrap(currentUser));
-                    intent.putExtra("fragment", nextFragment);
-                    startActivity(intent);
+                    if (groupchat != null) {
+                        final Intent intent = new Intent(ProfilePicture.this, CreateGroupActivity.class);
+                        intent.putExtra("user", Parcels.wrap(currentUser));
+                        startActivity(intent);
+                    } else {
+                        // return to info setup activity
+                        final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
+                        intent.putExtra("user", Parcels.wrap(currentUser));
+                        intent.putExtra("fragment", nextFragment);
+                        startActivity(intent);
+                    }
                 }
             }
         });

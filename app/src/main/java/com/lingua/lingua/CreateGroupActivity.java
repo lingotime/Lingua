@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +47,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     private EditText groupNameEt;
     private String groupName;
     private TextView tvParticipants;
+    private ImageView ivGroup;
     private static final String TAG = "CreateGroupActivity";
     Firebase reference;
     Chat chat;
@@ -98,6 +101,21 @@ public class CreateGroupActivity extends AppCompatActivity {
         rvFriends.setAdapter(friendsAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvFriends.setLayoutManager(linearLayoutManager);
+
+        ivGroup = findViewById(R.id.activity_create_group_iv);
+
+        ivGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // proceed to photo setup activity
+                final Intent intent = new Intent(CreateGroupActivity.this, ProfilePicture.class);
+                intent.putExtra("user", Parcels.wrap(currentUser));
+                if (chat != null) {
+                    intent.putExtra("groupchat", Parcels.wrap(chat));
+                }
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
