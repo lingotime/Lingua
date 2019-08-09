@@ -9,6 +9,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -234,8 +236,7 @@ public class ProfilePicture extends AppCompatActivity {
 
         if (requestCode == CAMERA_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Bitmap localProfilePhoto = BitmapFactory.decodeFile(localProfilePhotoFile.getAbsolutePath());
-
+                Bitmap localProfilePhoto = rotateBitmapOrientation(localProfilePhotoFile.getAbsolutePath());
                 Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
             } else {
                 Toast.makeText(this, "You did not take a photo.", Toast.LENGTH_SHORT).show();
@@ -245,16 +246,47 @@ public class ProfilePicture extends AppCompatActivity {
                 Uri localProfilePhotoURI = data.getData();
 
                 localProfilePhotoFile = getProfilePhotoFile(this, localProfilePhotoURI);
-
-                try {
-                    Bitmap localProfilePhoto = MediaStore.Images.Media.getBitmap(this.getContentResolver(), localProfilePhotoURI);
-
-                    Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
-                } catch (IOException e) {
-                    Log.e("ProfileSetupActivity", "There was an error reading the selected photo file.");
-                }
+                Bitmap localProfilePhoto  = rotateBitmapOrientation(getRealPathFromURI(localProfilePhotoURI));
+                Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
             }
         }
+    }
+
+    // getting the filepath from the URI
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
+    }
+
+    // to rotate the images to the correct orientation
+    public Bitmap rotateBitmapOrientation(String photoFilePath) {
+        // Create and configure BitmapFactory
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(photoFilePath, bounds);
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        Bitmap bm = BitmapFactory.decodeFile(photoFilePath, opts);
+        // Read EXIF Data
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(photoFilePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+        int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+        int rotationAngle = 0;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+        // Rotate Bitmap
+        Matrix matrix = new Matrix();
+        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+        // Return result
+        return rotatedBitmap;
     }
 
     @Override
@@ -332,6 +364,7 @@ public class ProfilePicture extends AppCompatActivity {
 
         return file;
     }
+
 
     private File getProfilePhotoFile(Context context, Uri uri) {
         // use a cursor to get profile photo selection
