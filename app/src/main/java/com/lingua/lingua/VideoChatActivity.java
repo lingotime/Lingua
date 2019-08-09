@@ -210,7 +210,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     // uses a Firebase transaction to find and add to the number of hours spoken in this language for the user
     private void queryAndUpdateHoursSpokenInfo() {
-        Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId + "/MinutesSpokenPerLanguage");
+        Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId + "/secondsSpokenPerLanguage");
         userReference.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {

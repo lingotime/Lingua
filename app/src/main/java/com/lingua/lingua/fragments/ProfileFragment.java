@@ -250,8 +250,8 @@ public class ProfileFragment extends Fragment {
                     Chip learningAchievementChip = new Chip(context);
                     learningAchievementChip.setText(pair.getKey().toString());
                     learningAchievementChip.setClickable(false);
-                    learningAchievementChip.setChipIconSize(175);
-                    learningAchievementChip.setChipMinHeight(200);
+                    learningAchievementChip.setChipIconSize(200);
+                    learningAchievementChip.setChipMinHeight(225);
                     learningAchievementChip.setChipBackgroundColorResource(android.R.color.white);
                     learningAchievementChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier("learning_"+pair.getValue().toString(), "drawable", getActivity().getPackageName())));
                     learningAchievementsChips.addView(learningAchievementChip);
@@ -260,8 +260,8 @@ public class ProfileFragment extends Fragment {
                     Chip teachingAchievementChip = new Chip(context);
                     teachingAchievementChip.setText(pair.getKey().toString());
                     teachingAchievementChip.setClickable(false);
-                    teachingAchievementChip.setChipIconSize(175);
-                    teachingAchievementChip.setChipMinHeight(200);
+                    teachingAchievementChip.setChipIconSize(200);
+                    teachingAchievementChip.setChipMinHeight(225);
                     teachingAchievementChip.setChipBackgroundColorResource(android.R.color.white);
                     teachingAchievementChip.setChipIcon(getResources().getDrawable(getResources().getIdentifier("teaching_"+pair.getValue().toString(), "drawable", getActivity().getPackageName())));
                     teachingAchievementsChips.addView(teachingAchievementChip);
