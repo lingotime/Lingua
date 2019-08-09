@@ -771,12 +771,10 @@ public class VideoChatActivity extends AppCompatActivity {
     private void awardAchievements(long numberOfHours) {
         Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId);
         String award = "none";
-        if (numberOfHours >= 15) {
-            award = "15 hours";
-        } else if (numberOfHours >= 10) {
-            award = "10 hours";
+        if (numberOfHours >= 10) {
+            award = "10";
         } else if (numberOfHours >= 5) {
-            award = "5 hours";
+            award = "5";
         }
         userReference.child("achievements").child(videoChatLanguage).setValue(award);
     }
