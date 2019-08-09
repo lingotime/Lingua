@@ -58,6 +58,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="5dp"
                 android:text="from [Country], [Age]"
+                android:textAppearance="@style/LinguaCaption"
                 app:layout_constraintStart_toEndOf="@+id/item_user_search_profile_image"
                 app:layout_constraintTop_toBottomOf="@+id/item_user_search_name_text" />
 

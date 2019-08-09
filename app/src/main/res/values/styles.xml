@@ -26,4 +26,8 @@
         </item>
     </style>
 
+    <style name="LinguaCaption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>

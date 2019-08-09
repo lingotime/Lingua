@@ -25,6 +25,8 @@ public class User {
     ArrayList<String> pendingReceivedFriendRequests;
     ArrayList<String> declinedUsers;
     ArrayList<String> conversations;
+    HashMap<String, String> learningAchievements;
+    HashMap<String, String> teachingAchievements;
     boolean willingToHost;
     boolean lookingForAHost;
     boolean complete;
@@ -168,6 +170,22 @@ public class User {
         this.conversations = conversations;
     }
 
+    public HashMap<String, String> getLearningAchievements() {
+        return learningAchievements;
+    }
+
+    public void setLearningAchievements(HashMap<String, String> learningAchievements) {
+        this.learningAchievements = learningAchievements;
+    }
+
+    public HashMap<String, String> getTeachingAchievements() {
+        return teachingAchievements;
+    }
+
+    public void setTeachingAchievements(HashMap<String, String> teachingAchievements) {
+        this.teachingAchievements = teachingAchievements;
+    }
+
     public boolean isOnline() {
         return online;
     }
@@ -183,4 +201,6 @@ public class User {
     public void setComplete(boolean complete) {
         this.complete = complete;
     }
+
+
 }

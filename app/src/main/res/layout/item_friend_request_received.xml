@@ -63,6 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="sent you a friend request!"
+                android:textAppearance="@style/LinguaCaption"
                 app:layout_constraintStart_toEndOf="@+id/friend_request_iv"
                 app:layout_constraintTop_toBottomOf="@+id/friend_request_name" />
 
