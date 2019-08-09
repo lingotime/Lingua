@@ -16,6 +16,7 @@ public class Chat {
     String lastTextMessage;
     String chatPhotoUrl;
     boolean lastMessageSeen;
+    boolean isGroup;
 
     public Chat() {}
 
@@ -103,7 +104,9 @@ public class Chat {
         return lastMessageSeen;
     }
 
-    public void setLastMessageSeen(boolean lastMessageSeen) {
-        this.lastMessageSeen = lastMessageSeen;
-    }
+    public void setLastMessageSeen(boolean lastMessageSeen) { this.lastMessageSeen = lastMessageSeen; }
+
+    public boolean isGroup() { return isGroup; }
+
+    public void setGroup(boolean group) { isGroup = group; }
 }

@@ -227,6 +227,7 @@ public class ChatFragment extends Fragment {
                         }
                     }
                 } else {
+                    chatOb.setGroup(true);
                     swipeContainer.setRefreshing(false);
                     chats.add(chatOb);
                     Collections.sort(chats, (o1, o2) -> o1.getLastTextChatTime().compareTo(o2.getLastTextChatTime()));
@@ -257,6 +258,7 @@ public class ChatFragment extends Fragment {
                 String profilePhotoURL = object.getString("userProfilePhotoURL");
 
                 // set chat info
+                chat.setGroup(false);
                 chat.setChatName(name);
                 chat.setChatPhotoUrl(profilePhotoURL);
 

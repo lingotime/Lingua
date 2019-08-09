@@ -71,7 +71,7 @@ public class TextChatActivity extends AppCompatActivity {
         Firebase.setAndroidContext(this);
         reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chat.getChatID());
 
-        adapter = new TextChatAdapter(this, messages);
+        adapter = new TextChatAdapter(this, messages, chat);
         rvMessages.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
@@ -111,13 +111,18 @@ public class TextChatActivity extends AppCompatActivity {
                 // if a message is added, show it in the recycler view
                 Map map = dataSnapshot.getValue(Map.class);
                 String senderId = map.get("senderId").toString();
+                String senderName = "";
+                if (map.get("senderName") != null) {
+                    senderName = map.get("senderName").toString();
+                }
                 String message = map.get("message").toString();
                 String timestamp = map.get("timestamp").toString();
 
                 Message messageOb = new Message();
                 messageOb.setCreatedTime(timestamp);
                 messageOb.setMessageText(message);
-                messageOb.setSenderUser(senderId);
+                messageOb.setSenderName(senderName);
+                messageOb.setSenderId(senderId);
                 messages.add(messageOb);
                 adapter.notifyItemInserted(messages.size() - 1);
                 rvMessages.scrollToPosition(messages.size() - 1);
@@ -206,6 +211,7 @@ public class TextChatActivity extends AppCompatActivity {
             Map<String, String> map = new HashMap<>();
             map.put("message", messageText);
             map.put("senderId", currentUser.getUserID());
+            map.put("senderName", currentUser.getUserName());
             map.put("timestamp", timestamp);
             reference.push().setValue(map);
             etMessage.setText("");

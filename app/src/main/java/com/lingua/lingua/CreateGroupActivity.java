@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -80,11 +81,15 @@ public class CreateGroupActivity extends AppCompatActivity {
 
         if (id == R.id.menu_create_group_icon) {
             groupName = groupNameEt.getText().toString();
-            createGroup();
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("user", Parcels.wrap(currentUser));
-            intent.putExtra("fragment", "chat");
-            startActivity(intent);
+            if (!groupName.equals("")) {
+                createGroup();
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("user", Parcels.wrap(currentUser));
+                intent.putExtra("fragment", "chat");
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Must enter a group name", Toast.LENGTH_SHORT);
+            }
             return true;
         } else if (id == android.R.id.home) {
             Intent intent = new Intent(this, SelectFriendsActivity.class);
