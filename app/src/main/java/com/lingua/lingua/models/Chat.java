@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class Chat {
     String chatID;
     String chatName;
-    ArrayList<String> chatParticipants;
+    ArrayList<String> chatParticipantIds;
     ArrayList<String> chatLanguages;
     String firstTextChatTime;
     String firstVideoChatTime;
@@ -16,6 +16,7 @@ public class Chat {
     String lastTextMessage;
     String chatPhotoUrl;
     boolean lastMessageSeen;
+    boolean isGroup;
 
     public Chat() {}
 
@@ -35,12 +36,12 @@ public class Chat {
         this.chatName = chatName;
     }
 
-    public ArrayList<String> getChatParticipants() {
-        return chatParticipants;
+    public ArrayList<String> getChatParticipantIds() {
+        return chatParticipantIds;
     }
 
-    public void setChatParticipants(ArrayList<String> chatParticipants) {
-        this.chatParticipants = chatParticipants;
+    public void setChatParticipantIds(ArrayList<String> chatParticipantIds) {
+        this.chatParticipantIds = chatParticipantIds;
     }
 
     public ArrayList<String> getChatLanguages() {
@@ -103,7 +104,9 @@ public class Chat {
         return lastMessageSeen;
     }
 
-    public void setLastMessageSeen(boolean lastMessageSeen) {
-        this.lastMessageSeen = lastMessageSeen;
-    }
+    public void setLastMessageSeen(boolean lastMessageSeen) { this.lastMessageSeen = lastMessageSeen; }
+
+    public boolean isGroup() { return isGroup; }
+
+    public void setGroup(boolean group) { isGroup = group; }
 }

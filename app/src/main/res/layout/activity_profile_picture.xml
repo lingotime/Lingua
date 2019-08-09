@@ -3,54 +3,98 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <Button
         android:id="@+id/activity_profile_photo_setup_take_photo_button"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Take Photo"
-        android:textColor="@color/linguaWhite"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/blue_circle"
+        android:backgroundTint="@color/colorSecondary"
+        app:layout_constraintStart_toStartOf="@+id/activity_profile_photo_setup_set_photo_button"
+        app:layout_constraintTop_toBottomOf="@+id/activity_profile_photo_setup_profile_image_preview" />
 
     <Button
         android:id="@+id/activity_profile_photo_setup_select_photo_button"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Select Photo"
-        android:textColor="@color/linguaWhite"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_profile_photo_setup_take_photo_button" />
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/blue_circle"
+        android:backgroundTint="@color/colorSecondary"
+        app:layout_constraintEnd_toEndOf="@+id/activity_profile_photo_setup_set_photo_button"
+        app:layout_constraintTop_toBottomOf="@+id/activity_profile_photo_setup_profile_image_preview" />
 
     <ImageView
         android:id="@+id/activity_profile_photo_setup_profile_image_preview"
-        android:layout_width="410dp"
-        android:layout_height="410dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_profile_photo_setup_select_photo_button"
-        app:srcCompat="@drawable/man" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_profile_picture_toolbar"
+        app:srcCompat="@drawable/placeholder_group" />
 
     <Button
         android:id="@+id/activity_profile_photo_setup_set_photo_button"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Set Profile Photo"
+        android:layout_marginTop="32dp"
+        android:text="Set Picture"
         android:textColor="@color/linguaWhite"
         app:backgroundTint="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_profile_photo_setup_profile_image_preview" />
+        app:layout_constraintTop_toBottomOf="@+id/activity_profile_photo_setup_take_photo_button" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/activity_profile_picture_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/linguaWhite"
+        android:elevation="8dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/activity_profile_picture_camera_iv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        android:elevation="2dp"
+        android:tint="@color/linguaWhite"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_profile_photo_setup_take_photo_button"
+        app:layout_constraintEnd_toEndOf="@+id/activity_profile_photo_setup_take_photo_button"
+        app:layout_constraintStart_toStartOf="@+id/activity_profile_photo_setup_take_photo_button"
+        app:layout_constraintTop_toTopOf="@+id/activity_profile_photo_setup_take_photo_button"
+        app:srcCompat="@drawable/camera_icon"
+        tools:srcCompat="@drawable/camera_icon" />
+
+    <ImageView
+        android:id="@+id/activity_profile_picture_gallery_iv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        android:elevation="2dp"
+        android:tint="@color/linguaWhite"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_profile_photo_setup_select_photo_button"
+        app:layout_constraintEnd_toEndOf="@+id/activity_profile_photo_setup_select_photo_button"
+        app:layout_constraintStart_toStartOf="@+id/activity_profile_photo_setup_select_photo_button"
+        app:layout_constraintTop_toTopOf="@+id/activity_profile_photo_setup_select_photo_button"
+        app:srcCompat="@drawable/gallery_icon"
+        tools:srcCompat="@drawable/gallery_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -38,6 +38,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.lingua.lingua.MainActivity;
 import com.lingua.lingua.R;
+import com.lingua.lingua.SelectFriendsActivity;
 import com.lingua.lingua.TextChatActivity;
 import com.lingua.lingua.VideoChatActivity;
 import com.lingua.lingua.adapters.ChatAdapter;
@@ -100,7 +101,9 @@ public class ChatFragment extends Fragment {
                 int id = item.getItemId();
 
                 if (id == R.id.menu_chat_fragment_group_icon) {
-                    Log.i(TAG,"new group clicked");
+                    Intent intent = new Intent(context, SelectFriendsActivity.class);
+                    intent.putExtra("user", Parcels.wrap(currentUser));
+                    context.startActivity(intent);
                 }
 
                 return ChatFragment.super.onOptionsItemSelected(item);
@@ -136,8 +139,6 @@ public class ChatFragment extends Fragment {
 
         queryChats();
         enableSwipe();
-
-
     }
 
     private void queryChats() {
@@ -171,6 +172,13 @@ public class ChatFragment extends Fragment {
             try {
                 JSONObject chat = new JSONObject(s);
 
+                String name = "";
+                String photoUrl = "";
+                if (chat.has("name") && chat.has("chatPhotoURL")) {
+                    name = chat.getString("name");
+                    photoUrl = chat.getString("chatPhotoURL");
+                }
+
                 String lastMessageAt = chat.getString("lastMessageAt");
                 boolean lastMessageSeen = chat.getBoolean("lastMessageSeen");
 
@@ -178,7 +186,7 @@ public class ChatFragment extends Fragment {
                 if (lastMessage.startsWith(currentUser.getUserName())) {
                     lastMessage = "You" + lastMessage.split(currentUser.getUserName())[1];
                     lastMessageSeen = true;
-                } else {
+                } else if (!chat.has("name")) {
                     lastMessage = lastMessage.split(": ")[1];
                 }
 
@@ -191,7 +199,7 @@ public class ChatFragment extends Fragment {
                     userIds.add(key);
                 }
 
-                // to get the explore languages of both users in the chat
+                // get the explore languages of all users in the chat
                 ArrayList<String> exploreLanguages = new ArrayList<>();
                 if (chat.has("exploreLanguages")) {
                     JSONArray chatExploreLanguages = chat.getJSONArray("exploreLanguages");
@@ -204,8 +212,10 @@ public class ChatFragment extends Fragment {
 
                 Chat chatOb = new Chat();
                 chatOb.setChatID(id);
+                chatOb.setChatName(name);
+                chatOb.setChatPhotoUrl(photoUrl);
                 chatOb.setLastTextChatTime(lastMessageAt);
-                chatOb.setChatParticipants(userIds);
+                chatOb.setChatParticipantIds(userIds);
                 chatOb.setLastTextMessage(lastMessage);
                 chatOb.setChatLanguages(exploreLanguages);
                 chatOb.setLastMessageSeen(lastMessageSeen);
@@ -216,6 +226,13 @@ public class ChatFragment extends Fragment {
                             getUserDetails(userID, chatOb);
                         }
                     }
+                } else {
+                    chatOb.setGroup(true);
+                    swipeContainer.setRefreshing(false);
+                    chats.add(chatOb);
+                    Collections.sort(chats, (o1, o2) -> o1.getLastTextChatTime().compareTo(o2.getLastTextChatTime()));
+                    Collections.reverse(chats);
+                    adapter.notifyDataSetChanged();
                 }
 
             } catch (JSONException e) {
@@ -241,16 +258,14 @@ public class ChatFragment extends Fragment {
                 String profilePhotoURL = object.getString("userProfilePhotoURL");
 
                 // set chat info
+                chat.setGroup(false);
                 chat.setChatName(name);
                 chat.setChatPhotoUrl(profilePhotoURL);
 
                 swipeContainer.setRefreshing(false);
-
                 chats.add(chat);
-
                 Collections.sort(chats, (o1, o2) -> o1.getLastTextChatTime().compareTo(o2.getLastTextChatTime()));
                 Collections.reverse(chats);
-
                 adapter.notifyDataSetChanged();
 
             } catch (JSONException e) {
@@ -260,7 +275,7 @@ public class ChatFragment extends Fragment {
         }, volleyError -> {
             Toast.makeText(context, "Connection error", Toast.LENGTH_SHORT).show();
             swipeContainer.setRefreshing(false);
-            Log.e("ChatFragment", "" + volleyError);
+            Log.e(TAG, "" + volleyError);
         });
 
         RequestQueue rQueue = Volley.newRequestQueue(context);

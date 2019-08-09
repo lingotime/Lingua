@@ -24,10 +24,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,6 +37,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.User;
 
 import org.parceler.Parcels;
@@ -57,11 +58,14 @@ public class ProfilePicture extends AppCompatActivity {
     private Button selectPhotoButton;
     private ImageView profilePreviewImage;
     private Button setProfilePhotoButton;
+    private StorageReference specificStorageReference;
     private static final int CAMERA_REQUEST_CODE = 1034;
     private static final int PHOTO_GALLERY_REQUEST_CODE = 1046;
     private static final int RC_VIDEO_APP_PERM = 124;
 
     private String nextFragment;
+    private Chat groupchat;
+    private boolean isNewGroup;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +73,17 @@ public class ProfilePicture extends AppCompatActivity {
         setContentView(R.layout.activity_profile_picture);
 
         Firebase.setAndroidContext(this);
+
+        Toolbar toolbar = findViewById(R.id.activity_profile_picture_toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getIntent().hasExtra("chat")) {
+            groupchat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+            isNewGroup = getIntent().getBooleanExtra("isNewGroup", false);
+            getSupportActionBar().setTitle("Set Group Picture");
+        } else {
+            getSupportActionBar().setTitle("Set Profile Picture");
+        }
 
         // associate views with java variables
         takePhotoButton = findViewById(R.id.activity_profile_photo_setup_take_photo_button);
@@ -99,7 +114,19 @@ public class ProfilePicture extends AppCompatActivity {
         });
 
         // load the current profile photo if one is available
-        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
+        if (groupchat == null) {
+            Glide.with(this).load(currentUser.getUserProfilePhotoURL()).centerCrop().placeholder(R.drawable.man).into(profilePreviewImage);
+        } else {
+            Glide.with(this).load(groupchat.getChatPhotoUrl()).centerCrop().placeholder(R.drawable.placeholder_group).into(profilePreviewImage);
+        }
+
+        // create references to cloud storage location
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference();
+        specificStorageReference = storageReference.child("profiles/" + currentUser.getUserID() + "_profile.jpg");
+        if (groupchat != null) {
+            specificStorageReference = storageReference.child("groupchats/" + groupchat.getChatID() + "_photo.jpg");
+        }
 
         // save new profile photo and return to previous page if the "set profile photo" button is clicked
         setProfilePhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -114,17 +141,12 @@ public class ProfilePicture extends AppCompatActivity {
                     // get URI of the new profile photo
                     Uri localProfilePhotoFileURI = Uri.fromFile(localProfilePhotoFile);
 
-                    // create references to cloud storage location
-                    FirebaseStorage storage = FirebaseStorage.getInstance();
-                    StorageReference storageReference = storage.getReference();
-                    StorageReference specificProfilesStorageReference = storageReference.child("profiles/" + currentUser.getUserID() + "_profile.jpg");
-
                     // upload the new profile photo
-                    UploadTask uploadTask = specificProfilesStorageReference.putFile(localProfilePhotoFileURI);
+                    UploadTask uploadTask = specificStorageReference.putFile(localProfilePhotoFileURI);
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.d("ProfileSetupActivity", "The new profile photo was successfully uploaded.");
+                            Log.d("ProfileSetupActivity", "The new photo was successfully uploaded.");
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -134,7 +156,7 @@ public class ProfilePicture extends AppCompatActivity {
                             setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
                             setProfilePhotoButton.setEnabled(true);
 
-                            Log.e("ProfileSetupActivity", "The new profile photo failed to upload successfully.");
+                            Log.e("ProfileSetupActivity", "The new photo failed to upload successfully.");
                         }
                     });
 
@@ -143,14 +165,14 @@ public class ProfilePicture extends AppCompatActivity {
                         @Override
                         public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                             if (task.isSuccessful()) {
-                                return specificProfilesStorageReference.getDownloadUrl();
+                                return specificStorageReference.getDownloadUrl();
                             } else {
                                 // re-enable the button
                                 setProfilePhotoButton.setText("Try Again");
                                 setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
                                 setProfilePhotoButton.setEnabled(true);
 
-                                Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
+                                Log.e("ProfileSetupActivity", "There was an error generating the URL for the new photo.");
                                 return null;
                             }
                         }
@@ -159,10 +181,14 @@ public class ProfilePicture extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
                                 // get the URL link for the user's new profile photo
-                                Uri profilePhotoURI = task.getResult();
+                                Uri photoUri = task.getResult();
 
-                                // update the user's profile photo with the new profile photo URL link
-                                currentUser.setUserProfilePhotoURL(profilePhotoURI.toString());
+                                if (groupchat != null) {
+                                    groupchat.setChatPhotoUrl(photoUri.toString());
+                                } else {
+                                    // update the user's profile photo with the new profile photo URL link
+                                    currentUser.setUserProfilePhotoURL(photoUri.toString());
+                                }
 
                                 // disable the button and change its text
                                 setProfilePhotoButton.setText("Set");
@@ -173,18 +199,26 @@ public class ProfilePicture extends AppCompatActivity {
                                 Firebase reference = new Firebase("https://lingua-project.firebaseio.com/users/" + currentUser.getUserID());
                                 reference.child("userProfilePhotoURL").setValue(currentUser.getUserProfilePhotoURL());
 
-                                // return to info setup activity
-                                final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
-                                intent.putExtra("user", Parcels.wrap(currentUser));
-                                intent.putExtra("fragment", nextFragment);
-                                startActivity(intent);
+                                if (groupchat != null) {
+                                    final Intent intent = new Intent(ProfilePicture.this, CreateGroupActivity.class);
+                                    intent.putExtra("user", Parcels.wrap(currentUser));
+                                    intent.putExtra("chat", Parcels.wrap(groupchat));
+                                    intent.putExtra("isNewGroup", isNewGroup);
+                                    startActivity(intent);
+                                } else {
+                                    // return to info setup activity
+                                    final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
+                                    intent.putExtra("user", Parcels.wrap(currentUser));
+                                    intent.putExtra("fragment", nextFragment);
+                                    startActivity(intent);
+                                }
                             } else {
                                 // re-enable the button
                                 setProfilePhotoButton.setText("Try Again");
                                 setProfilePhotoButton.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(110,47,222)));
                                 setProfilePhotoButton.setEnabled(true);
 
-                                Log.e("ProfileSetupActivity", "There was an error generating the URL for the new profile photo.");
+                                Log.e("ProfileSetupActivity", "There was an error generating the URL for the new photo.");
                             }
                         }
                     });
@@ -196,11 +230,19 @@ public class ProfilePicture extends AppCompatActivity {
 
                     Toast.makeText(ProfilePicture.this, "There was no new photo.", Toast.LENGTH_SHORT);
 
-                    // return to info setup activity
-                    final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
-                    intent.putExtra("user", Parcels.wrap(currentUser));
-                    intent.putExtra("fragment", nextFragment);
-                    startActivity(intent);
+                    if (groupchat != null) {
+                        final Intent intent = new Intent(ProfilePicture.this, CreateGroupActivity.class);
+                        intent.putExtra("user", Parcels.wrap(currentUser));
+                        intent.putExtra("chat", Parcels.wrap(groupchat));
+                        intent.putExtra("isNewGroup", isNewGroup);
+                        startActivity(intent);
+                    } else {
+                        // return to info setup activity
+                        final Intent intent = new Intent(ProfilePicture.this, ProfileCreationActivity.class);
+                        intent.putExtra("user", Parcels.wrap(currentUser));
+                        intent.putExtra("fragment", nextFragment);
+                        startActivity(intent);
+                    }
                 }
             }
         });
@@ -237,7 +279,7 @@ public class ProfilePicture extends AppCompatActivity {
         if (requestCode == CAMERA_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Bitmap localProfilePhoto = rotateBitmapOrientation(localProfilePhotoFile.getAbsolutePath());
-                Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
+                Glide.with(this).load(localProfilePhoto).centerCrop().placeholder(R.drawable.man).into(profilePreviewImage);
             } else {
                 Toast.makeText(this, "You did not take a photo.", Toast.LENGTH_SHORT).show();
             }

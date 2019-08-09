@@ -6,19 +6,11 @@ import org.parceler.Parcel;
 public class Message {
     String messageID;
     String messageText;
-    String senderUser;
-    String receiverUser;
+    String senderId;
+    String senderName;
     String createdTime;
 
     public Message() { }
-
-    public String getMessageID() {
-        return messageID;
-    }
-
-    public void setMessageID(String messageID) {
-        this.messageID = messageID;
-    }
 
     public String getMessageText() {
         return messageText;
@@ -28,20 +20,12 @@ public class Message {
         this.messageText = messageText;
     }
 
-    public String getSenderUser() {
-        return senderUser;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setSenderUser(String senderUser) {
-        this.senderUser = senderUser;
-    }
-
-    public String getReceiverUser() {
-        return receiverUser;
-    }
-
-    public void setReceiverUser(String receiverUser) {
-        this.receiverUser = receiverUser;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
     public String getCreatedTime() {
@@ -51,4 +35,8 @@ public class Message {
     public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
+
+    public String getSenderName() { return senderName; }
+
+    public void setSenderName(String senderName) { this.senderName = senderName; }
 }

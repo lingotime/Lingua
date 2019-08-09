@@ -3,12 +3,10 @@ package com.lingua.lingua;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -136,7 +134,6 @@ public class VideoChatActivity extends AppCompatActivity {
         SharedPreferences prefs = this.getSharedPreferences("com.lingua.lingua", Context.MODE_PRIVATE);
         userId = prefs.getString("userId", "");
         username = prefs.getString("userName", "");
-
 
         // setting up Firebase to receive the messages to be sent
         Firebase.setAndroidContext(VideoChatActivity.this);

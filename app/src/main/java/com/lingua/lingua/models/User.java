@@ -30,6 +30,7 @@ public class User {
     boolean lookingForAHost;
     boolean complete;
     boolean online;
+    boolean selected;
 
     public User() {}
 
@@ -194,5 +195,7 @@ public class User {
         this.complete = complete;
     }
 
+    public boolean isSelected() { return selected; }
 
+    public void setSelected(boolean selected) { this.selected = selected; }
 }

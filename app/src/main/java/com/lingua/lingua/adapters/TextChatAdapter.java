@@ -30,11 +30,11 @@ public class TextChatAdapter extends RecyclerView.Adapter {
     private static final int TYPE_MESSAGE_SENT = 1;
     private static final int TYPE_MESSAGE_RECEIVED = 2;
 
-    TextView tvMessage, tvTimestamp;
+    TextView tvMessage, tvTimestamp, tvSender;
 
     String userId;
 
-    public TextChatAdapter(Context context, List<Message> messages) {
+    public TextChatAdapter(Context context, List<Message> messages, Chat chat) {
         this.context = context;
         this.messages = messages;
         this.chat = chat;
@@ -66,6 +66,10 @@ public class TextChatAdapter extends RecyclerView.Adapter {
         tvMessage.setText(message.getMessageText());
         String timestamp = DateUtil.getHourAndMinuteFormat(message.getCreatedTime());
         tvTimestamp.setText(timestamp);
+        if (chat.isGroup() && getItemViewType(position) == TYPE_MESSAGE_RECEIVED) {
+            tvSender.setVisibility(View.VISIBLE);
+            tvSender.setText(message.getSenderName());
+        }
     }
 
     @Override
@@ -77,7 +81,7 @@ public class TextChatAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-        if (message.getSenderUser().equals(userId)) {
+        if (message.getSenderId().equals(userId)) {
             // If the current user is the sender of the message
             return TYPE_MESSAGE_SENT;
         } else {
@@ -91,6 +95,7 @@ public class TextChatAdapter extends RecyclerView.Adapter {
             super(itemView);
             tvMessage = itemView.findViewById(R.id.message_tv);
             tvTimestamp = itemView.findViewById(R.id.message_timestamp);
+            tvSender = itemView.findViewById(R.id.message_sender);
         }
     }
 }
