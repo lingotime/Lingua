@@ -139,8 +139,6 @@ public class ChatFragment extends Fragment {
 
         queryChats();
         enableSwipe();
-
-
     }
 
     private void queryChats() {
@@ -175,9 +173,10 @@ public class ChatFragment extends Fragment {
                 JSONObject chat = new JSONObject(s);
 
                 String name = "";
-
-                if (chat.has("name")) {
+                String photoUrl = "";
+                if (chat.has("name") && chat.has("chatPhotoURL")) {
                     name = chat.getString("name");
+                    photoUrl = chat.getString("chatPhotoURL");
                 }
 
                 String lastMessageAt = chat.getString("lastMessageAt");
@@ -214,6 +213,7 @@ public class ChatFragment extends Fragment {
                 Chat chatOb = new Chat();
                 chatOb.setChatID(id);
                 chatOb.setChatName(name);
+                chatOb.setChatPhotoUrl(photoUrl);
                 chatOb.setLastTextChatTime(lastMessageAt);
                 chatOb.setChatParticipantIds(userIds);
                 chatOb.setLastTextMessage(lastMessage);

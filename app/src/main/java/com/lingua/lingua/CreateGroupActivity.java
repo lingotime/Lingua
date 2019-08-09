@@ -67,18 +67,18 @@ public class CreateGroupActivity extends AppCompatActivity {
         if (getIntent().hasExtra("selectedUsers")) {
             participants = Parcels.unwrap(getIntent().getParcelableExtra("selectedUsers"));
         }
+        boolean isNewGroup = getIntent().getBooleanExtra("isNewGroup", false);
 
-        isEdit = false;
+        isEdit = !isNewGroup;
         if (getIntent().hasExtra("chat")) {
             chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
-            isEdit = true;
             groupNameEt.setText(chat.getChatName());
             participants = new ArrayList<>();
             for (String userId : chat.getChatParticipantIds()) {
                 queryFriendInfo(userId);
             }
             if (chat.getChatPhotoUrl() != null) {
-                Glide.with(this).load(chat.getChatPhotoUrl()).apply(RequestOptions.circleCropTransform()).placeholder(R.drawable.placeholder_group).into(ivGroup);
+                Glide.with(this).load(chat.getChatPhotoUrl()).apply(RequestOptions.circleCropTransform()).into(ivGroup);
             }
         }
 
@@ -126,6 +126,7 @@ public class CreateGroupActivity extends AppCompatActivity {
                 final Intent intent = new Intent(CreateGroupActivity.this, ProfilePicture.class);
                 intent.putExtra("user", Parcels.wrap(currentUser));
                 intent.putExtra("chat", Parcels.wrap(chat));
+                intent.putExtra("isNewGroup", isNewGroup);
                 startActivity(intent);
             }
         });
@@ -138,13 +139,15 @@ public class CreateGroupActivity extends AppCompatActivity {
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == R.id.menu_save_icon) {
             String groupName = groupNameEt.getText().toString();
+            if (chat.getChatPhotoUrl() == null) {
+                Toast.makeText(this, "Must set a group icon", Toast.LENGTH_SHORT);
+            }
             if (!groupName.equals("")) {
                 chat.setChatName(groupName);
                 if (isEdit) {
@@ -220,7 +223,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         chatMap.put("users", users);
         chatMap.put("exploreLanguages", exploreLanguages);
 
-        reference.child("chats").child(chatId).setValue(chat);
+        reference.child("chats").child(chatId).setValue(chatMap);
 
         // create message in the new chat
         Map<String, String> message = new HashMap<>();

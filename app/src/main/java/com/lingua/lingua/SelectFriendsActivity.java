@@ -153,6 +153,7 @@ public class SelectFriendsActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, CreateGroupActivity.class);
                 intent.putExtra("user", Parcels.wrap(currentUser));
                 intent.putExtra("selectedUsers", Parcels.wrap(selectedUsers));
+                intent.putExtra("isNewGroup", true);
                 startActivity(intent);
             } else {
                 Toast.makeText(this, "Add at least two participants to the group.", Toast.LENGTH_SHORT).show();

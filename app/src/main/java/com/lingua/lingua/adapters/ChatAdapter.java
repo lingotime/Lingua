@@ -75,7 +75,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         if (chat.getChatParticipantIds().size() > 2) {
             fallbackImage = R.drawable.placeholder_group;
         }
-        // load profile pic
+
         RequestOptions requestOptionsMedia = new RequestOptions();
         requestOptionsMedia = requestOptionsMedia.transforms(new CenterCrop(), new RoundedCorners(400));
         Glide.with(context)

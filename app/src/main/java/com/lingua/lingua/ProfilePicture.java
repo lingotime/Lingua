@@ -63,6 +63,7 @@ public class ProfilePicture extends AppCompatActivity {
 
     private String nextFragment;
     private Chat groupchat;
+    private boolean isNewGroup;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class ProfilePicture extends AppCompatActivity {
 
         if (getIntent().hasExtra("chat")) {
             groupchat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
+            isNewGroup = getIntent().getBooleanExtra("isNewGroup", false);
             getSupportActionBar().setTitle("Set Group Picture");
         } else {
             getSupportActionBar().setTitle("Set Profile Picture");
@@ -199,6 +201,7 @@ public class ProfilePicture extends AppCompatActivity {
                                     final Intent intent = new Intent(ProfilePicture.this, CreateGroupActivity.class);
                                     intent.putExtra("user", Parcels.wrap(currentUser));
                                     intent.putExtra("chat", Parcels.wrap(groupchat));
+                                    intent.putExtra("isNewGroup", isNewGroup);
                                     startActivity(intent);
                                 } else {
                                     // return to info setup activity
@@ -229,6 +232,7 @@ public class ProfilePicture extends AppCompatActivity {
                         final Intent intent = new Intent(ProfilePicture.this, CreateGroupActivity.class);
                         intent.putExtra("user", Parcels.wrap(currentUser));
                         intent.putExtra("chat", Parcels.wrap(groupchat));
+                        intent.putExtra("isNewGroup", isNewGroup);
                         startActivity(intent);
                     } else {
                         // return to info setup activity
