@@ -112,7 +112,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.menu_create_group_icon) {
+        if (id == R.id.menu_save_icon) {
             groupName = groupNameEt.getText().toString();
             if (!groupName.equals("")) {
                 if (isEdit) {

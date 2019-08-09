@@ -22,10 +22,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -60,6 +60,7 @@ public class ProfilePicture extends AppCompatActivity {
     private static final int RC_VIDEO_APP_PERM = 124;
 
     private String nextFragment;
+    private boolean isGroup;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,6 +68,15 @@ public class ProfilePicture extends AppCompatActivity {
         setContentView(R.layout.activity_profile_picture);
 
         Firebase.setAndroidContext(this);
+
+        Toolbar toolbar = findViewById(R.id.activity_profile_picture_toolbar);
+        setSupportActionBar(toolbar);
+        isGroup = false;
+        if (isGroup) {
+            getSupportActionBar().setTitle("Set Group Picture");
+        } else {
+            getSupportActionBar().setTitle("Set Profile Picture");
+        }
 
         // associate views with java variables
         takePhotoButton = findViewById(R.id.activity_profile_photo_setup_take_photo_button);
@@ -97,7 +107,7 @@ public class ProfilePicture extends AppCompatActivity {
         });
 
         // load the current profile photo if one is available
-        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
+        Glide.with(this).load(currentUser.getUserProfilePhotoURL()).centerCrop().placeholder(R.drawable.man).into(profilePreviewImage);
 
         // save new profile photo and return to previous page if the "set profile photo" button is clicked
         setProfilePhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -236,7 +246,7 @@ public class ProfilePicture extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Bitmap localProfilePhoto = BitmapFactory.decodeFile(localProfilePhotoFile.getAbsolutePath());
 
-                Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
+                Glide.with(this).load(localProfilePhoto).centerCrop().placeholder(R.drawable.man).into(profilePreviewImage);
             } else {
                 Toast.makeText(this, "You did not take a photo.", Toast.LENGTH_SHORT).show();
             }
@@ -249,7 +259,7 @@ public class ProfilePicture extends AppCompatActivity {
                 try {
                     Bitmap localProfilePhoto = MediaStore.Images.Media.getBitmap(this.getContentResolver(), localProfilePhotoURI);
 
-                    Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
+                    Glide.with(this).load(localProfilePhoto).centerCrop().placeholder(R.drawable.man).into(profilePreviewImage);
                 } catch (IOException e) {
                     Log.e("ProfileSetupActivity", "There was an error reading the selected photo file.");
                 }

@@ -68,7 +68,6 @@
 
         <Button
             android:id="@+id/activity_text_chat_button_send"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginEnd="10dp"
@@ -85,6 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/activity_text_chat_sl"
             android:tint="@color/linguaWhite"
+            android:elevation="2dp"
             app:layout_constraintBottom_toBottomOf="@+id/activity_text_chat_button_send"
             app:layout_constraintEnd_toEndOf="@+id/activity_text_chat_button_send"
             app:layout_constraintStart_toStartOf="@+id/activity_text_chat_button_send"
