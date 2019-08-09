@@ -19,12 +19,13 @@ public class User {
     ArrayList<String> knownLanguages;
     ArrayList<String> exploreLanguages;
     ArrayList<String> exploreCountries;
-    HashMap<String, Integer> hoursSpokenPerLanguage;
+    HashMap<String, Long> secondsSpokenPerLanguage;
     ArrayList<String> friends;
     ArrayList<String> pendingSentFriendRequests;
     ArrayList<String> pendingReceivedFriendRequests;
     ArrayList<String> declinedUsers;
     ArrayList<String> conversations;
+    HashMap<String, String> achievements;
     boolean willingToHost;
     boolean lookingForAHost;
     boolean complete;
@@ -120,12 +121,12 @@ public class User {
         this.exploreCountries = exploreCountries;
     }
 
-    public HashMap<String, Integer> getHoursSpokenPerLanguage() {
-        return hoursSpokenPerLanguage;
+    public HashMap<String, Long> getSecondsSpokenPerLanguage() {
+        return secondsSpokenPerLanguage;
     }
 
-    public void setHoursSpokenPerLanguage(HashMap<String, Integer> hoursSpoken) {
-        this.hoursSpokenPerLanguage = hoursSpoken;
+    public void setSecondsSpokenPerLanguage(HashMap<String, Long> hoursSpoken) {
+        this.secondsSpokenPerLanguage = hoursSpoken;
     }
 
     public ArrayList<String> getFriends() {
@@ -168,6 +169,15 @@ public class User {
         this.conversations = conversations;
     }
 
+    public HashMap<String, String> getAchievements() {
+        return achievements;
+    }
+
+    public void setAchievements(HashMap<String, String> achievements) {
+        this.achievements = achievements;
+    }
+
+
     public boolean isOnline() {
         return online;
     }
@@ -183,4 +193,6 @@ public class User {
     public void setComplete(boolean complete) {
         this.complete = complete;
     }
+
+
 }

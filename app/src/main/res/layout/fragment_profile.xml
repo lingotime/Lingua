@@ -3,7 +3,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -13,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/linguaWhite"
+        app:subtitleTextAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         android:elevation="8dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
@@ -80,16 +80,16 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="5dp"
-                            android:text="[Username]"
-                            android:textColor="#000000"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                            android:textStyle="bold"
+                            android:text="[Username]"/>
 
                         <TextView
                             android:id="@+id/fragment_profile_age_and_country_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="5dp"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                             android:text="[Age] | [Country]" />
 
                     </LinearLayout>
@@ -99,6 +99,7 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/fragment_profile_card_2"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_profile_card_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -106,50 +107,83 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/fragment_profile_biography_label"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/fragment_profile_bio_card"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="20dp"
-                        android:text="Biography:"
-                        android:textStyle="italic"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:elevation="8dp"
+                        app:cardCornerRadius="8dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:layout_marginBottom="@dimen/card_margin"
+                        android:layout_marginLeft="@dimen/card_margin"
+                        android:layout_marginRight="@dimen/card_margin"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                    <TextView
-                        android:id="@+id/fragment_profile_biography_text"
-                        android:layout_width="0dp"
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/fragment_profile_biography_label"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
+                            android:layout_width="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_height="wrap_content"
+                            android:text="Biography:" />
+
+                        <TextView
+                            android:id="@+id/fragment_profile_biography_text"
+                            android:layout_width="wrap_content"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_height="wrap_content"
+                            android:text="[Biography]"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/fragment_profile_known_languages_card"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:text="[Biography]"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_biography_label" />
+                        app:cardCornerRadius="8dp"
+                        android:elevation="8dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:layout_marginTop="@dimen/card_margin"
+                        android:layout_marginBottom="@dimen/card_margin"
+                        android:layout_marginLeft="@dimen/card_margin"
+                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_bio_card"
+                        android:layout_marginRight="@dimen/card_margin">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/fragment_profile_known_languages_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginTop="20dp"
-                        android:text="Known Languages:"
-                        android:textStyle="italic"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_biography_text" />
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
+                        android:text="Known Languages:"/>
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/fragment_profile_known_languages_chips"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_known_languages_text">
+                        android:layout_height="wrap_content">
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/fragment_profile_known_languages_chip"
@@ -158,30 +192,44 @@
                             android:text="[Language]"
                             app:chipIcon="@drawable/add_circle" />
                     </com.google.android.material.chip.ChipGroup>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    </com.google.android.material.card.MaterialCardView>
 
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/fragment_profile_explore_languages_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="8dp"
+                        android:elevation="8dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:layout_marginTop="@dimen/card_margin"
+                        android:layout_marginBottom="@dimen/card_margin"
+                        android:layout_marginLeft="@dimen/card_margin"
+                        android:layout_marginRight="@dimen/card_margin"
+                        app:layout_constraintTop_toBottomOf="@id/fragment_profile_known_languages_card">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/fragment_profile_explore_languages_text"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
-                        android:text="Explore Languages:"
-                        android:textStyle="italic"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_known_languages_chips" />
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
+                        android:text="Explore Languages:"/>
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/fragment_profile_explore_languages_chips"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_explore_languages_text">
+                        android:layout_height="wrap_content">
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/fragment_profile_explore_languages_chip"
@@ -190,30 +238,44 @@
                             android:text="[Language]"
                             app:chipIcon="@drawable/add_circle" />
                     </com.google.android.material.chip.ChipGroup>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    </com.google.android.material.card.MaterialCardView>
 
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/fragment_profile_explore_countries_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="8dp"
+                        android:elevation="8dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:layout_marginTop="@dimen/card_margin"
+                        android:layout_marginBottom="@dimen/card_margin"
+                        android:layout_marginLeft="@dimen/card_margin"
+                        android:layout_marginRight="@dimen/card_margin"
+                        app:layout_constraintTop_toBottomOf="@id/fragment_profile_explore_languages_card">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/fragment_profile_explore_countries_text"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
-                        android:text="Explore Countries:"
-                        android:textStyle="italic"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_explore_languages_chips" />
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
+                        android:text="Explore Countries:"/>
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/fragment_profile_explore_countries_chips"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginRight="20dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_explore_countries_text">
+                        android:layout_height="wrap_content">
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/fragment_profile_explore_countries_chip"
@@ -222,28 +284,126 @@
                             android:text="[Country]"
                             app:chipIcon="@drawable/add_circle" />
                     </com.google.android.material.chip.ChipGroup>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    </com.google.android.material.card.MaterialCardView>
 
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/fragment_profile_hosting_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="8dp"
+                        android:elevation="8dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:layout_marginTop="@dimen/card_margin"
+                        android:layout_marginBottom="@dimen/card_margin"
+                        android:layout_marginLeft="@dimen/card_margin"
+                        android:layout_marginRight="@dimen/card_margin"
+                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_explore_countries_card">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:orientation="vertical"
+                        android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/fragment_profile_hosting_header"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
-                        android:textStyle="italic"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_explore_countries_chips"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
                         android:text="Hosting:"/>
 
                     <TextView
                         android:id="@+id/fragment_profile_hosting_text"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_hosting_header"
+                        android:layout_marginBottom="10dp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:layout_marginEnd="20dp"
+                        android:layout_height="wrap_content"
                         android:text="[Hosting]"/>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/fragment_profile_learning_achievements_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="8dp"
+                        android:elevation="8dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:layout_marginTop="@dimen/card_margin"
+                        android:layout_marginBottom="@dimen/card_margin"
+                        android:layout_marginLeft="@dimen/card_margin"
+                        android:layout_marginRight="@dimen/card_margin"
+                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_hosting_card">
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:orientation="vertical"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/fragment_profile_learning_achievements_header"
+                                android:layout_width="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
+                                android:text="Learning Achievements:"/>
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/fragment_profile_learning_achievements_chips"
+                                android:layout_width="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_height="wrap_content"/>
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/fragment_profile_teaching_achievements_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="8dp"
+                        android:elevation="8dp"
+                        app:cardBackgroundColor="@android:color/white"
+                        android:layout_marginTop="@dimen/card_margin"
+                        android:layout_marginBottom="@dimen/card_margin"
+                        android:layout_marginLeft="@dimen/card_margin"
+                        android:layout_marginRight="@dimen/card_margin"
+                        app:layout_constraintTop_toBottomOf="@+id/fragment_profile_learning_achievements_card">
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:orientation="vertical"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/fragment_profile_teaching_achievements_header"
+                                android:layout_width="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.MaterialComponents.Overline"
+                                android:text="Teaching Achievements:"/>
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/fragment_profile_teaching_achievements_chips"
+                                android:layout_width="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_height="wrap_content"/>
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </com.google.android.material.card.MaterialCardView>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
