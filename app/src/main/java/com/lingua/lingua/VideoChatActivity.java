@@ -210,7 +210,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     // uses a Firebase transaction to find and add to the number of hours spoken in this language for the user
     private void queryAndUpdateHoursSpokenInfo() {
-        Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId + "/hoursSpokenPerLanguage");
+        Firebase userReference = new Firebase("https://lingua-project.firebaseio.com/users/" + userId + "/MinutesSpokenPerLanguage");
         userReference.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
@@ -307,7 +307,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
     // calculates the length of the call and returns a value in minutes
     private long lengthOfCall(long start, long end) {
-        long duration = TimeUnit.MINUTES.convert(end-start, TimeUnit.NANOSECONDS);
+        long duration = TimeUnit.SECONDS.convert(end-start, TimeUnit.NANOSECONDS);
         return duration;
     }
 
@@ -550,6 +550,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
             @Override
             public void onParticipantConnected(@NonNull Room room, @NonNull RemoteParticipant remoteParticipant) {
+                startTime = System.nanoTime(); // gets the start time of the call being answered
                 Log.i(TAG, "new participant connected" + remoteParticipant.getIdentity());
                 // In the case that the connected callback is received, the LocalParticipant and the RemoteParticipant objects become available
                 localParticipant = room.getLocalParticipant();
@@ -557,7 +558,6 @@ public class VideoChatActivity extends AppCompatActivity {
                 // to set a listener for the new participant that has been added to the room
                 addRemoteParticipant(remoteParticipant);
                 remoteParticipant.setListener(remoteParticipantListener());
-                startTime = System.nanoTime(); // gets the start time of the call
             }
 
             @Override
