@@ -289,7 +289,7 @@ public class ProfilePicture extends AppCompatActivity {
 
                 localProfilePhotoFile = getProfilePhotoFile(this, localProfilePhotoURI);
                 Bitmap localProfilePhoto  = rotateBitmapOrientation(getRealPathFromURI(localProfilePhotoURI));
-                Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).apply(RequestOptions.circleCropTransform()).into(profilePreviewImage);
+                Glide.with(this).load(localProfilePhoto).placeholder(R.drawable.man).centerCrop().into(profilePreviewImage);
             }
         }
     }
