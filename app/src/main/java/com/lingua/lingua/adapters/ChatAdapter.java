@@ -73,7 +73,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         }
         int fallbackImage = R.drawable.placeholder_person;
         if (chat.getChatParticipantIds().size() > 2) {
-            fallbackImage = R.drawable.placeholder_group;
+            fallbackImage = R.drawable.group_placeholder;
         }
 
         RequestOptions requestOptionsMedia = new RequestOptions();

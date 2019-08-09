@@ -41,7 +41,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_profile_picture_toolbar"
-        app:srcCompat="@drawable/placeholder_group" />
+        app:srcCompat="@drawable/group_placeholder" />
 
     <Button
         android:id="@+id/activity_profile_photo_setup_set_photo_button"

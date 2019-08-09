@@ -117,7 +117,7 @@ public class ProfilePicture extends AppCompatActivity {
         if (groupchat == null) {
             Glide.with(this).load(currentUser.getUserProfilePhotoURL()).centerCrop().placeholder(R.drawable.man).into(profilePreviewImage);
         } else {
-            Glide.with(this).load(groupchat.getChatPhotoUrl()).centerCrop().placeholder(R.drawable.placeholder_group).into(profilePreviewImage);
+            Glide.with(this).load(groupchat.getChatPhotoUrl()).centerCrop().placeholder(R.drawable.group_placeholder).into(profilePreviewImage);
         }
 
         // create references to cloud storage location
