@@ -46,7 +46,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:text="[Username]"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 android:textSize="18sp"
                 app:layout_constraintStart_toEndOf="@+id/item_user_search_profile_image"
                 app:layout_constraintTop_toTopOf="parent" />
