@@ -114,6 +114,7 @@ public class ReceivedFriendRequestsFragment extends Fragment {
         StringRequest request = new StringRequest(Request.Method.GET, urlReceived, s -> {
             try {
                 JSONObject object = new JSONObject(s);
+                noFriendRequestsTv.setVisibility(View.GONE);
                 Iterator keys = object.keys();
                 while (keys.hasNext()) {
                     String key = keys.next().toString();

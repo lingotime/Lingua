@@ -168,7 +168,7 @@ public class SearchFragment extends Fragment {
         StringRequest request = new StringRequest(Request.Method.GET, url, s -> {
             try {
                 JSONObject userObject = new JSONObject(s);
-
+                noUsersTv.setVisibility(View.GONE);
                 // get received friend requests
                 if (userObject.has("receivedFriendRequests")) {
                     JSONObject receivedFriendRequests = userObject.getJSONObject("receivedFriendRequests");
