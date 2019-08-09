@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -54,8 +55,8 @@ public class ProfilePicture extends AppCompatActivity {
     private User currentUser;
 
     File localProfilePhotoFile;
-    private Button takePhotoButton;
-    private Button selectPhotoButton;
+    private FloatingActionButton takePhotoButton;
+    private FloatingActionButton selectPhotoButton;
     private ImageView profilePreviewImage;
     private Button setProfilePhotoButton;
     private StorageReference specificStorageReference;
@@ -86,8 +87,8 @@ public class ProfilePicture extends AppCompatActivity {
         }
 
         // associate views with java variables
-        takePhotoButton = findViewById(R.id.activity_profile_photo_setup_take_photo_button);
-        selectPhotoButton = findViewById(R.id.activity_profile_photo_setup_select_photo_button);
+        takePhotoButton = findViewById(R.id.activity_profile_picture_camera_btn);
+        selectPhotoButton = findViewById(R.id.activity_profile_picture_gallery_btn);
         profilePreviewImage = findViewById(R.id.activity_profile_photo_setup_profile_image_preview);
         setProfilePhotoButton = findViewById(R.id.activity_profile_photo_setup_set_photo_button);
 

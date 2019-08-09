@@ -6,7 +6,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +17,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lingua.lingua.adapters.TextChatAdapter;
 import com.lingua.lingua.models.Chat;
 import com.lingua.lingua.models.Message;
@@ -42,7 +42,7 @@ public class TextChatActivity extends AppCompatActivity {
     private TextChatAdapter adapter;
     private List<Message> messages;
 
-    private Button sendButton;
+    private FloatingActionButton sendButton;
     private EditText etMessage;
 
     Firebase reference, lastMessageSeenReference;
