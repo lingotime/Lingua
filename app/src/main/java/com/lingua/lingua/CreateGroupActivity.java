@@ -21,6 +21,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.Firebase;
 import com.lingua.lingua.adapters.SelectFriendsAdapter;
 import com.lingua.lingua.models.Chat;
@@ -45,7 +47,6 @@ public class CreateGroupActivity extends AppCompatActivity {
     private SelectFriendsAdapter friendsAdapter;
     private List<User> participants;
     private EditText groupNameEt;
-    private String groupName;
     private TextView tvParticipants;
     private ImageView ivGroup;
     private static final String TAG = "CreateGroupActivity";
@@ -60,6 +61,7 @@ public class CreateGroupActivity extends AppCompatActivity {
 
         groupNameEt = findViewById(R.id.activity_create_group_name_et);
         tvParticipants = findViewById(R.id.activity_create_group_participants_tv);
+        ivGroup = findViewById(R.id.activity_create_group_iv_background);
 
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         if (getIntent().hasExtra("selectedUsers")) {
@@ -72,10 +74,12 @@ public class CreateGroupActivity extends AppCompatActivity {
             isEdit = true;
             groupNameEt.setText(chat.getChatName());
             participants = new ArrayList<>();
-            for (String userId : chat.getChatParticipants()) {
+            for (String userId : chat.getChatParticipantIds()) {
                 queryFriendInfo(userId);
             }
-            //TODO: prefill image
+            if (chat.getChatPhotoUrl() != null) {
+                Glide.with(this).load(chat.getChatPhotoUrl()).apply(RequestOptions.circleCropTransform()).placeholder(R.drawable.placeholder_group).into(ivGroup);
+            }
         }
 
         Firebase.setAndroidContext(this);
@@ -102,17 +106,26 @@ public class CreateGroupActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvFriends.setLayoutManager(linearLayoutManager);
 
-        ivGroup = findViewById(R.id.activity_create_group_iv);
-
         ivGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // proceed to photo setup activity
+                if (chat == null) {
+                    chat = new Chat();
+                    String chatId = reference.child("chats").push().getKey();
+                    String groupName = groupNameEt.getText().toString();
+                    chat.setChatName(groupName);
+                    ArrayList<String> participantIds = new ArrayList<>();
+                    for (User participant : participants) {
+                        participantIds.add(participant.getUserID());
+                    }
+                    chat.setChatParticipantIds(participantIds);
+                    chat.setChatID(chatId);
+                }
+
                 final Intent intent = new Intent(CreateGroupActivity.this, ProfilePicture.class);
                 intent.putExtra("user", Parcels.wrap(currentUser));
-                if (chat != null) {
-                    intent.putExtra("groupchat", Parcels.wrap(chat));
-                }
+                intent.putExtra("chat", Parcels.wrap(chat));
                 startActivity(intent);
             }
         });
@@ -131,8 +144,9 @@ public class CreateGroupActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menu_save_icon) {
-            groupName = groupNameEt.getText().toString();
+            String groupName = groupNameEt.getText().toString();
             if (!groupName.equals("")) {
+                chat.setChatName(groupName);
                 if (isEdit) {
                     saveEdits();
                 } else {
@@ -166,16 +180,22 @@ public class CreateGroupActivity extends AppCompatActivity {
     private void createGroup() {
 
         // create chat between users
-        String chatId = reference.child("chats").push().getKey();
+        String chatId;
+        if (chat != null) {
+            chatId = chat.getChatID();
+        } else {
+            chatId = reference.child("chats").push().getKey();
+        }
 
-        Map<String, Object> chat = new HashMap<>();
-        String lastMessage = currentUser.getUserName() + " created group " + groupName;
+        Map<String, Object> chatMap = new HashMap<>();
+        String lastMessage = currentUser.getUserName() + " created group " + chat.getChatName();
         String lastMessageAt = new Date().toString();
-        chat.put("lastMessage", lastMessage);
-        chat.put("lastMessageAt", lastMessageAt);
-        chat.put("lastMessageSeen", false);
-        chat.put("id", chatId);
-        chat.put("name", groupName);
+        chatMap.put("lastMessage", lastMessage);
+        chatMap.put("lastMessageAt", lastMessageAt);
+        chatMap.put("lastMessageSeen", false);
+        chatMap.put("id", chatId);
+        chatMap.put("name", chat.getChatName());
+        chatMap.put("chatPhotoURL", chat.getChatPhotoUrl());
 
         participants.add(currentUser);
 
@@ -197,14 +217,14 @@ public class CreateGroupActivity extends AppCompatActivity {
                 }
             }
         }
-        chat.put("users", users);
-        chat.put("exploreLanguages", exploreLanguages);
+        chatMap.put("users", users);
+        chatMap.put("exploreLanguages", exploreLanguages);
 
         reference.child("chats").child(chatId).setValue(chat);
 
         // create message in the new chat
         Map<String, String> message = new HashMap<>();
-        message.put("message", "Created group " + groupName);
+        message.put("message", "Created group " + chat.getChatName());
         message.put("senderId", currentUser.getUserID());
         message.put("timestamp", lastMessageAt);
 
@@ -212,8 +232,10 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
 
     private void saveEdits() {
-        reference.child("chats").child(chat.getChatID()).child("name").setValue(groupName);
-        //TODO: save image
+        reference.child("chats").child(chat.getChatID()).child("name").setValue(chat.getChatName());
+        if (chat.getChatPhotoUrl() != null) {
+            reference.child("chats").child(chat.getChatID()).child("chatPhotoURL").setValue(chat.getChatPhotoUrl());
+        }
     }
 
     private void queryFriendInfo(String friendId) {

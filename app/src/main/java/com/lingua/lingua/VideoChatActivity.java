@@ -3,12 +3,10 @@ package com.lingua.lingua;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -149,7 +147,7 @@ public class VideoChatActivity extends AppCompatActivity {
 
         // the intent from the push notification will not have the user object
         if (currentChat != null) {
-            chatMembers = currentChat.getChatParticipants();
+            chatMembers = currentChat.getChatParticipantIds();
             chatMembers.remove(userId);
 
             // to get all the possible explore languages from the users in the chat

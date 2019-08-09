@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class Chat {
     String chatID;
     String chatName;
-    ArrayList<String> chatParticipants;
+    ArrayList<String> chatParticipantIds;
     ArrayList<String> chatLanguages;
     String firstTextChatTime;
     String firstVideoChatTime;
@@ -36,12 +36,12 @@ public class Chat {
         this.chatName = chatName;
     }
 
-    public ArrayList<String> getChatParticipants() {
-        return chatParticipants;
+    public ArrayList<String> getChatParticipantIds() {
+        return chatParticipantIds;
     }
 
-    public void setChatParticipants(ArrayList<String> chatParticipants) {
-        this.chatParticipants = chatParticipants;
+    public void setChatParticipantIds(ArrayList<String> chatParticipantIds) {
+        this.chatParticipantIds = chatParticipantIds;
     }
 
     public ArrayList<String> getChatLanguages() {

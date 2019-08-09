@@ -215,7 +215,7 @@ public class ChatFragment extends Fragment {
                 chatOb.setChatID(id);
                 chatOb.setChatName(name);
                 chatOb.setLastTextChatTime(lastMessageAt);
-                chatOb.setChatParticipants(userIds);
+                chatOb.setChatParticipantIds(userIds);
                 chatOb.setLastTextMessage(lastMessage);
                 chatOb.setChatLanguages(exploreLanguages);
                 chatOb.setLastMessageSeen(lastMessageSeen);

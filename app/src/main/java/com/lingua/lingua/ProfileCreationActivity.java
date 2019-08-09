@@ -110,7 +110,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
             }
         });
 
-
         // set up toolbar
         Toolbar toolbar = findViewById(R.id.activity_profile_creation_toolbar);
         setSupportActionBar(toolbar);

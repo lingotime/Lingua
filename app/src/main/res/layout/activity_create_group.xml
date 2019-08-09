@@ -26,7 +26,6 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/blue_circle"
         android:backgroundTint="@color/linguaLightGray"
-        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/activity_create_group_description_tv"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"

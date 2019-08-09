@@ -74,8 +74,8 @@ public class ProfilePicture extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.activity_profile_picture_toolbar);
         setSupportActionBar(toolbar);
 
-        if (getIntent().hasExtra("groupchat")) {
-            groupchat = Parcels.unwrap(getIntent().getParcelableExtra("groupchat"));
+        if (getIntent().hasExtra("chat")) {
+            groupchat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
             getSupportActionBar().setTitle("Set Group Picture");
         } else {
             getSupportActionBar().setTitle("Set Profile Picture");
@@ -112,6 +112,8 @@ public class ProfilePicture extends AppCompatActivity {
         // load the current profile photo if one is available
         if (groupchat == null) {
             Glide.with(this).load(currentUser.getUserProfilePhotoURL()).centerCrop().placeholder(R.drawable.man).into(profilePreviewImage);
+        } else {
+            Glide.with(this).load(groupchat.getChatPhotoUrl()).centerCrop().placeholder(R.drawable.placeholder_group).into(profilePreviewImage);
         }
 
         // create references to cloud storage location
@@ -175,10 +177,14 @@ public class ProfilePicture extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
                                 // get the URL link for the user's new profile photo
-                                Uri profilePhotoURI = task.getResult();
+                                Uri photoUri = task.getResult();
 
-                                // update the user's profile photo with the new profile photo URL link
-                                currentUser.setUserProfilePhotoURL(profilePhotoURI.toString());
+                                if (groupchat != null) {
+                                    groupchat.setChatPhotoUrl(photoUri.toString());
+                                } else {
+                                    // update the user's profile photo with the new profile photo URL link
+                                    currentUser.setUserProfilePhotoURL(photoUri.toString());
+                                }
 
                                 // disable the button and change its text
                                 setProfilePhotoButton.setText("Set");
@@ -190,9 +196,9 @@ public class ProfilePicture extends AppCompatActivity {
                                 reference.child("userProfilePhotoURL").setValue(currentUser.getUserProfilePhotoURL());
 
                                 if (groupchat != null) {
-                                    //TODO: show photo
                                     final Intent intent = new Intent(ProfilePicture.this, CreateGroupActivity.class);
                                     intent.putExtra("user", Parcels.wrap(currentUser));
+                                    intent.putExtra("chat", Parcels.wrap(groupchat));
                                     startActivity(intent);
                                 } else {
                                     // return to info setup activity
@@ -222,6 +228,7 @@ public class ProfilePicture extends AppCompatActivity {
                     if (groupchat != null) {
                         final Intent intent = new Intent(ProfilePicture.this, CreateGroupActivity.class);
                         intent.putExtra("user", Parcels.wrap(currentUser));
+                        intent.putExtra("chat", Parcels.wrap(groupchat));
                         startActivity(intent);
                     } else {
                         // return to info setup activity

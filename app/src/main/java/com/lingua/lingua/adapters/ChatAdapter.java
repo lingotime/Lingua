@@ -72,7 +72,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             ivNewMessage.setVisibility(View.VISIBLE);
         }
         int fallbackImage = R.drawable.placeholder_person;
-        if (chat.getChatParticipants().size() > 2) {
+        if (chat.getChatParticipantIds().size() > 2) {
             fallbackImage = R.drawable.placeholder_group;
         }
         // load profile pic

@@ -61,7 +61,7 @@ public class TextChatActivity extends AppCompatActivity {
         chat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
-        isGroup = chat.getChatParticipants().size() > 2;
+        isGroup = chat.getChatParticipantIds().size() > 2;
 
         rvMessages = findViewById(R.id.activity_text_chat_rv);
         messages = new ArrayList<>();
