@@ -2,6 +2,7 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="android:colorControlActivated">@color/colorPrimary</item>
     </style>
 
     <style name="Widget.MaterialComponents.CardView" parent="CardView">
@@ -24,4 +25,9 @@
             @style/ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox
         </item>
     </style>
+
+    <style name="LinguaCaption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>

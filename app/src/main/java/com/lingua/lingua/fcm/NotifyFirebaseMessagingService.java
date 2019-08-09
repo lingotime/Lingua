@@ -63,9 +63,10 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
         if (notificationType.equals(FRIEND_REQUEST_NOTIFICATION)) {
             showNotification(body);
         } else {
-            String senderId = data.get("fromIdentity");
+            String recipientId = data.get("toIdentity");
             String roomName = data.get("roomName");
-            showVideoNotification(body, roomName);
+            String videoChatLanguage = data.get("videoChatLanguage");
+            showVideoNotification(body, roomName, recipientId, videoChatLanguage);
         }
     }
 
@@ -114,10 +115,12 @@ public class NotifyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     // show a notification for video chat
-    private void showVideoNotification(String message, String roomName) {
+    private void showVideoNotification(String message, String roomName, String recipientId, String videoChatLanguage) {
         Intent intent = new Intent(this, VideoChatActivity.class);
         intent.setAction("Launch Push Notification");
         intent.putExtra("roomName", roomName);
+        intent.putExtra("userId", recipientId);
+        intent.putExtra("videoChatLanguage", videoChatLanguage);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,

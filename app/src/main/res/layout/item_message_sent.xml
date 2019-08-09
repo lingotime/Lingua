@@ -16,6 +16,7 @@
         android:maxWidth="300dp"
         android:padding="10dp"
         android:text="[Message]"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:textColor="@color/linguaWhite"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"

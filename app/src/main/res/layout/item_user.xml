@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -71,12 +72,27 @@
                 app:layout_constraintStart_toStartOf="@+id/item_user_profile_image"
                 app:srcCompat="@drawable/circle" />
 
+            <ImageView
+                android:id="@+id/item_user_home_icon"
+                android:layout_width="30dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="115dp"
+                android:layout_marginBottom="6dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/home"
+                android:tint="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="@+id/item_user_profile_image"
+                app:layout_constraintEnd_toEndOf="@+id/item_user_live_signal_image"
+                app:layout_constraintHorizontal_bias="0.333"
+                app:layout_constraintStart_toStartOf="@+id/item_user_profile_image" />
+
             <TextView
                 android:id="@+id/item_user_name_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="[Username]"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textColor="@color/linguaBlack"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -90,6 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="from [Country]"
+                android:textAppearance="@style/LinguaCaption"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/item_user_name_text" />
@@ -100,6 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="[Age]"
+                android:textAppearance="@style/LinguaCaption"
                 app:layout_constraintEnd_toEndOf="@+id/item_user_country_text"
                 app:layout_constraintStart_toStartOf="@+id/item_user_country_text"
                 app:layout_constraintTop_toBottomOf="@+id/item_user_country_text" />
@@ -113,6 +131,7 @@
                 android:layout_marginEnd="20dp"
                 android:gravity="center"
                 android:text="[Biography]"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 android:textColor="@color/linguaBlack"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

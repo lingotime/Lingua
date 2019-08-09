@@ -15,6 +15,7 @@
         android:background="@drawable/rounded_rectangle_gray_message"
         android:maxWidth="300dp"
         android:padding="10dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:text="[Message]"
         android:textColor="@color/linguaBlack"
         android:textSize="16sp"
