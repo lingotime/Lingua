@@ -145,22 +145,24 @@ public class CreateGroupActivity extends AppCompatActivity {
 
         if (id == R.id.menu_save_icon) {
             String groupName = groupNameEt.getText().toString();
-            if (chat.getChatPhotoUrl() == null) {
-                Toast.makeText(this, "Must set a group icon", Toast.LENGTH_SHORT);
-            }
             if (!groupName.equals("")) {
-                chat.setChatName(groupName);
-                if (isEdit) {
-                    saveEdits();
+                if (chat == null || chat.getChatPhotoUrl() == null) {
+                    Toast.makeText(this, "Must set a group icon", Toast.LENGTH_SHORT).show();
                 } else {
-                    createGroup();
+                    if (isEdit) {
+                        chat.setChatName(groupName);
+                        saveEdits();
+                    } else {
+                        chat.setChatName(groupName);
+                        createGroup();
+                    }
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.putExtra("user", Parcels.wrap(currentUser));
+                    intent.putExtra("fragment", "chat");
+                    startActivity(intent);
                 }
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra("user", Parcels.wrap(currentUser));
-                intent.putExtra("fragment", "chat");
-                startActivity(intent);
             } else {
-                Toast.makeText(this, "Must enter a group name", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "Must enter a group name", Toast.LENGTH_SHORT).show();
             }
             return true;
         } else if (id == android.R.id.home) {
@@ -181,15 +183,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
 
     private void createGroup() {
-
-        // create chat between users
-        String chatId;
-        if (chat != null) {
-            chatId = chat.getChatID();
-        } else {
-            chatId = reference.child("chats").push().getKey();
-        }
-
+        String chatId = chat.getChatID();
         Map<String, Object> chatMap = new HashMap<>();
         String lastMessage = currentUser.getUserName() + " created group " + chat.getChatName();
         String lastMessageAt = new Date().toString();
