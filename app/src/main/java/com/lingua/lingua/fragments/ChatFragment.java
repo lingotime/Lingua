@@ -151,6 +151,10 @@ public class ChatFragment extends Fragment {
                     String key = keys.next().toString();
                     queryChatInfo(key);
                 }
+                Collections.sort(chats, (o1, o2) -> o1.getLastTextChatTime().compareTo(o2.getLastTextChatTime()));
+                Collections.reverse(chats);
+                adapter.notifyDataSetChanged();
+
             } catch (JSONException e) {
                 noChatsTv.setVisibility(View.VISIBLE);
                 swipeContainer.setRefreshing(false);
