@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -77,6 +78,8 @@ public class ProfilePicture extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.activity_profile_picture_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         if (getIntent().hasExtra("chat")) {
             groupchat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
@@ -433,5 +436,35 @@ public class ProfilePicture extends AppCompatActivity {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.home) {
+            back();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        back();
+    }
+
+    private void back() {
+        if (groupchat != null) {
+            Intent intent = new Intent(ProfilePicture.this, CreateGroupActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("chat", Parcels.wrap(groupchat));
+            intent.putExtra("isNewGroup", isNewGroup);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, ProfileCreationActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("fragment", nextFragment);
+            startActivity(intent);
+        }
     }
 }
