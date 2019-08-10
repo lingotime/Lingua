@@ -94,10 +94,11 @@ public class SearchFragment extends Fragment {
                 // reset the scroll listener
                 scrollListener.resetState();
 
-                // fetch compatible users who match criteria and load them into timeline
-                queryInfoAndLoadUsers(queriedName);
                 // change the focus
                 searchBar.clearFocus();
+
+                // fetch compatible users who match criteria and load them into timeline
+                queryInfoAndLoadUsers(queriedName);
 
                 // return success status
                 return true;
@@ -155,7 +156,6 @@ public class SearchFragment extends Fragment {
         // display timeline
         resultsTimeline.setLayoutManager(layoutManager);
 
-        queryInfoAndLoadUsers("");
     }
 
     @Override
