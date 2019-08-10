@@ -86,15 +86,6 @@ public class SearchFragment extends Fragment {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String queriedName) {
-                // change the focus
-                searchBar.clearFocus();
-
-                // return success status
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String queriedName) {
                 // clear the user lists
                 usersList.clear();
                 hiddenUsersList.clear();
@@ -105,6 +96,27 @@ public class SearchFragment extends Fragment {
 
                 // fetch compatible users who match criteria and load them into timeline
                 queryInfoAndLoadUsers(queriedName);
+                // change the focus
+                searchBar.clearFocus();
+
+                // return success status
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String queriedName) {
+                // clear the user lists
+                if (queriedName.equals("")) {
+                    usersList.clear();
+                    hiddenUsersList.clear();
+                    usersAdapter.notifyDataSetChanged();
+
+                    // reset the scroll listener
+                    scrollListener.resetState();
+
+                    // fetch compatible users who match criteria and load them into timeline
+                    queryInfoAndLoadUsers(queriedName);
+                }
 
                 // return success status
                 return true;
@@ -142,6 +154,8 @@ public class SearchFragment extends Fragment {
 
         // display timeline
         resultsTimeline.setLayoutManager(layoutManager);
+
+        queryInfoAndLoadUsers("");
     }
 
     @Override
