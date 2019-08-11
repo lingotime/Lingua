@@ -15,11 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -52,9 +47,6 @@ import com.twilio.video.VideoTrack;
 import com.twilio.video.VideoView;
 import com.twilio.video.Vp8Codec;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 import org.webrtc.MediaCodecVideoDecoder;
 import org.webrtc.MediaCodecVideoEncoder;
@@ -136,10 +128,6 @@ public class VideoChatActivity extends AppCompatActivity {
         userId = prefs.getString("userId", "");
         username = prefs.getString("userName", "");
 
-        // setting up Firebase to receive the messages to be sent
-        Firebase.setAndroidContext(VideoChatActivity.this);
-        reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + chatId);
-
         localVideoView = (VideoView) findViewById(R.id.activity_video_chat_publisher_container);
         remoteVideoView = (VideoView) findViewById(R.id.activity_video_chat_subscriber_container);
         connectionButton = (FloatingActionButton) findViewById(R.id.activity_video_chat_connect);
@@ -179,6 +167,10 @@ public class VideoChatActivity extends AppCompatActivity {
                 languageChoices = possibleChatLanguages.toArray(new String[possibleChatLanguages.size()]);
             }
         }
+        // setting up Firebase to receive the messages to be sent
+        Firebase.setAndroidContext(VideoChatActivity.this);
+        reference = new Firebase("https://lingua-project.firebaseio.com/messages/" + roomName);
+
         requestPermissions();
     }
 
@@ -246,6 +238,7 @@ public class VideoChatActivity extends AppCompatActivity {
                             Intent intent = new Intent(VideoChatActivity.this, MainActivity.class);
                             intent.putExtra("user", Parcels.wrap(currentUser));
                             intent.putExtra("fragment", "chat");
+                            finish();
                         }
                     }
                 }
@@ -486,17 +479,20 @@ public class VideoChatActivity extends AppCompatActivity {
 
     private void sendTextChat(String messageText) {
         String timestamp = new Date().toString();
+
         // save message
         Map<String, String> map = new HashMap<>();
         map.put("message", messageText);
-        map.put("senderId", userId);
+        map.put("senderId", currentUser.getUserID());
+        map.put("senderName", currentUser.getUserName());
         map.put("timestamp", timestamp);
         reference.push().setValue(map);
 
         // set this message to be the lastMessage of the chat
-        Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + chatId);
-        chatReference.child("lastMessage").setValue(username + ": " + messageText);
+        Firebase chatReference = new Firebase("https://lingua-project.firebaseio.com/chats/" + roomName);
+        chatReference.child("lastMessage").setValue(currentUser.getUserName() + ": " + messageText);
         chatReference.child("lastMessageAt").setValue(timestamp);
+        chatReference.child("lastMessageSeen").setValue(false);
     }
 
     private Room.Listener roomListener() {
