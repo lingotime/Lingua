@@ -15,7 +15,7 @@
         android:layout_marginEnd="64dp"
         android:text="No users to display. Try broadening your profile preferences."
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+        android:textAppearance="@style/LinguaCaption"
         android:textColor="@color/linguaDarkGray"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

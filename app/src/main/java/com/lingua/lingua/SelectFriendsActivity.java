@@ -160,12 +160,21 @@ public class SelectFriendsActivity extends AppCompatActivity {
             }
             return true;
         } else if (id == android.R.id.home) {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("user", Parcels.wrap(currentUser));
-            intent.putExtra("fragment", "chat");
-            startActivity(intent);
+            back();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        back();
+    }
+
+    private void back() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("user", Parcels.wrap(currentUser));
+        intent.putExtra("fragment", "chat");
+        startActivity(intent);
     }
 }

@@ -90,7 +90,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
         // unwrap the current user and next fragment
         currentUser = Parcels.unwrap(getIntent().getParcelableExtra("user"));
         nextFragment = getIntent().getStringExtra("fragment");
-        Log.d("ProfileCreationActivity", nextFragment);
 
         // setting up the birthdate field for to accept the date from a calendar popup
         DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
@@ -490,22 +489,29 @@ public class ProfileCreationActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            // intent to chat fragment
-            if (nextFragment.equals("profile")) {
-                Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
-                intent.putExtra("user", Parcels.wrap(currentUser));
-                intent.putExtra("fragment", "profile");
-                startActivity(intent);
-            } else {
-                // if we are creating profile and hit back button, log out
-                FirebaseAuth.getInstance().signOut();
-                LoginManager.getInstance().logOut();
-                Intent intent = new Intent(ProfileCreationActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-
+            back();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        back();
+    }
+
+    private void back() {
+        if (nextFragment.equals("profile")) {
+            Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("fragment", "profile");
+            startActivity(intent);
+        } else {
+            // if we are creating profile and hit back button, log out
+            FirebaseAuth.getInstance().signOut();
+            LoginManager.getInstance().logOut();
+            Intent intent = new Intent(ProfileCreationActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
     }
 }

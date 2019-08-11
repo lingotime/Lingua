@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -34,6 +36,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -54,8 +57,8 @@ public class ProfilePicture extends AppCompatActivity {
     private User currentUser;
 
     File localProfilePhotoFile;
-    private Button takePhotoButton;
-    private Button selectPhotoButton;
+    private FloatingActionButton takePhotoButton;
+    private FloatingActionButton selectPhotoButton;
     private ImageView profilePreviewImage;
     private Button setProfilePhotoButton;
     private StorageReference specificStorageReference;
@@ -76,6 +79,8 @@ public class ProfilePicture extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.activity_profile_picture_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         if (getIntent().hasExtra("chat")) {
             groupchat = Parcels.unwrap(getIntent().getParcelableExtra("chat"));
@@ -86,8 +91,8 @@ public class ProfilePicture extends AppCompatActivity {
         }
 
         // associate views with java variables
-        takePhotoButton = findViewById(R.id.activity_profile_photo_setup_take_photo_button);
-        selectPhotoButton = findViewById(R.id.activity_profile_photo_setup_select_photo_button);
+        takePhotoButton = findViewById(R.id.activity_profile_picture_camera_btn);
+        selectPhotoButton = findViewById(R.id.activity_profile_picture_gallery_btn);
         profilePreviewImage = findViewById(R.id.activity_profile_photo_setup_profile_image_preview);
         setProfilePhotoButton = findViewById(R.id.activity_profile_photo_setup_set_photo_button);
 
@@ -117,7 +122,7 @@ public class ProfilePicture extends AppCompatActivity {
         if (groupchat == null) {
             Glide.with(this).load(currentUser.getUserProfilePhotoURL()).centerCrop().placeholder(R.drawable.man).into(profilePreviewImage);
         } else {
-            Glide.with(this).load(groupchat.getChatPhotoUrl()).centerCrop().placeholder(R.drawable.placeholder_group).into(profilePreviewImage);
+            Glide.with(this).load(groupchat.getChatPhotoUrl()).centerCrop().placeholder(R.drawable.group_placeholder).into(profilePreviewImage);
         }
 
         // create references to cloud storage location
@@ -432,5 +437,42 @@ public class ProfilePicture extends AppCompatActivity {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_default_fragments, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            back();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        back();
+    }
+
+    private void back() {
+        if (groupchat != null) {
+            Intent intent = new Intent(ProfilePicture.this, CreateGroupActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("chat", Parcels.wrap(groupchat));
+            intent.putExtra("isNewGroup", isNewGroup);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, ProfileCreationActivity.class);
+            intent.putExtra("user", Parcels.wrap(currentUser));
+            intent.putExtra("fragment", nextFragment);
+            startActivity(intent);
+        }
     }
 }

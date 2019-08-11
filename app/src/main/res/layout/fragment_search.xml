@@ -22,13 +22,14 @@
 
     <SearchView
         android:id="@+id/fragment_search_search_bar"
+        style="@android:style/Widget.Material.Light.SearchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/linguaWhite"
         android:elevation="4dp"
         android:iconifiedByDefault="false"
-        android:queryHint="Search for a country or language..."
         android:queryBackground="@color/linguaWhite"
+        android:queryHint="Search for a country or language..."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_search_toolbar" />
@@ -41,7 +42,7 @@
         android:layout_marginEnd="64dp"
         android:text="There are no users that match your search."
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+        android:textAppearance="@style/LinguaCaption"
         android:textColor="@color/linguaDarkGray"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
